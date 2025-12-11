@@ -1,8 +1,8 @@
 const { useState, useEffect, useCallback } = React;
-const { ChevronDown, ChevronUp, CloseIcon, Capsule, TraitBar, ModeTabs } = window;
+const { CloseIcon, Capsule, ModeTabs } = window;
 
-// 상수 정의
-const MAX_SCORE_PER_QUESTION = 5;
+// 공유 상수 사용
+const MAX_SCORE_PER_QUESTION = window.CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
 
 const App = () => {
     const [mode, setMode] = useState('human');
@@ -90,8 +90,8 @@ const App = () => {
         return maxPossible > 0 ? Math.round((score / maxPossible) * 100) : 0;
     };
 
-    // 아이콘은 window에서 직접 가져옴 (폴백: HumanIcon)
-    const IconComponent = window[currentModeData.icon] || window.HumanIcon;
+    // 아이콘은 SUBJECT_CONFIG에서 가져옴 (일관성)
+    const IconComponent = window[subjectConfig.icon] || window.HumanIcon;
 
     return (
         <div className="w-full h-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col p-6 relative border-4 border-gray-800" style={{ minHeight: '600px' }}>
@@ -158,7 +158,7 @@ const App = () => {
                             onClick={() => setShowGraphPopup(true)}
                             className="doodle-border w-full py-2 bg-white text-gray-700 font-bold mb-4 hover:bg-gray-50 flex-shrink-0 text-sm"
                         >
-                            📊 상세 성향 분석 보기
+                            {subjectConfig.analysisButtonText || "📊 상세 성향 분석 보기"}
                         </button>
                     )}
 
@@ -187,11 +187,11 @@ const App = () => {
                                 {/* 매칭 포인트 */}
                                 {finalResult.matchPoints && (
                                     <div className="p-4 border-b border-gray-200">
-                                        <h3 className="font-bold text-base mb-3 text-gray-800">💘 이런 사람이 맞아요</h3>
+                                        <h3 className="font-bold text-base mb-3 text-gray-800">{subjectConfig.matchPointsTitle || "💘 이런 사람이 맞아요"}</h3>
                                         <ul className="space-y-2">
                                             {finalResult.matchPoints.map((point, idx) => (
                                                 <li key={idx} className="flex items-start text-sm text-gray-700">
-                                                    <span className="text-pink-500 mr-2">✓</span>
+                                                    <span className={`${subjectConfig.checkColor || 'text-pink-500'} mr-2`}>✓</span>
                                                     <span className="break-keep">{point}</span>
                                                 </li>
                                             ))}
@@ -201,13 +201,13 @@ const App = () => {
                                 {/* 탭 형식 상세 설명 */}
                                 <div className="flex text-sm font-bold">
                                     {[
-                                        { key: 'interpretation', label: '💡 해석' },
-                                        { key: 'guide', label: '🔮 연애 팁' }
+                                        { key: 'interpretation', label: subjectConfig.tabLabels?.interpretation || '💡 해석' },
+                                        { key: 'guide', label: subjectConfig.tabLabels?.guide || '🔮 연애 팁' }
                                     ].map((tab, idx) => (
                                         <button
                                             key={tab.key}
                                             onClick={() => setDetailTab(tab.key)}
-                                            className={`flex-1 py-3 px-2 transition-colors ${detailTab === tab.key ? 'bg-pink-100 text-gray-800 border-b-2 border-pink-400' : 'text-gray-400 bg-gray-50'} `}
+                                            className={`flex-1 py-3 px-2 transition-colors ${detailTab === tab.key ? `${subjectConfig.tabActiveColor || 'bg-pink-100 border-pink-400'} text-gray-800 border-b-2` : 'text-gray-400 bg-gray-50'} `}
                                         >
                                             {tab.label}
                                         </button>
