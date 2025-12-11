@@ -76,6 +76,37 @@ const Capsule = () => (
     </svg>
 );
 
+const HeartIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 하트 모양 */}
+        <path d="M50 85 L20 55 Q5 40 20 25 Q35 10 50 30 Q65 10 80 25 Q95 40 80 55 Z"
+              fill="#FF6B9D" stroke="#4A4A4A" strokeWidth="3" />
+        {mood === "happy" && (<g>
+            <circle cx="35" cy="45" r="3" fill="white" />
+            <circle cx="65" cy="45" r="3" fill="white" />
+            <path d="M40 55 Q 50 65 60 55" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="35" cy="45" r="4" fill="white" />
+            <circle cx="65" cy="45" r="4" fill="white" />
+            <path d="M35 55 Q 50 70 65 55" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" />
+            {/* 반짝임 */}
+            <path d="M15 20 L20 25 M25 15 L20 25 M15 30 L20 25" stroke="#FFD700" strokeWidth="2" />
+            <path d="M85 20 L80 25 M75 15 L80 25 M85 30 L80 25" stroke="#FFD700" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="27" y="42" width="15" height="6" rx="2" fill="white" />
+            <rect x="58" y="42" width="15" height="6" rx="2" fill="white" />
+            <path d="M45 58 Q 50 58 55 58" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" />
+        </g>)}
+        {mood === "sad" && (<g>
+            <circle cx="35" cy="45" r="3" fill="white" />
+            <circle cx="65" cy="45" r="3" fill="white" />
+            <path d="M40 60 Q 50 52 60 60" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" />
+        </g>)}
+    </svg>
+);
+
 // Make components globally available
 window.ChevronDown = ChevronDown;
 window.ChevronUp = ChevronUp;
@@ -86,3 +117,4 @@ window.HumanIcon = HumanIcon;
 window.RabbitFace = RabbitFace;
 window.HamsterFace = HamsterFace;
 window.Capsule = Capsule;
+window.HeartIcon = HeartIcon;

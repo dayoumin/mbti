@@ -1,5 +1,8 @@
-const { useState, useEffect } = React;
+const { useState, useEffect, useCallback } = React;
 const { ChevronDown, ChevronUp, CloseIcon, Capsule, TraitBar, ModeTabs } = window;
+
+// 상수 정의
+const MAX_SCORE_PER_QUESTION = 5;
 
 const App = () => {
     const [mode, setMode] = useState('human');
@@ -19,19 +22,19 @@ const App = () => {
     const questions = isDeepMode ? [...basicQuestions, ...deepQuestions] : basicQuestions;
     const maxQuestions = questions.length;
 
-    // 초기 점수 설정
-    const getInitialScores = () => {
+    // 초기 점수 설정 (dimensions 변경시에만 재생성)
+    const getInitialScores = useCallback(() => {
         const initial = {};
         Object.keys(dimensions).forEach(dim => {
             initial[dim] = 0;
         });
         return initial;
-    };
+    }, [dimensions]);
 
     // 모드 변경 시 점수 초기화
     useEffect(() => {
         setScores(getInitialScores());
-    }, [mode]);
+    }, [mode, getInitialScores]);
 
     // SUBJECT_CONFIG에서 설정 가져오기
     const subjectConfig = window.SUBJECT_CONFIG?.[mode] || {};
@@ -82,13 +85,13 @@ const App = () => {
     // 각 차원별 점수를 백분율로 계산
     const getScorePercentage = (dimension) => {
         const questionsForDim = questions.filter(q => q.dimension === dimension);
-        const maxPossible = questionsForDim.length * 5; // 각 질문 최대 5점
+        const maxPossible = questionsForDim.length * MAX_SCORE_PER_QUESTION;
         const score = scores[dimension] || 0;
         return maxPossible > 0 ? Math.round((score / maxPossible) * 100) : 0;
     };
 
-    // 아이콘은 window에서 직접 가져옴
-    const IconComponent = window[currentModeData.icon];
+    // 아이콘은 window에서 직접 가져옴 (폴백: HumanIcon)
+    const IconComponent = window[currentModeData.icon] || window.HumanIcon;
 
     return (
         <div className="w-full h-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col p-6 relative border-4 border-gray-800" style={{ minHeight: '600px' }}>
@@ -175,6 +178,43 @@ const App = () => {
                                         <h3 className="font-bold text-base mb-2 text-gray-800">🍀 성격 조언</h3>
                                         <p>{finalResult.guide}</p>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : subjectConfig.resultFormat === 'matching' ? (
+                        <div className="w-full mb-4 flex-shrink-0">
+                            <div className="bg-white rounded-2xl border-2 border-gray-800 shadow-sm">
+                                {/* 매칭 포인트 */}
+                                {finalResult.matchPoints && (
+                                    <div className="p-4 border-b border-gray-200">
+                                        <h3 className="font-bold text-base mb-3 text-gray-800">💘 이런 사람이 맞아요</h3>
+                                        <ul className="space-y-2">
+                                            {finalResult.matchPoints.map((point, idx) => (
+                                                <li key={idx} className="flex items-start text-sm text-gray-700">
+                                                    <span className="text-pink-500 mr-2">✓</span>
+                                                    <span className="break-keep">{point}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                                {/* 탭 형식 상세 설명 */}
+                                <div className="flex text-sm font-bold">
+                                    {[
+                                        { key: 'interpretation', label: '💡 해석' },
+                                        { key: 'guide', label: '🔮 연애 팁' }
+                                    ].map((tab, idx) => (
+                                        <button
+                                            key={tab.key}
+                                            onClick={() => setDetailTab(tab.key)}
+                                            className={`flex-1 py-3 px-2 transition-colors ${detailTab === tab.key ? 'bg-pink-100 text-gray-800 border-b-2 border-pink-400' : 'text-gray-400 bg-gray-50'} `}
+                                        >
+                                            {tab.label}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="p-4 text-gray-700 text-sm leading-relaxed break-keep whitespace-pre-wrap">
+                                    {detailTab === "interpretation" ? finalResult.interpretation : finalResult.guide}
                                 </div>
                             </div>
                         </div>

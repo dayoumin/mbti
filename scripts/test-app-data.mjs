@@ -79,7 +79,7 @@ console.log('\n' + '='.repeat(50));
 console.log('🎨 아이콘 참조 확인\n');
 
 // 예상되는 아이콘 목록 (Icons.js 기준)
-const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace'];
+const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace', 'HeartIcon'];
 
 Object.entries(CHEMI_DATA).forEach(([key, data]) => {
     const icon = data.icon;
@@ -184,6 +184,74 @@ Object.entries(CHEMI_DATA).forEach(([key, data]) => {
         console.log(`${key}: ✅ 모든 결과 라벨 조건 유효`);
     }
 });
+
+console.log('\n' + '='.repeat(50));
+console.log('🔗 matchResultLabel 함수 테스트\n');
+
+// matchResultLabel 함수 구현 (data.js와 동일)
+function matchResultLabel(scores, dimensions, resultLabels, dimCounts) {
+    const levels = {};
+    Object.keys(dimensions).forEach(dim => {
+        const questionCount = dimCounts[dim] || 5;
+        const maxScore = questionCount * 5;
+        levels[dim] = getScoreLevel(scores[dim] || 0, maxScore);
+    });
+
+    for (const result of resultLabels) {
+        const condition = result.condition;
+        let match = true;
+        for (const [dim, level] of Object.entries(condition)) {
+            if (levels[dim] !== level) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return result;
+    }
+
+    let bestMatch = resultLabels[resultLabels.length - 1];
+    let bestScore = 0;
+    for (const result of resultLabels) {
+        const condition = result.condition;
+        let matchCount = 0;
+        for (const [dim, level] of Object.entries(condition)) {
+            if (levels[dim] === level) matchCount++;
+        }
+        if (matchCount > bestScore) {
+            bestScore = matchCount;
+            bestMatch = result;
+        }
+    }
+    return bestMatch;
+}
+
+// 테스트: 차원별 질문 수가 다른 경우 (cat 모드 시뮬레이션)
+const catData = CHEMI_DATA.cat;
+const catDimCounts = { curious: 4, alert: 2, boss: 3, random: 3, cute: 2 };
+const catScores = { curious: 16, alert: 8, boss: 12, random: 6, cute: 8 };
+// curious: 16/20=80% → high, alert: 8/10=80% → high, boss: 12/15=80% → high
+// random: 6/15=40% → low, cute: 8/10=80% → high
+
+const catResult = matchResultLabel(catScores, catData.dimensions, catData.resultLabels, catDimCounts);
+console.log('  Cat 테스트 (차원별 질문 수 다름):');
+console.log(`    dimCounts: ${JSON.stringify(catDimCounts)}`);
+console.log(`    scores: ${JSON.stringify(catScores)}`);
+console.log(`    결과: "${catResult.name}" ${catResult.name ? '✅' : '❌'}`);
+
+// 테스트: NaN 버그 없는지 확인 (이전 버그: questionsPerDim * 5 = NaN)
+const testDimCounts = { dim1: 3, dim2: 4, dim3: 5 };
+const testDims = { dim1: { name: "테스트1" }, dim2: { name: "테스트2" }, dim3: { name: "테스트3" } };
+const testScores = { dim1: 12, dim2: 16, dim3: 10 };  // 12/15=80%, 16/20=80%, 10/25=40%
+const testLabels = [
+    { name: "테스트A", condition: { dim1: "high", dim2: "high" } },
+    { name: "테스트B", condition: { dim1: "low" } },
+    { name: "기본", condition: {} }
+];
+
+const testResult = matchResultLabel(testScores, testDims, testLabels, testDimCounts);
+const expectedName = "테스트A";  // dim1=high, dim2=high 매칭
+console.log('\n  NaN 버그 테스트:');
+console.log(`    결과: "${testResult.name}" ${testResult.name === expectedName ? '✅' : `❌ (expected: ${expectedName})`}`);
 
 console.log('\n' + '='.repeat(50));
 
