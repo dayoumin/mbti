@@ -4,6 +4,81 @@ const { CloseIcon, Capsule, ModeTabs } = window;
 // 공유 상수 사용
 const MAX_SCORE_PER_QUESTION = window.CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
 
+// 다음 테스트 추천 컴포넌트
+const NextTestRecommendation = ({ currentTest, onSelectTest }) => {
+    const [recommendation, setRecommendation] = useState(null);
+    const [completedCount, setCompletedCount] = useState(0);
+
+    useEffect(() => {
+        const loadRecommendation = async () => {
+            if (!window.resultService) return;
+
+            const rec = await window.resultService.getRecommendedTest();
+            const completed = await window.resultService.getCompletedTests();
+            setCompletedCount(completed.length);
+
+            // 현재 테스트 제외하고 추천
+            if (rec && rec.testType !== currentTest) {
+                setRecommendation(rec);
+            } else {
+                // 현재 테스트와 같으면 다른 테스트 찾기
+                const incomplete = await window.resultService.getIncompleteTests();
+                const other = incomplete.find(t => t !== currentTest);
+                if (other) {
+                    setRecommendation({ testType: other, reason: 'new' });
+                }
+            }
+        };
+
+        loadRecommendation();
+    }, [currentTest]);
+
+    if (!recommendation) return null;
+
+    const config = window.SUBJECT_CONFIG?.[recommendation.testType];
+    const data = window.CHEMI_DATA?.[recommendation.testType];
+
+    if (!config || !data) return null;
+
+    const totalTests = Object.keys(window.CHEMI_DATA || {}).length;
+    const IconComponent = window[config.icon];
+
+    return (
+        <div className="mt-4 p-4 bg-white rounded-xl border-2 border-gray-300 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-bold text-gray-600">
+                    {recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 테스트 추천'}
+                </span>
+                <span className="text-xs text-gray-400">
+                    {completedCount}/{totalTests} 완료
+                </span>
+            </div>
+
+            <button
+                onClick={() => onSelectTest(recommendation.testType)}
+                className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg hover:from-indigo-100 hover:to-purple-100 transition-colors border border-indigo-200"
+            >
+                {IconComponent && (
+                    <div className="w-12 h-12 flex items-center justify-center">
+                        <IconComponent mood="happy" />
+                    </div>
+                )}
+                <div className="flex-1 text-left">
+                    <p className="font-bold text-gray-800">{data.title}</p>
+                    <p className="text-xs text-gray-500">{data.subtitle}</p>
+                </div>
+                <span className="text-xl">→</span>
+            </button>
+
+            {recommendation.reason === 'retest' && recommendation.lastDoneAt && (
+                <p className="text-xs text-gray-400 mt-2 text-center">
+                    마지막: {new Date(recommendation.lastDoneAt).toLocaleDateString('ko-KR')}
+                </p>
+            )}
+        </div>
+    );
+};
+
 const App = () => {
     const [mode, setMode] = useState('human');
     const [step, setStep] = useState('intro');
@@ -54,7 +129,7 @@ const App = () => {
 
     const calculateResult = (finalScores) => {
         setStep("loading");
-        setTimeout(() => {
+        setTimeout(async () => {
             // 각 차원별 질문 수 계산
             const dimCounts = {};
             questions.forEach(q => {
@@ -66,6 +141,16 @@ const App = () => {
             setFinalResult(result);
             setStep("result");
             setDetailTab("interpretation");
+
+            // 결과 저장 (ResultService 사용)
+            if (window.resultService && result) {
+                try {
+                    await window.resultService.saveResult(mode, result, finalScores, isDeepMode);
+                    console.log('[App] 결과 저장 완료:', mode, result.name);
+                } catch (error) {
+                    console.error('[App] 결과 저장 실패:', error);
+                }
+            }
         }, 2000);
     };
 
@@ -250,6 +335,9 @@ const App = () => {
                             {subjectConfig.deepButtonText || '결과'}, 이게 다가 아니다? (+{deepQuestions.length}문항)
                         </button>
                     )}
+
+                    {/* 다음 테스트 추천 */}
+                    <NextTestRecommendation currentTest={mode} onSelectTest={restart} />
 
                     <div className="w-full mt-auto pt-4 flex-shrink-0 pb-4">
                         <button onClick={() => restart()} className="doodle-border w-full py-3 bg-white font-bold text-gray-500 hover:bg-gray-100">다시 하기</button>

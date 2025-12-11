@@ -16,11 +16,27 @@ const projectRoot = path.resolve(__dirname, '..');
 
 console.log('=== 브라우저 통합 테스트 ===\n');
 
-// window 객체 시뮬레이션
-const window = {};
+// window 객체 시뮬레이션 (브라우저 API 모킹)
+const localStorage = {
+    _data: {},
+    getItem(key) { return this._data[key] || null; },
+    setItem(key, value) { this._data[key] = value; },
+    removeItem(key) { delete this._data[key]; }
+};
+
+const window = {
+    innerWidth: 375,
+    dispatchEvent: () => {},
+    addEventListener: () => {},
+    CustomEvent: class CustomEvent { constructor(name, opts) { this.name = name; this.detail = opts?.detail; } }
+};
+
+// navigator 모킹
+const navigator = { userAgent: 'Node.js test' };
 
 // 파일 로드 순서 (index.html과 동일)
 const loadOrder = [
+    'services/ResultService.js',
     'data/constants.js',
     'data/subjects/human.js',
     'data/subjects/cat.js',
@@ -28,7 +44,9 @@ const loadOrder = [
     'data/subjects/rabbit.js',
     'data/subjects/hamster.js',
     'data/subjects/idealType.js',
+    'data/subjects/petMatch.js',
     'data/subjects/plant.js',
+    'data/subjects/coffee.js',
     'data/index.js',
     'data/config.js',
     'data/utils.js'
@@ -42,7 +60,7 @@ for (const file of loadOrder) {
 
     try {
         // vm.createContext로 window 객체를 전역으로 사용
-        const context = vm.createContext({ window, console });
+        const context = vm.createContext({ window, console, localStorage, navigator, Date, Math, JSON, Array, Object, Error, Promise, Set });
         vm.runInContext(code, context);
         console.log(`   ✓ ${file}`);
     } catch (error) {
@@ -153,6 +171,41 @@ if (window.CHEMI_DATA) {
 
 if (integrityPassed) {
     console.log('   ✓ 모든 데이터 무결성 검사 통과');
+}
+
+// 7. ResultService 검증
+console.log('\n7. ResultService 검증:');
+if (window.resultService) {
+    console.log('   ✓ resultService 인스턴스 생성됨');
+
+    // 기본 메서드 확인
+    const methods = ['saveResult', 'getMyResults', 'getCompletedTests', 'getIncompleteTests', 'getRecommendedTest', 'exportData'];
+    for (const method of methods) {
+        if (typeof window.resultService[method] === 'function') {
+            console.log(`   ✓ ${method}() 메서드 존재`);
+        } else {
+            console.log(`   ✗ ${method}() 메서드 누락`);
+        }
+    }
+
+    // StorageProviders 확인
+    if (window.StorageProviders) {
+        console.log(`   ✓ StorageProviders 정의됨 (${Object.keys(window.StorageProviders).join(', ')})`);
+    }
+} else {
+    console.log('   ✗ resultService가 정의되지 않음');
+}
+
+// 8. PWA 파일 존재 확인
+console.log('\n8. PWA 파일 확인:');
+const pwaFiles = ['manifest.json', 'sw.js', 'icons/icon.svg'];
+for (const file of pwaFiles) {
+    const filePath = path.join(projectRoot, file);
+    if (fs.existsSync(filePath)) {
+        console.log(`   ✓ ${file} 존재`);
+    } else {
+        console.log(`   ✗ ${file} 누락`);
+    }
 }
 
 console.log('\n=== 테스트 완료 ===');
