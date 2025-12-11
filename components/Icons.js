@@ -164,6 +164,88 @@ const PlantIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => 
     </svg>
 );
 
+const PetMatchIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 발바닥 모양 */}
+        <ellipse cx="50" cy="60" rx="20" ry="18" fill="#F4A460" stroke="#4A4A4A" strokeWidth="3" />
+        <ellipse cx="30" cy="40" rx="10" ry="12" fill="#F4A460" stroke="#4A4A4A" strokeWidth="2" />
+        <ellipse cx="50" cy="32" rx="10" ry="12" fill="#F4A460" stroke="#4A4A4A" strokeWidth="2" />
+        <ellipse cx="70" cy="40" rx="10" ry="12" fill="#F4A460" stroke="#4A4A4A" strokeWidth="2" />
+        {mood === "happy" && (<g>
+            <circle cx="43" cy="55" r="2" fill="#4A4A4A" />
+            <circle cx="57" cy="55" r="2" fill="#4A4A4A" />
+            <path d="M46 62 Q 50 66 54 62" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="43" cy="55" r="3" fill="#4A4A4A" />
+            <circle cx="57" cy="55" r="3" fill="#4A4A4A" />
+            <path d="M44 62 Q 50 70 56 62" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 반짝임 */}
+            <path d="M20 25 L25 30 M30 20 L25 30 M20 35 L25 30" stroke="#FFD700" strokeWidth="2" />
+            <path d="M80 25 L75 30 M70 20 L75 30 M80 35 L75 30" stroke="#FFD700" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="36" y="52" width="10" height="5" rx="1" fill="black" />
+            <rect x="54" y="52" width="10" height="5" rx="1" fill="black" />
+            <path d="M46 65 Q 50 65 54 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            <circle cx="43" cy="55" r="2" fill="#4A4A4A" />
+            <circle cx="57" cy="55" r="2" fill="#4A4A4A" />
+            <path d="M46 65 Q 50 62 54 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+const CoffeeIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 컵 */}
+        <path d="M25 35 L30 85 L70 85 L75 35 Z" fill="white" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 커피 */}
+        <path d="M28 45 L32 80 L68 80 L72 45 Z" fill="#6F4E37" />
+        {/* 손잡이 */}
+        <path d="M75 45 Q 90 45 90 60 Q 90 75 75 75" fill="none" stroke="#4A4A4A" strokeWidth="3" />
+        {mood === "happy" && (<g>
+            {/* 김 */}
+            <path d="M35 25 Q 38 15 35 5" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M50 25 Q 53 15 50 5" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M65 25 Q 68 15 65 5" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 얼굴 */}
+            <circle cx="42" cy="58" r="3" fill="#4A4A4A" />
+            <circle cx="58" cy="58" r="3" fill="#4A4A4A" />
+            <path d="M45 68 Q 50 73 55 68" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            {/* 김 많이 */}
+            <path d="M32 28 Q 36 15 32 2" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M44 28 Q 48 15 44 2" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M56 28 Q 60 15 56 2" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M68 28 Q 72 15 68 2" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 얼굴 */}
+            <circle cx="42" cy="58" r="4" fill="#4A4A4A" />
+            <circle cx="58" cy="58" r="4" fill="#4A4A4A" />
+            <path d="M43 68 Q 50 78 57 68" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            {/* 김 */}
+            <path d="M50 25 Q 53 15 50 5" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 선글라스 */}
+            <rect x="34" y="54" width="12" height="6" rx="2" fill="black" />
+            <rect x="54" y="54" width="12" height="6" rx="2" fill="black" />
+            <path d="M46 57 L54 57" stroke="black" strokeWidth="2" />
+            <path d="M45 70 Q 50 70 55 70" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            {/* 김 적게 */}
+            <path d="M50 28 Q 52 22 50 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 얼굴 */}
+            <circle cx="42" cy="58" r="3" fill="#4A4A4A" />
+            <circle cx="58" cy="58" r="3" fill="#4A4A4A" />
+            <path d="M45 72 Q 50 67 55 72" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
 // Make components globally available
 window.ChevronDown = ChevronDown;
 window.ChevronUp = ChevronUp;
@@ -176,3 +258,5 @@ window.HamsterFace = HamsterFace;
 window.Capsule = Capsule;
 window.HeartIcon = HeartIcon;
 window.PlantIcon = PlantIcon;
+window.PetMatchIcon = PetMatchIcon;
+window.CoffeeIcon = CoffeeIcon;

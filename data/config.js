@@ -83,6 +83,32 @@ const SUBJECT_CONFIG = {
         tabActiveColor: "bg-green-100 border-green-400",
         checkColor: "text-green-500",
         analysisButtonText: "🌱 상세 성향 분석 보기"
+    },
+    petMatch: {
+        testType: "matching",
+        icon: "PetMatchIcon",
+        label: "반려동물",
+        intro: ["어떤 동물과 잘 맞을까?", "첫 반려동물 고민 중?", "나의 라이프스타일에 맞는 친구는?"],
+        resultFormat: "matching",
+        deepButtonText: "반려동물",
+        matchPointsTitle: "🐾 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 소개", guide: "🏠 키우기 팁" },
+        tabActiveColor: "bg-amber-100 border-amber-400",
+        checkColor: "text-amber-600",
+        analysisButtonText: "🐾 상세 성향 분석 보기"
+    },
+    coffee: {
+        testType: "matching",
+        icon: "CoffeeIcon",
+        label: "커피",
+        intro: ["나에게 맞는 커피는?", "오늘 뭐 마시지?", "내 취향의 커피 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "커피 취향",
+        matchPointsTitle: "☕ 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 소개", guide: "💡 즐기는 팁" },
+        tabActiveColor: "bg-amber-200 border-amber-600",
+        checkColor: "text-amber-700",
+        analysisButtonText: "☕ 상세 취향 분석 보기"
     }
 };
 

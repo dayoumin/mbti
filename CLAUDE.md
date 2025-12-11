@@ -15,11 +15,12 @@ data/
     ├── rabbit.js
     ├── hamster.js
     ├── idealType.js
-    └── plant.js
+    ├── petMatch.js
+    ├── plant.js
+    └── coffee.js
 ```
 
-**정식 데이터 소스**: `data/subjects/*.js` (분리된 파일)
-**레거시**: `data.js` (참조용, 직접 수정 금지)
+**데이터 소스**: `data/subjects/*.js`
 
 ---
 
@@ -109,6 +110,24 @@ node scripts/validate-questions.mjs
 | space | 공간 | 식물 둘 공간 크기 |
 | style | 취향 | 선호 식물 스타일 |
 
+### PetMatch (반려동물 매칭)
+| 키 | 이름 | 설명 |
+|----|------|------|
+| lifestyle | 생활패턴 | 활동량과 외출 빈도 |
+| space | 주거공간 | 집의 크기와 환경 |
+| time | 돌봄시간 | 반려동물에게 쓸 수 있는 시간 |
+| experience | 경험도 | 반려동물 양육 경험 |
+| interaction | 교감욕구 | 원하는 교감 수준 |
+
+### Coffee (커피 매칭)
+| 키 | 이름 | 설명 |
+|----|------|------|
+| bitter | 쓴맛 | 쓴맛 선호도 |
+| sweet | 단맛 | 단맛 선호도 |
+| caffeine | 카페인 | 카페인 필요 정도 |
+| temperature | 온도 | 뜨거운 vs 차가운 |
+| mood | 분위기 | 커피 마시는 상황/기분 |
+
 ---
 
 ## 공유 상수 (data/constants.js)
@@ -136,14 +155,6 @@ CHEMI_CONSTANTS = {
 | `scripts/test-app-data.mjs` | 앱 데이터 무결성 테스트 |
 | `scripts/check-similarity.mjs` | 질문 유사도 검사 |
 | `scripts/fix-double-comma.mjs` | 이중 콤마 오류 수정 |
-
-### 레거시 스크립트 (data.js 대상, 참조용)
-| 스크립트 | 용도 |
-|----------|------|
-| `scripts/refactor-data-structure.mjs` | data.js → 분리 구조 변환 (완료) |
-| `scripts/add-*.mjs` | 원타임 데이터 추가 스크립트 |
-| `scripts/fix-*.mjs` (일부) | 원타임 오류 수정 스크립트 |
-| `scripts/transform-data.mjs` | MBTI→CHEMI 구조 변환 (레거시) |
 
 ---
 

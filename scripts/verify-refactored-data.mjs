@@ -24,7 +24,9 @@ const requiredFiles = [
     'data/subjects/rabbit.js',
     'data/subjects/hamster.js',
     'data/subjects/idealType.js',
-    'data/subjects/plant.js'
+    'data/subjects/petMatch.js',
+    'data/subjects/plant.js',
+    'data/subjects/coffee.js'
 ];
 
 console.log('1. 파일 존재 확인:');
@@ -38,7 +40,7 @@ for (const file of requiredFiles) {
 
 // 2. 각 subject 파일의 데이터 구조 검증
 console.log('\n2. Subject 데이터 구조 검증:');
-const subjects = ['human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant'];
+const subjects = ['human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'petMatch', 'plant', 'coffee'];
 
 for (const subject of subjects) {
     const filePath = path.join(projectRoot, `data/subjects/${subject}.js`);

@@ -15,6 +15,9 @@ const App = () => {
     const [showGraphPopup, setShowGraphPopup] = useState(false);
 
     const appData = window.CHEMI_DATA;
+    if (!appData[mode]) {
+        console.warn(`[CHEMI] 데이터 누락: "${mode}" 모드의 데이터가 CHEMI_DATA에 없습니다. human 데이터로 대체됩니다.`);
+    }
     const currentModeData = appData[mode] || appData.human;
     const dimensions = currentModeData.dimensions;
     const basicQuestions = currentModeData.questions || [];
@@ -242,7 +245,7 @@ const App = () => {
                         </div>
                     )}
 
-                    {!isDeepMode && (
+                    {!isDeepMode && deepQuestions.length > 0 && (
                         <button onClick={startDeepTest} className="doodle-border w-full py-3 bg-indigo-500 text-white font-bold mb-4 animate-pulse hover:bg-indigo-600 transition-colors flex-shrink-0">
                             {subjectConfig.deepButtonText || '결과'}, 이게 다가 아니다? (+{deepQuestions.length}문항)
                         </button>

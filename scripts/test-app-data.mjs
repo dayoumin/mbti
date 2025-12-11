@@ -31,7 +31,9 @@ const loadOrder = [
     'data/subjects/rabbit.js',
     'data/subjects/hamster.js',
     'data/subjects/idealType.js',
+    'data/subjects/petMatch.js',
     'data/subjects/plant.js',
+    'data/subjects/coffee.js',
     'data/index.js',
     'data/config.js'
 ];
@@ -94,7 +96,7 @@ console.log('\n' + '='.repeat(50));
 console.log('🎨 아이콘 참조 확인\n');
 
 // 예상되는 아이콘 목록 (Icons.js 기준)
-const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace', 'HeartIcon', 'PlantIcon'];
+const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace', 'HeartIcon', 'PlantIcon', 'PetMatchIcon', 'CoffeeIcon'];
 
 Object.entries(CHEMI_DATA).forEach(([key, data]) => {
     const icon = data.icon;

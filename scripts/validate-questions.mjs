@@ -33,7 +33,9 @@ const loadOrder = [
     'data/subjects/rabbit.js',
     'data/subjects/hamster.js',
     'data/subjects/idealType.js',
+    'data/subjects/petMatch.js',
     'data/subjects/plant.js',
+    'data/subjects/coffee.js',
     'data/index.js'
 ];
 
@@ -67,7 +69,9 @@ const VALID_DIMENSIONS = {
     rabbit: ['curious', 'social', 'active', 'brave', 'chill'],
     hamster: ['curious', 'hoard', 'active', 'tame', 'nocturnal'],
     idealType: ['passion', 'commit', 'close', 'express', 'active'],
-    plant: ['care', 'light', 'water', 'space', 'style']
+    petMatch: ['lifestyle', 'space', 'time', 'experience', 'interaction'],
+    plant: ['care', 'light', 'water', 'space', 'style'],
+    coffee: ['bitter', 'sweet', 'caffeine', 'temperature', 'mood']
 };
 
 // 모드별 최소 질문 수
@@ -78,7 +82,9 @@ const MIN_QUESTIONS = {
     rabbit: { perDim: 4, basic: 2 },
     hamster: { perDim: 4, basic: 2 },
     idealType: { perDim: 4, basic: 2 },
-    plant: { perDim: 4, basic: 2 }
+    petMatch: { perDim: 4, basic: 2 },
+    plant: { perDim: 4, basic: 2 },
+    coffee: { perDim: 4, basic: 2 }
 };
 
 const errors = [];
@@ -318,7 +324,7 @@ function validateMode(mode, modeData) {
 console.log('🔍 질문 데이터 검증 시작...\n');
 console.log('=' .repeat(50));
 
-['human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant'].forEach(mode => {
+['human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'petMatch', 'plant', 'coffee'].forEach(mode => {
     if (CHEMI_DATA[mode]) {
         validateMode(mode, CHEMI_DATA[mode]);
     } else {

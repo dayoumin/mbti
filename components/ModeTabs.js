@@ -9,10 +9,14 @@ const ModeTabs = ({ mode, onRestart }) => {
         if (!groupedTabs[type]) {
             groupedTabs[type] = [];
         }
+        const IconComponent = window[cfg.icon];
+        if (!IconComponent) {
+            console.warn(`[CHEMI] 아이콘 누락: "${cfg.icon}"이 window에 등록되지 않았습니다. 기본 아이콘을 사용합니다.`);
+        }
         groupedTabs[type].push({
             key,
             label: cfg.label,
-            Icon: window[cfg.icon]
+            Icon: IconComponent || window.HumanIcon
         });
     });
 

@@ -64,7 +64,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "연인과 함께하는 시간이...",
+                                "q": "연인과 함께하는 시간이?",
                                 "dimension": "passion",
                                 "a": [
                                         {
@@ -92,7 +92,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "연인의 힘든 일에 대해...",
+                                "q": "연인의 힘든 일에 대해?",
                                 "dimension": "commit",
                                 "a": [
                                         {
@@ -134,7 +134,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "연인의 친구 모임에...",
+                                "q": "연인의 친구 모임에?",
                                 "dimension": "close",
                                 "a": [
                                         {
@@ -234,7 +234,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "첫 만남부터 설레는 느낌이...",
+                                "q": "첫 만남부터 설레는 느낌이?",
                                 "dimension": "passion",
                                 "a": [
                                         {
@@ -276,7 +276,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "연인과의 미래 계획을...",
+                                "q": "연인과의 미래 계획을?",
                                 "dimension": "commit",
                                 "a": [
                                         {
@@ -402,7 +402,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "연인에게 칭찬을...",
+                                "q": "연인에게 칭찬을?",
                                 "dimension": "express",
                                 "a": [
                                         {
@@ -444,7 +444,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "새로운 취미를...",
+                                "q": "새로운 취미를?",
                                 "dimension": "active",
                                 "a": [
                                         {
@@ -458,7 +458,7 @@ const IDEALTYPE_DATA = {
                                 ]
                         },
                         {
-                                "q": "연인과 운동을...",
+                                "q": "연인과 운동을?",
                                 "dimension": "active",
                                 "a": [
                                         {
