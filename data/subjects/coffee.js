@@ -220,6 +220,86 @@ const COFFEE_DATA = {
                 { "text": "내 취향은 나만 알면 돼요", "score": 5 },
                 { "text": "좋은 카페 발견하면 공유해요", "score": 1 }
             ]
+        },
+        {
+            "q": "블랙커피(아메리카노, 에스프레소)를 즐기나요?",
+            "dimension": "bitter",
+            "a": [
+                { "text": "블랙커피가 기본이죠", "score": 5 },
+                { "text": "뭔가 넣어야 마실 수 있어요", "score": 1 }
+            ]
+        },
+        {
+            "q": "커피 쓴맛이 혀에 남는 느낌은?",
+            "dimension": "bitter",
+            "a": [
+                { "text": "그게 커피의 매력이에요", "score": 5 },
+                { "text": "빨리 씻어내고 싶어요", "score": 1 }
+            ]
+        },
+        {
+            "q": "프라푸치노나 쉐이크 음료는?",
+            "dimension": "sweet",
+            "a": [
+                { "text": "가끔 마셔요, 맛있어요", "score": 5 },
+                { "text": "그건 커피가 아니죠", "score": 1 }
+            ]
+        },
+        {
+            "q": "커피에 우유를 넣을 때?",
+            "dimension": "sweet",
+            "a": [
+                { "text": "달달한 연유나 바닐라밀크로!", "score": 5 },
+                { "text": "일반 우유나 두유 정도요", "score": 1 }
+            ]
+        },
+        {
+            "q": "오후 3시 이후에도 커피를 마시나요?",
+            "dimension": "caffeine",
+            "a": [
+                { "text": "상관없이 마셔요", "score": 5 },
+                { "text": "저녁엔 카페인 피해요", "score": 1 }
+            ]
+        },
+        {
+            "q": "커피 없이 하루를 시작할 수 있나요?",
+            "dimension": "caffeine",
+            "a": [
+                { "text": "절대 불가능해요", "score": 5 },
+                { "text": "없어도 괜찮아요", "score": 1 }
+            ]
+        },
+        {
+            "q": "미지근해진 커피를 마실 수 있나요?",
+            "dimension": "temperature",
+            "a": [
+                { "text": "상관없어요, 그냥 마셔요", "score": 1 },
+                { "text": "싫어요, 뜨겁거나 차갑거나", "score": 5 }
+            ]
+        },
+        {
+            "q": "여름에 뜨거운 커피를 마시나요?",
+            "dimension": "temperature",
+            "a": [
+                { "text": "네, 뜨거운 게 좋아요", "score": 5 },
+                { "text": "여름엔 무조건 아이스요", "score": 1 }
+            ]
+        },
+        {
+            "q": "혼자 카페에 가는 것은?",
+            "dimension": "mood",
+            "a": [
+                { "text": "편해요, 자주 가요", "score": 5 },
+                { "text": "누군가와 함께 가는 게 좋아요", "score": 1 }
+            ]
+        },
+        {
+            "q": "커피를 마시면서 주로 뭘 하나요?",
+            "dimension": "mood",
+            "a": [
+                { "text": "일이나 공부를 해요", "score": 5 },
+                { "text": "그냥 쉬거나 대화해요", "score": 1 }
+            ]
         }
     ],
     "resultLabels": [
@@ -249,7 +329,7 @@ const COFFEE_DATA = {
             "name": "부드러운 카페라떼",
             "emoji": "🥛",
             "desc": "우유와 커피의 부드러운 조화",
-            "condition": { "bitter": "low", "sweet": "medium", "temperature": "high" },
+            "condition": { "bitter": "low", "sweet": "medium", "temperature": "high", "caffeine": "medium" },
             "mood": "happy",
             "color": "bg-amber-200",
             "interpretation": "쓴맛은 좀 부담스럽지만 커피 맛은 즐기고 싶은 당신에게 카페라떼가 딱이에요! 우유가 에스프레소의 쓴맛을 부드럽게 감싸주고, 고소한 풍미를 더해줘요.",
@@ -260,7 +340,7 @@ const COFFEE_DATA = {
             "name": "달콤한 바닐라 라떼",
             "emoji": "🍦",
             "desc": "디저트 같은 달달한 커피",
-            "condition": { "bitter": "low", "sweet": "high" },
+            "condition": { "bitter": "low", "sweet": "high", "caffeine": "low" },
             "mood": "excited",
             "color": "bg-yellow-100",
             "interpretation": "커피는 달아야 맛있다! 바닐라 시럽의 달콤함과 우유의 부드러움, 그 위에 휘핑크림까지. 마시는 디저트 같은 커피가 당신의 스타일이에요.",
@@ -282,7 +362,7 @@ const COFFEE_DATA = {
             "name": "진한 카페모카",
             "emoji": "🍫",
             "desc": "커피와 초콜릿의 환상적인 만남",
-            "condition": { "sweet": "high", "bitter": "medium" },
+            "condition": { "sweet": "high", "bitter": "medium", "caffeine": "medium" },
             "mood": "excited",
             "color": "bg-amber-800",
             "interpretation": "커피도 좋고 초콜릿도 좋은 당신! 카페모카는 에스프레소와 초콜릿의 달콤 쌉싸름한 조화가 일품이에요. 달달하지만 커피 맛도 제대로 느낄 수 있어요.",
@@ -293,7 +373,7 @@ const COFFEE_DATA = {
             "name": "여유로운 플랫화이트",
             "emoji": "☁️",
             "desc": "에스프레소 풍미가 살아있는 벨벳 같은 커피",
-            "condition": { "bitter": "high", "sweet": "low", "mood": "low" },
+            "condition": { "bitter": "high", "sweet": "low", "mood": "low", "caffeine": "high" },
             "mood": "happy",
             "color": "bg-amber-100",
             "interpretation": "라떼보다 진하고 에스프레소보다 부드러운 플랫화이트가 딱이에요! 얇고 고운 우유 거품이 에스프레소와 완벽하게 어우러져요. 커피 맛을 알면서도 부드러움을 원하는 당신을 위한 선택.",
@@ -315,12 +395,45 @@ const COFFEE_DATA = {
             "name": "트렌디한 아인슈페너",
             "emoji": "🎂",
             "desc": "비엔나 커피의 달콤 쌉싸름한 매력",
-            "condition": { "bitter": "high", "sweet": "high", "temperature": "low" },
+            "condition": { "bitter": "high", "sweet": "high", "temperature": "low", "caffeine": "high" },
             "mood": "excited",
             "color": "bg-amber-300",
             "interpretation": "진한 에스프레소 위에 달콤한 휘핑크림! 아인슈페너는 쓴맛과 단맛의 완벽한 대비를 즐기는 당신을 위한 커피예요. 차갑게 마시면 더 매력적이죠.",
             "guide": "휘핑크림을 섞지 말고, 크림을 통해 커피를 마셔보세요. 쓴맛과 단맛이 레이어처럼 느껴져요.",
             "matchPoints": ["쓴맛과 단맛 모두 좋아하는 분", "트렌디한 메뉴를 즐기는 분", "비주얼도 중요한 분", "아이스 커피를 좋아하는 분"]
+        },
+        {
+            "name": "집중력 더블샷",
+            "emoji": "💪",
+            "desc": "일할 때 필요한 강력한 카페인 부스터",
+            "condition": { "caffeine": "high", "mood": "high" },
+            "mood": "cool",
+            "color": "bg-gray-800",
+            "interpretation": "집중이 필요한 순간, 카페인이 절실할 때! 더블샷 아메리카노나 에스프레소 추가 음료가 당신의 업무 효율을 높여줄 거예요. 일할 때 마시는 커피는 역시 진해야죠.",
+            "guide": "오전이나 점심 직후에 마시면 효과적이에요. 오후 늦게는 수면에 영향을 줄 수 있어요. 물도 충분히 마셔주세요.",
+            "matchPoints": ["업무 중 집중이 필요한 분", "카페인이 잘 듣는 분", "바쁜 일정을 소화하는 분", "테이크아웃으로 빠르게 마시는 분"]
+        },
+        {
+            "name": "디카페인 아메리카노",
+            "emoji": "🌙",
+            "desc": "카페인 없이도 커피 맛을 즐기고 싶을 때",
+            "condition": { "caffeine": "low", "bitter": "medium", "sweet": "low" },
+            "mood": "happy",
+            "color": "bg-amber-600",
+            "interpretation": "커피 맛은 좋아하지만 카페인은 피하고 싶은 당신! 디카페인 아메리카노는 저녁에도 부담 없이 마실 수 있고, 커피 특유의 풍미는 그대로 즐길 수 있어요.",
+            "guide": "디카페인도 소량의 카페인이 있어요 (97% 제거). 스페셜티 카페의 디카페인은 맛이 더 좋아요. 임산부나 카페인 민감자에게 추천!",
+            "matchPoints": ["저녁에도 커피를 마시고 싶은 분", "카페인에 민감한 분", "커피 맛은 포기 못하는 분", "건강을 생각하는 분"]
+        },
+        {
+            "name": "달달한 핫초코",
+            "emoji": "🍫",
+            "desc": "따뜻하고 달콤한 위로 한 잔",
+            "condition": { "sweet": "high", "temperature": "high", "bitter": "low" },
+            "mood": "excited",
+            "color": "bg-amber-900",
+            "interpretation": "추운 날 따뜻하게 녹여주는 달달한 핫초코! 커피의 쓴맛보다는 초콜릿의 달콤함이 좋은 당신에게 딱이에요. 휘핑크림과 마시멜로를 올리면 더 행복해져요.",
+            "guide": "다크 핫초코, 화이트 핫초코 등 다양한 종류를 시도해보세요. 시나몬 파우더를 뿌리면 풍미가 더해져요.",
+            "matchPoints": ["단맛을 좋아하는 분", "따뜻한 음료가 좋은 분", "쓴맛을 싫어하는 분", "기분 전환이 필요한 분"]
         }
     ]
 };

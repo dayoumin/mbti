@@ -209,6 +209,70 @@ const PET_MATCH_DATA = {
                 { "text": "네, 예쁘게 해주고 싶어요", "score": 5 },
                 { "text": "기본적인 것만 있으면 돼요", "score": 1 }
             ]
+        },
+        {
+            "q": "주말에 주로 어떻게 보내나요?",
+            "dimension": "lifestyle",
+            "a": [
+                { "text": "야외 활동이나 운동을 해요", "score": 5 },
+                { "text": "집에서 푹 쉬어요", "score": 1 }
+            ]
+        },
+        {
+            "q": "규칙적인 생활 패턴을 유지하나요?",
+            "dimension": "lifestyle",
+            "a": [
+                { "text": "네, 일정한 루틴이 있어요", "score": 5 },
+                { "text": "불규칙한 편이에요", "score": 1 }
+            ]
+        },
+        {
+            "q": "집에 베란다나 테라스가 있나요?",
+            "dimension": "space",
+            "a": [
+                { "text": "네, 있어요", "score": 5 },
+                { "text": "없어요", "score": 1 }
+            ]
+        },
+        {
+            "q": "층간소음에 민감한 환경인가요?",
+            "dimension": "space",
+            "a": [
+                { "text": "괜찮아요, 1층이거나 단독주택이에요", "score": 5 },
+                { "text": "아파트라 조심해야 해요", "score": 1 }
+            ]
+        },
+        {
+            "q": "매일 정해진 시간에 밥을 챙겨줄 수 있나요?",
+            "dimension": "time",
+            "a": [
+                { "text": "네, 규칙적으로 가능해요", "score": 5 },
+                { "text": "일정이 불규칙해서 어려워요", "score": 1 }
+            ]
+        },
+        {
+            "q": "반려동물 교육 영상이나 책을 볼 의향이 있나요?",
+            "dimension": "experience",
+            "a": [
+                { "text": "네, 열심히 공부할게요", "score": 5 },
+                { "text": "그냥 감으로 키우고 싶어요", "score": 1 }
+            ]
+        },
+        {
+            "q": "반려동물이 아플 때 병원에 자주 갈 수 있나요?",
+            "dimension": "experience",
+            "a": [
+                { "text": "언제든 갈 수 있어요", "score": 5 },
+                { "text": "시간 내기가 어려워요", "score": 1 }
+            ]
+        },
+        {
+            "q": "반려동물과 함께 자고 싶나요?",
+            "dimension": "interaction",
+            "a": [
+                { "text": "같이 자고 싶어요!", "score": 5 },
+                { "text": "각자 공간이 좋아요", "score": 1 }
+            ]
         }
     ],
     "resultLabels": [
@@ -227,7 +291,7 @@ const PET_MATCH_DATA = {
             "name": "얌전한 소형견",
             "emoji": "🐶",
             "desc": "아담하고 사랑스러운 동반자",
-            "condition": { "space": "low", "time": "medium", "interaction": "high" },
+            "condition": { "lifestyle": "medium", "space": "low", "time": "medium", "interaction": "high" },
             "mood": "happy",
             "color": "bg-orange-100",
             "interpretation": "작은 공간에서도 잘 적응하고 애교 많은 소형견이 잘 맞아요! 말티즈, 푸들, 시츄, 치와와 같은 친구들은 실내에서도 행복하게 지내요. 산책은 짧아도 되지만 애정 표현은 듬뿍!",
@@ -249,7 +313,7 @@ const PET_MATCH_DATA = {
             "name": "응석쟁이 고양이",
             "emoji": "😺",
             "desc": "개냥이라 불리는 애교 만렙 고양이",
-            "condition": { "time": "medium", "space": "low", "interaction": "high" },
+            "condition": { "lifestyle": "low", "space": "low", "time": "medium", "interaction": "high" },
             "mood": "happy",
             "color": "bg-pink-100",
             "interpretation": "고양이지만 강아지처럼 애교 넘치는 품종이 있어요! 랙돌, 스코티시폴드, 버만 같은 친구들은 주인을 졸졸 따라다니고 안기는 것도 좋아해요. 고양이의 편리함 + 강아지의 친근함!",
@@ -293,12 +357,23 @@ const PET_MATCH_DATA = {
             "name": "똑똑한 앵무새",
             "emoji": "🦜",
             "desc": "대화하고 교감하는 깃털 친구",
-            "condition": { "time": "high", "interaction": "high", "experience": "medium" },
+            "condition": { "time": "high", "interaction": "high", "experience": "high" },
             "mood": "excited",
             "color": "bg-green-100",
             "interpretation": "말을 배우고 교감하는 앵무새는 정말 특별한 경험을 줘요! 사회성이 좋아서 주인과 대화하고 놀기를 좋아해요. 시간 투자가 필요하지만 그만큼 보람 있는 친구예요.",
             "guide": "매일 꺼내서 교감해야 해요. 지능이 높아 지루하면 스트레스 받아요. 소음이 있을 수 있어요.",
             "matchPoints": ["대화하는 반려동물을 원하는 분", "시간 투자 가능한 분", "독특한 반려동물을 원하는 분", "소음에 괜찮은 환경"]
+        },
+        {
+            "name": "나만의 반려동물",
+            "emoji": "🐾",
+            "desc": "당신의 상황에 맞는 친구를 천천히 찾아보세요",
+            "condition": {},
+            "mood": "happy",
+            "color": "bg-gray-100",
+            "interpretation": "당신의 생활 패턴은 다양한 반려동물과 잘 맞을 수 있어요! 위의 결과들을 참고해서 가장 마음에 드는 친구를 선택해보세요. 입양 전 해당 동물에 대해 충분히 알아보는 것이 중요해요.",
+            "guide": "반려동물 입양 전 최소 일주일은 관련 정보를 찾아보세요. 유기동물 보호소 방문도 좋은 선택이에요. 가족 모두의 동의를 먼저 구하세요.",
+            "matchPoints": ["다양한 선택지를 고려 중인 분", "처음 반려동물을 고민하는 분", "신중하게 결정하고 싶은 분", "여러 동물에 관심 있는 분"]
         }
     ]
 };
