@@ -3,8 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>케미 테스트 - 재미로 보는 성격 테스트 🔮</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>케미 테스트 - 재미로 보는 성격 테스트</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="나와 어울리는 반려동물, 연애 스타일, 커피 취향까지! 다양한 성격 테스트">
+    <meta name="theme-color" content="#FCD34D">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="케미테스트">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-72x72.png">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -95,6 +113,9 @@
 <body class="flex items-center justify-center min-h-screen p-4">
     <div id="root" class="w-full max-w-md mx-auto"></div>
 
+    <!-- Services -->
+    <script src="services/ResultService.js"></script>
+
     <!-- Data (모듈화된 구조) -->
     <script src="data/constants.js"></script>
     <script src="data/subjects/human.js"></script>
@@ -117,6 +138,21 @@
 
     <!-- Main App -->
     <script type="text/babel" src="App.js"></script>
+
+    <!-- Service Worker 등록 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker 등록 성공:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('[PWA] Service Worker 등록 실패:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>
