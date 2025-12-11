@@ -4,53 +4,68 @@
  * - SUBJECT_CONFIG 로드 확인
  * - 아이콘 참조 확인
  * - 결과 매칭 로직 테스트
+ *
+ * 데이터 소스: data/subjects/*.js (모듈화된 구조)
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import vm from 'vm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dataPath = path.join(__dirname, '..', 'data.js');
+const projectRoot = path.resolve(__dirname, '..');
 
 console.log('🧪 앱 데이터 무결성 테스트\n');
 console.log('='.repeat(50));
 
-// data.js 읽기 및 파싱
-const content = fs.readFileSync(dataPath, 'utf-8');
+// 분리된 데이터 파일 로드 (브라우저 시뮬레이션)
+const window = {};
 
-// CHEMI_DATA 추출
-const dataMatch = content.match(/const CHEMI_DATA = (\{[\s\S]*?\});/);
-if (!dataMatch) {
+const loadOrder = [
+    'data/constants.js',
+    'data/subjects/human.js',
+    'data/subjects/cat.js',
+    'data/subjects/dog.js',
+    'data/subjects/rabbit.js',
+    'data/subjects/hamster.js',
+    'data/subjects/idealType.js',
+    'data/subjects/plant.js',
+    'data/index.js',
+    'data/config.js'
+];
+
+for (const file of loadOrder) {
+    const filePath = path.join(projectRoot, file);
+    if (!fs.existsSync(filePath)) {
+        console.error(`❌ 파일을 찾을 수 없습니다: ${file}`);
+        process.exit(1);
+    }
+    const code = fs.readFileSync(filePath, 'utf-8');
+    try {
+        const context = vm.createContext({ window, console });
+        vm.runInContext(code, context);
+    } catch (e) {
+        console.error(`❌ ${file} 로드 실패:`, e.message);
+        process.exit(1);
+    }
+}
+
+const CHEMI_DATA = window.CHEMI_DATA;
+const SUBJECT_CONFIG = window.SUBJECT_CONFIG;
+
+if (!CHEMI_DATA) {
     console.error('❌ CHEMI_DATA를 찾을 수 없습니다.');
     process.exit(1);
 }
+console.log('✅ CHEMI_DATA 로드 성공');
 
-let CHEMI_DATA;
-try {
-    CHEMI_DATA = eval('(' + dataMatch[1] + ')');
-    console.log('✅ CHEMI_DATA 로드 성공');
-} catch (e) {
-    console.error('❌ CHEMI_DATA 파싱 실패:', e.message);
-    process.exit(1);
-}
-
-// SUBJECT_CONFIG 추출
-const configMatch = content.match(/const SUBJECT_CONFIG = (\{[\s\S]*?\});/);
-if (!configMatch) {
+if (!SUBJECT_CONFIG) {
     console.error('❌ SUBJECT_CONFIG를 찾을 수 없습니다.');
     process.exit(1);
 }
-
-let SUBJECT_CONFIG;
-try {
-    SUBJECT_CONFIG = eval('(' + configMatch[1] + ')');
-    console.log('✅ SUBJECT_CONFIG 로드 성공');
-} catch (e) {
-    console.error('❌ SUBJECT_CONFIG 파싱 실패:', e.message);
-    process.exit(1);
-}
+console.log('✅ SUBJECT_CONFIG 로드 성공');
 
 console.log('\n' + '='.repeat(50));
 console.log('📋 Subject 일치 확인\n');
@@ -79,7 +94,7 @@ console.log('\n' + '='.repeat(50));
 console.log('🎨 아이콘 참조 확인\n');
 
 // 예상되는 아이콘 목록 (Icons.js 기준)
-const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace', 'HeartIcon'];
+const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace', 'HeartIcon', 'PlantIcon'];
 
 Object.entries(CHEMI_DATA).forEach(([key, data]) => {
     const icon = data.icon;

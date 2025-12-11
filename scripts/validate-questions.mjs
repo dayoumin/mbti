@@ -9,31 +9,53 @@
  * - 질문 형식 (? 종료)
  * - 차원별 최소 질문 수
  * - 중복 검사
+ *
+ * 데이터 소스: data/subjects/*.js (모듈화된 구조)
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import vm from 'vm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, '..');
 
-// data.js 파일 읽기
-const dataPath = path.join(__dirname, '..', 'data.js');
-const dataContent = fs.readFileSync(dataPath, 'utf8');
+// 분리된 데이터 파일 로드 (브라우저 시뮬레이션)
+const window = {};
 
-// CHEMI_DATA 추출
-const dataMatch = dataContent.match(/const CHEMI_DATA = (\{[\s\S]*?\});/);
-if (!dataMatch) {
-    console.error('❌ CHEMI_DATA를 찾을 수 없습니다.');
-    process.exit(1);
+const loadOrder = [
+    'data/constants.js',
+    'data/subjects/human.js',
+    'data/subjects/cat.js',
+    'data/subjects/dog.js',
+    'data/subjects/rabbit.js',
+    'data/subjects/hamster.js',
+    'data/subjects/idealType.js',
+    'data/subjects/plant.js',
+    'data/index.js'
+];
+
+for (const file of loadOrder) {
+    const filePath = path.join(projectRoot, file);
+    if (!fs.existsSync(filePath)) {
+        console.error(`❌ 파일을 찾을 수 없습니다: ${file}`);
+        process.exit(1);
+    }
+    const code = fs.readFileSync(filePath, 'utf-8');
+    try {
+        const context = vm.createContext({ window, console });
+        vm.runInContext(code, context);
+    } catch (e) {
+        console.error(`❌ ${file} 로드 실패:`, e.message);
+        process.exit(1);
+    }
 }
 
-let CHEMI_DATA;
-try {
-    CHEMI_DATA = eval('(' + dataMatch[1] + ')');
-} catch (e) {
-    console.error('❌ CHEMI_DATA 파싱 실패:', e.message);
+const CHEMI_DATA = window.CHEMI_DATA;
+if (!CHEMI_DATA) {
+    console.error('❌ CHEMI_DATA를 찾을 수 없습니다.');
     process.exit(1);
 }
 
@@ -44,7 +66,8 @@ const VALID_DIMENSIONS = {
     dog: ['energy', 'humanLove', 'dogFriend', 'focus', 'brave', 'persist'],
     rabbit: ['curious', 'social', 'active', 'brave', 'chill'],
     hamster: ['curious', 'hoard', 'active', 'tame', 'nocturnal'],
-    idealType: ['passion', 'commit', 'close', 'express', 'active']
+    idealType: ['passion', 'commit', 'close', 'express', 'active'],
+    plant: ['care', 'light', 'water', 'space', 'style']
 };
 
 // 모드별 최소 질문 수
@@ -54,7 +77,8 @@ const MIN_QUESTIONS = {
     dog: { perDim: 4, basic: 2 },
     rabbit: { perDim: 4, basic: 2 },
     hamster: { perDim: 4, basic: 2 },
-    idealType: { perDim: 4, basic: 2 }
+    idealType: { perDim: 4, basic: 2 },
+    plant: { perDim: 4, basic: 2 }
 };
 
 const errors = [];
@@ -294,7 +318,7 @@ function validateMode(mode, modeData) {
 console.log('🔍 질문 데이터 검증 시작...\n');
 console.log('=' .repeat(50));
 
-['human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType'].forEach(mode => {
+['human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant'].forEach(mode => {
     if (CHEMI_DATA[mode]) {
         validateMode(mode, CHEMI_DATA[mode]);
     } else {

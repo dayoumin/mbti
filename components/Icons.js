@@ -107,6 +107,63 @@ const HeartIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => 
     </svg>
 );
 
+const PlantIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 화분 */}
+        <path d="M30 65 L35 90 L65 90 L70 65 Z" fill="#D2691E" stroke="#4A4A4A" strokeWidth="3" />
+        <rect x="28" y="60" width="44" height="8" rx="2" fill="#CD853F" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 흙 */}
+        <ellipse cx="50" cy="62" rx="18" ry="4" fill="#8B4513" />
+        {mood === "happy" && (<g>
+            {/* 건강한 잎 */}
+            <ellipse cx="50" cy="35" rx="12" ry="20" fill="#228B22" stroke="#4A4A4A" strokeWidth="2" />
+            <ellipse cx="35" cy="45" rx="10" ry="15" fill="#32CD32" stroke="#4A4A4A" strokeWidth="2" transform="rotate(-30 35 45)" />
+            <ellipse cx="65" cy="45" rx="10" ry="15" fill="#32CD32" stroke="#4A4A4A" strokeWidth="2" transform="rotate(30 65 45)" />
+            <path d="M50 55 L50 35" stroke="#228B22" strokeWidth="3" />
+            {/* 얼굴 */}
+            <circle cx="45" cy="32" r="2" fill="#4A4A4A" />
+            <circle cx="55" cy="32" r="2" fill="#4A4A4A" />
+            <path d="M46 38 Q 50 42 54 38" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            {/* 꽃 피운 식물 */}
+            <ellipse cx="50" cy="40" rx="10" ry="18" fill="#228B22" stroke="#4A4A4A" strokeWidth="2" />
+            <ellipse cx="38" cy="48" rx="8" ry="12" fill="#32CD32" stroke="#4A4A4A" strokeWidth="2" transform="rotate(-25 38 48)" />
+            <ellipse cx="62" cy="48" rx="8" ry="12" fill="#32CD32" stroke="#4A4A4A" strokeWidth="2" transform="rotate(25 62 48)" />
+            <path d="M50 58 L50 40" stroke="#228B22" strokeWidth="3" />
+            {/* 꽃 */}
+            <circle cx="50" cy="18" r="8" fill="#FF69B4" stroke="#4A4A4A" strokeWidth="2" />
+            <circle cx="50" cy="18" r="4" fill="#FFD700" />
+            {/* 얼굴 */}
+            <circle cx="46" cy="38" r="2" fill="#4A4A4A" />
+            <circle cx="54" cy="38" r="2" fill="#4A4A4A" />
+            <path d="M44 44 Q 50 50 56 44" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            {/* 선인장 스타일 */}
+            <ellipse cx="50" cy="40" rx="12" ry="22" fill="#228B22" stroke="#4A4A4A" strokeWidth="2" />
+            <ellipse cx="35" cy="45" rx="6" ry="10" fill="#32CD32" stroke="#4A4A4A" strokeWidth="2" />
+            <ellipse cx="65" cy="42" rx="6" ry="12" fill="#32CD32" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 선글라스 */}
+            <rect x="40" y="32" width="8" height="5" rx="1" fill="black" />
+            <rect x="52" y="32" width="8" height="5" rx="1" fill="black" />
+            <path d="M48 34 L52 34" stroke="black" strokeWidth="1" />
+            <path d="M46 42 Q 50 42 54 42" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            {/* 시든 잎 */}
+            <ellipse cx="50" cy="40" rx="10" ry="16" fill="#9ACD32" stroke="#4A4A4A" strokeWidth="2" />
+            <ellipse cx="38" cy="50" rx="8" ry="10" fill="#BDB76B" stroke="#4A4A4A" strokeWidth="2" transform="rotate(-40 38 50)" />
+            <ellipse cx="62" cy="50" rx="8" ry="10" fill="#BDB76B" stroke="#4A4A4A" strokeWidth="2" transform="rotate(40 62 50)" />
+            <path d="M50 58 L50 42" stroke="#9ACD32" strokeWidth="3" />
+            {/* 얼굴 */}
+            <circle cx="46" cy="38" r="2" fill="#4A4A4A" />
+            <circle cx="54" cy="38" r="2" fill="#4A4A4A" />
+            <path d="M46 46 Q 50 42 54 46" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
 // Make components globally available
 window.ChevronDown = ChevronDown;
 window.ChevronUp = ChevronUp;
@@ -118,3 +175,4 @@ window.RabbitFace = RabbitFace;
 window.HamsterFace = HamsterFace;
 window.Capsule = Capsule;
 window.HeartIcon = HeartIcon;
+window.PlantIcon = PlantIcon;

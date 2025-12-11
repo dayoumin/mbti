@@ -13,6 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import vm from 'vm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -119,27 +120,43 @@ function saveCache(cache) {
     fs.writeFileSync(CONFIG.cacheFile, JSON.stringify(cache, null, 2), 'utf8');
 }
 
-// 질문 로드
+// 질문 로드 (분리된 데이터 구조 사용)
 function loadQuestions() {
-    const dataPath = path.join(__dirname, '..', 'data.js');
-    const dataContent = fs.readFileSync(dataPath, 'utf8');
-    const dataMatch = dataContent.match(/const CHEMI_DATA = (\{[\s\S]*?\});/);
+    const projectRoot = path.resolve(__dirname, '..');
+    const window = {};
 
-    if (!dataMatch) {
+    const loadOrder = [
+        'data/constants.js',
+        'data/subjects/human.js',
+        'data/subjects/cat.js',
+        'data/subjects/dog.js',
+        'data/subjects/rabbit.js',
+        'data/subjects/hamster.js',
+        'data/subjects/idealType.js',
+        'data/subjects/plant.js',
+        'data/index.js'
+    ];
+
+    for (const file of loadOrder) {
+        const filePath = path.join(projectRoot, file);
+        if (!fs.existsSync(filePath)) continue;
+        const code = fs.readFileSync(filePath, 'utf-8');
+        try {
+            const context = vm.createContext({ window, console });
+            vm.runInContext(code, context);
+        } catch (e) {
+            console.error(`❌ ${file} 로드 실패:`, e.message);
+        }
+    }
+
+    const CHEMI_DATA = window.CHEMI_DATA;
+    if (!CHEMI_DATA) {
         console.error('❌ CHEMI_DATA를 찾을 수 없습니다.');
         process.exit(1);
     }
 
-    let CHEMI_DATA;
-    try {
-        CHEMI_DATA = eval('(' + dataMatch[1] + ')');
-    } catch (e) {
-        console.error('❌ CHEMI_DATA 파싱 실패:', e.message);
-        process.exit(1);
-    }
-
     const questions = [];
-    ['human', 'cat', 'dog'].forEach(mode => {
+    Object.keys(CHEMI_DATA).forEach(mode => {
         const modeData = CHEMI_DATA[mode];
         if (!modeData) return;
 
