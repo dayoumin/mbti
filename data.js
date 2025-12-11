@@ -1,6 +1,6 @@
 // CHEMI_DATA - 케미 테스트 데이터
 // Big Five (OCEAN), Feline Five, C-BARQ 기반 성격 분석 시스템
-// 생성일: 2025-11-25
+// 생성일: 2025-12-07
 
 const CHEMI_DATA = {
     human: {
@@ -205,7 +205,7 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "중요한 발표가 코앞인데, 갑자기 자료가 날아갔다!",
+                q: "중요한 발표가 코앞인데, 갑자기 자료가 날아갔다면?",
                 dimension: "mental",
                 a: [
                     {
@@ -219,7 +219,7 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "SNS에서 누군가 내 글에 비판적인 댓글을 달았다.",
+                q: "SNS에서 누군가 내 글에 비판적인 댓글을 달았다면?",
                 dimension: "mental",
                 a: [
                     {
@@ -319,7 +319,7 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "새로운 모임에 나갔을 때 나의 자기소개 스타일은?",
+                q: "처음 만난 사람들 앞에서 나의 자기소개 스타일은?",
                 dimension: "inssa",
                 a: [
                     {
@@ -487,7 +487,7 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "친구가 늦어서 약속 시간에 늦었다. 친구는 '차가 너무 막혔어'라고 한다.",
+                q: "친구가 늦어서 약속 시간에 늦었다. 친구가 '차가 너무 막혔어'라고 한다면?",
                 dimension: "empathy",
                 a: [
                     {
@@ -668,7 +668,23 @@ const CHEMI_DATA = {
                     }
                 ]
             }
-        ],
+        ,
+            {
+                q: "열심히 준비한 일이 결과가 안 좋았을 때?",
+                dimension: "mental",
+                a: [
+                    { text: "다음엔 더 잘하면 돼. 피드백 삼아 넘긴다.", score: 5 },
+                    { text: "한동안 무기력하고 자책하게 된다.", score: 1 }
+                ]
+            },
+            {
+                q: "해외여행에서 길을 잃었을 때?",
+                dimension: "adventure",
+                a: [
+                    { text: "오히려 좋아! 예상 못한 장소를 탐험한다.", score: 5 },
+                    { text: "불안해서 빨리 원래 경로로 돌아가려 한다.", score: 1 }
+                ]
+            }],
         resultLabels: [
             {
                 name: "에너자이저",
@@ -983,17 +999,17 @@ const CHEMI_DATA = {
                     },
                     {
                         text: "그냥 멍하니 풍경을 바라보며 사색에 잠긴다.",
-                        score: 3
+                        score: 1
                     }
                 ]
             },
             {
-                q: "새로운 박스가 생겼다!",
+                q: "새로운 박스가 생겼다면?",
                 dimension: "curious",
                 a: [
                     {
                         text: "일단 들어가서 사이즈가 맞는지 확인한다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "이건 우주선이다옹! 상상하며 뜯고 맛본다.",
@@ -1007,7 +1023,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "눈앞에 보이는 장난감만 쫓는다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "장난감이 숨을 곳을 미리 예측하고 매복한다.",
@@ -1044,7 +1060,7 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "간식을 줄 때 집사의 손가락까지 깨물었다!",
+                q: "간식을 줄 때 집사의 손가락까지 깨물었다면?",
                 dimension: "boss",
                 a: [
                     {
@@ -1181,7 +1197,7 @@ const CHEMI_DATA = {
                     },
                     {
                         text: "며칠 동안 냄새만 맡으며 탐색전을 벌인다.",
-                        score: 3
+                        score: 1
                     }
                 ]
             },
@@ -1219,7 +1235,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "올라갈 수 있을까? 각도를 계산해본다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "저기는 정복해야 할 나의 성이다옹!",
@@ -1242,12 +1258,12 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "벌레가 나타났다!",
+                q: "벌레가 나타났다면?",
                 dimension: "curious",
                 a: [
                     {
                         text: "잡았다! 바로 앞발로 내리친다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "저건 뭘까? 뚫어져라 관찰하며 채터링한다.",
@@ -1261,7 +1277,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "뭐하냐옹? 냄새를 맡아본다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "새로운 놀이인가? 같이 이상한 자세를 취한다.",
@@ -1275,7 +1291,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "봉지 부스럭거리는 소리를 들었다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "집사의 기운이 간식을 줄 것 같았다.",
@@ -1326,7 +1342,7 @@ const CHEMI_DATA = {
                 ]
             },
             {
-                q: "집사가 실수로 꼬리를 밟았다!",
+                q: "집사가 실수로 꼬리를 밟았다면?",
                 dimension: "boss",
                 a: [
                     {
@@ -1465,7 +1481,103 @@ const CHEMI_DATA = {
                     }
                 ]
             }
-        ],
+        ,
+            {
+                q: "집 근처에서 공사 소리가 날 때?",
+                dimension: "alert",
+                a: [
+                    { text: "스트레스 만렙! 가장 조용한 곳으로 피신한다.", score: 5 },
+                    { text: "시끄럽네. 그래도 적응하며 일상을 보낸다.", score: 1 }
+                ]
+            },
+            {
+                q: "창문 밖에서 이상한 소리가 날 때?",
+                dimension: "alert",
+                a: [
+                    { text: "귀를 쫑긋! 꼬리 부풀리고 경계 태세.", score: 5 },
+                    { text: "뭐지? 창가로 가서 구경한다.", score: 1 }
+                ]
+            },
+            {
+                q: "집사가 캐리어를 꺼냈을 때?",
+                dimension: "alert",
+                a: [
+                    { text: "위험 감지! 순간이동으로 사라진다.", score: 5 },
+                    { text: "저건 뭐하는 거지? 관심 있게 본다.", score: 1 }
+                ]
+            },
+            {
+                q: "처음 보는 물건이 집에 생겼을 때?",
+                dimension: "alert",
+                a: [
+                    { text: "멀리서 관찰... 며칠간 조심스럽게 접근.", score: 5 },
+                    { text: "신상이다! 바로 올라타거나 냄새 맡는다.", score: 1 }
+                ]
+            },
+            {
+                q: "집사가 평소와 다른 행동을 할 때?",
+                dimension: "alert",
+                a: [
+                    { text: "뭔가 수상해... 눈을 떼지 않고 감시한다.", score: 5 },
+                    { text: "관심 없다옹. 내 할 일 한다.", score: 1 }
+                ]
+            },
+            {
+                q: "집사가 다른 동물 영상을 볼 때?",
+                dimension: "cute",
+                a: [
+                    { text: "야옹~ 나를 봐달라고 화면 앞을 막는다.", score: 5 },
+                    { text: "마음대로 해라. 나는 창밖을 본다.", score: 1 }
+                ]
+            },
+            {
+                q: "집사 무릎이 비어있을 때?",
+                dimension: "cute",
+                a: [
+                    { text: "자리 확보! 바로 올라가서 자리 잡는다.", score: 5 },
+                    { text: "내 자리는 따로 있다. 캣타워로 간다.", score: 1 }
+                ]
+            },
+            {
+                q: "츄르를 받고 싶을 때?",
+                dimension: "cute",
+                a: [
+                    { text: "머리 부비부비~ 온갖 애교로 구걸한다.", score: 5 },
+                    { text: "서랍 앞에서 무언의 압박을 가한다.", score: 1 }
+                ]
+            },
+            {
+                q: "집사가 내 자리에 앉았을 때?",
+                dimension: "boss",
+                a: [
+                    { text: "이건 내 자리다! 째려보며 앉으라고 압박.", score: 5 },
+                    { text: "다른 데 가면 되지. 옆으로 간다.", score: 1 }
+                ]
+            },
+            {
+                q: "밥 시간이 늦어졌을 때?",
+                dimension: "boss",
+                a: [
+                    { text: "밥! 밥! 밥! 시끄럽게 항의한다.", score: 5 },
+                    { text: "오겠지... 기다린다.", score: 1 }
+                ]
+            },
+            {
+                q: "한밤중에 갑자기?",
+                dimension: "random",
+                a: [
+                    { text: "운동회 시작! 집안을 미친 듯이 뛴다.", score: 5 },
+                    { text: "푹 자고 있다. 새벽형 고양이 아님.", score: 1 }
+                ]
+            },
+            {
+                q: "빈 박스와 비싼 캣타워가 있을 때?",
+                dimension: "random",
+                a: [
+                    { text: "박스 최고! 캣타워는 장식이다.", score: 5 },
+                    { text: "캣타워로 간다. 높은 곳이 좋다.", score: 1 }
+                ]
+            }],
         resultLabels: [
             {
                 name: "철학 냥이",
@@ -1753,7 +1865,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "옆에 가만히 앉아서 지켜본다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "얼굴을 핥고 안절부절못한다.",
@@ -1951,7 +2063,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "바스락 소리에 귀를 쫑긋한다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "살아있는 생물인 줄 알고 사냥하려 든다.",
@@ -1965,7 +2077,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "목소리 톤이나 행동으로 기분을 파악한다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "눈빛만 봐도 기분을 귀신같이 알아챈다.",
@@ -1993,7 +2105,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "진짜 줄 때까지 기다린다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "이미 침 흘리며 앉아 있다.",
@@ -2035,7 +2147,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "깨갱! 하고 자리를 피한다.",
-                        score: 3
+                        score: 5
                     },
                     {
                         text: "아파 ㅠㅠ 안아달라고 매달린다.",
@@ -2063,7 +2175,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "당당하게 간식을 요구한다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "온몸으로 기쁨을 표현하며 날뛴다.",
@@ -2161,7 +2273,7 @@ const CHEMI_DATA = {
                 a: [
                     {
                         text: "보호자가 이끄는 대로 잘 따라간다.",
-                        score: 3
+                        score: 1
                     },
                     {
                         text: "내가 가고 싶은 길로 가려고 고집 부린다.",
@@ -2196,6 +2308,86 @@ const CHEMI_DATA = {
                         text: "구석에서 혼자 있거나 사람만 찾는다.",
                         score: 1
                     }
+                ]
+            },
+            {
+                q: "동네 단골 강아지 친구를 만났을 때?",
+                dimension: "dogFriend",
+                a: [
+                    { text: "오랜만이야! 격하게 반기며 놀자고 한다.", score: 5 },
+                    { text: "아는 사이지만 시큰둥하게 지나친다.", score: 1 }
+                ]
+            },
+            {
+                q: "강아지 놀이터에서?",
+                dimension: "dogFriend",
+                a: [
+                    { text: "모든 강아지와 어울리며 신나게 논다.", score: 5 },
+                    { text: "보호자 곁에만 있으려 한다.", score: 1 }
+                ]
+            },
+            {
+                q: "집에 다른 강아지가 놀러 왔을 때?",
+                dimension: "dogFriend",
+                a: [
+                    { text: "환영해! 장난감 가져와서 같이 놀자고 한다.", score: 5 },
+                    { text: "내 영역이야! 으르렁거린다.", score: 1 }
+                ]
+            },
+            {
+                q: "다른 강아지가 먼저 다가올 때?",
+                dimension: "dogFriend",
+                a: [
+                    { text: "반가워! 코 인사하며 친해진다.", score: 5 },
+                    { text: "불편해... 피하려 한다.", score: 1 }
+                ]
+            },
+            {
+                q: "좋아하는 장난감이 소파 밑에 들어갔을 때?",
+                dimension: "persist",
+                a: [
+                    { text: "절대 포기 안 해! 계속 파고든다.", score: 5 },
+                    { text: "아쉽지만... 다른 장난감을 찾는다.", score: 1 }
+                ]
+            },
+            {
+                q: "보호자가 '안 돼'라고 했는데 하고 싶을 때?",
+                dimension: "persist",
+                a: [
+                    { text: "끈질기게 눈치 보며 재시도한다.", score: 5 },
+                    { text: "알겠어... 순순히 포기한다.", score: 1 }
+                ]
+            },
+            {
+                q: "산책 중 가고 싶은 곳이 있을 때?",
+                dimension: "persist",
+                a: [
+                    { text: "줄을 당기며 그쪽으로 가려 한다.", score: 5 },
+                    { text: "보호자 리드에 따른다.", score: 1 }
+                ]
+            },
+            {
+                q: "비 오는 날 산책을 못 갈 때?",
+                dimension: "energy",
+                a: [
+                    { text: "에너지 폭발! 집안에서 뛰어다닌다.", score: 5 },
+                    { text: "오늘은 쉬는 날~ 잠만 잔다.", score: 1 }
+                ]
+            },
+            {
+                q: "보호자가 외출 준비를 할 때?",
+                dimension: "humanLove",
+                a: [
+                    { text: "안 돼! 현관문 앞에서 애절한 눈빛.", score: 5 },
+                    { text: "갔다 와~ 자기 자리로 간다.", score: 1 }
+                ]
+            },
+            {
+                q: "우산 펴는 소리를 들었을 때?",
+                dimension: "brave",
+                a: [
+                    { text: "뭐야? 다가가서 확인한다.", score: 5 },
+                    { text: "무서워! 뒤로 물러난다.", score: 1 }
                 ]
             }],
         resultLabels: [
@@ -2343,6 +2535,1203 @@ const CHEMI_DATA = {
                 color: "bg-gray-100"
             }
         ]
+    },
+    rabbit: {
+            "title": "토끼 맘 테스트",
+            "subtitle": "우리 토끼 성향은?",
+            "themeColor": "bg-[#FFB6C1]",
+            "icon": "RabbitFace",
+            "dimensions": {
+                    "curious": {
+                            "name": "호기심",
+                            "emoji": "🔍",
+                            "desc": "새로운 것에 대한 탐구심"
+                    },
+                    "social": {
+                            "name": "사교성",
+                            "emoji": "💕",
+                            "desc": "사람/동물과의 친밀도"
+                    },
+                    "active": {
+                            "name": "활동성",
+                            "emoji": "🏃",
+                            "desc": "움직임과 놀이 선호도"
+                    },
+                    "brave": {
+                            "name": "담력",
+                            "emoji": "🦁",
+                            "desc": "낯선 상황에 대한 대담함"
+                    },
+                    "chill": {
+                            "name": "느긋함",
+                            "emoji": "😌",
+                            "desc": "스트레스 관리 능력"
+                    }
+            },
+            "questions": [
+                    {
+                            "q": "새로운 장난감을 케이지에 넣어주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "바로 다가가서 코로 킁킁 탐색한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "멀리서 지켜보다가 나중에 확인한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "집안에서 처음 가보는 공간을 발견하면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "신나서 구석구석 돌아다닌다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "익숙한 곳으로 돌아가려 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "낯선 소리가 들리면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "귀를 쫑긋 세우고 소리 방향을 확인한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "숨거나 움츠러든다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "주인이 손을 내밀면?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "다가와서 손 냄새를 맡거나 핥는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "피하거나 무시한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "쓰다듬어 주려고 하면?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "가만히 있거나 더 기대온다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "피하려고 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "다른 반려동물(토끼/고양이 등)을 만나면?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "관심을 보이며 다가간다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "경계하거나 도망간다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 밖으로 나오면 주로?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "신나게 뛰어다니고 빙키(점프)한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "한 곳에 앉아서 쉰다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "저녁 시간대 토끼의 모습은?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "활발하게 움직이며 놀아달라 한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "조용히 휴식을 취한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "갑자기 큰 소리가 나면?",
+                            "dimension": "brave",
+                            "a": [
+                                    {
+                                            "text": "잠깐 멈추고 다시 하던 일을 한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "숨거나 발을 쿵쿵 구른다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "처음 보는 사람이 방문하면?",
+                            "dimension": "brave",
+                            "a": [
+                                    {
+                                            "text": "호기심을 가지고 다가간다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "숨거나 경계한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "안아주려고 하면?",
+                            "dimension": "chill",
+                            "a": [
+                                    {
+                                            "text": "차분하게 안겨 있는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "발버둥 치며 내려가려 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "평소 토끼의 모습은?",
+                            "dimension": "chill",
+                            "a": [
+                                    {
+                                            "text": "편안하게 옆으로 누워 있거나 늘어져 있다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "항상 긴장하고 주변을 살핀다",
+                                            "score": 1
+                                    }
+                            ]
+                    }
+            ],
+            "questions_deep": [
+                    {
+                            "q": "새로운 야채를 처음 주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "일단 맛본다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "익숙한 것만 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "방 구조를 바꾸면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "바뀐 곳을 열심히 탐색한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "혼란스러워한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "새로운 건초 종류를 주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "호기심 있게 시도한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "기존 건초만 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "창문 밖 새소리가 들리면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "귀 세우고 관심을 보인다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "무관심하다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "여러 명이 집에 있을 때?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "돌아다니며 각자에게 관심을 보인다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "주인 곁에만 있는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "주인이 바닥에 누우면?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "옆에 와서 같이 눕는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "관심 없다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "주인이 우울해 보이면?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "다가와서 코를 킁킁거린다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "평소와 같다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "손에 간식이 있으면?",
+                            "dimension": "social",
+                            "a": [
+                                    {
+                                            "text": "손에서 직접 받아먹는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "바닥에 놓아야 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "놀이 시간에 터널을 주면?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "신나게 통과하며 논다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "관심 없다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "아침에 일어나면?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "케이지 안에서 뛰어다닌다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "조용히 건초를 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "공이나 장난감을 주면?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "코로 밀며 논다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "무시한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "밤늦은 시간에는?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "여전히 활동적이다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "조용히 쉰다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "청소기 소리가 나면?",
+                            "dimension": "brave",
+                            "a": [
+                                    {
+                                            "text": "신경 쓰지 않는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "패닉 상태가 된다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "발톱 깎을 때?",
+                            "dimension": "brave",
+                            "a": [
+                                    {
+                                            "text": "비교적 차분하다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "격하게 저항한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "차를 타고 이동하면?",
+                            "dimension": "brave",
+                            "a": [
+                                    {
+                                            "text": "금방 적응한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "매우 불안해한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "낯선 환경(병원 등)에 가면?",
+                            "dimension": "brave",
+                            "a": [
+                                    {
+                                            "text": "주변을 살피며 적응한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "계속 떨거나 숨으려 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "주인이 TV를 크게 틀어도?",
+                            "dimension": "chill",
+                            "a": [
+                                    {
+                                            "text": "편하게 쉰다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "불안해한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 청소 중일 때?",
+                            "dimension": "chill",
+                            "a": [
+                                    {
+                                            "text": "신경 쓰지 않는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "스트레스 받아한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "사진 찍으려고 하면?",
+                            "dimension": "chill",
+                            "a": [
+                                    {
+                                            "text": "가만히 있어준다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "피한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "손톱 정리나 그루밍 중?",
+                            "dimension": "chill",
+                            "a": [
+                                    {
+                                            "text": "편안하게 받아들인다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "싫어한다",
+                                            "score": 1
+                                    }
+                            ]
+                    }
+            ],
+            "resultLabels": [
+                    {
+                            "name": "탐험가 토끼",
+                            "emoji": "🗺️",
+                            "desc": "호기심 만땅! 뭐든 궁금한 탐험가",
+                            "condition": {
+                                    "curious": "high",
+                                    "social": "high",
+                                    "brave": "high"
+                            },
+                            "interpretation": "호기심이 넘치고 사교적인 성격입니다. 새로운 것을 두려워하지 않고 적극적으로 탐색해요.",
+                            "guide": "다양한 장난감과 탐색 공간을 제공해주세요. 새로운 경험을 좋아하니 안전한 범위에서 탐험 기회를 주세요.",
+                            "mood": "excited",
+                            "color": "bg-yellow-100"
+                    },
+                    {
+                            "name": "애교쟁이 토끼",
+                            "emoji": "🥰",
+                            "desc": "사람 좋아! 스킨십 최고!",
+                            "condition": {
+                                    "social": "high",
+                                    "chill": "high"
+                            },
+                            "interpretation": "사람과의 교감을 즐기는 다정한 성격입니다. 스킨십을 좋아하고 주인 곁에 있는 걸 좋아해요.",
+                            "guide": "많은 애정과 스킨십을 주세요. 혼자 두는 시간이 길면 외로워할 수 있어요.",
+                            "mood": "happy",
+                            "color": "bg-pink-100"
+                    },
+                    {
+                            "name": "액티브 토끼",
+                            "emoji": "🏃",
+                            "desc": "뛰고 뛰고 또 뛰고! 빙키 마스터",
+                            "condition": {
+                                    "active": "high",
+                                    "brave": "high"
+                            },
+                            "interpretation": "에너지가 넘치고 활동적인 성격입니다. 놀이 시간을 정말 좋아하고 빙키(기쁨 점프)를 자주 해요.",
+                            "guide": "충분한 운동 공간과 놀이 시간을 제공해주세요. 터널, 공 등 다양한 장난감이 좋아요.",
+                            "mood": "excited",
+                            "color": "bg-green-100"
+                    },
+                    {
+                            "name": "신중한 토끼",
+                            "emoji": "🤔",
+                            "desc": "일단 지켜본다... 안전 제일!",
+                            "condition": {
+                                    "curious": "low",
+                                    "brave": "low"
+                            },
+                            "interpretation": "조심성이 많고 신중한 성격입니다. 새로운 것에 시간을 두고 천천히 적응해요.",
+                            "guide": "급격한 환경 변화를 피하고 천천히 새로운 것을 소개해주세요. 숨을 공간을 항상 제공해주세요.",
+                            "mood": "sad",
+                            "color": "bg-blue-100"
+                    },
+                    {
+                            "name": "독립적인 토끼",
+                            "emoji": "😎",
+                            "desc": "나는 나! 쿨한 마이웨이",
+                            "condition": {
+                                    "social": "low",
+                                    "chill": "high"
+                            },
+                            "interpretation": "독립적이고 자기만의 시간을 중요시하는 성격입니다. 스킨십보다는 자유를 선호해요.",
+                            "guide": "억지 스킨십은 피하고 토끼가 다가올 때까지 기다려주세요. 개인 공간을 존중해주세요.",
+                            "mood": "cool",
+                            "color": "bg-purple-100"
+                    },
+                    {
+                            "name": "겁쟁이 토끼",
+                            "emoji": "🐰",
+                            "desc": "무서워... 조용히 해줘...",
+                            "condition": {
+                                    "brave": "low",
+                                    "chill": "low"
+                            },
+                            "interpretation": "예민하고 겁이 많은 성격입니다. 조용하고 안정적인 환경을 좋아해요.",
+                            "guide": "갑작스러운 소리나 움직임을 피해주세요. 안전한 숨을 공간과 일관된 루틴이 중요해요.",
+                            "mood": "sad",
+                            "color": "bg-gray-100"
+                    },
+                    {
+                            "name": "사색가 토끼",
+                            "emoji": "📚",
+                            "desc": "조용히 생각 중... 철학 토끼",
+                            "condition": {
+                                    "active": "low",
+                                    "chill": "high"
+                            },
+                            "interpretation": "차분하고 조용한 성격입니다. 활동적이기보다는 편안히 쉬는 것을 좋아해요.",
+                            "guide": "편안한 휴식 공간을 만들어주세요. 억지로 놀게 하지 말고 토끼의 페이스를 존중해주세요.",
+                            "mood": "happy",
+                            "color": "bg-indigo-100"
+                    },,
+            {
+                      "name": "에너자이저 토끼",
+                      "emoji": "⚡",
+                      "desc": "쉴 틈이 없어! 에너지 폭발!",
+                      "condition": {
+                                "active": "high",
+                                "chill": "low"
+                      },
+                      "interpretation": "에너지가 넘치고 가만히 있지 못하는 성격입니다. 항상 무언가를 하고 싶어해요.",
+                      "guide": "충분한 운동 공간과 다양한 장난감을 제공해주세요. 에너지를 발산할 수 있는 놀이 시간이 중요해요.",
+                      "mood": "excited",
+                      "color": "bg-orange-100"
+            },
+
+                    {
+                            "name": "밸런스 토끼",
+                            "emoji": "⚖️",
+                            "desc": "모든 면에서 균형 잡힌 이상적인 토끼",
+                            "condition": {
+                                    "curious": "medium",
+                                    "social": "medium",
+                                    "active": "medium",
+                                    "brave": "medium",
+                                    "chill": "medium"
+                            },
+                            "interpretation": "균형 잡힌 성격으로 다양한 상황에 잘 적응합니다. 키우기 편한 성격이에요.",
+                            "guide": "현재 환경을 유지하면서 다양한 경험을 조금씩 제공해주세요.",
+                            "mood": "happy",
+                            "color": "bg-teal-100"
+                    }
+            ]
+    },
+    hamster: {
+            "title": "햄스터 맘 테스트",
+            "subtitle": "우리 햄찌 성향은?",
+            "themeColor": "bg-[#F4A460]",
+            "icon": "HamsterFace",
+            "dimensions": {
+                    "curious": {
+                            "name": "탐험심",
+                            "emoji": "🔎",
+                            "desc": "새로운 것에 대한 호기심"
+                    },
+                    "hoard": {
+                            "name": "저장욕",
+                            "emoji": "🥜",
+                            "desc": "먹이를 모으려는 본능"
+                    },
+                    "active": {
+                            "name": "활동량",
+                            "emoji": "🎡",
+                            "desc": "쳇바퀴 러닝, 움직임 정도"
+                    },
+                    "tame": {
+                            "name": "친밀도",
+                            "emoji": "🤝",
+                            "desc": "사람에 대한 길들여짐"
+                    },
+                    "nocturnal": {
+                            "name": "야행성",
+                            "emoji": "🌙",
+                            "desc": "밤 활동 선호도"
+                    }
+            },
+            "questions": [
+                    {
+                            "q": "케이지에 새로운 물건을 넣어주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "바로 다가가서 냄새 맡고 탐색한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "경계하며 거리를 둔다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "햄스터 볼에 넣어주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "신나게 굴리며 탐험한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "움직이지 않고 가만히 있다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "손바닥 위에 올려놓으면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "손가락 사이를 탐색한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "도망가려 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "먹이를 주면?",
+                            "dimension": "hoard",
+                            "a": [
+                                    {
+                                            "text": "볼주머니에 가득 채워 집으로 간다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "그 자리에서 바로 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "간식을 여러 개 주면?",
+                            "dimension": "hoard",
+                            "a": [
+                                    {
+                                            "text": "최대한 많이 볼에 넣으려 한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "하나씩 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "쳇바퀴를 얼마나 돌리나요?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "밤새 돌린다! 소리가 들릴 정도",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "가끔 돌리거나 안 탄다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 밖으로 나오면?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "쉬지 않고 돌아다닌다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "한 곳에 머무른다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 안에서 주로?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "이리저리 움직이며 활동한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "집 안에서 자고 있다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "손을 케이지에 넣으면?",
+                            "dimension": "tame",
+                            "a": [
+                                    {
+                                            "text": "다가와서 냄새 맡거나 올라온다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "도망가거나 숨는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "이름을 부르면?",
+                            "dimension": "tame",
+                            "a": [
+                                    {
+                                            "text": "반응하며 다가온다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "반응이 없다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "낮 시간에는 주로?",
+                            "dimension": "nocturnal",
+                            "a": [
+                                    {
+                                            "text": "깊이 자고 있다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "가끔 활동한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "밤 10시 이후에는?",
+                            "dimension": "nocturnal",
+                            "a": [
+                                    {
+                                            "text": "쳇바퀴 소리가 들릴 정도로 활동적",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "조용히 쉬고 있다",
+                                            "score": 1
+                                    }
+                            ]
+                    }
+            ],
+            "questions_deep": [
+                    {
+                            "q": "새로운 베딩 종류를 깔아주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "파헤치며 탐색한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "불편해한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "터널을 넣어주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "바로 들어가서 탐험한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "관심 없다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "새로운 간식을 주면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "일단 맛본다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "익숙한 것만 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 레이아웃을 바꾸면?",
+                            "dimension": "curious",
+                            "a": [
+                                    {
+                                            "text": "바뀐 환경을 탐색한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "스트레스 받아한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "씨앗류를 주면?",
+                            "dimension": "hoard",
+                            "a": [
+                                    {
+                                            "text": "볼이 터질 듯 저장한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "적당히 먹는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "집 안을 들여다보면?",
+                            "dimension": "hoard",
+                            "a": [
+                                    {
+                                            "text": "음식 저장소가 가득하다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "별로 쌓아두지 않는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "화장실 모래를 갈아주면?",
+                            "dimension": "hoard",
+                            "a": [
+                                    {
+                                            "text": "음식을 다시 옮겨 저장한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "신경 쓰지 않는다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "플레이펜에서 놀 때?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "계속 뛰어다닌다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "금방 지친다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "모래 목욕을 시켜주면?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "신나게 뒹군다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "관심 없다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 철망을 오르려 하나요?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "자주 오른다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "안 오른다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "파헤치기 놀이를?",
+                            "dimension": "active",
+                            "a": [
+                                    {
+                                            "text": "정말 좋아한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "별로 안 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "간식을 손에 들고 있으면?",
+                            "dimension": "tame",
+                            "a": [
+                                    {
+                                            "text": "손에서 받아먹는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "손을 피한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "핸들링(손에 올리기)할 때?",
+                            "dimension": "tame",
+                            "a": [
+                                    {
+                                            "text": "편안해한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "도망가려 한다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "케이지 문을 열면?",
+                            "dimension": "tame",
+                            "a": [
+                                    {
+                                            "text": "다가와서 올라오려 한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "무관심하다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "건드리면?",
+                            "dimension": "tame",
+                            "a": [
+                                    {
+                                            "text": "물지 않는다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "물 수 있다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "저녁 식사 시간쯤?",
+                            "dimension": "nocturnal",
+                            "a": [
+                                    {
+                                            "text": "일어나기 시작한다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "아직 자고 있다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "새벽 시간에?",
+                            "dimension": "nocturnal",
+                            "a": [
+                                    {
+                                            "text": "가장 활발하다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "조용하다",
+                                            "score": 1
+                                    }
+                            ]
+                    },
+                    {
+                            "q": "낮에 깨우면?",
+                            "dimension": "nocturnal",
+                            "a": [
+                                    {
+                                            "text": "짜증내며 다시 잔다",
+                                            "score": 5
+                                    },
+                                    {
+                                            "text": "일어난다",
+                                            "score": 1
+                                    }
+                            ]
+                    }
+            ],
+            "resultLabels": [
+                    {
+                            "name": "탐험가 햄찌",
+                            "emoji": "🗺️",
+                            "desc": "호기심 폭발! 모든 게 궁금해",
+                            "condition": {
+                                    "curious": "high",
+                                    "active": "high"
+                            },
+                            "interpretation": "호기심이 넘치고 활동적인 성격입니다. 새로운 것을 발견하면 바로 탐색해요.",
+                            "guide": "다양한 장난감과 터널, 은신처를 제공해주세요. 탐험할 수 있는 안전한 공간도 좋아요.",
+                            "mood": "excited",
+                            "color": "bg-yellow-100"
+                    },
+                    {
+                            "name": "수집왕 햄찌",
+                            "emoji": "🥜",
+                            "desc": "볼주머니 가득! 저장의 달인",
+                            "condition": {
+                                    "hoard": "high"
+                            },
+                            "interpretation": "저장 본능이 강한 햄스터입니다. 먹이를 모으는 것에 큰 기쁨을 느껴요.",
+                            "guide": "숨길 수 있는 다양한 간식을 주세요. 저장할 공간도 충분히 제공해주세요.",
+                            "mood": "happy",
+                            "color": "bg-orange-100"
+                    },
+                    {
+                            "name": "쳇바퀴 마스터",
+                            "emoji": "🎡",
+                            "desc": "뛴다! 뛴다! 밤새 러닝",
+                            "condition": {
+                                    "active": "high",
+                                    "nocturnal": "high"
+                            },
+                            "interpretation": "밤에 특히 활동적인 에너자이저입니다. 쳇바퀴 러닝을 정말 좋아해요.",
+                            "guide": "조용한 쳇바퀴를 제공하고 밤 활동을 방해하지 마세요. 충분한 운동이 건강에 중요해요.",
+                            "mood": "excited",
+                            "color": "bg-green-100"
+                    },
+                    {
+                            "name": "인싸 햄찌",
+                            "emoji": "🤝",
+                            "desc": "사람 좋아! 친근한 성격",
+                            "condition": {
+                                    "tame": "high",
+                                    "curious": "high"
+                            },
+                            "interpretation": "사람을 잘 따르고 친근한 성격입니다. 핸들링에도 잘 적응해요.",
+                            "guide": "자주 교감하고 손에 올려 놀아주세요. 신뢰 관계가 잘 형성되어 있어요.",
+                            "mood": "happy",
+                            "color": "bg-pink-100"
+                    },
+                    {
+                            "name": "수줍음쟁이 햄찌",
+                            "emoji": "🙈",
+                            "desc": "조심조심... 천천히 다가와",
+                            "condition": {
+                                    "tame": "low",
+                                    "curious": "low"
+                            },
+                            "interpretation": "겁이 많고 조심스러운 성격입니다. 신뢰를 쌓는 데 시간이 필요해요.",
+                            "guide": "억지로 만지지 말고 천천히 신뢰를 쌓아주세요. 간식으로 유대감을 형성하세요.",
+                            "mood": "sad",
+                            "color": "bg-blue-100"
+                    },
+                    {
+                            "name": "낮잠왕 햄찌",
+                "emoji": "😴",
+                "desc": "낮엔 자야지... zzZ",
+                "condition": { "nocturnal": "high" },
+                            "interpretation": "확실한 야행성으로 낮에는 깊이 잠들어 있어요. 밤에 조금씩 활동합니다.",
+                            "guide": "낮에 깨우지 마세요. 밤 활동 시간을 존중해주는 것이 중요해요.",
+                            "mood": "happy",
+                            "color": "bg-indigo-100"
+                    },,
+            {
+                      "name": "미니멀리스트 햄찌",
+                      "emoji": "✨",
+                      "desc": "저장? 난 그때그때 먹어!",
+                      "condition": {
+                                "hoard": "low"
+                      },
+                      "interpretation": "저장 본능이 약한 편이에요. 볼주머니를 잘 사용하지 않고 그 자리에서 먹는 걸 선호해요.",
+                      "guide": "먹이가 부족하지 않은지 확인해주세요. 저장을 안 해서 배고플 수 있어요.",
+                      "mood": "happy",
+                      "color": "bg-cyan-100"
+            },
+            {
+                      "name": "아침형 햄찌",
+                      "emoji": "🌅",
+                      "desc": "낮에도 활동해요!",
+                      "condition": {
+                                "nocturnal": "low",
+                                "active": "high"
+                      },
+                      "interpretation": "일반적인 햄스터와 달리 낮에도 활동적이에요. 주인과 교감할 기회가 더 많아요.",
+                      "guide": "낮 활동이 건강 문제가 아닌지 확인해주세요. 정상적이라면 함께 놀아주기 좋은 타입이에요.",
+                      "mood": "excited",
+                      "color": "bg-amber-100"
+            },
+
+                    {
+                            "name": "균형잡힌 햄찌",
+                            "emoji": "⚖️",
+                            "desc": "모든 면에서 균형 잡힌 이상적인 햄스터",
+                            "condition": {
+                                    "curious": "medium",
+                                    "hoard": "medium",
+                                    "active": "medium",
+                                    "tame": "medium",
+                                    "nocturnal": "medium"
+                            },
+                            "interpretation": "균형 잡힌 성격으로 다양한 상황에 잘 적응합니다. 키우기 편한 성격이에요.",
+                            "guide": "현재 환경을 유지하면서 꾸준히 교감해주세요.",
+                            "mood": "happy",
+                            "color": "bg-teal-100"
+                    },
+                    {
+                            "name": "미스터리 햄찌",
+                            "emoji": "🎭",
+                            "desc": "예측불가! 매력적인 반전",
+                            "condition": {
+                                    "curious": "medium",
+                                    "active": "medium"
+                            },
+                            "interpretation": "다양한 면을 가진 매력적인 성격입니다. 때에 따라 다른 모습을 보여줘요.",
+                            "guide": "햄스터의 다양한 성격을 관찰하고 즐겨주세요. 유연하게 대응하는 것이 좋아요.",
+                            "mood": "cool",
+                            "color": "bg-purple-100"
+                    }
+            ]
     }
 };
 
@@ -2396,5 +3785,47 @@ function matchResultLabel(scores, dimensions, resultLabels, questionsPerDim) {
 window.getScoreLevel = getScoreLevel;
 window.matchResultLabel = matchResultLabel;
 
+
+
+// Subject 설정 - 새 테스트 추가시 여기에만 추가하면 됨
+const SUBJECT_CONFIG = {
+    human: {
+        icon: "HumanIcon",
+        label: "사람",
+        intro: ["나는 어떤 사람일까?", "나의 숨겨진 성격은?", "친구들이 보는 나는?"],
+        resultFormat: "simple",  // simple: 단순 형식, tabs: 탭형 (심층해석/육아팁)
+        deepButtonText: "내 성격"
+    },
+    cat: {
+        icon: "CatFace",
+        label: "고양이",
+        intro: ["철학 냥이?", "보스 냥이?", "인싸 냥이?"],
+        resultFormat: "tabs",
+        deepButtonText: "우리 냥이"
+    },
+    dog: {
+        icon: "DogFace",
+        label: "강아지",
+        intro: ["규율 멍멍이?", "파티 멍멍이?", "CEO 멍멍이?"],
+        resultFormat: "tabs",
+        deepButtonText: "우리 멍이"
+    },
+    rabbit: {
+        icon: "RabbitFace",
+        label: "토끼",
+        intro: ["탐험가 토끼?", "애교쟁이 토끼?", "독립적인 토끼?"],
+        resultFormat: "tabs",
+        deepButtonText: "우리 토끼"
+    },
+    hamster: {
+        icon: "HamsterFace",
+        label: "햄스터",
+        intro: ["쳇바퀴 마스터?", "수집왕 햄찌?", "인싸 햄찌?"],
+        resultFormat: "tabs",
+        deepButtonText: "우리 햄찌"
+    }
+};
+
+window.SUBJECT_CONFIG = SUBJECT_CONFIG;
 
 window.CHEMI_DATA = CHEMI_DATA;

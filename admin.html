@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>케미테스트 관리 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Gradient backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            transition: width 0.3s ease, transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        /* Nav items */
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover {
+            transform: translateX(4px);
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .dark .nav-item.active {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Cards */
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .dark .stat-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.6s ease;
+        }
+
+        /* Table styles */
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        .table-row:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .dark .table-row:hover {
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        /* Mode buttons */
+        .mode-btn {
+            transition: all 0.2s ease;
+        }
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.5);
+        }
+
+        /* Slider custom style */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-track {
+            height: 8px;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+            border-radius: 4px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            margin-top: -6px;
+        }
+
+        /* Result card animation */
+        .result-card {
+            transition: all 0.3s ease;
+        }
+        .result-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* Responsive sidebar */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 50;
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 min-h-screen transition-colors duration-300">
+    <!-- Mobile Menu Button -->
+    <button onclick="toggleSidebar()" class="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg glass">
+        <svg class="w-6 h-6 text-slate-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 glass z-40 flex flex-col">
+        <!-- Logo -->
+        <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center animate-float">
+                    <span class="text-white text-xl">🎯</span>
+                </div>
+                <div class="nav-text">
+                    <h1 class="font-bold text-slate-800 dark:text-white">케미테스트</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">관리 대시보드</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="showTab('overview')" id="nav-overview" class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left">
+                <span class="text-xl">📊</span>
+                <span class="nav-text font-medium">개요</span>
+            </button>
+            <button onclick="showTab('questions')" id="nav-questions" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
+                <span class="text-xl">❓</span>
+                <span class="nav-text font-medium">질문 목록</span>
+            </button>
+            <button onclick="showTab('logic')" id="nav-logic" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
+                <span class="text-xl">⚙️</span>
+                <span class="nav-text font-medium">결과 로직</span>
+            </button>
+            <button onclick="showTab('simulator')" id="nav-simulator" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
+                <span class="text-xl">🧪</span>
+                <span class="nav-text font-medium">시뮬레이터</span>
+            </button>
+            <button onclick="showTab('docs')" id="nav-docs" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
+                <span class="text-xl">📚</span>
+                <span class="nav-text font-medium">문서</span>
+            </button>
+            <button onclick="showTab('design')" id="nav-design" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
+                <span class="text-xl">🎨</span>
+                <span class="nav-text font-medium">디자인 시스템</span>
+            </button>
+            <button onclick="showTab('hub')" id="nav-hub" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
+                <span class="text-xl">🚀</span>
+                <span class="nav-text font-medium">테스트 허브</span>
+            </button>
+        </nav>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+            <button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition">
+                <span class="text-xl" id="theme-icon">🌙</span>
+                <span class="nav-text font-medium" id="theme-text">다크 모드</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="overlay" onclick="toggleSidebar()" class="md:hidden fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+    <!-- Main Content -->
+    <main class="main-content md:ml-64 p-4 md:p-8 min-h-screen transition-all duration-300">
+        <!-- 개요 탭 -->
+        <div id="panel-overview" class="tab-panel animate-fade-in">
+            <!-- Header -->
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">대시보드 개요</h2>
+                <p class="text-slate-500 dark:text-slate-400">질문, 차원, 결과 로직을 한눈에 확인합니다.</p>
+            </div>
+
+            <!-- 통계 카드 -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="stat-card glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <span class="text-white text-xl">📝</span>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300">전체</span>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 dark:text-white" id="stat-total">0</div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">총 질문 수</div>
+                </div>
+
+                <div class="stat-card glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                            <span class="text-white text-xl">👤</span>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300">Human</span>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 dark:text-white" id="stat-human">0</div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">Human 모드</div>
+                </div>
+
+                <div class="stat-card glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                            <span class="text-white text-xl">🐱</span>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-300">Cat</span>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 dark:text-white" id="stat-cat">0</div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">Cat 모드</div>
+                </div>
+
+                <div class="stat-card glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.4s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                            <span class="text-white text-xl">🐕</span>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300">Dog</span>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 dark:text-white" id="stat-dog">0</div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">Dog 모드</div>
+                </div>
+            </div>
+
+            <!-- 모드별 차원 분포 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Human -->
+                <div class="glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.5s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                            <span class="text-white">👤</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Human 차원</h3>
+                    </div>
+                    <div id="human-dimensions" class="space-y-4"></div>
+                </div>
+
+                <!-- Cat -->
+                <div class="glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.6s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                            <span class="text-white">🐱</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Cat 차원</h3>
+                    </div>
+                    <div id="cat-dimensions" class="space-y-4"></div>
+                </div>
+
+                <!-- Dog -->
+                <div class="glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.7s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                            <span class="text-white">🐕</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Dog 차원</h3>
+                    </div>
+                    <div id="dog-dimensions" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- 점수 계산 로직 -->
+            <div class="glass rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.8s">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm">📐</span>
+                    점수 계산 로직
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center">1</span>
+                            점수 수집
+                        </h4>
+                        <div class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <p>• 점수 5: 해당 차원이 "높음" 방향</p>
+                            <p>• 점수 1: 해당 차원이 "낮음" 방향</p>
+                            <p class="mt-2 text-slate-500">차원별 총점 = Σ(선택한 답변 점수)</p>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center">2</span>
+                            레벨 판정
+                        </h4>
+                        <div class="text-sm space-y-1">
+                            <p class="text-slate-600 dark:text-slate-300">백분율 = (점수 / 최대) × 100</p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs">≥60% HIGH</span>
+                                <span class="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 text-xs">41-59% MED</span>
+                                <span class="px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 text-xs">≤40% LOW</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center">3</span>
+                            결과 매칭
+                        </h4>
+                        <div class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <p>• 1순위: 조건 완전 일치</p>
+                            <p>• 2순위: 부분 매칭 (폴백)</p>
+                            <p class="text-slate-500">→ 가장 많이 일치하는 결과 선택</p>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center">4</span>
+                            예시 계산
+                        </h4>
+                        <div class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <p>차원당 10문항, 최대 = 50점</p>
+                            <p>inssa: 35점 → 70% → <span class="text-emerald-500 font-bold">HIGH</span></p>
+                            <p>adventure: 20점 → 40% → <span class="text-red-500 font-bold">LOW</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 질문 목록 탭 -->
+        <div id="panel-questions" class="tab-panel hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">질문 목록</h2>
+                <p class="text-slate-500 dark:text-slate-400">모드별 질문과 답변을 확인합니다.</p>
+            </div>
+
+            <!-- 모드 선택 -->
+            <div class="flex gap-2 mb-6 flex-wrap">
+                <button onclick="showMode('human')" id="mode-human" class="mode-btn active px-5 py-2.5 rounded-xl font-medium transition">
+                    👤 Human
+                </button>
+                <button onclick="showMode('cat')" id="mode-cat" class="mode-btn px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    🐱 Cat
+                </button>
+                <button onclick="showMode('dog')" id="mode-dog" class="mode-btn px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    🐕 Dog
+                </button>
+            </div>
+
+            <!-- 질문 테이블 -->
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-700">
+                                <th class="px-4 py-4 text-left text-sm font-bold text-slate-600 dark:text-slate-300">#</th>
+                                <th class="px-4 py-4 text-left text-sm font-bold text-slate-600 dark:text-slate-300">타입</th>
+                                <th class="px-4 py-4 text-left text-sm font-bold text-slate-600 dark:text-slate-300">차원</th>
+                                <th class="px-4 py-4 text-left text-sm font-bold text-slate-600 dark:text-slate-300">질문</th>
+                                <th class="px-4 py-4 text-left text-sm font-bold text-slate-600 dark:text-slate-300">답변 (점수)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="questions-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과 로직 탭 -->
+        <div id="panel-logic" class="tab-panel hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">결과 로직</h2>
+                <p class="text-slate-500 dark:text-slate-400">각 결과 유형과 조건을 확인합니다.</p>
+            </div>
+
+            <div class="flex gap-2 mb-6 flex-wrap">
+                <button onclick="showLogicMode('human')" id="logic-human" class="mode-btn active px-5 py-2.5 rounded-xl font-medium transition">
+                    👤 Human
+                </button>
+                <button onclick="showLogicMode('cat')" id="logic-cat" class="mode-btn px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    🐱 Cat
+                </button>
+                <button onclick="showLogicMode('dog')" id="logic-dog" class="mode-btn px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    🐕 Dog
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="results-grid"></div>
+        </div>
+
+        <!-- 시뮬레이터 탭 -->
+        <div id="panel-simulator" class="tab-panel hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">결과 시뮬레이터</h2>
+                <p class="text-slate-500 dark:text-slate-400">각 차원의 점수를 조절하여 결과를 테스트합니다.</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6">
+                <div class="flex gap-2 mb-6 flex-wrap">
+                    <button onclick="setSimMode('human')" id="sim-human" class="mode-btn active px-5 py-2.5 rounded-xl font-medium transition">
+                        👤 Human
+                    </button>
+                    <button onclick="setSimMode('cat')" id="sim-cat" class="mode-btn px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                        🐱 Cat
+                    </button>
+                    <button onclick="setSimMode('dog')" id="sim-dog" class="mode-btn px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                        🐕 Dog
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
+                            <span class="text-xl">🎚️</span> 차원별 점수 (%)
+                        </h4>
+                        <div id="sim-sliders" class="space-y-6"></div>
+                        <button onclick="simulate()" class="mt-6 w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-indigo-500/30">
+                            🔮 결과 확인
+                        </button>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
+                            <span class="text-xl">✨</span> 예상 결과
+                        </h4>
+                        <div id="sim-result" class="rounded-2xl bg-slate-50 dark:bg-slate-800/50 p-6 min-h-[300px] flex items-center justify-center">
+                            <p class="text-slate-400 dark:text-slate-500 text-center">슬라이더를 조절하고<br>"결과 확인" 버튼을 클릭하세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 문서 탭 -->
+        <div id="panel-docs" class="tab-panel hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">문서 및 도구</h2>
+                <p class="text-slate-500 dark:text-slate-400">관련 문서와 스크립트를 확인합니다.</p>
+            </div>
+
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="text-xl">📖</span> 관련 문서
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="docs/planning/QUESTION_BANK.md" class="block p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 hover:shadow-lg transition group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl group-hover:scale-110 transition">📋</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">문제은행 시스템</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">랜덤 출제, 질문 생성 규칙</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="docs/research/QUESTION_COUNT_RESEARCH.md" class="block p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 hover:shadow-lg transition group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl group-hover:scale-110 transition">🔬</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">적정 문항 수 연구</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">과학적 근거, 신뢰도 분석</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="docs/design/PSYCHOLOGY_TEST_DESIGN_SYSTEM.md" class="block p-4 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 hover:shadow-lg transition group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl group-hover:scale-110 transition">🎨</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">심리 테스트 디자인</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">바이럴 요소, 확장 전략</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="docs/LEGAL_COMPLIANCE.md" class="block p-4 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 hover:shadow-lg transition group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl group-hover:scale-110 transition">⚖️</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">법적 준수</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">MBTI 상표권, Big Five 전환</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="text-xl">🛠️</span> 스크립트
+                </h3>
+                <div class="rounded-xl bg-slate-900 p-4 font-mono text-sm overflow-x-auto">
+                    <div class="text-slate-400"># 검증</div>
+                    <div class="text-emerald-400">node scripts/validate-questions.mjs</div>
+                    <br>
+                    <div class="text-slate-400"># 유사도 검사</div>
+                    <div class="text-emerald-400">node scripts/check-similarity.mjs</div>
+                    <br>
+                    <div class="text-slate-400"># 데이터 복구 (git checkout 후)</div>
+                    <div class="text-emerald-400">node scripts/transform-data.mjs</div>
+                    <div class="text-emerald-400">node scripts/fix-data-errors.mjs</div>
+                    <div class="text-emerald-400">node scripts/fix-warnings.mjs</div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6 border-2 border-red-200 dark:border-red-900">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">⚠️</span>
+                    <div>
+                        <h4 class="font-bold text-red-700 dark:text-red-400">data.js 직접 수정 금지!</h4>
+                        <p class="text-sm text-red-600 dark:text-red-300 mt-1">UTF-8 한글 인코딩 손상 위험. 반드시 Node.js 스크립트 사용.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 디자인 시스템 탭 -->
+        <div id="panel-design" class="tab-panel hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">디자인 시스템</h2>
+                <p class="text-slate-500 dark:text-slate-400">케미테스트의 시각적 일관성을 위한 디자인 가이드입니다.</p>
+            </div>
+
+            <!-- 컬러 팔레트 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="text-xl">🎨</span> 컬러 팔레트
+                </h3>
+
+                <!-- 브랜드 컬러 -->
+                <div class="mb-6">
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">브랜드 그라디언트</h4>
+                    <div class="flex gap-3 flex-wrap">
+                        <div class="w-32 h-20 rounded-xl gradient-bg flex items-end p-2">
+                            <span class="text-white text-xs font-medium">Primary</span>
+                        </div>
+                        <div class="w-32 h-20 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-end p-2">
+                            <span class="text-white text-xs font-medium">Human</span>
+                        </div>
+                        <div class="w-32 h-20 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-end p-2">
+                            <span class="text-white text-xs font-medium">Cat</span>
+                        </div>
+                        <div class="w-32 h-20 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-end p-2">
+                            <span class="text-white text-xs font-medium">Dog</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상태 컬러 -->
+                <div class="mb-6">
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">상태 컬러</h4>
+                    <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-emerald-500 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">HIGH</span>
+                            <p class="text-xs text-slate-400">#10B981</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-amber-500 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">MEDIUM</span>
+                            <p class="text-xs text-slate-400">#F59E0B</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-red-500 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">LOW</span>
+                            <p class="text-xs text-slate-400">#EF4444</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-indigo-500 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Info</span>
+                            <p class="text-xs text-slate-400">#6366F1</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-purple-500 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Accent</span>
+                            <p class="text-xs text-slate-400">#A855F7</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-slate-500 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Neutral</span>
+                            <p class="text-xs text-slate-400">#64748B</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 다크모드 컬러 -->
+                <div>
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">배경 (Light / Dark)</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-slate-100 border border-slate-200 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Page BG</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-slate-900 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Page BG (Dark)</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-white border border-slate-200 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Card BG</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-12 rounded-lg bg-slate-800 mb-2"></div>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Card BG (Dark)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 타이포그래피 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="text-xl">📝</span> 타이포그래피
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <span class="text-3xl font-bold text-slate-800 dark:text-white">Heading 1</span>
+                        <span class="text-xs text-slate-400">text-3xl font-bold</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <span class="text-2xl font-bold text-slate-800 dark:text-white">Heading 2</span>
+                        <span class="text-xs text-slate-400">text-2xl font-bold</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <span class="text-lg font-bold text-slate-800 dark:text-white">Heading 3</span>
+                        <span class="text-xs text-slate-400">text-lg font-bold</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <span class="text-base text-slate-700 dark:text-slate-200">Body Text</span>
+                        <span class="text-xs text-slate-400">text-base</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <span class="text-sm text-slate-600 dark:text-slate-300">Small Text</span>
+                        <span class="text-xs text-slate-400">text-sm</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <span class="text-xs text-slate-500 dark:text-slate-400">Caption</span>
+                        <span class="text-xs text-slate-400">text-xs</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컴포넌트 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="text-xl">🧩</span> 컴포넌트
+                </h3>
+
+                <!-- 버튼 -->
+                <div class="mb-6">
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">버튼</h4>
+                    <div class="flex gap-3 flex-wrap">
+                        <button class="px-5 py-2.5 rounded-xl font-medium bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 hover:opacity-90 transition">
+                            Primary Button
+                        </button>
+                        <button class="px-5 py-2.5 rounded-xl font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                            Secondary Button
+                        </button>
+                        <button class="px-5 py-2.5 rounded-xl font-medium border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition">
+                            Outline Button
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 배지 -->
+                <div class="mb-6">
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">배지</h4>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs font-medium">HIGH</span>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 text-xs font-medium">MEDIUM</span>
+                        <span class="px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 text-xs font-medium">LOW</span>
+                        <span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold">기본</span>
+                        <span class="px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-bold">심화</span>
+                    </div>
+                </div>
+
+                <!-- 카드 -->
+                <div class="mb-6">
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">카드</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass rounded-2xl p-4">
+                            <h5 class="font-bold text-slate-800 dark:text-white mb-2">Glass Card</h5>
+                            <p class="text-sm text-slate-600 dark:text-slate-300">Glassmorphism 스타일의 기본 카드입니다.</p>
+                        </div>
+                        <div class="rounded-2xl p-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30">
+                            <h5 class="font-bold text-slate-800 dark:text-white mb-2">Gradient Card</h5>
+                            <p class="text-sm text-slate-600 dark:text-slate-300">그라디언트 배경 카드입니다.</p>
+                        </div>
+                        <div class="rounded-2xl p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg transition">
+                            <h5 class="font-bold text-slate-800 dark:text-white mb-2">Shadow Card</h5>
+                            <p class="text-sm text-slate-600 dark:text-slate-300">호버 시 그림자가 커지는 카드입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 입력 -->
+                <div>
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">입력 요소</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-1 block">텍스트 입력</label>
+                            <input type="text" placeholder="입력해주세요" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-1 block">슬라이더</label>
+                            <input type="range" min="0" max="100" value="50" class="w-full h-2 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 애니메이션 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="text-xl">✨</span> 애니메이션
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-2 rounded-xl gradient-bg animate-fade-in"></div>
+                        <span class="text-xs text-slate-600 dark:text-slate-300">Fade In</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-2 rounded-xl gradient-bg animate-slide-up"></div>
+                        <span class="text-xs text-slate-600 dark:text-slate-300">Slide Up</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-2 rounded-xl gradient-bg animate-float"></div>
+                        <span class="text-xs text-slate-600 dark:text-slate-300">Float</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-2 rounded-xl gradient-bg animate-pulse"></div>
+                        <span class="text-xs text-slate-600 dark:text-slate-300">Pulse</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 아이콘 & 이모지 -->
+            <div class="glass rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="text-xl">😊</span> 이모지 가이드
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-3">
+                        <h5 class="font-medium text-slate-700 dark:text-slate-200 mb-2">모드</h5>
+                        <div class="flex gap-2 text-2xl">
+                            <span title="Human">👤</span>
+                            <span title="Cat">🐱</span>
+                            <span title="Dog">🐕</span>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-3">
+                        <h5 class="font-medium text-slate-700 dark:text-slate-200 mb-2">탭</h5>
+                        <div class="flex gap-2 text-2xl">
+                            <span title="개요">📊</span>
+                            <span title="질문">❓</span>
+                            <span title="로직">⚙️</span>
+                            <span title="시뮬">🧪</span>
+                            <span title="문서">📚</span>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-3">
+                        <h5 class="font-medium text-slate-700 dark:text-slate-200 mb-2">상태</h5>
+                        <div class="flex gap-2 text-2xl">
+                            <span title="성공">✅</span>
+                            <span title="경고">⚠️</span>
+                            <span title="오류">❌</span>
+                            <span title="정보">ℹ️</span>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-3">
+                        <h5 class="font-medium text-slate-700 dark:text-slate-200 mb-2">액션</h5>
+                        <div class="flex gap-2 text-2xl">
+                            <span title="시작">🚀</span>
+                            <span title="저장">💾</span>
+                            <span title="검색">🔍</span>
+                            <span title="설정">🔧</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 테스트 허브 탭 -->
+        <div id="panel-hub" class="tab-panel hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2">테스트 허브</h2>
+                <p class="text-slate-500 dark:text-slate-400">다양한 심리 테스트의 확장 계획과 로드맵입니다.</p>
+            </div>
+
+            <!-- 현재 테스트 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-sm">✓</span>
+                    현재 운영 중
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="rounded-2xl p-5 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-2 border-amber-200 dark:border-amber-800">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">👤</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">Human 케미테스트</h4>
+                                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">운영 중</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Big Five 기반 성격 분석</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 text-xs">5차원</span>
+                            <span class="px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 text-xs">47문항</span>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl p-5 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-2 border-orange-200 dark:border-orange-800">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">🐱</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">Cat 케미테스트</h4>
+                                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">운영 중</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Feline Five 기반 고양이 성격</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 text-xs">5차원</span>
+                            <span class="px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 text-xs">50문항</span>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl p-5 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-2 border-emerald-200 dark:border-emerald-800">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">🐕</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">Dog 케미테스트</h4>
+                                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">운영 중</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">C-BARQ 기반 강아지 행동 분석</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs">6차원</span>
+                            <span class="px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs">49문항</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 확장 계획 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white text-sm">🗓️</span>
+                    확장 로드맵
+                </h3>
+
+                <!-- Phase 1 -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold">1</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 dark:text-white">Phase 1: 매칭 테스트</h4>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">우선순위 높음</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ml-12">
+                        <div class="rounded-xl p-4 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border border-pink-200 dark:border-pink-800">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">💕</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">이상형 테스트</h5>
+                            </div>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">애착 이론 기반 연애/친구 궁합</p>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <p>• 과학적 기반: 애착 이론 (Bowlby)</p>
+                                <p>• 예상 차원: 친밀감, 독립성, 소통방식, 갈등해결</p>
+                                <p>• 바이럴 포인트: 궁합 % 결과, 커플 공유</p>
+                            </div>
+                        </div>
+                        <div class="rounded-xl p-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border border-violet-200 dark:border-violet-800">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">🐾</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">반려동물 궁합</h5>
+                            </div>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Human + Cat/Dog 교차 매칭</p>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <p>• 기반: 현재 테스트 결과 활용</p>
+                                <p>• 매칭 알고리즘 설계 필요</p>
+                                <p>• 바이럴 포인트: "내 반려동물과 얼마나 잘 맞나?"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">2</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 dark:text-white">Phase 2: 직장인 특화</h4>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">중간 우선순위</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ml-12">
+                        <div class="rounded-xl p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-800">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">💼</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">업무 스타일</h5>
+                            </div>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Big Five 중 C(성실성), N(신경성) 집중</p>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <p>• 차원: 계획성, 협업성, 리더십, 스트레스 대처</p>
+                                <p>• 결과: "당신은 ○○형 직장인"</p>
+                                <p>• 확장: 팀 빌딩 리포트 가능</p>
+                            </div>
+                        </div>
+                        <div class="rounded-xl p-4 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">🔥</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">번아웃 체크</h5>
+                            </div>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">MBI (Maslach Burnout Inventory) 간소화</p>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <p>• 차원: 정서적 탈진, 비인간화, 성취감 저하</p>
+                                <p>• 주의: 의료 조언 아님 면책 필수</p>
+                                <p>• 바이럴: "번아웃 위험도 ○○%"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 flex items-center justify-center text-white font-bold">3</div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 dark:text-white">Phase 3: 추가 확장</h4>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">장기 계획</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ml-12">
+                        <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">🐹</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">다른 반려동물</h5>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">햄스터, 토끼, 앵무새 등</p>
+                        </div>
+                        <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">👨‍👩‍👧</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">가족 케미</h5>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">부모-자녀, 형제자매 궁합</p>
+                        </div>
+                        <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xl">🎮</span>
+                                <h5 class="font-bold text-slate-800 dark:text-white">테마 테스트</h5>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">여행, 음식, 취미 스타일</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 아키텍처 가이드 -->
+            <div class="glass rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center text-white text-sm">🏗️</span>
+                    확장 아키텍처
+                </h3>
+                <div class="rounded-xl bg-slate-900 p-4 font-mono text-sm overflow-x-auto mb-4">
+                    <div class="text-slate-400">// 새 테스트 추가 시 data.js 구조</div>
+                    <div class="text-purple-400">const CHEMI_DATA = {</div>
+                    <div class="text-slate-300 ml-4">human: { ... },</div>
+                    <div class="text-slate-300 ml-4">cat: { ... },</div>
+                    <div class="text-slate-300 ml-4">dog: { ... },</div>
+                    <div class="text-emerald-400 ml-4">// 새 테스트 추가</div>
+                    <div class="text-amber-400 ml-4">loveStyle: {</div>
+                    <div class="text-slate-300 ml-8">title: "이상형 테스트",</div>
+                    <div class="text-slate-300 ml-8">dimensions: { intimacy, independence, ... },</div>
+                    <div class="text-slate-300 ml-8">questions: [...],</div>
+                    <div class="text-slate-300 ml-8">resultLabels: [...],</div>
+                    <div class="text-slate-300 ml-8">matchingRules: { ... } <span class="text-emerald-400">// 매칭 테스트용</span></div>
+                    <div class="text-amber-400 ml-4">}</div>
+                    <div class="text-purple-400">};</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                        <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">필수 요소</h5>
+                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <li>• title, subtitle, icon</li>
+                            <li>• dimensions (차원 정의)</li>
+                            <li>• questions, questions_deep</li>
+                            <li>• resultLabels (결과 유형)</li>
+                            <li>• themeColor (UI 컬러)</li>
+                        </ul>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                        <h5 class="font-bold text-slate-700 dark:text-slate-200 mb-2">매칭 테스트 추가</h5>
+                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <li>• matchingRules (궁합 계산 규칙)</li>
+                            <li>• compatibilityMatrix (상성표)</li>
+                            <li>• matchResultLabels (궁합 결과)</li>
+                            <li>• shareTemplate (공유용 텍스트)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 품질 기준 -->
+            <div class="glass rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-sm">✓</span>
+                    새 테스트 품질 기준
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-4 border border-emerald-200 dark:border-emerald-800">
+                        <h5 class="font-bold text-emerald-700 dark:text-emerald-300 mb-2">과학적 기반</h5>
+                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <li>• 검증된 심리학 이론 사용</li>
+                            <li>• 차원당 최소 7문항</li>
+                            <li>• α ≥ 0.70 목표</li>
+                        </ul>
+                    </div>
+                    <div class="rounded-xl bg-blue-50 dark:bg-blue-900/20 p-4 border border-blue-200 dark:border-blue-800">
+                        <h5 class="font-bold text-blue-700 dark:text-blue-300 mb-2">바이럴 요소</h5>
+                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <li>• 공유하고 싶은 결과</li>
+                            <li>• 3~5분 완료 시간</li>
+                            <li>• SNS 친화적 결과 이미지</li>
+                        </ul>
+                    </div>
+                    <div class="rounded-xl bg-amber-50 dark:bg-amber-900/20 p-4 border border-amber-200 dark:border-amber-800">
+                        <h5 class="font-bold text-amber-700 dark:text-amber-300 mb-2">법적 준수</h5>
+                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                            <li>• 상표권 침해 방지</li>
+                            <li>• 의료 조언 면책</li>
+                            <li>• 개인정보 최소 수집</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const data = window.CHEMI_DATA;
+        let currentMode = 'human';
+        let simMode = 'human';
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            renderDimensions();
+            renderQuestions('human');
+            renderResults('human');
+            renderSimSliders('human');
+
+            // 다크 모드 체크
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+                updateThemeUI(true);
+            }
+        });
+
+        // 사이드바 토글 (모바일)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        }
+
+        // 다크 모드 토글
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark);
+            updateThemeUI(isDark);
+        }
+
+        function updateThemeUI(isDark) {
+            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+            document.getElementById('theme-text').textContent = isDark ? '라이트 모드' : '다크 모드';
+        }
+
+        // 탭 전환
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-600', 'dark:text-slate-300');
+            });
+
+            const panel = document.getElementById(`panel-${tabName}`);
+            panel.classList.remove('hidden');
+            panel.classList.add('animate-fade-in');
+
+            const nav = document.getElementById(`nav-${tabName}`);
+            nav.classList.add('active');
+            nav.classList.remove('text-slate-600', 'dark:text-slate-300');
+
+            // 모바일에서 사이드바 닫기
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            const humanTotal = data.human.questions.length + data.human.questions_deep.length;
+            const catTotal = data.cat.questions.length + data.cat.questions_deep.length;
+            const dogTotal = data.dog.questions.length + data.dog.questions_deep.length;
+
+            document.getElementById('stat-total').textContent = humanTotal + catTotal + dogTotal;
+            document.getElementById('stat-human').textContent = humanTotal;
+            document.getElementById('stat-cat').textContent = catTotal;
+            document.getElementById('stat-dog').textContent = dogTotal;
+        }
+
+        // 차원 렌더링
+        function renderDimensions() {
+            ['human', 'cat', 'dog'].forEach(mode => {
+                const container = document.getElementById(`${mode}-dimensions`);
+                const dims = data[mode].dimensions;
+                const questions = [...data[mode].questions, ...data[mode].questions_deep];
+
+                let html = '';
+                Object.entries(dims).forEach(([key, dim]) => {
+                    const count = questions.filter(q => q.dimension === key).length;
+                    const percentage = Math.min(100, (count / 10) * 100);
+                    const isGood = count >= 7;
+                    const isWarning = count >= 5 && count < 7;
+
+                    html += `
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-200">${dim.emoji} ${dim.name}</span>
+                                <span class="text-sm font-bold ${isGood ? 'text-emerald-500' : isWarning ? 'text-amber-500' : 'text-red-500'}">${count}개</span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                <div class="progress-bar h-full rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">${dim.desc}</p>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        // 질문 모드 전환
+        function showMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('#panel-questions .mode-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            });
+            const btn = document.getElementById(`mode-${mode}`);
+            btn.classList.add('active');
+            btn.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            renderQuestions(mode);
+        }
+
+        // 질문 렌더링
+        function renderQuestions(mode) {
+            const questions = data[mode].questions;
+            const deepQuestions = data[mode].questions_deep;
+            const dims = data[mode].dimensions;
+
+            let html = '';
+            let idx = 0;
+
+            // 기본 질문
+            questions.forEach((q, i) => {
+                idx++;
+                const dimInfo = dims[q.dimension] || { emoji: '❓', name: q.dimension };
+                html += `
+                    <tr class="table-row border-b border-slate-100 dark:border-slate-700">
+                        <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-300">${idx}</td>
+                        <td class="px-4 py-4">
+                            <span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold">기본</span>
+                        </td>
+                        <td class="px-4 py-4 text-sm text-slate-700 dark:text-slate-200">${dimInfo.emoji} ${dimInfo.name}</td>
+                        <td class="px-4 py-4 text-sm text-slate-700 dark:text-slate-200">${q.q}</td>
+                        <td class="px-4 py-4 text-xs">
+                            ${q.a.map(a => `
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="inline-flex w-6 h-6 rounded-full items-center justify-center text-white text-xs font-bold ${a.score === 5 ? 'bg-emerald-500' : 'bg-red-500'}">${a.score}</span>
+                                    <span class="text-slate-600 dark:text-slate-300">${a.text}</span>
+                                </div>
+                            `).join('')}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // 심화 질문
+            deepQuestions.forEach((q, i) => {
+                idx++;
+                const dimInfo = dims[q.dimension] || { emoji: '❓', name: q.dimension };
+                html += `
+                    <tr class="table-row border-b border-slate-100 dark:border-slate-700">
+                        <td class="px-4 py-4 text-sm text-slate-600 dark:text-slate-300">${idx}</td>
+                        <td class="px-4 py-4">
+                            <span class="px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-bold">심화</span>
+                        </td>
+                        <td class="px-4 py-4 text-sm text-slate-700 dark:text-slate-200">${dimInfo.emoji} ${dimInfo.name}</td>
+                        <td class="px-4 py-4 text-sm text-slate-700 dark:text-slate-200">${q.q}</td>
+                        <td class="px-4 py-4 text-xs">
+                            ${q.a.map(a => `
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="inline-flex w-6 h-6 rounded-full items-center justify-center text-white text-xs font-bold ${a.score === 5 ? 'bg-emerald-500' : 'bg-red-500'}">${a.score}</span>
+                                    <span class="text-slate-600 dark:text-slate-300">${a.text}</span>
+                                </div>
+                            `).join('')}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('questions-table').innerHTML = html;
+        }
+
+        // 결과 로직 모드 전환
+        function showLogicMode(mode) {
+            document.querySelectorAll('#panel-logic .mode-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            });
+            const btn = document.getElementById(`logic-${mode}`);
+            btn.classList.add('active');
+            btn.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            renderResults(mode);
+        }
+
+        // 결과 렌더링
+        function renderResults(mode) {
+            const results = data[mode].resultLabels;
+            const dims = data[mode].dimensions;
+
+            let html = '';
+            results.forEach((r, i) => {
+                const conditionHtml = Object.entries(r.condition).map(([dim, level]) => {
+                    const dimInfo = dims[dim] || { emoji: '❓', name: dim };
+                    const levelColors = {
+                        high: 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300',
+                        medium: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300',
+                        low: 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
+                    };
+                    return `<span class="inline-block px-2 py-1 rounded-full text-xs font-medium ${levelColors[level]} mr-1 mb-1">${dimInfo.emoji} ${level.toUpperCase()}</span>`;
+                }).join('');
+
+                html += `
+                    <div class="result-card glass rounded-2xl p-5 hover:shadow-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">${r.emoji}</span>
+                            <span class="font-bold text-lg text-slate-800 dark:text-white">${r.name}</span>
+                        </div>
+                        <div class="mb-3 flex flex-wrap">${conditionHtml}</div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">${r.desc}</p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('results-grid').innerHTML = html;
+        }
+
+        // 시뮬레이터 모드 전환
+        function setSimMode(mode) {
+            simMode = mode;
+            document.querySelectorAll('#panel-simulator .mode-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            });
+            const btn = document.getElementById(`sim-${mode}`);
+            btn.classList.add('active');
+            btn.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+            renderSimSliders(mode);
+            document.getElementById('sim-result').innerHTML = '<p class="text-slate-400 dark:text-slate-500 text-center">슬라이더를 조절하고<br>"결과 확인" 버튼을 클릭하세요.</p>';
+        }
+
+        // 시뮬레이터 슬라이더 렌더링
+        function renderSimSliders(mode) {
+            const dims = data[mode].dimensions;
+            let html = '';
+
+            Object.entries(dims).forEach(([key, dim]) => {
+                html += `
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-200">${dim.emoji} ${dim.name}</span>
+                            <span class="text-sm font-bold text-indigo-600 dark:text-indigo-400" id="val-${key}">50%</span>
+                        </div>
+                        <input type="range" id="slider-${key}" min="0" max="100" value="50"
+                            class="w-full h-2 rounded-lg cursor-pointer"
+                            oninput="document.getElementById('val-${key}').textContent = this.value + '%'">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>LOW</span>
+                            <span>MEDIUM</span>
+                            <span>HIGH</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('sim-sliders').innerHTML = html;
+        }
+
+        // 시뮬레이션 실행
+        function simulate() {
+            const dims = data[simMode].dimensions;
+            const results = data[simMode].resultLabels;
+            const questions = [...data[simMode].questions, ...data[simMode].questions_deep];
+
+            // 차원별 질문 수 계산
+            const dimCounts = {};
+            Object.keys(dims).forEach(dim => {
+                dimCounts[dim] = questions.filter(q => q.dimension === dim).length;
+            });
+
+            // 슬라이더 값으로 점수 계산
+            const scores = {};
+            Object.keys(dims).forEach(dim => {
+                const percentage = parseInt(document.getElementById(`slider-${dim}`).value);
+                const maxScore = dimCounts[dim] * 5;
+                scores[dim] = Math.round((percentage / 100) * maxScore);
+            });
+
+            // 레벨 계산
+            const levels = {};
+            Object.keys(dims).forEach(dim => {
+                const maxScore = dimCounts[dim] * 5;
+                const percentage = (scores[dim] / maxScore) * 100;
+                if (percentage >= 60) levels[dim] = 'high';
+                else if (percentage <= 40) levels[dim] = 'low';
+                else levels[dim] = 'medium';
+            });
+
+            // 결과 매칭
+            let matchedResult = null;
+            let bestScore = 0;
+
+            for (const result of results) {
+                let matchCount = 0;
+                let totalConditions = Object.keys(result.condition).length;
+
+                for (const [dim, level] of Object.entries(result.condition)) {
+                    if (levels[dim] === level) matchCount++;
+                }
+
+                if (matchCount === totalConditions) {
+                    matchedResult = result;
+                    break;
+                }
+
+                if (matchCount > bestScore) {
+                    bestScore = matchCount;
+                    matchedResult = result;
+                }
+            }
+
+            // 결과 표시
+            const levelBadges = Object.entries(levels).map(([dim, level]) => {
+                const dimInfo = dims[dim];
+                const colors = {
+                    high: 'bg-emerald-500',
+                    medium: 'bg-amber-500',
+                    low: 'bg-red-500'
+                };
+                return `<span class="inline-flex items-center gap-1 px-2.5 py-1 ${colors[level]} text-white rounded-full text-xs font-medium mr-1 mb-1">${dimInfo.emoji} ${level.toUpperCase()}</span>`;
+            }).join('');
+
+            document.getElementById('sim-result').innerHTML = `
+                <div class="text-center animate-fade-in">
+                    <div class="text-6xl mb-4 animate-float">${matchedResult.emoji}</div>
+                    <h4 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">${matchedResult.name}</h4>
+                    <div class="mb-4 flex flex-wrap justify-center">${levelBadges}</div>
+                    <p class="text-slate-600 dark:text-slate-300">${matchedResult.desc}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

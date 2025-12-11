@@ -41,14 +41,18 @@ try {
 const VALID_DIMENSIONS = {
     human: ['inssa', 'adventure', 'empathy', 'plan', 'mental'],
     cat: ['curious', 'alert', 'boss', 'random', 'cute'],
-    dog: ['energy', 'humanLove', 'dogFriend', 'focus', 'brave', 'persist']
+    dog: ['energy', 'humanLove', 'dogFriend', 'focus', 'brave', 'persist'],
+    rabbit: ['curious', 'social', 'active', 'brave', 'chill'],
+    hamster: ['curious', 'hoard', 'active', 'tame', 'nocturnal']
 };
 
 // 모드별 최소 질문 수
 const MIN_QUESTIONS = {
     human: { perDim: 6, basic: 3 },
     cat: { perDim: 4, basic: 2 },
-    dog: { perDim: 4, basic: 2 }
+    dog: { perDim: 4, basic: 2 },
+    rabbit: { perDim: 4, basic: 2 },
+    hamster: { perDim: 4, basic: 2 }
 };
 
 const errors = [];
@@ -288,7 +292,7 @@ function validateMode(mode, modeData) {
 console.log('🔍 질문 데이터 검증 시작...\n');
 console.log('=' .repeat(50));
 
-['human', 'cat', 'dog'].forEach(mode => {
+['human', 'cat', 'dog', 'rabbit', 'hamster'].forEach(mode => {
     if (CHEMI_DATA[mode]) {
         validateMode(mode, CHEMI_DATA[mode]);
     } else {

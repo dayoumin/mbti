@@ -33,6 +33,41 @@ const HumanIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => 
     </svg>
 );
 
+const RabbitFace = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 긴 귀 */}
+        <ellipse cx="35" cy="20" rx="8" ry="20" fill="white" stroke="#4A4A4A" strokeWidth="3" />
+        <ellipse cx="65" cy="20" rx="8" ry="20" fill="white" stroke="#4A4A4A" strokeWidth="3" />
+        <ellipse cx="35" cy="20" rx="4" ry="12" fill="#FFB6C1" />
+        <ellipse cx="65" cy="20" rx="4" ry="12" fill="#FFB6C1" />
+        {/* 얼굴 */}
+        <ellipse cx="50" cy="60" rx="30" ry="25" fill="white" stroke="#4A4A4A" strokeWidth="3" />
+        {mood === "happy" && (<g><circle cx="40" cy="55" r="3" fill="#4A4A4A" /><circle cx="60" cy="55" r="3" fill="#4A4A4A" /><ellipse cx="50" cy="68" rx="5" ry="3" fill="#FFB6C1" /><path d="M45 70 Q 50 75 55 70" fill="none" stroke="#4A4A4A" strokeWidth="2" /></g>)}
+        {mood === "excited" && (<g><circle cx="40" cy="55" r="4" fill="#4A4A4A" /><circle cx="60" cy="55" r="4" fill="#4A4A4A" /><ellipse cx="50" cy="68" rx="6" ry="4" fill="#FFB6C1" /><path d="M43 70 Q 50 78 57 70" fill="none" stroke="#4A4A4A" strokeWidth="2" /></g>)}
+        {mood === "cool" && (<g><rect x="32" y="52" width="15" height="6" rx="2" fill="black" /><rect x="53" y="52" width="15" height="6" rx="2" fill="black" /><ellipse cx="50" cy="68" rx="5" ry="3" fill="#FFB6C1" /></g>)}
+        {mood === "sad" && (<g><circle cx="40" cy="55" r="3" fill="#4A4A4A" /><circle cx="60" cy="55" r="3" fill="#4A4A4A" /><ellipse cx="50" cy="68" rx="5" ry="3" fill="#FFB6C1" /><path d="M45 73 Q 50 70 55 73" fill="none" stroke="#4A4A4A" strokeWidth="2" /></g>)}
+    </svg>
+);
+
+const HamsterFace = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 둥근 귀 */}
+        <circle cx="25" cy="30" r="12" fill="#F4A460" stroke="#4A4A4A" strokeWidth="3" />
+        <circle cx="75" cy="30" r="12" fill="#F4A460" stroke="#4A4A4A" strokeWidth="3" />
+        <circle cx="25" cy="30" r="6" fill="#FFB6C1" />
+        <circle cx="75" cy="30" r="6" fill="#FFB6C1" />
+        {/* 볼살 가득한 얼굴 */}
+        <ellipse cx="50" cy="55" rx="35" ry="30" fill="#F4A460" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 볼 주머니 */}
+        <ellipse cx="25" cy="60" rx="12" ry="10" fill="#FFDAB9" stroke="#4A4A4A" strokeWidth="2" />
+        <ellipse cx="75" cy="60" rx="12" ry="10" fill="#FFDAB9" stroke="#4A4A4A" strokeWidth="2" />
+        {mood === "happy" && (<g><circle cx="40" cy="50" r="3" fill="#4A4A4A" /><circle cx="60" cy="50" r="3" fill="#4A4A4A" /><ellipse cx="50" cy="62" rx="4" ry="3" fill="#FF9999" /><path d="M46 65 Q 50 68 54 65" fill="none" stroke="#4A4A4A" strokeWidth="2" /></g>)}
+        {mood === "excited" && (<g><circle cx="40" cy="50" r="4" fill="#4A4A4A" /><circle cx="60" cy="50" r="4" fill="#4A4A4A" /><ellipse cx="50" cy="62" rx="5" ry="4" fill="#FF9999" /><path d="M44 65 Q 50 72 56 65" fill="none" stroke="#4A4A4A" strokeWidth="2" /></g>)}
+        {mood === "cool" && (<g><rect x="32" y="47" width="15" height="6" rx="2" fill="black" /><rect x="53" y="47" width="15" height="6" rx="2" fill="black" /><ellipse cx="50" cy="62" rx="4" ry="3" fill="#FF9999" /></g>)}
+        {mood === "sad" && (<g><circle cx="40" cy="50" r="3" fill="#4A4A4A" /><circle cx="60" cy="50" r="3" fill="#4A4A4A" /><ellipse cx="50" cy="62" rx="4" ry="3" fill="#FF9999" /><path d="M46 68 Q 50 65 54 68" fill="none" stroke="#4A4A4A" strokeWidth="2" /></g>)}
+    </svg>
+);
+
 const Capsule = () => (
     <svg viewBox="0 0 100 100" className="w-40 h-40 mx-auto">
         <circle cx="50" cy="50" r="45" fill="#FFD700" stroke="#4A4A4A" strokeWidth="3" />
@@ -48,4 +83,6 @@ window.CloseIcon = CloseIcon;
 window.CatFace = CatFace;
 window.DogFace = DogFace;
 window.HumanIcon = HumanIcon;
+window.RabbitFace = RabbitFace;
+window.HamsterFace = HamsterFace;
 window.Capsule = Capsule;

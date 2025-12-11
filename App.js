@@ -1,5 +1,5 @@
 const { useState, useEffect } = React;
-const { ChevronDown, ChevronUp, CloseIcon, CatFace, DogFace, HumanIcon, Capsule, TraitBar, ModeTabs } = window;
+const { ChevronDown, ChevronUp, CloseIcon, Capsule, TraitBar, ModeTabs } = window;
 
 const App = () => {
     const [mode, setMode] = useState('human');
@@ -33,11 +33,8 @@ const App = () => {
         setScores(getInitialScores());
     }, [mode]);
 
-    const iconMap = {
-        "HumanIcon": HumanIcon,
-        "CatFace": CatFace,
-        "DogFace": DogFace
-    };
+    // SUBJECT_CONFIG에서 설정 가져오기
+    const subjectConfig = window.SUBJECT_CONFIG?.[mode] || {};
 
     const handleAnswer = (dimension, scoreVal) => {
         const newScores = { ...scores, [dimension]: (scores[dimension] || 0) + scoreVal };
@@ -90,7 +87,8 @@ const App = () => {
         return maxPossible > 0 ? Math.round((score / maxPossible) * 100) : 0;
     };
 
-    const IconComponent = iconMap[currentModeData.icon];
+    // 아이콘은 window에서 직접 가져옴
+    const IconComponent = window[currentModeData.icon];
 
     return (
         <div className="w-full h-full bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col p-6 relative border-4 border-gray-800" style={{ minHeight: '600px' }}>
@@ -102,27 +100,9 @@ const App = () => {
                         <p className="text-gray-500 mb-8">{currentModeData.subtitle}</p>
                         <IconComponent mood="happy" />
                         <div className="space-y-2 text-gray-600 font-medium mb-8">
-                            {mode === 'human' && (
-                                <>
-                                    <span>나는 어떤 사람일까?</span>
-                                    <span>나의 숨겨진 성격은?</span>
-                                    <span>친구들이 보는 나는?</span>
-                                </>
-                            )}
-                            {mode === 'cat' && (
-                                <>
-                                    <span>철학 냥이?</span>
-                                    <span>보스 냥이?</span>
-                                    <span>인싸 냥이?</span>
-                                </>
-                            )}
-                            {mode === 'dog' && (
-                                <>
-                                    <span>규율 멍멍이?</span>
-                                    <span>파티 멍멍이?</span>
-                                    <span>CEO 멍멍이?</span>
-                                </>
-                            )}
+                            {(subjectConfig.intro || []).map((text, idx) => (
+                                <span key={idx}>{text}</span>
+                            ))}
                         </div>
                     </div>
 
@@ -183,7 +163,7 @@ const App = () => {
                         <p className="text-gray-700 text-lg break-keep leading-relaxed font-bold">" {finalResult.desc} "</p>
                     </div>
 
-                    {mode === 'human' ? (
+                    {subjectConfig.resultFormat === 'simple' ? (
                         <div className="w-full mb-4 flex-shrink-0">
                             <div className="bg-white rounded-2xl border-2 border-gray-800 shadow-sm p-4">
                                 <div className="text-gray-700 text-sm leading-relaxed break-keep whitespace-pre-wrap space-y-4">
@@ -224,7 +204,7 @@ const App = () => {
 
                     {!isDeepMode && (
                         <button onClick={startDeepTest} className="doodle-border w-full py-3 bg-indigo-500 text-white font-bold mb-4 animate-pulse hover:bg-indigo-600 transition-colors flex-shrink-0">
-                            {mode === 'human' ? '내 성격' : mode === 'cat' ? '우리 냥이' : '우리 멍이'}, 이게 다가 아니다? (+{deepQuestions.length}문항)
+                            {subjectConfig.deepButtonText || '결과'}, 이게 다가 아니다? (+{deepQuestions.length}문항)
                         </button>
                     )}
 

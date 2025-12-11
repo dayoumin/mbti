@@ -1,0 +1,194 @@
+/**
+ * 앱 데이터 무결성 테스트
+ * - CHEMI_DATA 로드 확인
+ * - SUBJECT_CONFIG 로드 확인
+ * - 아이콘 참조 확인
+ * - 결과 매칭 로직 테스트
+ */
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dataPath = path.join(__dirname, '..', 'data.js');
+
+console.log('🧪 앱 데이터 무결성 테스트\n');
+console.log('='.repeat(50));
+
+// data.js 읽기 및 파싱
+const content = fs.readFileSync(dataPath, 'utf-8');
+
+// CHEMI_DATA 추출
+const dataMatch = content.match(/const CHEMI_DATA = (\{[\s\S]*?\});/);
+if (!dataMatch) {
+    console.error('❌ CHEMI_DATA를 찾을 수 없습니다.');
+    process.exit(1);
+}
+
+let CHEMI_DATA;
+try {
+    CHEMI_DATA = eval('(' + dataMatch[1] + ')');
+    console.log('✅ CHEMI_DATA 로드 성공');
+} catch (e) {
+    console.error('❌ CHEMI_DATA 파싱 실패:', e.message);
+    process.exit(1);
+}
+
+// SUBJECT_CONFIG 추출
+const configMatch = content.match(/const SUBJECT_CONFIG = (\{[\s\S]*?\});/);
+if (!configMatch) {
+    console.error('❌ SUBJECT_CONFIG를 찾을 수 없습니다.');
+    process.exit(1);
+}
+
+let SUBJECT_CONFIG;
+try {
+    SUBJECT_CONFIG = eval('(' + configMatch[1] + ')');
+    console.log('✅ SUBJECT_CONFIG 로드 성공');
+} catch (e) {
+    console.error('❌ SUBJECT_CONFIG 파싱 실패:', e.message);
+    process.exit(1);
+}
+
+console.log('\n' + '='.repeat(50));
+console.log('📋 Subject 일치 확인\n');
+
+// CHEMI_DATA와 SUBJECT_CONFIG 키 비교
+const dataKeys = Object.keys(CHEMI_DATA);
+const configKeys = Object.keys(SUBJECT_CONFIG);
+
+console.log('CHEMI_DATA keys:', dataKeys.join(', '));
+console.log('SUBJECT_CONFIG keys:', configKeys.join(', '));
+
+const missingInConfig = dataKeys.filter(k => !configKeys.includes(k));
+const missingInData = configKeys.filter(k => !dataKeys.includes(k));
+
+if (missingInConfig.length > 0) {
+    console.log('⚠️  SUBJECT_CONFIG에 없는 키:', missingInConfig.join(', '));
+}
+if (missingInData.length > 0) {
+    console.log('⚠️  CHEMI_DATA에 없는 키:', missingInData.join(', '));
+}
+if (missingInConfig.length === 0 && missingInData.length === 0) {
+    console.log('✅ 모든 키가 일치합니다.');
+}
+
+console.log('\n' + '='.repeat(50));
+console.log('🎨 아이콘 참조 확인\n');
+
+// 예상되는 아이콘 목록 (Icons.js 기준)
+const availableIcons = ['HumanIcon', 'CatFace', 'DogFace', 'RabbitFace', 'HamsterFace'];
+
+Object.entries(CHEMI_DATA).forEach(([key, data]) => {
+    const icon = data.icon;
+    const configIcon = SUBJECT_CONFIG[key]?.icon;
+
+    const dataIconOk = availableIcons.includes(icon);
+    const configIconOk = availableIcons.includes(configIcon);
+
+    console.log(`${key}:`);
+    console.log(`  data.icon: ${icon} ${dataIconOk ? '✅' : '❌ (없음)'}`);
+    console.log(`  config.icon: ${configIcon} ${configIconOk ? '✅' : '❌ (없음)'}`);
+
+    if (icon !== configIcon) {
+        console.log(`  ⚠️  아이콘 불일치!`);
+    }
+});
+
+console.log('\n' + '='.repeat(50));
+console.log('🔢 결과 매칭 로직 테스트\n');
+
+// getScoreLevel 함수 직접 구현 (data.js와 동일)
+function getScoreLevel(score, maxScore) {
+    const percentage = (score / maxScore) * 100;
+    if (percentage >= 60) return "high";
+    if (percentage <= 40) return "low";
+    return "medium";
+}
+
+// 테스트 케이스
+const testCases = [
+    { score: 30, max: 50, expected: 'high' },    // 60%
+    { score: 25, max: 50, expected: 'medium' },  // 50%
+    { score: 15, max: 50, expected: 'low' },     // 30%
+    { score: 35, max: 50, expected: 'high' },    // 70%
+    { score: 20, max: 50, expected: 'low' },     // 40% (경계)
+];
+
+let passed = 0;
+testCases.forEach(tc => {
+    const result = getScoreLevel(tc.score, tc.max);
+    const ok = result === tc.expected;
+    if (ok) passed++;
+    console.log(`  getScoreLevel(${tc.score}, ${tc.max}) = "${result}" ${ok ? '✅' : `❌ (expected: ${tc.expected})`}`);
+});
+
+console.log(`\n  결과: ${passed}/${testCases.length} 통과`);
+
+console.log('\n' + '='.repeat(50));
+console.log('📊 각 Subject 데이터 요약\n');
+
+Object.entries(CHEMI_DATA).forEach(([key, data]) => {
+    const dims = Object.keys(data.dimensions).length;
+    const basic = data.questions?.length || 0;
+    const deep = data.questions_deep?.length || 0;
+    const results = data.resultLabels?.length || 0;
+
+    console.log(`${key}:`);
+    console.log(`  차원: ${dims}개, 기본: ${basic}개, 심화: ${deep}개, 결과: ${results}개`);
+
+    // 필수 필드 확인
+    const requiredFields = ['title', 'subtitle', 'themeColor', 'icon', 'dimensions', 'questions', 'resultLabels'];
+    const missing = requiredFields.filter(f => !data[f]);
+    if (missing.length > 0) {
+        console.log(`  ❌ 누락된 필드: ${missing.join(', ')}`);
+    } else {
+        console.log(`  ✅ 모든 필수 필드 존재`);
+    }
+});
+
+console.log('\n' + '='.repeat(50));
+console.log('🎯 결과 라벨 조건 검증\n');
+
+let totalIssues = 0;
+
+Object.entries(CHEMI_DATA).forEach(([key, data]) => {
+    const dims = Object.keys(data.dimensions);
+    let issues = [];
+
+    data.resultLabels?.forEach((label, idx) => {
+        const conditionDims = Object.keys(label.condition || {});
+
+        // 조건에 사용된 차원이 실제로 존재하는지 확인
+        const invalidDims = conditionDims.filter(d => !dims.includes(d));
+        if (invalidDims.length > 0) {
+            issues.push(`  [${idx}] ${label.name}: 존재하지 않는 차원 "${invalidDims.join(', ')}"`);
+        }
+
+        // 조건 값이 유효한지 확인 (high, medium, low)
+        const invalidValues = Object.entries(label.condition || {})
+            .filter(([_, v]) => !['high', 'medium', 'low'].includes(v))
+            .map(([k, v]) => `${k}=${v}`);
+        if (invalidValues.length > 0) {
+            issues.push(`  [${idx}] ${label.name}: 잘못된 조건 값 "${invalidValues.join(', ')}"`);
+        }
+    });
+
+    if (issues.length > 0) {
+        console.log(`${key}: ❌ ${issues.length}개 문제`);
+        issues.forEach(i => console.log(i));
+        totalIssues += issues.length;
+    } else {
+        console.log(`${key}: ✅ 모든 결과 라벨 조건 유효`);
+    }
+});
+
+console.log('\n' + '='.repeat(50));
+
+if (totalIssues === 0) {
+    console.log('\n✅ 모든 테스트 통과!\n');
+} else {
+    console.log(`\n⚠️  ${totalIssues}개 문제 발견\n`);
+}
