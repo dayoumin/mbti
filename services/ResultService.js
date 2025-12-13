@@ -397,7 +397,9 @@
     window.StorageProviders = StorageProviders;
 
     // Service Worker 메시지 리스너 (Background Sync 지원)
-    if ('serviceWorker' in navigator) {
+    // NOTE: 서비스 워커(PWA) 미사용. 필요하면 상위 프로젝트에서 별도 구현.
+    const swEnabled = false;
+    if (swEnabled) {
         navigator.serviceWorker.addEventListener('message', async (event) => {
             if (event.data && event.data.type === 'SYNC_PENDING_RESULTS') {
                 console.log('[ResultService] Received sync request from SW');

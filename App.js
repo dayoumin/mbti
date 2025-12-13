@@ -1,8 +1,8 @@
 const { useState, useEffect, useCallback } = React;
-const { CloseIcon, Capsule, ModeTabs } = window;
+const { CloseIcon, Capsule, ModeTabs, TestHeader, InsightView } = window;
 
-// 공유 상수 사용
-const MAX_SCORE_PER_QUESTION = window.CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
+// 공유 상수 사용 (방어 코드 포함)
+const MAX_SCORE_PER_QUESTION = window.CHEMI_CONSTANTS?.MAX_SCORE_PER_QUESTION ?? 5;
 
 // 다음 테스트 추천 컴포넌트
 const NextTestRecommendation = ({ currentTest, onSelectTest }) => {
@@ -88,6 +88,10 @@ const App = () => {
     const [detailTab, setDetailTab] = useState("interpretation");
     const [isDeepMode, setIsDeepMode] = useState(false);
     const [showGraphPopup, setShowGraphPopup] = useState(false);
+    // 네비게이션용 답변 히스토리
+    const [answers, setAnswers] = useState([]);  // [{ qIdx, dimension, score }, ...]
+    // 인사이트 화면
+    const [showInsight, setShowInsight] = useState(false);
 
     const appData = window.CHEMI_DATA;
     if (!appData[mode]) {
@@ -99,6 +103,12 @@ const App = () => {
     const deepQuestions = currentModeData.questions_deep || [];
     const questions = isDeepMode ? [...basicQuestions, ...deepQuestions] : basicQuestions;
     const maxQuestions = questions.length;
+
+    console.log('[App] Render:', { mode, step, qIdx, isDeepMode, questionsLength: questions.length, basicLength: basicQuestions.length });
+
+    // 심화 모드용 진행률 계산 (전체 질문 수 기준 연속 번호)
+    const displayQuestionNum = qIdx + 1;
+    const displayTotalQuestions = questions.length;
 
     // 초기 점수 설정 (dimensions 변경시에만 재생성)
     const getInitialScores = useCallback(() => {
@@ -118,6 +128,9 @@ const App = () => {
     const subjectConfig = window.SUBJECT_CONFIG?.[mode] || {};
 
     const handleAnswer = (dimension, scoreVal) => {
+        // 답변 히스토리에 기록
+        setAnswers(prev => [...prev, { qIdx, dimension, score: scoreVal }]);
+
         const newScores = { ...scores, [dimension]: (scores[dimension] || 0) + scoreVal };
         setScores(newScores);
         if (qIdx + 1 < maxQuestions) {
@@ -125,6 +138,35 @@ const App = () => {
         } else {
             calculateResult(newScores);
         }
+    };
+
+    // 이전 질문으로 돌아가기
+    const handleGoBack = () => {
+        if (answers.length === 0) return;
+
+        // 마지막 답변 가져오기
+        const lastAnswer = answers[answers.length - 1];
+
+        // 점수 롤백
+        setScores(prev => ({
+            ...prev,
+            [lastAnswer.dimension]: (prev[lastAnswer.dimension] || 0) - lastAnswer.score
+        }));
+
+        // 히스토리에서 제거
+        setAnswers(prev => prev.slice(0, -1));
+
+        // 이전 질문으로 이동
+        setQIdx(lastAnswer.qIdx);
+    };
+
+    // 테스트 종료 (홈으로)
+    const handleExit = () => {
+        setStep('intro');
+        setQIdx(0);
+        setScores(getInitialScores());
+        setAnswers([]);
+        setIsDeepMode(false);
     };
 
     const calculateResult = (finalScores) => {
@@ -162,12 +204,16 @@ const App = () => {
         setFinalResult(null);
         setIsDeepMode(false);
         setShowGraphPopup(false);
+        setAnswers([]);
     };
 
     const startDeepTest = () => {
+        // 심화 모드 시작: 기본 질문 이후부터 시작
+        const deepStartIndex = basicQuestions.length;
+        console.log('[App] startDeepTest called. deepStartIndex:', deepStartIndex);
+        setQIdx(deepStartIndex);
         setIsDeepMode(true);
         setStep("question");
-        setQIdx(basicQuestions.length);
     };
 
     // 각 차원별 점수를 백분율로 계산
@@ -199,21 +245,40 @@ const App = () => {
 
                     <p className="text-xs text-gray-400 text-center mb-2">⏱️ 약 3분 소요</p>
 
-                    <button
-                        onClick={() => setStep("question")}
-                        className={`doodle-border w-full py-4 ${currentModeData.themeColor} text-xl font-bold text-gray-800 hover:opacity-90 mt-auto`}>
-                        테스트 시작하기 ({maxQuestions}문항)
-                    </button>
+                    {/* 좌우 버튼 */}
+                    <div className="flex gap-3 mt-auto">
+                        <button
+                            onClick={() => setStep("question")}
+                            className={`flex-1 doodle-border py-4 ${currentModeData.themeColor} text-xl font-bold text-gray-800 hover:opacity-90`}>
+                            시작! ({maxQuestions})
+                        </button>
+                        <button
+                            onClick={() => setShowInsight(true)}
+                            className="flex-1 py-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl border-2 border-purple-200 font-bold text-purple-700 hover:from-purple-200 hover:to-pink-200 transition-colors"
+                        >
+                            🔮 결과보기
+                        </button>
+                    </div>
                 </div>
             )}
 
             {step === "question" && (
                 <div className="w-full flex-grow flex flex-col justify-between animate-pop h-full">
+                    {/* 테스트 헤더 (네비게이션) */}
+                    <TestHeader
+                        testName={isDeepMode ? `${currentModeData.title} (심화)` : currentModeData.title}
+                        currentQuestion={displayQuestionNum - 1}
+                        totalQuestions={displayTotalQuestions}
+                        themeColor={currentModeData.themeColor}
+                        onBack={handleGoBack}
+                        onExit={handleExit}
+                    />
+                    {/* 진행률 바 */}
                     <div className="w-full bg-gray-200 rounded-full h-4 border-2 border-gray-800 mb-6">
-                        <div className={`${currentModeData.themeColor} h-full rounded-full border-r-2 border-gray-800 progress-bar-fill`} style={{ width: `${((qIdx + 1) / maxQuestions) * 100}%` }}></div>
+                        <div className={`${currentModeData.themeColor} h-full rounded-full border-r-2 border-gray-800 progress-bar-fill`} style={{ width: `${(displayQuestionNum / displayTotalQuestions) * 100}%` }}></div>
                     </div>
                     <div className="text-center flex-grow flex flex-col justify-center">
-                        <span className={`text-xl ${currentModeData.themeColor.replace('bg', 'text')} font-bold mb-2`}>Q{qIdx + 1}.</span>
+                        <span className={`text-xl ${currentModeData.themeColor.replace('bg', 'text')} font-bold mb-2`}>Q{displayQuestionNum}.</span>
                         <h2 className="text-2xl font-bold text-gray-800 mb-6 break-keep leading-relaxed min-h-[80px] flex items-center justify-center">{questions[qIdx]?.q}</h2>
                         <IconComponent mood="excited" />
                     </div>
@@ -226,7 +291,13 @@ const App = () => {
             )}
 
             {step === "loading" && (
-                <div className="text-center w-full flex-grow flex flex-col items-center justify-center h-full">
+                <div className="text-center w-full flex-grow flex flex-col items-center justify-center h-full relative">
+                    <button
+                        onClick={handleExit}
+                        className="absolute top-0 left-0 text-gray-400 hover:text-gray-600 font-medium text-sm"
+                    >
+                        ✕ 취소
+                    </button>
                     <h2 className="text-2xl font-bold text-gray-800 mb-8">결과를 뽑는 중...</h2>
                     <div className="animate-shake cursor-pointer"><Capsule /></div>
                     <p className="mt-8 text-gray-400 animate-pulse">두근두근...</p>
@@ -339,8 +410,9 @@ const App = () => {
                     {/* 다음 테스트 추천 */}
                     <NextTestRecommendation currentTest={mode} onSelectTest={restart} />
 
-                    <div className="w-full mt-auto pt-4 flex-shrink-0 pb-4">
-                        <button onClick={() => restart()} className="doodle-border w-full py-3 bg-white font-bold text-gray-500 hover:bg-gray-100">다시 하기</button>
+                    <div className="w-full mt-auto pt-4 flex-shrink-0 pb-4 flex gap-3">
+                        <button onClick={() => restart()} className="flex-1 doodle-border py-3 bg-white font-bold text-gray-500 hover:bg-gray-100">🔄 다시</button>
+                        <button onClick={() => setStep('intro')} className="flex-1 doodle-border py-3 bg-gray-100 font-bold text-gray-600 hover:bg-gray-200">🏠 목록</button>
                     </div>
                 </div>
             )}
@@ -389,6 +461,17 @@ const App = () => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* 통합 인사이트 화면 */}
+            {showInsight && (
+                <InsightView
+                    onClose={() => setShowInsight(false)}
+                    onSelectTest={(testType) => {
+                        setShowInsight(false);
+                        restart(testType);
+                    }}
+                />
             )}
         </div>
     );
