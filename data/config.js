@@ -109,6 +109,14 @@ const SUBJECT_CONFIG = {
         tabActiveColor: "bg-amber-200 border-amber-600",
         checkColor: "text-amber-700",
         analysisButtonText: "☕ 상세 취향 분석 보기"
+    },
+    conflictStyle: {
+        testType: "personality",
+        icon: "HeartHandshake",
+        label: "갈등 대처",
+        intro: ["갈등 상황에서 나는?", "연인과 싸울 때 어떻게?", "나의 대처 유형은?"],
+        resultFormat: "simple",
+        deepButtonText: "갈등 대처"
     }
 };
 
