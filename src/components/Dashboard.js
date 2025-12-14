@@ -29,7 +29,6 @@ const SUBJECT_CATEGORIES = {
     love: { label: '연애', emoji: '💕' }
 };
 
-
 // 테스트별 주제 카테고리 매핑
 const TEST_SUBJECT_MAP = {
     // 나
