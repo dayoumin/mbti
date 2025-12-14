@@ -31,6 +31,7 @@ export interface ResultLabel {
   mood: string;
   color: string;
   matchPoints?: string[];
+  nextTest?: string;  // 세부 테스트 연결 (예: petMatch → dogBreed)
 }
 
 export interface SubjectData {
@@ -66,7 +67,11 @@ export interface SubjectConfig {
   analysisButtonText?: string;
 }
 
-export type SubjectKey = 'human' | 'cat' | 'dog' | 'rabbit' | 'hamster' | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'conflictStyle';
+export type SubjectKey =
+  | 'human' | 'cat' | 'dog' | 'rabbit' | 'hamster'
+  | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'conflictStyle'
+  // petMatch 세부 테스트
+  | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 
 export interface ChemiData {
   [key: string]: SubjectData;

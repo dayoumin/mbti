@@ -11,6 +11,13 @@ import { plantData } from './subjects/plant';
 import { petMatchData } from './subjects/petMatch';
 import { coffeeData } from './subjects/coffee';
 import { conflictStyleData } from './subjects/conflictStyle';
+// petMatch 세부 테스트
+import { dogBreedData } from './subjects/dogBreed';
+import { catBreedData } from './subjects/catBreed';
+import { smallPetData } from './subjects/smallPet';
+import { fishTypeData } from './subjects/fishType';
+import { birdTypeData } from './subjects/birdType';
+import { reptileTypeData } from './subjects/reptileType';
 
 export const CHEMI_DATA: ChemiData = {
   human: humanData,
@@ -22,11 +29,20 @@ export const CHEMI_DATA: ChemiData = {
   plant: plantData,
   petMatch: petMatchData,
   coffee: coffeeData,
-  conflictStyle: conflictStyleData
+  conflictStyle: conflictStyleData,
+  // petMatch 세부 테스트
+  dogBreed: dogBreedData,
+  catBreed: catBreedData,
+  smallPet: smallPetData,
+  fishType: fishTypeData,
+  birdType: birdTypeData,
+  reptileType: reptileTypeData
 };
 
 export const SUBJECT_KEYS: SubjectKey[] = [
-  'human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant', 'petMatch', 'coffee', 'conflictStyle'
+  'human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant', 'petMatch', 'coffee', 'conflictStyle',
+  // petMatch 세부 테스트
+  'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
 
 // Re-export everything

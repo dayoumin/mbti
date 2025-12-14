@@ -118,5 +118,84 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     intro: ["갈등 상황에서 나는?", "연인과 싸울 때 어떻게?", "나의 대처 유형은?"],
     resultFormat: "simple",
     deepButtonText: "갈등 대처"
+  },
+  // === petMatch 세부 테스트 ===
+  dogBreed: {
+    testType: "matching",
+    icon: "DogFace",
+    label: "강아지 품종",
+    intro: ["어떤 강아지가 맞을까?", "나의 라이프스타일에 맞는 품종은?", "첫 강아지 고민 중?"],
+    resultFormat: "matching",
+    deepButtonText: "강아지 품종",
+    matchPointsTitle: "🐕 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "🏠 키우기 팁" },
+    tabActiveColor: "bg-amber-100 border-amber-400",
+    checkColor: "text-amber-600",
+    analysisButtonText: "🐕 상세 성향 분석 보기"
+  },
+  catBreed: {
+    testType: "matching",
+    icon: "CatFace",
+    label: "고양이 품종",
+    intro: ["어떤 고양이가 맞을까?", "나의 라이프스타일에 맞는 품종은?", "첫 고양이 고민 중?"],
+    resultFormat: "matching",
+    deepButtonText: "고양이 품종",
+    matchPointsTitle: "🐱 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "🏠 키우기 팁" },
+    tabActiveColor: "bg-slate-100 border-slate-400",
+    checkColor: "text-slate-600",
+    analysisButtonText: "🐱 상세 성향 분석 보기"
+  },
+  smallPet: {
+    testType: "matching",
+    icon: "HamsterFace",
+    label: "소동물",
+    intro: ["어떤 소동물이 맞을까?", "첫 소동물 고민 중?", "나에게 맞는 소동물은?"],
+    resultFormat: "matching",
+    deepButtonText: "소동물",
+    matchPointsTitle: "🐹 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "🏠 키우기 팁" },
+    tabActiveColor: "bg-pink-100 border-pink-300",
+    checkColor: "text-pink-500",
+    analysisButtonText: "🐹 상세 성향 분석 보기"
+  },
+  fishType: {
+    testType: "matching",
+    icon: "FishIcon",
+    label: "관상어",
+    intro: ["어떤 물고기가 맞을까?", "첫 어항 고민 중?", "나에게 맞는 관상어는?"],
+    resultFormat: "matching",
+    deepButtonText: "관상어",
+    matchPointsTitle: "🐟 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "🌊 키우기 팁" },
+    tabActiveColor: "bg-blue-100 border-blue-400",
+    checkColor: "text-blue-500",
+    analysisButtonText: "🐟 상세 성향 분석 보기"
+  },
+  birdType: {
+    testType: "matching",
+    icon: "BirdIcon",
+    label: "반려조",
+    intro: ["어떤 새가 맞을까?", "첫 반려조 고민 중?", "나에게 맞는 새는?"],
+    resultFormat: "matching",
+    deepButtonText: "반려조",
+    matchPointsTitle: "🐦 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "🪶 키우기 팁" },
+    tabActiveColor: "bg-sky-100 border-sky-400",
+    checkColor: "text-sky-500",
+    analysisButtonText: "🐦 상세 성향 분석 보기"
+  },
+  reptileType: {
+    testType: "matching",
+    icon: "ReptileIcon",
+    label: "파충류",
+    intro: ["어떤 파충류가 맞을까?", "첫 파충류 고민 중?", "나에게 맞는 파충류는?"],
+    resultFormat: "matching",
+    deepButtonText: "파충류",
+    matchPointsTitle: "🦎 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "🌡️ 키우기 팁" },
+    tabActiveColor: "bg-emerald-100 border-emerald-400",
+    checkColor: "text-emerald-600",
+    analysisButtonText: "🦎 상세 성향 분석 보기"
   }
 };
