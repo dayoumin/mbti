@@ -14,10 +14,42 @@
 | 신규 테스트 추가 | 🔄 진행 중 (1/6 완료) |
 | **커뮤니티 전략** | ✅ 문서화 완료 |
 | **공유 카드 (Phase 1)** | ✅ 완료 |
+| **퀴즈/투표 데이터** | ✅ 기본 구조 완료 |
 
 ---
 
 ## 최근 완료 (2025-12-14)
+
+### 퀴즈/투표 콘텐츠 시스템
+
+**데이터 구조:**
+- ✅ `src/data/content/types.ts` - 타입 정의 (KnowledgeQuiz, ScenarioQuiz, VSPoll 등)
+- ✅ `src/data/content/quizzes/` - 퀴즈 데이터 폴더
+- ✅ `src/data/content/polls/` - 투표 데이터 폴더
+
+**지식 퀴즈:**
+- ✅ `cat-knowledge.ts` - 고양이 상식 퀴즈 12개
+- ✅ `dog-knowledge.ts` - 강아지 상식 퀴즈 12개
+
+**시나리오 퀴즈:**
+- ✅ `cat-scenario.ts` - "나의 집사 점수는?" (10문항, 5등급)
+- ✅ `dog-scenario.ts` - "나의 견주력 테스트" (10문항, 5등급)
+
+**VS 투표:**
+- ✅ `vs-polls.ts` - VS 투표 27개 (고양이/강아지/연애/라이프스타일 등)
+
+**통합 Export:**
+- ✅ `src/data/content/index.ts` - 통합 export, 통계 함수
+
+---
+
+### next-app 폴더 정리
+
+- ✅ 모든 문서에서 `next-app/` 경로 → `src/` 경로로 업데이트
+- ✅ 스크립트 경로 수정 (`validate-test-data.mjs`, `test-matching-logic.mjs` 등)
+- ✅ 빈 `next-app/` 폴더 삭제
+
+---
 
 ### ResultService 정리 및 Dashboard UI 개선
 
@@ -128,6 +160,46 @@
 
 ## 다음 작업
 
+### 🎯 퀴즈/투표 콘텐츠 확장 (우선순위 1)
+
+> 현재 반려동물별 지식 퀴즈와 투표 콘텐츠 제작 중
+
+| 순위 | 기능 | 난이도 | 임팩트 | 상태 |
+|------|------|--------|--------|------|
+| 1 | **퀴즈/투표 데이터 구조** | 낮음 | 높음 | 🔄 진행 중 |
+| 2 | **메인페이지 퀴즈/투표 섹션** | 중간 | 높음 | ⏳ 대기 |
+| 3 | **분야별 랭킹** (인기 1위 배지) | 중간 | 중간 | ⏳ 대기 |
+| 4 | **게이미피케이션** (배지/스트릭) | 중간 | 높음 | ⏳ 대기 |
+
+**콘텐츠 방향:**
+- 상황별 추천 퀴즈: "우울할 때 좋은 커피 순위", "여행갈 때 조심해야 할 OO"
+- 지식 퀴즈: 반려동물별 상식 퀴즈 (강아지/고양이/토끼 등)
+- VS 투표: 이것 vs 저것 투표
+- 분야별 배지: "🏆 반려동물 인기 1위" 등 카테고리 순위
+
+**데이터 구조 (`content-system.ts`):**
+- ScenarioQuiz: 상황 + 선택지 + 결과
+- KnowledgeQuiz: 문제 + 정답 + 해설
+- VSPoll: A vs B + 투표 결과
+
+---
+
+### 메인페이지 UX 개선
+
+> 참고: [푸망](https://poomang.com/), [테스트모아](https://testmoa.com/), [케이테스트](https://ktestone.com/), [16Personalities](https://www.16personalities.com/)
+
+| 순위 | 기능 | 난이도 | 임팩트 | 상태 |
+|------|------|--------|--------|------|
+| 1 | **분야별 순위 배지** | 낮음 | 중간 | ⏳ 대기 |
+| 2 | **롤링 배너** | 중간 | 중간 | ⏳ 대기 |
+| 3 | **북마크/찜하기** | 중간 | 중간 | ⏳ 대기 |
+| 4 | **검색** | 낮음 | 낮음 | ⏳ 대기 (테스트 수 적을 때) |
+
+**변경 사항:**
+- 플레이 횟수 단독 표시 → 분야별 순위 배지로 변경 (사용자 관심사 다양성 고려)
+
+---
+
 ### 커뮤니티 Phase 1 (나머지)
 1. ~~**SNS 공유 카드 생성**~~ ✅ 완료
 2. **카카오톡 공유** - SDK 연동, 커스텀 템플릿 (앱 마무리 후)
@@ -164,20 +236,16 @@
 ### 2025-12-14
 | 파일 | 변경 |
 |------|------|
-| `next-app/src/services/ResultService.js` | 삭제 - TS 구현만 사용 |
-| `next-app/src/services/ResultService.ts` | parentInfo 저장 로직 추가 |
-| `next-app/src/components/Dashboard.js` | 카테고리 UI, FeaturedTestCard, CompletedTestCard 추가 |
-| `next-app/supabase/migrations/002_mbti_results_parent_info.sql` | 신규 생성 - parent 컬럼 추가 |
-| `next-app/src/components/ShareCard.tsx` | 신규 생성 - Canvas 기반 공유 카드 |
-| `next-app/src/app/page.js` | ShareCard 통합, 공유/비교 CTA 버튼 추가 |
-| `next-app/src/components/index.ts` | ShareCard export 추가 |
-| `next-app/src/app/dashboard/components/CommunityStrategy.tsx` | 신규 생성 - 커뮤니티 전략 UI |
-| `next-app/src/app/dashboard/data/community.ts` | 신규 생성 - 커뮤니티 전략 데이터 |
-| `next-app/src/app/dashboard/page.tsx` | 커뮤니티 서브탭 추가, 구조 개선 |
-| `next-app/src/data/subjects/conflictStyle.ts` | 신규 생성 - 갈등 대처 테스트 데이터 |
-| `next-app/src/data/types.ts` | SubjectKey에 conflictStyle 추가 |
-| `next-app/src/data/config.ts` | SUBJECT_CONFIG에 conflictStyle 추가 |
-| `next-app/src/data/index.ts` | conflictStyle export 추가 |
-| `data/subjects/conflictStyle.js` | 신규 생성 - 레거시 동기화 |
-| `data/config.js` | SUBJECT_CONFIG에 conflictStyle 추가 |
-| `index.html` | conflictStyle.js 스크립트 로딩 추가 |
+| `src/services/ResultService.ts` | parentInfo 저장 로직 추가 |
+| `src/components/Dashboard.js` | 카테고리 UI, FeaturedTestCard, CompletedTestCard 추가 |
+| `supabase/migrations/002_mbti_results_parent_info.sql` | 신규 생성 - parent 컬럼 추가 |
+| `src/components/ShareCard.tsx` | 신규 생성 - Canvas 기반 공유 카드 |
+| `src/app/page.js` | ShareCard 통합, 공유/비교 CTA 버튼 추가 |
+| `src/components/index.ts` | ShareCard export 추가 |
+| `src/app/dashboard/components/CommunityStrategy.tsx` | 신규 생성 - 커뮤니티 전략 UI |
+| `src/app/dashboard/data/community.ts` | 신규 생성 - 커뮤니티 전략 데이터 |
+| `src/app/dashboard/page.tsx` | 커뮤니티 서브탭 추가, 구조 개선 |
+| `src/data/subjects/conflictStyle.ts` | 신규 생성 - 갈등 대처 테스트 데이터 |
+| `src/data/types.ts` | SubjectKey에 conflictStyle 추가 |
+| `src/data/config.ts` | SUBJECT_CONFIG에 conflictStyle 추가 |
+| `src/data/index.ts` | conflictStyle export 추가 |

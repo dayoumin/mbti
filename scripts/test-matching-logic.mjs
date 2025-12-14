@@ -109,7 +109,7 @@ function matchResultLabel(scores, dimensions, resultLabels, dimCounts) {
 
 // conflictStyle 데이터 로드
 function loadConflictStyleData() {
-  const filePath = join(projectRoot, 'next-app', 'src', 'data', 'subjects', 'conflictStyle.ts');
+  const filePath = join(projectRoot, 'src', 'data', 'subjects', 'conflictStyle.ts');
   const content = readFileSync(filePath, 'utf-8');
 
   const match = content.match(/export\s+const\s+\w+Data[^=]*=\s*(\{[\s\S]*\})\s*;?\s*$/);

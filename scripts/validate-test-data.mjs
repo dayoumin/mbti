@@ -125,7 +125,7 @@ class ValidationResult {
 // ============================================================
 
 function loadNextData(subject) {
-  const filePath = join(projectRoot, 'next-app', 'src', 'data', 'subjects', `${subject}.ts`);
+  const filePath = join(projectRoot, 'src', 'data', 'subjects', `${subject}.ts`);
   if (!existsSync(filePath)) return null;
 
   const content = readFileSync(filePath, 'utf-8');

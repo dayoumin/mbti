@@ -166,19 +166,19 @@ petMatch (반려동물 매칭)
 ## 수정된 파일 목록
 
 ### 새로 생성된 파일
-- `next-app/src/data/subjects/dogBreed.ts`
-- `next-app/src/data/subjects/catBreed.ts`
-- `next-app/src/data/subjects/smallPet.ts`
-- `next-app/src/data/subjects/fishType.ts`
-- `next-app/src/data/subjects/birdType.ts`
-- `next-app/src/data/subjects/reptileType.ts`
+- `src/data/subjects/dogBreed.ts`
+- `src/data/subjects/catBreed.ts`
+- `src/data/subjects/smallPet.ts`
+- `src/data/subjects/fishType.ts`
+- `src/data/subjects/birdType.ts`
+- `src/data/subjects/reptileType.ts`
 
 ### 수정된 파일
-- `next-app/src/data/types.ts` - SubjectKey 확장
-- `next-app/src/data/index.ts` - import/export 추가
-- `next-app/src/data/config.ts` - SUBJECT_CONFIG 추가
-- `next-app/src/data/subjects/petMatch.ts` - nextTest 필드 추가
-- `next-app/src/app/dashboard/page.tsx` - TEST_ICONS 추가
+- `src/data/types.ts` - SubjectKey 확장
+- `src/data/index.ts` - import/export 추가
+- `src/data/config.ts` - SUBJECT_CONFIG 추가
+- `src/data/subjects/petMatch.ts` - nextTest 필드 추가
+- `src/app/dashboard/page.tsx` - TEST_ICONS 추가
 
 ### 검증 스크립트
 - `scripts/test-detail-tests.mjs` - 세부 테스트 검증용

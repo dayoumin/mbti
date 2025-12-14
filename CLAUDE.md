@@ -26,16 +26,22 @@
 | 링크 | 설명 |
 |------|------|
 | **[src/](src/)** | 소스 코드 |
-| **[src/app/dashboard](src/app/dashboard/)** | 프로젝트 대시보드 |
-| **[docs/PROGRESS.md](docs/PROGRESS.md)** | 진행 상황 |
+| **[/dashboard](/dashboard)** | 🔗 프로젝트 대시보드 (모든 기획/전략 통합) |
 
-### 상세 문서
+### 대시보드 주요 섹션
+| 섹션 | 설명 |
+|------|------|
+| 전략 > 콘텐츠 시스템 | 퀴즈/투표/Q&A 기획, 데이터 구조, 구현 로드맵 |
+| 전략 > 커뮤니티 | 커뮤니티 전략 Phase 1~4, 리스크, 지표 |
+| 전략 > 로드맵 | 전체 개발 로드맵 |
+| 개발 도구 > 시뮬레이터 | 결과 매칭 테스트 |
+| 테스트 관리 | 테스트별 상세 스펙, 질문 미리보기 |
+
+### 참고 문서 (레거시)
 | 링크 | 설명 |
 |------|------|
-| [docs/planning/EXTENSION_ARCHITECTURE.md](docs/planning/EXTENSION_ARCHITECTURE.md) | 확장 아키텍처 (Supabase/인사이트) |
+| [docs/planning/EXTENSION_ARCHITECTURE.md](docs/planning/EXTENSION_ARCHITECTURE.md) | Supabase 스키마/인사이트 설계 |
 | [docs/design/DESIGN_SYSTEM.md](docs/design/DESIGN_SYSTEM.md) | UI/로직/스타일 규칙 |
-| [docs/planning/QUESTION_BANK.md](docs/planning/QUESTION_BANK.md) | 문제은행, 랜덤 출제 규칙 |
-| [docs/planning/QUESTION_DESIGN.md](docs/planning/QUESTION_DESIGN.md) | 질문 작성 원칙 |
 
 ---
 
@@ -47,35 +53,26 @@ MBTI/
 │   ├── app/
 │   │   ├── page.js            # 메인 테스트 (/, home/test/result 화면)
 │   │   ├── dashboard/
-│   │   │   └── page.tsx       # 대시보드 (통계/테스트관리/시뮬레이터)
+│   │   │   ├── page.tsx       # 대시보드 메인
+│   │   │   ├── components/    # 대시보드 전용 컴포넌트
+│   │   │   │   ├── CommunityStrategy.tsx   # 커뮤니티 전략 뷰어
+│   │   │   │   └── ContentSystem.tsx       # 퀴즈/투표/Q&A 기획 뷰어
+│   │   │   └── data/          # 대시보드 전용 데이터
+│   │   │       ├── community.ts        # 커뮤니티 전략 데이터
+│   │   │       └── content-system.ts   # 콘텐츠 시스템 데이터
 │   │   ├── layout.tsx         # 루트 레이아웃
 │   │   └── globals.css        # 전역 스타일
-│   ├── components/
-│   │   ├── Icons.tsx          # 9종 아이콘 (mood 변형)
-│   │   ├── TraitBar.tsx       # 성향 막대 그래프
-│   │   ├── ModeTabs.tsx       # 테스트 선택 탭
-│   │   ├── TestHeader.tsx     # 테스트 헤더 (뒤로/종료)
-│   │   ├── Dashboard.js       # 대시보드 메인 컴포넌트
-│   │   ├── ShareCard.tsx      # SNS 공유 카드
-│   │   └── index.ts           # 컴포넌트 export
-│   ├── data/
-│   │   ├── types.ts           # 타입 정의 (SubjectKey, Question, ResultLabel...)
-│   │   ├── constants.ts       # 상수 (CHEMI_CONSTANTS)
+│   ├── components/            # 공통 컴포넌트
+│   ├── data/                  # 테스트 데이터
+│   │   ├── types.ts           # 타입 정의
 │   │   ├── config.ts          # SUBJECT_CONFIG, TEST_TYPES
-│   │   ├── utils.ts           # matchResultLabel, getScoreLevel
-│   │   ├── subjects/*.ts      # 테스트 데이터
+│   │   ├── subjects/*.ts      # 테스트별 데이터
 │   │   └── index.ts           # CHEMI_DATA 통합
-│   └── services/
-│       ├── ResultService.ts   # 결과 저장/조회 (localStorage/Supabase)
-│       ├── InsightService.js  # 인사이트 생성
-│       └── index.ts
-├── public/                    # 정적 파일
-├── supabase/                  # Supabase 마이그레이션
-├── docs/                      # 문서
+│   └── services/              # 서비스 레이어
+├── docs/                      # 레거시 문서 (대시보드로 통합 중)
 ├── scripts/                   # 검증/테스트 스크립트
 ├── legacy/                    # 레거시 코드 (사용 안함)
-├── package.json
-└── tsconfig.json
+└── package.json
 ```
 
 ---

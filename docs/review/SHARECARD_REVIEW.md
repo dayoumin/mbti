@@ -1,7 +1,7 @@
 # ShareCard 컴포넌트 코드 리뷰
 
 > 작성일: 2025-12-14
-> 리뷰 대상: `next-app/src/components/ShareCard.tsx`
+> 리뷰 대상: `src/components/ShareCard.tsx`
 
 ---
 
@@ -13,7 +13,7 @@
 - 바이럴 루프의 핵심 컴포넌트 (커뮤니티 Phase 1)
 
 ### 파일 정보
-- **경로**: `next-app/src/components/ShareCard.tsx`
+- **경로**: `src/components/ShareCard.tsx`
 - **라인 수**: 305줄
 - **의존성**: React, lucide-react (아이콘)
 
@@ -133,8 +133,8 @@ node scripts/test-share-card.mjs
 
 | 파일 | 역할 |
 |-----|------|
-| `next-app/src/app/page.js` | ShareCard 사용처, maxScores 계산 |
-| `next-app/src/components/index.ts` | ShareCard export |
+| `src/app/page.js` | ShareCard 사용처, maxScores 계산 |
+| `src/components/index.ts` | ShareCard export |
 | `scripts/test-share-card.mjs` | 로직 테스트 스크립트 |
 
 ---

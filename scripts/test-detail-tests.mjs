@@ -17,7 +17,7 @@ const LEVEL_THRESHOLDS = { HIGH: 60, LOW: 40 };
 
 // TypeScript 파일에서 데이터 추출 (간단한 파싱)
 function loadTestData(testName) {
-    const filePath = join(__dirname, '..', 'next-app', 'src', 'data', 'subjects', `${testName}.ts`);
+    const filePath = join(__dirname, '..', 'src', 'data', 'subjects', `${testName}.ts`);
     const content = readFileSync(filePath, 'utf-8');
 
     // dimensions 추출 - dimensions 블록 내의 키들 찾기

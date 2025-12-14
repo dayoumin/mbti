@@ -2,8 +2,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const subjectsDir = path.join(process.cwd(), 'data/subjects');
-const outputDir = path.join(process.cwd(), 'next-app/src/data/subjects');
+const subjectsDir = path.join(process.cwd(), 'legacy/data/subjects');
+const outputDir = path.join(process.cwd(), 'src/data/subjects');
 
 // 출력 디렉토리 생성
 if (!fs.existsSync(outputDir)) {
