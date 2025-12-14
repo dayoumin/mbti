@@ -58,6 +58,7 @@ import CommunityStrategy from './components/CommunityStrategy';
 import ContentSystem from './components/ContentSystem';
 import ProfileSystem from './components/ProfileSystem';
 import PostDetailTestStrategy from './components/PostDetailTestStrategy';
+import SocialFeatures from './components/SocialFeatures';
 
 // ============================================================================
 // Types
@@ -120,6 +121,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'vision', label: '비전/해자', icon: <Sparkles className="w-4 h-4" /> },
       { key: 'content', label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
       { key: 'postDetailTest', label: '세부테스트 후 여정', icon: <RefreshCw className="w-4 h-4" /> },
+      { key: 'social', label: '소셜 기능', icon: <Share2 className="w-4 h-4" /> },
       { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
       { key: 'aiDefense', label: 'AI 시대 대응', icon: <Brain className="w-4 h-4" /> },
       { key: 'uxFlow', label: 'UX 흐름', icon: <RefreshCw className="w-4 h-4" /> },
@@ -328,6 +330,7 @@ export default function DashboardPage() {
           {activeCategory === 'strategy' && activeSubTab === 'vision' && <VisionMoat />}
           {activeCategory === 'strategy' && activeSubTab === 'content' && <ContentSystem />}
           {activeCategory === 'strategy' && activeSubTab === 'postDetailTest' && <PostDetailTestStrategy />}
+          {activeCategory === 'strategy' && activeSubTab === 'social' && <SocialFeatures />}
           {activeCategory === 'strategy' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'strategy' && activeSubTab === 'aiDefense' && <AIDefense />}
           {activeCategory === 'strategy' && activeSubTab === 'uxFlow' && <UXFlow />}
