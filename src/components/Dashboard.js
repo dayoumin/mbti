@@ -59,11 +59,13 @@ const TEST_SUBJECT_MAP = {
 };
 
 // 테스트 배지 설정
+// HOT: 인기, NEW: 신규, UPDATE: 업데이트됨
 const TEST_BADGES = {
     human: 'HOT',
     fruit: 'NEW',
     alcohol: 'NEW',
-    bread: 'NEW'
+    bread: 'NEW',
+    // tea: 'UPDATE', // 예시: 업데이트된 테스트
 };
 
 // Compact Test Item (아이콘 + 제목 + 배지) - 더 작게
@@ -73,12 +75,13 @@ const CompactTestItem = ({ item, onStart, badge }) => {
     return (
         <button
             onClick={() => onStart(item.key)}
-            className="group flex flex-col items-center gap-1 p-1.5 rounded-lg bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 relative"
+            className="group flex flex-col items-center gap-1 pt-3 pb-1.5 px-1.5 rounded-lg bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 relative"
         >
             {badge && (
-                <span className={`absolute -top-1 -right-1 px-1 py-0.5 text-[7px] font-bold rounded-full shadow-sm ${
+                <span className={`absolute top-0.5 right-0.5 px-1 py-0.5 text-[7px] font-bold rounded-full shadow-sm z-10 ${
                     badge === 'HOT' ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white' :
                     badge === 'NEW' ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white' :
+                    badge === 'UPDATE' ? 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white' :
                     'bg-slate-200 text-slate-600'
                 }`}>
                     {badge}
@@ -626,7 +629,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 />
             )}
 
-            <div className="relative max-w-md md:max-w-2xl lg:max-w-4xl mx-auto w-full pb-8 px-4">
+            <div className="relative max-w-md md:max-w-2xl lg:max-w-4xl mx-auto w-full pb-8 px-4 h-[calc(100vh-2rem)] overflow-y-auto">
                 {/* Header */}
                 <Header onProfileClick={onProfileClick} />
 
@@ -680,8 +683,8 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                     </section>
                 )}
 
-                {/* 필터 영역 - sticky로 고정 */}
-                <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 pt-1 pb-2">
+                {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
+                <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 pt-1 pb-2" style={{ minHeight: '76px' }}>
                     {/* 1차 필터: 탭 스타일 (underline) */}
                     <div className="flex items-center border-b border-slate-200">
                         {Object.keys(TEST_TYPE_TABS).map((type) => (
@@ -698,8 +701,8 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                         ))}
                     </div>
 
-                    {/* 2차 필터: 작은 칩 스타일 */}
-                    <div className="mt-2 overflow-x-auto no-scrollbar">
+                    {/* 2차 필터: 작은 칩 스타일 - 고정 높이 */}
+                    <div className="mt-2 overflow-x-auto no-scrollbar h-8">
                         <div className="flex gap-1">
                             {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
                                 const count = subjectCounts[sub] || 0;
@@ -719,10 +722,10 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 </div>
 
                 {/* All Tests - Single Grid */}
-                <section className="animate-fade-in-up min-h-[200px]">
+                <section className="animate-fade-in-up">
 
-                    {/* Grid: 모바일 5열, PC 6-7열 */}
-                    <div className="grid gap-1 grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
+                    {/* Grid: 모바일 5열, PC 6-7열 - 최소 높이로 레이아웃 안정화 */}
+                    <div className="grid gap-1 grid-cols-5 md:grid-cols-6 lg:grid-cols-7 min-h-[280px] content-start">
                         {filteredTests.map((item) => (
                             <CompactTestItem
                                 key={item.key}
