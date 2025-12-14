@@ -29,7 +29,6 @@ const SUBJECT_CATEGORIES = {
     love: { label: '연애', emoji: '💕' }
 };
 
-const CATEGORIES = SUBJECT_CATEGORIES;
 
 // 테스트별 주제 카테고리 매핑
 const TEST_SUBJECT_MAP = {
@@ -659,7 +658,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                                 isActive={activeType === type}
                                 onClick={() => {
                                     setActiveType(type);
-                                    setActiveSubject('all'); // 1차 필터 변경 시 2차 초기화
+                                    setActiveCategory('all'); // 1차 필터 변경 시 2차 초기화
                                 }}
                                 count={typeCounts[type]}
                             />
@@ -671,15 +670,15 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 <div className="mb-4 overflow-x-auto no-scrollbar -mx-4 px-4">
                     <div className="flex gap-1.5 pb-2">
                         {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
-                            const count = subjectCounts[sub] || 0;
+                            const count = categoryCounts[sub] || 0;
                             // '전체'는 항상 표시, 나머지는 count > 0일 때만
                             if (sub !== 'all' && count === 0) return null;
                             return (
                                 <SubjectTab
                                     key={sub}
                                     subject={sub}
-                                    isActive={activeSubject === sub}
-                                    onClick={() => setActiveSubject(sub)}
+                                    isActive={activeCategory === sub}
+                                    onClick={() => setActiveCategory(sub)}
                                     count={count}
                                     disabled={false}
                                 />
@@ -691,16 +690,16 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 {/* All Tests - Single Grid */}
                 <section className="animate-fade-in-up">
                     {/* 필터 상태 표시 */}
-                    {(activeType !== 'all' || activeSubject !== 'all') && (
+                    {(activeType !== 'all' || activeCategory !== 'all') && (
                         <div className="flex items-center gap-2 mb-3 px-1">
                             {activeType !== 'all' && (
                                 <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
                                     {TEST_TYPE_TABS[activeType].emoji} {TEST_TYPE_TABS[activeType].label}
                                 </span>
                             )}
-                            {activeSubject !== 'all' && (
+                            {activeCategory !== 'all' && (
                                 <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
-                                    {SUBJECT_CATEGORIES[activeSubject].emoji} {SUBJECT_CATEGORIES[activeSubject].label}
+                                    {SUBJECT_CATEGORIES[activeCategory].emoji} {SUBJECT_CATEGORIES[activeCategory].label}
                                 </span>
                             )}
                             <span className="text-[10px] font-medium text-slate-400">
@@ -730,7 +729,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 </section>
 
                 {/* 퀴즈/투표 섹션 - 전체일 때만 표시 (컴팩트) */}
-                {activeType === 'all' && activeSubject === 'all' && (dailyQuiz || dailyPoll) && (
+                {activeType === 'all' && activeCategory === 'all' && (dailyQuiz || dailyPoll) && (
                     <section className="mt-4 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
                         <div className="flex items-center justify-between mb-2 px-1">
                             <span className="text-xs font-bold text-slate-500">오늘의 참여</span>
@@ -770,7 +769,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 )}
 
                 {/* 세부 테스트 섹션 (접힘 가능) */}
-                {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (activeSubject === 'all' || activeSubject === 'pet') && (
+                {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (activeCategory === 'all' || activeCategory === 'pet') && (
                     <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         <button
                             onClick={() => setShowDetailTests(!showDetailTests)}
