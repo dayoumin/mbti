@@ -1,0 +1,166 @@
+// ============================================================================
+// 강아지 지식 퀴즈
+// ============================================================================
+
+import type { KnowledgeQuiz } from '../types';
+
+export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
+  {
+    id: 'dog-k-001',
+    category: 'dog',
+    question: '강아지에게 절대 주면 안 되는 과일은?',
+    options: [
+      { id: 'a', text: '사과 (씨 제거)', isCorrect: false },
+      { id: 'b', text: '포도/건포도', isCorrect: true },
+      { id: 'c', text: '수박 (씨 제거)', isCorrect: false },
+      { id: 'd', text: '바나나', isCorrect: false },
+    ],
+    explanation: '포도와 건포도는 강아지에게 급성 신부전을 일으킬 수 있어요. 소량도 매우 위험해요!',
+    difficulty: 1,
+  },
+  {
+    id: 'dog-k-002',
+    category: 'dog',
+    question: '강아지가 꼬리를 흔드는 것은 항상 기쁨의 표현일까요?',
+    options: [
+      { id: 'a', text: '네, 항상 기뻐요', isCorrect: false },
+      { id: 'b', text: '아니요, 긴장이나 불안일 수도 있어요', isCorrect: true },
+      { id: 'c', text: '배가 고플 때만 흔들어요', isCorrect: false },
+      { id: 'd', text: '아무 의미 없어요', isCorrect: false },
+    ],
+    explanation: '꼬리 흔들기는 감정의 "각성"을 나타내요. 높이, 속도, 방향에 따라 기쁨, 불안, 경계 등 다양한 의미가 있어요.',
+    difficulty: 2,
+  },
+  {
+    id: 'dog-k-003',
+    category: 'dog',
+    question: '성견 기준 하루 산책 권장 시간은?',
+    options: [
+      { id: 'a', text: '10-15분', isCorrect: false },
+      { id: 'b', text: '30분-2시간 (견종에 따라 다름)', isCorrect: true },
+      { id: 'c', text: '딱 5분', isCorrect: false },
+      { id: 'd', text: '산책 안 해도 괜찮아요', isCorrect: false },
+    ],
+    explanation: '소형견 30분-1시간, 대형견/활동적인 견종은 1-2시간 이상 권장해요. 견종별 특성을 고려하세요!',
+    difficulty: 1,
+  },
+  {
+    id: 'dog-k-004',
+    category: 'dog',
+    question: '강아지가 하품하는 이유로 틀린 것은?',
+    options: [
+      { id: 'a', text: '졸릴 때', isCorrect: false },
+      { id: 'b', text: '스트레스/긴장 해소', isCorrect: false },
+      { id: 'c', text: '다른 개의 하품을 따라서', isCorrect: false },
+      { id: 'd', text: '배가 고플 때', isCorrect: true },
+    ],
+    explanation: '강아지 하품은 졸릴 때, 스트레스 해소, 전염성 하품(공감 능력) 때문이에요. 배고픔과는 관련 없어요!',
+    difficulty: 2,
+  },
+  {
+    id: 'dog-k-005',
+    category: 'dog',
+    question: '강아지 예방접종 "종합백신(DHPPL)"에서 P가 의미하는 것은?',
+    options: [
+      { id: 'a', text: '파보바이러스', isCorrect: true },
+      { id: 'b', text: '광견병', isCorrect: false },
+      { id: 'c', text: '폐렴', isCorrect: false },
+      { id: 'd', text: '기생충', isCorrect: false },
+    ],
+    explanation: 'DHPPL = 홍역(D), 간염(H), 파보(P), 파라인플루엔자(P), 렙토스피라(L)예요.',
+    difficulty: 3,
+  },
+  {
+    id: 'dog-k-006',
+    category: 'dog',
+    question: '강아지가 코를 핥는 이유는?',
+    options: [
+      { id: 'a', text: '코가 건조해서', isCorrect: false },
+      { id: 'b', text: '후각 능력 향상을 위해', isCorrect: true },
+      { id: 'c', text: '배가 고파서', isCorrect: false },
+      { id: 'd', text: '습관이에요', isCorrect: false },
+    ],
+    explanation: '촉촉한 코는 공기 중 냄새 분자를 더 잘 포착해요. 강아지가 코를 핥는 건 "냄새를 더 잘 맡기 위해"예요!',
+    difficulty: 2,
+  },
+  {
+    id: 'dog-k-007',
+    category: 'dog',
+    question: '강아지가 빙글빙글 돌고 나서 눕는 이유는?',
+    options: [
+      { id: 'a', text: '어지러워서', isCorrect: false },
+      { id: 'b', text: '야생 본능 (잠자리 정리)', isCorrect: true },
+      { id: 'c', text: '특별한 이유 없어요', isCorrect: false },
+      { id: 'd', text: '아파서', isCorrect: false },
+    ],
+    explanation: '야생에서 풀을 눌러 편한 잠자리를 만들고, 위험 요소(뱀 등)를 확인하던 본능이 남아있어요!',
+    difficulty: 1,
+  },
+  {
+    id: 'dog-k-008',
+    category: 'dog',
+    question: '강아지의 정상 호흡수(분당)는?',
+    options: [
+      { id: 'a', text: '5-10회', isCorrect: false },
+      { id: 'b', text: '15-30회', isCorrect: true },
+      { id: 'c', text: '40-60회', isCorrect: false },
+      { id: 'd', text: '60회 이상', isCorrect: false },
+    ],
+    explanation: '휴식 시 분당 15-30회가 정상이에요. 40회 이상이면 스트레스, 더위, 또는 건강 문제일 수 있어요.',
+    difficulty: 2,
+  },
+  {
+    id: 'dog-k-009',
+    category: 'dog',
+    question: '"칼로링 시그널" 중 강아지가 입술을 핥는 것은?',
+    options: [
+      { id: 'a', text: '맛있는 게 먹고 싶다', isCorrect: false },
+      { id: 'b', text: '불안하거나 긴장됐다', isCorrect: true },
+      { id: 'c', text: '놀고 싶다', isCorrect: false },
+      { id: 'd', text: '공격 전조', isCorrect: false },
+    ],
+    explanation: '입술 핥기는 대표적인 "칼밍 시그널"로 불안, 긴장, 스트레스를 표현해요. 강아지의 불편함 신호예요.',
+    difficulty: 2,
+  },
+  {
+    id: 'dog-k-010',
+    category: 'dog',
+    question: '강아지 치아 관리를 위해 양치질은 얼마나 자주?',
+    options: [
+      { id: 'a', text: '한 달에 1번', isCorrect: false },
+      { id: 'b', text: '매일 또는 최소 주 3회', isCorrect: true },
+      { id: 'c', text: '1년에 1번', isCorrect: false },
+      { id: 'd', text: '양치질은 필요 없어요', isCorrect: false },
+    ],
+    explanation: '매일이 가장 좋지만, 최소 주 3회 양치질을 권장해요. 치석은 3일 만에 굳어버려요!',
+    difficulty: 1,
+  },
+  {
+    id: 'dog-k-011',
+    category: 'dog',
+    question: '강아지가 눈을 마주치지 않고 고개를 돌리는 것은?',
+    options: [
+      { id: 'a', text: '무시하는 거예요', isCorrect: false },
+      { id: 'b', text: '복종/갈등 회피 신호', isCorrect: true },
+      { id: 'c', text: '화났다는 신호', isCorrect: false },
+      { id: 'd', text: '놀고 싶다는 신호', isCorrect: false },
+    ],
+    explanation: '강아지 세계에서 직접적인 눈 맞춤은 도전 신호예요. 고개를 돌리는 건 "싸우고 싶지 않아요"라는 평화 신호예요.',
+    difficulty: 2,
+  },
+  {
+    id: 'dog-k-012',
+    category: 'dog',
+    question: '강아지 발바닥 패드의 역할이 아닌 것은?',
+    options: [
+      { id: 'a', text: '충격 흡수', isCorrect: false },
+      { id: 'b', text: '체온 조절 (땀 배출)', isCorrect: false },
+      { id: 'c', text: '미끄럼 방지', isCorrect: false },
+      { id: 'd', text: '냄새 맡기', isCorrect: true },
+    ],
+    explanation: '발바닥 패드는 쿠션 역할, 땀샘(체온 조절), 미끄럼 방지 기능을 해요. 냄새는 코로 맡아요!',
+    difficulty: 2,
+  },
+];
+
+export default DOG_KNOWLEDGE_QUIZZES;

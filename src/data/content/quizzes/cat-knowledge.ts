@@ -1,0 +1,166 @@
+// ============================================================================
+// 고양이 지식 퀴즈
+// ============================================================================
+
+import type { KnowledgeQuiz } from '../types';
+
+export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
+  {
+    id: 'cat-k-001',
+    category: 'cat',
+    question: '고양이가 꼬리를 수직으로 세우고 다가올 때의 기분은?',
+    options: [
+      { id: 'a', text: '화가 났다', isCorrect: false },
+      { id: 'b', text: '기분이 좋고 반갑다', isCorrect: true },
+      { id: 'c', text: '무섭다', isCorrect: false },
+      { id: 'd', text: '배가 고프다', isCorrect: false },
+    ],
+    explanation: '꼬리를 수직으로 세우는 것은 고양이가 기분이 좋고 반가움을 표현하는 대표적인 신호예요!',
+    difficulty: 1,
+  },
+  {
+    id: 'cat-k-002',
+    category: 'cat',
+    question: '고양이에게 절대 주면 안 되는 음식은?',
+    options: [
+      { id: 'a', text: '삶은 닭가슴살', isCorrect: false },
+      { id: 'b', text: '양파/파류', isCorrect: true },
+      { id: 'c', text: '삶은 호박', isCorrect: false },
+      { id: 'd', text: '수박 (씨 제거)', isCorrect: false },
+    ],
+    explanation: '양파, 대파, 쪽파 등 파류는 고양이의 적혈구를 파괴해 빈혈을 유발할 수 있어요. 소량도 위험해요!',
+    difficulty: 1,
+  },
+  {
+    id: 'cat-k-003',
+    category: 'cat',
+    question: '고양이가 "골골송"(그르릉 소리)을 내는 이유로 틀린 것은?',
+    options: [
+      { id: 'a', text: '기분이 좋을 때', isCorrect: false },
+      { id: 'b', text: '아플 때 자기 치유', isCorrect: false },
+      { id: 'c', text: '화가 나서 경고할 때', isCorrect: true },
+      { id: 'd', text: '엄마에게 젖 달라고 할 때', isCorrect: false },
+    ],
+    explanation: '골골송은 기분 좋을 때, 아플 때 자기 치유, 새끼가 엄마에게 신호 보낼 때 등에 내요. 화날 땐 "하악" 소리를 내죠!',
+    difficulty: 2,
+  },
+  {
+    id: 'cat-k-004',
+    category: 'cat',
+    question: '성묘 기준 하루 권장 물 섭취량은 체중 1kg당 약?',
+    options: [
+      { id: 'a', text: '10-20ml', isCorrect: false },
+      { id: 'b', text: '40-60ml', isCorrect: true },
+      { id: 'c', text: '100-150ml', isCorrect: false },
+      { id: 'd', text: '200ml 이상', isCorrect: false },
+    ],
+    explanation: '체중 1kg당 약 40-60ml가 적정해요. 4kg 고양이면 하루 160-240ml 정도예요. 습식 사료 급여 시 물 섭취량이 줄어들 수 있어요.',
+    difficulty: 2,
+  },
+  {
+    id: 'cat-k-005',
+    category: 'cat',
+    question: '고양이 화장실 개수의 황금 법칙은?',
+    options: [
+      { id: 'a', text: '고양이 수와 동일', isCorrect: false },
+      { id: 'b', text: '고양이 수 + 1', isCorrect: true },
+      { id: 'c', text: '고양이 수 x 2', isCorrect: false },
+      { id: 'd', text: '집안 방 개수와 동일', isCorrect: false },
+    ],
+    explanation: '"N+1 법칙"이라고 해요. 고양이 수보다 1개 많은 화장실을 준비하면 스트레스가 줄어요!',
+    difficulty: 1,
+  },
+  {
+    id: 'cat-k-006',
+    category: 'cat',
+    question: '고양이가 천천히 눈을 깜빡이는 것은 무슨 의미일까요?',
+    options: [
+      { id: 'a', text: '졸리다', isCorrect: false },
+      { id: 'b', text: '"사랑해" 표현', isCorrect: true },
+      { id: 'c', text: '눈이 아프다', isCorrect: false },
+      { id: 'd', text: '밥 달라는 신호', isCorrect: false },
+    ],
+    explanation: '슬로우 블링크(Slow Blink)는 고양이의 "사랑해" 표현이에요! 당신도 천천히 눈을 깜빡여 대답해주세요.',
+    difficulty: 1,
+  },
+  {
+    id: 'cat-k-007',
+    category: 'cat',
+    question: '고양이가 배를 보여주는 행동의 의미는?',
+    options: [
+      { id: 'a', text: '배를 만져달라는 신호', isCorrect: false },
+      { id: 'b', text: '신뢰와 편안함의 표현', isCorrect: true },
+      { id: 'c', text: '복통이 있다', isCorrect: false },
+      { id: 'd', text: '더워서 열을 식히려고', isCorrect: false },
+    ],
+    explanation: '배는 고양이의 가장 취약한 부위예요. 배를 보여주는 건 신뢰의 표현이지, 만져달라는 건 아닐 수 있어요!',
+    difficulty: 2,
+  },
+  {
+    id: 'cat-k-008',
+    category: 'cat',
+    question: '고양이의 정상 체온 범위는?',
+    options: [
+      { id: 'a', text: '35.5-36.5°C', isCorrect: false },
+      { id: 'b', text: '37.5-39.2°C', isCorrect: true },
+      { id: 'c', text: '39.5-40.5°C', isCorrect: false },
+      { id: 'd', text: '36.5-37.5°C', isCorrect: false },
+    ],
+    explanation: '고양이의 정상 체온은 37.5-39.2°C로 사람보다 높아요. 39.5°C 이상이면 발열을 의심해야 해요.',
+    difficulty: 2,
+  },
+  {
+    id: 'cat-k-009',
+    category: 'cat',
+    question: '캣닢(캣닙)에 반응하는 고양이의 비율은 약?',
+    options: [
+      { id: 'a', text: '약 30%', isCorrect: false },
+      { id: 'b', text: '약 50-70%', isCorrect: true },
+      { id: 'c', text: '약 90%', isCorrect: false },
+      { id: 'd', text: '100% (모든 고양이)', isCorrect: false },
+    ],
+    explanation: '캣닢 반응은 유전적이에요. 약 50-70%의 고양이만 반응하고, 새끼 고양이는 반응하지 않아요.',
+    difficulty: 2,
+  },
+  {
+    id: 'cat-k-010',
+    category: 'cat',
+    question: '고양이 예방접종 중 "3종"에 포함되지 않는 것은?',
+    options: [
+      { id: 'a', text: '범백혈구감소증', isCorrect: false },
+      { id: 'b', text: '허피스바이러스', isCorrect: false },
+      { id: 'c', text: '칼리시바이러스', isCorrect: false },
+      { id: 'd', text: '광견병', isCorrect: true },
+    ],
+    explanation: '3종 백신은 범백(파보), 허피스(비기관염), 칼리시 3가지예요. 광견병은 별도 접종이에요.',
+    difficulty: 3,
+  },
+  {
+    id: 'cat-k-011',
+    category: 'cat',
+    question: '고양이가 머리를 비비는 행동(버팅)은?',
+    options: [
+      { id: 'a', text: '가려워서', isCorrect: false },
+      { id: 'b', text: '영역 표시 + 애정 표현', isCorrect: true },
+      { id: 'c', text: '놀아달라는 신호', isCorrect: false },
+      { id: 'd', text: '스트레스 신호', isCorrect: false },
+    ],
+    explanation: '고양이 얼굴에는 페로몬 분비샘이 있어요. 머리를 비비면 "내 거야" 표시와 함께 친밀감을 표현하는 거예요!',
+    difficulty: 1,
+  },
+  {
+    id: 'cat-k-012',
+    category: 'cat',
+    question: '고양이 중성화 적정 시기는?',
+    options: [
+      { id: 'a', text: '생후 1-2개월', isCorrect: false },
+      { id: 'b', text: '생후 4-6개월', isCorrect: true },
+      { id: 'c', text: '생후 1년 이후', isCorrect: false },
+      { id: 'd', text: '첫 발정 이후', isCorrect: false },
+    ],
+    explanation: '대부분의 수의사들은 생후 4-6개월을 권장해요. 첫 발정 전에 하면 유선종양 예방 효과가 높아요.',
+    difficulty: 2,
+  },
+];
+
+export default CAT_KNOWLEDGE_QUIZZES;
