@@ -76,10 +76,6 @@ const toCamelCase = (str: string): string => {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 };
 
-const toSnakeCase = (str: string): string => {
-  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-};
-
 const keysToCamel = <T>(obj: unknown): T => {
   if (Array.isArray(obj)) {
     return obj.map(keysToCamel) as unknown as T;
@@ -142,7 +138,7 @@ const localStorageProvider: StorageProvider = {
 // 사용법:
 // 1. npm install @supabase/supabase-js
 // 2. .env.local에 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY 설정
-// 3. Supabase에서 001_mbti_results.sql 실행
+// 3. Supabase에서 001_mbti_results.sql, 002_mbti_results_parent_info.sql 실행
 
 // Supabase 클라이언트 싱글톤 (패키지 설치 시 활성화)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,7 +153,6 @@ async function getSupabaseClient() {
 
   try {
     // 동적 import로 패키지 없이도 빌드 가능하게 함
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const moduleName = '@supabase/supabase-js';
     const { createClient } = await import(/* webpackIgnore: true */ moduleName);
     supabaseClient = createClient(
@@ -190,6 +185,8 @@ const supabaseProvider: StorageProvider = {
           subject_key: data.test_type,
           result_name: data.result_key,
           result_emoji: data.result_emoji,
+          parent_test: data.parent_test,
+          parent_result: data.parent_result,
           scores: data.scores,
           is_deep_mode: data.is_deep_mode,
         })
@@ -236,6 +233,8 @@ const supabaseProvider: StorageProvider = {
         test_type: row.subject_key,
         result_key: row.result_name,
         result_emoji: row.result_emoji || '',
+        parent_test: row.parent_test || undefined,
+        parent_result: row.parent_result || undefined,
         scores: row.scores,
         is_deep_mode: row.is_deep_mode,
         created_at: row.created_at,
