@@ -19,6 +19,25 @@
 
 ## 최근 완료 (2025-12-14)
 
+### ResultService 정리 및 Dashboard UI 개선
+
+**ResultService 정리:**
+- ✅ `ResultService.js` 삭제 → TS 구현만 사용
+- ✅ `parentInfo` 저장 로직 추가 (petMatch → 세부 테스트 연결)
+- ✅ Supabase insert/select에 `parent_test`, `parent_result` 매핑
+
+**Supabase 마이그레이션:**
+- ✅ `002_mbti_results_parent_info.sql` 추가
+- `parent_test`, `parent_result` 컬럼 및 인덱스
+
+**Dashboard 카테고리 UI:**
+- ✅ 카테고리 탭 추가 (전체/나/반려동물/매칭/연애)
+- ✅ `FeaturedTestCard` - 인기 테스트 3개 강조 표시
+- ✅ `CompletedTestCard` - 완료 테스트 결과 표시 + 재시도
+- ✅ 세부 테스트 섹션 접힘 토글
+
+---
+
 ### SNS 공유 카드 구현 (커뮤니티 Phase 1)
 
 **구현 내용:**
@@ -145,6 +164,10 @@
 ### 2025-12-14
 | 파일 | 변경 |
 |------|------|
+| `next-app/src/services/ResultService.js` | 삭제 - TS 구현만 사용 |
+| `next-app/src/services/ResultService.ts` | parentInfo 저장 로직 추가 |
+| `next-app/src/components/Dashboard.js` | 카테고리 UI, FeaturedTestCard, CompletedTestCard 추가 |
+| `next-app/supabase/migrations/002_mbti_results_parent_info.sql` | 신규 생성 - parent 컬럼 추가 |
 | `next-app/src/components/ShareCard.tsx` | 신규 생성 - Canvas 기반 공유 카드 |
 | `next-app/src/app/page.js` | ShareCard 통합, 공유/비교 CTA 버튼 추가 |
 | `next-app/src/components/index.ts` | ShareCard export 추가 |
