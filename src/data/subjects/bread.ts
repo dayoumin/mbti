@@ -383,7 +383,7 @@ export const breadData: SubjectData = {
             "name": "달달한 초코빵",
             "emoji": "🍫",
             "desc": "초코 러버를 위한 선택",
-            "condition": { "sweet": "high", "filling": "medium", "texture": "low" },
+            "condition": { "sweet": "high", "filling": "low", "texture": "low" },
             "mood": "excited",
             "color": "bg-amber-900",
             "interpretation": "달콤한 초코빵! 초콜릿의 진한 달콤함을 사랑하시네요. 간식이나 디저트로 완벽한 선택이에요.",

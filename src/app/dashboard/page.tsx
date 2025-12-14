@@ -46,6 +46,9 @@ import {
   Activity,
   Share2,
   CupSoda,
+  Apple,
+  Wine,
+  Croissant,
 } from 'lucide-react';
 import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
@@ -54,6 +57,7 @@ import { TEST_TYPES, SUBJECT_CONFIG } from '@/data/config';
 import CommunityStrategy from './components/CommunityStrategy';
 import ContentSystem from './components/ContentSystem';
 import ProfileSystem from './components/ProfileSystem';
+import PostDetailTestStrategy from './components/PostDetailTestStrategy';
 
 // ============================================================================
 // Types
@@ -115,6 +119,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'vision', label: '비전/해자', icon: <Sparkles className="w-4 h-4" /> },
       { key: 'content', label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
+      { key: 'postDetailTest', label: '세부테스트 후 여정', icon: <RefreshCw className="w-4 h-4" /> },
       { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
       { key: 'aiDefense', label: 'AI 시대 대응', icon: <Brain className="w-4 h-4" /> },
       { key: 'uxFlow', label: 'UX 흐름', icon: <RefreshCw className="w-4 h-4" /> },
@@ -165,6 +170,9 @@ const TEST_ICONS: Record<SubjectKey, React.ReactNode> = {
   coffee: <Coffee className="w-5 h-5" />,
   tea: <CupSoda className="w-5 h-5" />,
   conflictStyle: <HeartHandshake className="w-5 h-5" />,
+  fruit: <Apple className="w-5 h-5" />,
+  alcohol: <Wine className="w-5 h-5" />,
+  bread: <Croissant className="w-5 h-5" />,
   // petMatch 세부 테스트
   dogBreed: <Dog className="w-5 h-5" />,
   catBreed: <Cat className="w-5 h-5" />,
@@ -319,6 +327,7 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
           {activeCategory === 'strategy' && activeSubTab === 'vision' && <VisionMoat />}
           {activeCategory === 'strategy' && activeSubTab === 'content' && <ContentSystem />}
+          {activeCategory === 'strategy' && activeSubTab === 'postDetailTest' && <PostDetailTestStrategy />}
           {activeCategory === 'strategy' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'strategy' && activeSubTab === 'aiDefense' && <AIDefense />}
           {activeCategory === 'strategy' && activeSubTab === 'uxFlow' && <UXFlow />}
