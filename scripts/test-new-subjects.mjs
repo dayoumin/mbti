@@ -5,9 +5,35 @@
  * - 결과 매칭 시뮬레이션
  */
 
-import { fruitData } from '../src/data/subjects/fruit.ts';
-import { alcoholData } from '../src/data/subjects/alcohol.ts';
-import { breadData } from '../src/data/subjects/bread.ts';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// TypeScript 파일에서 데이터 추출
+function loadSubjectData(filename) {
+    const filepath = join(__dirname, '..', 'src', 'data', 'subjects', filename);
+    const content = readFileSync(filepath, 'utf-8');
+
+    // export const xxxData: SubjectData = {...}; 패턴에서 객체 추출
+    const match = content.match(/export const \w+Data[^=]*=\s*(\{[\s\S]*\});?\s*$/);
+    if (!match) {
+        throw new Error(`Could not parse data from ${filename}`);
+    }
+
+    // JSON으로 변환 가능하게 정리
+    let jsonStr = match[1];
+    // trailing comma 제거 및 JSON 형식으로 변환
+    jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
+
+    return eval(`(${jsonStr})`);
+}
+
+const fruitData = loadSubjectData('fruit.ts');
+const alcoholData = loadSubjectData('alcohol.ts');
+const breadData = loadSubjectData('bread.ts');
 
 const LEVEL_THRESHOLDS = { HIGH: 60, LOW: 40 };
 

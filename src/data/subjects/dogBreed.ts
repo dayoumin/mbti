@@ -163,7 +163,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-amber-100",
             "interpretation": "활동적이고 가족을 사랑하는 당신에게 골든 리트리버는 최고의 동반자예요! 똑똑하고 훈련이 잘 되며, 아이들과도 잘 지내요. 넓은 공간에서 마음껏 뛰어놀 수 있으면 더 행복해해요.",
             "guide": "하루 1-2시간 운동이 필요해요. 털빠짐이 많아 주기적 빗질이 필수예요. 물놀이를 좋아해서 수영도 좋아요!",
-            "matchPoints": ["가족과 함께하는 분", "넓은 공간이 있는 분", "활동적인 생활을 하는 분", "훈련에 관심 있는 분"]
+            "matchPoints": ["가족과 함께하는 분", "넓은 공간이 있는 분", "활동적인 생활을 하는 분", "훈련에 관심 있는 분"],
+            "detailInfo": {
+                "origin": "스코틀랜드",
+                "lifespan": "10-12년",
+                "size": "대형",
+                "weight": "25-34kg",
+                "personality": ["온순함", "친근함", "충성스러움", "지능적", "활발함"],
+                "goodWith": ["어린이", "노인", "다른 강아지", "고양이"],
+                "notGoodWith": ["좁은 공간", "혼자 오래 있는 것"],
+                "exerciseNeeds": "high",
+                "groomingNeeds": "high",
+                "sheddingLevel": "high",
+                "trainingDifficulty": "easy",
+                "healthIssues": ["고관절 이형성증", "백내장", "피부 알레르기", "심장질환"],
+                "monthlyCost": { "min": 15, "max": 25, "note": "사료/간식/의료비 포함" },
+                "initialCost": { "min": 50, "max": 150, "note": "분양비+용품" },
+                "tips": [
+                    "물을 좋아하니 수영장이나 강가 산책 추천",
+                    "털빠짐이 심해 로봇청소기가 필수!",
+                    "입에 무언가 물고 다니는 걸 좋아해요",
+                    "더위에 약하니 여름철 산책 시간 조절 필요"
+                ]
+            }
         },
         {
             "name": "래브라도 리트리버",
@@ -196,7 +218,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-white",
             "interpretation": "새하얀 털에 사랑스러운 눈망울! 말티즈는 주인을 무척 따르고 애교가 넘쳐요. 아파트 생활에 완벽하게 적합하고, 운동량도 적어 바쁜 분들에게도 좋아요.",
             "guide": "분리불안이 생기기 쉬우니 어릴 때 훈련해주세요. 눈물자국 관리와 정기적 미용이 필요해요. 짧은 산책으로 충분해요!",
-            "matchPoints": ["아파트 거주자", "소형견을 원하는 분", "애교 많은 강아지를 원하는 분", "실내 생활 중심인 분"]
+            "matchPoints": ["아파트 거주자", "소형견을 원하는 분", "애교 많은 강아지를 원하는 분", "실내 생활 중심인 분"],
+            "detailInfo": {
+                "origin": "지중해 몰타",
+                "lifespan": "12-15년",
+                "size": "소형",
+                "weight": "2-4kg",
+                "personality": ["애교많음", "활발함", "영리함", "사람좋아함", "용감함"],
+                "goodWith": ["1인 가구", "노인", "아파트 생활"],
+                "notGoodWith": ["어린 아이(너무 작아서)", "혼자 오래 있는 것"],
+                "exerciseNeeds": "low",
+                "groomingNeeds": "high",
+                "sheddingLevel": "low",
+                "trainingDifficulty": "medium",
+                "healthIssues": ["슬개골 탈구", "눈물자국", "치아 문제", "저혈당"],
+                "monthlyCost": { "min": 8, "max": 15, "note": "소형견 기준" },
+                "initialCost": { "min": 80, "max": 200, "note": "분양비+용품" },
+                "tips": [
+                    "눈물자국 관리에 신경 써주세요",
+                    "분리불안 예방을 위해 어릴 때부터 훈련",
+                    "소형견이라 뼈가 약하니 높은 곳 점프 주의",
+                    "정기적 미용이 필요해요 (4-6주)"
+                ]
+            }
         },
         {
             "name": "시츄",

@@ -18,9 +18,8 @@ const TEST_TYPE_TABS = {
     matching: { label: '매칭', emoji: '💫' }
 };
 
-// 2차 필터: 주제별 카테고리
+// 2차 필터: 주제별 카테고리 (전체 제거 - 1차 필터에서 이미 전체 선택 가능)
 const SUBJECT_CATEGORIES = {
-    all: { label: '전체', emoji: '✨' },
     me: { label: '나', emoji: '👤' },
     pet: { label: '반려동물', emoji: '🐾' },
     drink: { label: '음료', emoji: '🥤' },
@@ -468,7 +467,7 @@ const VSPollCard = ({ poll, onVote, isExpanded, onToggle, isVoted = false, previ
 const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
     // 2단계 필터 상태
     const [activeType, setActiveType] = useState('all');        // 1차: 심리/매칭
-    const [activeSubject, setActiveSubject] = useState('all');  // 2차: 주제별
+    const [activeSubject, setActiveSubject] = useState(null);   // 2차: 주제별 (null = 전체)
     const [showDetailTests, setShowDetailTests] = useState(false);
 
     // 오늘의 퀴즈/투표 (클라이언트에서만 랜덤 선택)
@@ -598,7 +597,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
 
     // 2차 필터 적용 (주제별)
     const filteredTests = useMemo(() => {
-        if (activeSubject === 'all') return typeFilteredTests;
+        if (!activeSubject) return typeFilteredTests;
         return typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === activeSubject);
     }, [typeFilteredTests, activeSubject]);
 
@@ -613,11 +612,9 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
 
     // 2차 필터별 카운트 (현재 1차 필터 기준)
     const subjectCounts = useMemo(() => {
-        const counts = { all: typeFilteredTests.length };
+        const counts = {};
         Object.keys(SUBJECT_CATEGORIES).forEach(sub => {
-            if (sub !== 'all') {
-                counts[sub] = typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === sub).length;
-            }
+            counts[sub] = typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === sub).length;
         });
         return counts;
     }, [typeFilteredTests]);
@@ -650,89 +647,9 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                     />
                 )}
 
-                {/* 1차 필터: 테스트 유형 (심리/매칭) */}
-                <div className="mb-3 overflow-x-auto no-scrollbar -mx-4 px-4">
-                    <div className="flex gap-2 pb-2">
-                        {Object.keys(TEST_TYPE_TABS).map((type) => (
-                            <TypeTab
-                                key={type}
-                                type={type}
-                                isActive={activeType === type}
-                                 onClick={() => {
-                                     setActiveType(type);
-                                     setActiveSubject('all'); // 1차 필터 변경 시 2차 초기화
-                                 }}
-                                 count={typeCounts[type]}
-                             />
-                         ))}
-                    </div>
-                </div>
-
-                {/* 2차 필터: 주제별 (테스트가 있는 카테고리만 표시) */}
-                <div className="mb-4 overflow-x-auto no-scrollbar -mx-4 px-4">
-                    <div className="flex gap-1.5 pb-2">
-                        {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
-                            const count = subjectCounts[sub] || 0;
-                            // '전체'는 항상 표시, 나머지는 count > 0일 때만
-                            if (sub !== 'all' && count === 0) return null;
-                            return (
-                                <SubjectTab
-                                    key={sub}
-                                    subject={sub}
-                                    isActive={activeSubject === sub}
-                                    onClick={() => setActiveSubject(sub)}
-                                    count={count}
-                                    disabled={false}
-                                />
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* All Tests - Single Grid */}
-                <section className="animate-fade-in-up">
-                    {/* 필터 상태 표시 */}
-                    {(activeType !== 'all' || activeSubject !== 'all') && (
-                        <div className="flex items-center gap-2 mb-3 px-1">
-                            {activeType !== 'all' && (
-                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
-                                    {TEST_TYPE_TABS[activeType].emoji} {TEST_TYPE_TABS[activeType].label}
-                                </span>
-                            )}
-                            {activeSubject !== 'all' && (
-                                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
-                                    {SUBJECT_CATEGORIES[activeSubject].emoji} {SUBJECT_CATEGORIES[activeSubject].label}
-                                </span>
-                            )}
-                            <span className="text-[10px] font-medium text-slate-400">
-                                {filteredTests.length}개
-                            </span>
-                        </div>
-                    )}
-
-                    {/* Grid: 모바일 4열, PC 5-6열 */}
-                    <div className="grid gap-1.5 grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-                        {filteredTests.map((item) => (
-                            <CompactTestItem
-                                key={item.key}
-                                item={item}
-                                onStart={onStartTest}
-                                badge={TEST_BADGES[item.key]}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Empty State */}
-                    {filteredTests.length === 0 && (
-                        <div className="text-center py-12 text-slate-400">
-                            <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
-                        </div>
-                    )}
-                </section>
-
-                {/* 퀴즈/투표 섹션 - 전체일 때만 표시 (컴팩트) */}
-                {activeType === 'all' && activeSubject === 'all' && (dailyQuiz || dailyPoll) && (
-                    <section className="mt-4 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
+                {/* 오늘의 참여 섹션 - 상단 배치 */}
+                {(dailyQuiz || dailyPoll) && (
+                    <section className="mb-4 animate-fade-in-up">
                         <div className="flex items-center justify-between mb-2 px-1">
                             <span className="text-xs font-bold text-slate-500">오늘의 참여</span>
                             {onContentExplore && (
@@ -770,8 +687,91 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                     </section>
                 )}
 
+                {/* 필터 영역 - sticky로 고정 */}
+                <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm pb-3 -mx-4 px-4 pt-2">
+                    {/* 1차 필터: 테스트 유형 (심리/매칭) */}
+                    <div className="mb-2 overflow-x-auto no-scrollbar">
+                        <div className="flex gap-2">
+                            {Object.keys(TEST_TYPE_TABS).map((type) => (
+                                <TypeTab
+                                    key={type}
+                                    type={type}
+                                    isActive={activeType === type}
+                                    onClick={() => {
+                                        setActiveType(type);
+                                        setActiveSubject(null); // 1차 필터 변경 시 2차 초기화
+                                    }}
+                                    count={typeCounts[type]}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* 2차 필터: 주제별 (테스트가 있는 카테고리만 표시) */}
+                    <div className="overflow-x-auto no-scrollbar">
+                        <div className="flex gap-1.5">
+                            {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
+                                const count = subjectCounts[sub] || 0;
+                                // count > 0일 때만 표시
+                                if (count === 0) return null;
+                                return (
+                                    <SubjectTab
+                                        key={sub}
+                                        subject={sub}
+                                        isActive={activeSubject === sub}
+                                        onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
+                                        count={count}
+                                        disabled={false}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* All Tests - Single Grid */}
+                <section className="animate-fade-in-up min-h-[200px]">
+                    {/* 필터 상태 표시 */}
+                    {(activeType !== 'all' || activeSubject) && (
+                        <div className="flex items-center gap-2 mb-3 px-1">
+                            {activeType !== 'all' && (
+                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
+                                    {TEST_TYPE_TABS[activeType].emoji} {TEST_TYPE_TABS[activeType].label}
+                                </span>
+                            )}
+                            {activeSubject && SUBJECT_CATEGORIES[activeSubject] && (
+                                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
+                                    {SUBJECT_CATEGORIES[activeSubject].emoji} {SUBJECT_CATEGORIES[activeSubject].label}
+                                </span>
+                            )}
+                            <span className="text-[10px] font-medium text-slate-400">
+                                {filteredTests.length}개
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Grid: 모바일 4열, PC 5-6열 */}
+                    <div className="grid gap-1.5 grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+                        {filteredTests.map((item) => (
+                            <CompactTestItem
+                                key={item.key}
+                                item={item}
+                                onStart={onStartTest}
+                                badge={TEST_BADGES[item.key]}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Empty State */}
+                    {filteredTests.length === 0 && (
+                        <div className="text-center py-12 text-slate-400">
+                            <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
+                        </div>
+                    )}
+                </section>
+
                 {/* 세부 테스트 섹션 (접힘 가능) */}
-                {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (activeSubject === 'all' || activeSubject === 'pet') && (
+                {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
                     <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         <button
                             onClick={() => setShowDetailTests(!showDetailTests)}
