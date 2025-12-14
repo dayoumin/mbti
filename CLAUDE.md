@@ -27,7 +27,6 @@
 |------|------|
 | **[next-app/](next-app/)** | Next.js 앱 (메인) |
 | **[next-app/src/app/dashboard](next-app/src/app/dashboard/)** | 프로젝트 대시보드 |
-| **[dashboard.html](dashboard.html)** | 레거시 대시보드 (참고용) |
 | **[docs/PROGRESS.md](docs/PROGRESS.md)** | 진행 상황 |
 
 ### 상세 문서
@@ -73,14 +72,7 @@ next-app/
 
 ---
 
-## 레거시 구조 (참고용)
-
-```
-data/*.js, components/*.js, services/*.js  # 기존 HTML용
-dashboard.html, index.html                  # 레거시 UI
-```
-
-### 데이터 수정 (Next.js)
+### 데이터 수정
 ```bash
 cd next-app && npm run build  # 검증
 # next-app/src/data/subjects/{subject}.ts 편집

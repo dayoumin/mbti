@@ -408,39 +408,13 @@ function matchResultLabel(scores, dimensions, resultLabels, dimCounts) {
   return partialBest;
 }
 
-// 4. 동기화 검증
-function validateSync(subject, result) {
+// 4. 데이터 로드 (레거시 동기화 검증 제거됨)
+function loadData(subject, result) {
   const nextData = loadNextData(subject);
-  const legacyData = loadLegacyData(subject);
-
-  if (!nextData && !legacyData) {
-    result.error('동기화', '양쪽 모두 데이터 없음');
-    return null;
-  }
 
   if (!nextData) {
-    result.error('동기화', 'Next.js 데이터 없음');
-    return legacyData;
-  }
-
-  if (!legacyData) {
-    result.error('동기화', 'Legacy 데이터 없음');
-    return nextData;
-  }
-
-  // 주요 필드 비교
-  const fieldsToCompare = ['title', 'questions', 'resultLabels'];
-  let hasDiff = false;
-
-  for (const field of fieldsToCompare) {
-    if (JSON.stringify(nextData[field]) !== JSON.stringify(legacyData[field])) {
-      result.error('동기화', `${field} 불일치`, '`node scripts/compare-data-sync.mjs` 실행 권장');
-      hasDiff = true;
-    }
-  }
-
-  if (!hasDiff) {
-    result.addInfo('동기화', 'Next.js ↔ Legacy 일치');
+    result.error('데이터', 'Next.js 데이터 없음');
+    return null;
   }
 
   return nextData;
@@ -494,8 +468,8 @@ function validateQuestionQuality(data, result) {
 function validateSubject(subject) {
   const result = new ValidationResult(subject);
 
-  // 1. 동기화 검증 (데이터도 로드)
-  const data = validateSync(subject, result);
+  // 1. 데이터 로드
+  const data = loadData(subject, result);
   if (!data) {
     return result;
   }
