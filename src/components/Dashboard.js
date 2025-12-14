@@ -9,7 +9,6 @@ import { gamificationService } from '../services/GamificationService';
 import { contentParticipationService } from '../services/ContentParticipationService';
 import { ChevronRight, ChevronDown, User, HelpCircle, Vote, Flame, Star } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
-import { CompactProfile } from './MyProfile';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -74,10 +73,10 @@ const CompactTestItem = ({ item, onStart, badge }) => {
     return (
         <button
             onClick={() => onStart(item.key)}
-            className="group flex flex-col items-center gap-1.5 p-2 rounded-xl bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 relative"
+            className="group flex flex-col items-center gap-1 p-1.5 rounded-lg bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 relative"
         >
             {badge && (
-                <span className={`absolute -top-1 -right-1 px-1 py-0.5 text-[8px] font-bold rounded-full shadow-sm ${
+                <span className={`absolute -top-1 -right-1 px-1 py-0.5 text-[7px] font-bold rounded-full shadow-sm ${
                     badge === 'HOT' ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white' :
                     badge === 'NEW' ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white' :
                     'bg-slate-200 text-slate-600'
@@ -85,60 +84,49 @@ const CompactTestItem = ({ item, onStart, badge }) => {
                     {badge}
                 </span>
             )}
-            <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                <IconComponent mood="happy" className="w-7 h-7" />
+            <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-md group-hover:scale-110 transition-transform duration-300">
+                <IconComponent mood="happy" className="w-6 h-6" />
             </div>
-            <span className="text-[11px] font-bold text-slate-600 group-hover:text-indigo-600 transition-colors text-center leading-tight">
+            <span className="text-[10px] font-bold text-slate-600 group-hover:text-indigo-600 transition-colors text-center leading-tight">
                 {item.label}
             </span>
         </button>
     );
 };
 
-// 1차 필터 탭 (심리/매칭)
+// 1차 필터 탭 (underline 스타일 - 고정 탭)
 const TypeTab = ({ type, isActive, onClick, count }) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
+        className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${
             isActive
-                ? 'bg-indigo-500 text-white shadow-md'
-                : 'bg-white/60 text-slate-600 hover:bg-white hover:shadow-sm'
+                ? 'text-indigo-600'
+                : 'text-slate-400 hover:text-slate-600'
         }`}
     >
-        <span>{TEST_TYPE_TABS[type].emoji}</span>
         <span>{TEST_TYPE_TABS[type].label}</span>
-        {count > 0 && (
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'
-            }`}>
-                {count}
-            </span>
+        <span className={`text-[10px] ${isActive ? 'text-indigo-400' : 'text-slate-300'}`}>
+            {count}
+        </span>
+        {/* Underline indicator */}
+        {isActive && (
+            <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-indigo-500 rounded-full" />
         )}
     </button>
 );
 
-// 2차 필터 탭 (주제별)
-const SubjectTab = ({ subject, isActive, onClick, count, disabled }) => (
+// 2차 필터 칩 (작은 필터)
+const SubjectChip = ({ subject, isActive, onClick }) => (
     <button
         onClick={onClick}
-        disabled={disabled}
-        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-            disabled
-                ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
-                : isActive
-                    ? 'bg-slate-700 text-white shadow-sm'
-                    : 'bg-white/60 text-slate-500 hover:bg-white hover:text-slate-700'
+        className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+            isActive
+                ? 'bg-slate-700 text-white'
+                : 'bg-white/80 text-slate-500 hover:bg-white hover:text-slate-700 border border-slate-200'
         }`}
     >
         <span>{SUBJECT_CATEGORIES[subject].emoji}</span>
         <span>{SUBJECT_CATEGORIES[subject].label}</span>
-        {count > 0 && !disabled && (
-            <span className={`text-[9px] px-1 py-0.5 rounded-full ${
-                isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-400'
-            }`}>
-                {count}
-            </span>
-        )}
     </button>
 );
 
@@ -161,8 +149,13 @@ const Header = ({ onProfileClick }) => (
     </div>
 );
 
-// 스트릭 배너 컴포넌트
+// 스트릭 배너 컴포넌트 (5초 후 자동 사라짐)
 const StreakBanner = ({ streak, level, points, onClose }) => {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 5000); // 5초 후 자동 닫힘
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
     if (!streak || streak.currentStreak === 0) return null;
 
     return (
@@ -238,7 +231,7 @@ const BackgroundDecoration = () => (
 );
 
 // 오늘의 퀴즈 카드 (접힘/펼침)
- const DailyQuizCard = ({ quiz, onAnswer, isExpanded, onToggle, isAnswered = false, previousAnswer = null }) => {
+const DailyQuizCard = ({ quiz, onAnswer, isExpanded, onToggle, isAnswered = false, previousAnswer = null }) => {
     const [localSelectedOption, setLocalSelectedOption] = useState(null);
     const [localShowResult, setLocalShowResult] = useState(false);
 
@@ -688,40 +681,36 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 )}
 
                 {/* 필터 영역 - sticky로 고정 */}
-                <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm pb-3 -mx-4 px-4 pt-2">
-                    {/* 1차 필터: 테스트 유형 (심리/매칭) */}
-                    <div className="mb-2 overflow-x-auto no-scrollbar">
-                        <div className="flex gap-2">
-                            {Object.keys(TEST_TYPE_TABS).map((type) => (
-                                <TypeTab
-                                    key={type}
-                                    type={type}
-                                    isActive={activeType === type}
-                                    onClick={() => {
-                                        setActiveType(type);
-                                        setActiveSubject(null); // 1차 필터 변경 시 2차 초기화
-                                    }}
-                                    count={typeCounts[type]}
-                                />
-                            ))}
-                        </div>
+                <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 pt-1 pb-2">
+                    {/* 1차 필터: 탭 스타일 (underline) */}
+                    <div className="flex items-center border-b border-slate-200">
+                        {Object.keys(TEST_TYPE_TABS).map((type) => (
+                            <TypeTab
+                                key={type}
+                                type={type}
+                                isActive={activeType === type}
+                                onClick={() => {
+                                    setActiveType(type);
+                                    setActiveSubject(null);
+                                }}
+                                count={typeCounts[type]}
+                            />
+                        ))}
                     </div>
 
-                    {/* 2차 필터: 주제별 (테스트가 있는 카테고리만 표시) */}
-                    <div className="overflow-x-auto no-scrollbar">
-                        <div className="flex gap-1.5">
+                    {/* 2차 필터: 작은 칩 스타일 */}
+                    <div className="mt-2 overflow-x-auto no-scrollbar">
+                        <div className="flex gap-1">
                             {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
                                 const count = subjectCounts[sub] || 0;
-                                // count > 0일 때만 표시
                                 if (count === 0) return null;
                                 return (
-                                    <SubjectTab
+                                    <SubjectChip
                                         key={sub}
                                         subject={sub}
                                         isActive={activeSubject === sub}
                                         onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
                                         count={count}
-                                        disabled={false}
                                     />
                                 );
                             })}
@@ -731,27 +720,9 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
 
                 {/* All Tests - Single Grid */}
                 <section className="animate-fade-in-up min-h-[200px]">
-                    {/* 필터 상태 표시 */}
-                    {(activeType !== 'all' || activeSubject) && (
-                        <div className="flex items-center gap-2 mb-3 px-1">
-                            {activeType !== 'all' && (
-                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
-                                    {TEST_TYPE_TABS[activeType].emoji} {TEST_TYPE_TABS[activeType].label}
-                                </span>
-                            )}
-                            {activeSubject && SUBJECT_CATEGORIES[activeSubject] && (
-                                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
-                                    {SUBJECT_CATEGORIES[activeSubject].emoji} {SUBJECT_CATEGORIES[activeSubject].label}
-                                </span>
-                            )}
-                            <span className="text-[10px] font-medium text-slate-400">
-                                {filteredTests.length}개
-                            </span>
-                        </div>
-                    )}
 
-                    {/* Grid: 모바일 4열, PC 5-6열 */}
-                    <div className="grid gap-1.5 grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+                    {/* Grid: 모바일 5열, PC 6-7열 */}
+                    <div className="grid gap-1 grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
                         {filteredTests.map((item) => (
                             <CompactTestItem
                                 key={item.key}
