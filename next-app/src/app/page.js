@@ -132,6 +132,7 @@ export default function Home() {
     const [answers, setAnswers] = useState([]);
     const [showInsight, setShowInsight] = useState(false);
     const [showShareCard, setShowShareCard] = useState(false);
+    const [parentInfo, setParentInfo] = useState(null); // petMatch → 세부 테스트 연결용
 
     // Ensure mode is valid - use useMemo to derive safe mode
     const safeMode = CHEMI_DATA[mode] ? mode : 'human';
@@ -157,7 +158,7 @@ export default function Home() {
 
     const subjectConfig = SUBJECT_CONFIG[mode] || {};
 
-    const handleStartTest = (testType) => {
+    const handleStartTest = (testType, fromParent = null) => {
         setMode(testType);
         setStep('intro');
         setQIdx(0);
@@ -165,6 +166,7 @@ export default function Home() {
         setAnswers([]);
         setIsDeepMode(false);
         setFinalResult(null);
+        setParentInfo(fromParent); // { testType: 'petMatch', resultName: '강아지' }
         setView('test');
     };
 
@@ -212,7 +214,7 @@ export default function Home() {
 
             if (resultService && result) {
                 try {
-                    await resultService.saveResult(mode, result, finalScores, isDeepMode);
+                    await resultService.saveResult(mode, result, finalScores, isDeepMode, parentInfo);
                 } catch (error) {
                     console.error('Save failed:', error);
                 }
@@ -508,6 +510,31 @@ export default function Home() {
                                                                     {point}
                                                                 </span>
                                                             ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* nextTest CTA - 세부 테스트 연결 */}
+                                                {finalResult.nextTest && CHEMI_DATA[finalResult.nextTest] && (
+                                                    <div className="mt-4 p-0.5 bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 rounded-xl shadow-lg">
+                                                        <div className="bg-white rounded-[10px] p-4">
+                                                            <div className="flex items-center gap-1 mb-2">
+                                                                <Sparkles className="w-4 h-4 text-amber-500" />
+                                                                <span className="text-xs font-bold text-amber-600">더 자세히 알아보기</span>
+                                                            </div>
+                                                            <h4 className="font-black text-slate-800 mb-1">
+                                                                어떤 {finalResult.name === '강아지' ? '품종' : finalResult.name === '고양이' ? '품종' : '종류'}가 나와 맞을까?
+                                                            </h4>
+                                                            <p className="text-xs text-slate-500 mb-3">
+                                                                {CHEMI_DATA[finalResult.nextTest].resultLabels?.length || 0}개 {finalResult.name === '강아지' || finalResult.name === '고양이' ? '품종' : '종류'} 중 나의 베스트 매치를 찾아보세요!
+                                                            </p>
+                                                            <button
+                                                                onClick={() => handleStartTest(finalResult.nextTest, { testType: mode, resultName: finalResult.name })}
+                                                                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95"
+                                                            >
+                                                                {CHEMI_DATA[finalResult.nextTest].title} 시작하기
+                                                                <ArrowRight className="w-4 h-4" />
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 )}

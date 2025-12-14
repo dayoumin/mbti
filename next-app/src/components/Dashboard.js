@@ -3,7 +3,10 @@ import * as Icons from './Icons';
 import { SUBJECT_CONFIG, TEST_TYPES } from '../data/config';
 import { CHEMI_DATA } from '../data/index';
 import { resultService } from '../services/ResultService';
-import { ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, Sparkles, TrendingUp, ChevronDown, ChevronRight } from 'lucide-react';
+
+// petMatch 세부 테스트 키
+const DETAIL_TEST_KEYS = ['dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'];
 
 // Compact Test Item (아이콘 + 제목만)
 const CompactTestItem = ({ item, onStart, isCompleted }) => {
@@ -82,6 +85,8 @@ const Dashboard = ({ onStartTest }) => {
         loadCompleted();
     }, []);
 
+    const [showDetailTests, setShowDetailTests] = useState(false);
+
     // Group configs by testType
     const groupedConfigs = useMemo(() => {
         const groups = {};
@@ -108,12 +113,18 @@ const Dashboard = ({ onStartTest }) => {
         .map(key => groupedConfigs.personality?.find(t => t.key === key) || groupedConfigs.matching?.find(t => t.key === key))
         .filter(Boolean);
 
-    // All tests excluding featured
-    const allTests = [...(groupedConfigs.personality || []), ...(groupedConfigs.matching || [])]
-        .filter(t => !featuredKeys.includes(t.key));
+    // 세부 테스트와 일반 테스트 분리
+    const detailTests = [...(groupedConfigs.personality || []), ...(groupedConfigs.matching || [])]
+        .filter(t => DETAIL_TEST_KEYS.includes(t.key));
 
-    const completedCount = completedTests.length;
-    const totalCount = Object.keys(SUBJECT_CONFIG).length;
+    // All tests excluding featured AND detail tests
+    const allTests = [...(groupedConfigs.personality || []), ...(groupedConfigs.matching || [])]
+        .filter(t => !featuredKeys.includes(t.key) && !DETAIL_TEST_KEYS.includes(t.key));
+
+    // 메인 테스트만 카운트 (세부 테스트 제외)
+    const mainTestCount = Object.keys(SUBJECT_CONFIG).length - DETAIL_TEST_KEYS.length;
+    const completedMainTests = completedTests.filter(t => !DETAIL_TEST_KEYS.includes(t));
+    const completedCount = completedMainTests.length;
 
     return (
         <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto w-full pb-8">
@@ -124,7 +135,7 @@ const Dashboard = ({ onStartTest }) => {
                 </h1>
                 {completedCount > 0 && (
                     <p className="text-xs text-slate-400 mt-1">
-                        {completedCount}/{totalCount}개 완료
+                        {completedCount}/{mainTestCount}개 완료
                     </p>
                 )}
             </div>
@@ -171,6 +182,46 @@ const Dashboard = ({ onStartTest }) => {
                     </div>
                 </section>
             </div>
+
+            {/* 세부 테스트 섹션 (접힘 가능) */}
+            {detailTests.length > 0 && (
+                <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <button
+                        onClick={() => setShowDetailTests(!showDetailTests)}
+                        className="flex items-center gap-2 mb-3 px-1 w-full text-left group"
+                    >
+                        <span className="text-sm font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
+                            🐾 반려동물 세부 추천
+                        </span>
+                        <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                            {detailTests.length}
+                        </span>
+                        {showDetailTests ? (
+                            <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
+                        ) : (
+                            <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
+                        )}
+                    </button>
+
+                    {showDetailTests && (
+                        <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
+                            <p className="text-xs text-amber-700 mb-3 px-1">
+                                💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
+                            </p>
+                            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                                {detailTests.map((item) => (
+                                    <CompactTestItem
+                                        key={item.key}
+                                        item={item}
+                                        onStart={onStartTest}
+                                        isCompleted={completedTests.includes(item.key)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </section>
+            )}
 
             {/* Footer */}
             <div className="mt-8 text-center text-slate-300 text-[10px]">

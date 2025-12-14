@@ -20,6 +20,8 @@ interface TestResultData {
   scores: Record<string, number>;
   is_deep_mode: boolean;
   created_at: string;
+  parent_test?: string;  // petMatch → 세부 테스트 연결용
+  parent_result?: string; // 부모 테스트의 결과명 (예: "강아지")
   meta: {
     user_agent: string;
     screen_width: number;
@@ -37,6 +39,8 @@ interface TestResultCamel {
   scores: Record<string, number>;
   isDeepMode: boolean;
   createdAt: string;
+  parentTest?: string;  // petMatch → 세부 테스트 연결용
+  parentResult?: string; // 부모 테스트의 결과명 (예: "강아지")
   meta: {
     userAgent: string;
     screenWidth: number;
@@ -297,7 +301,8 @@ class ResultServiceClass {
     testType: string,
     result: ResultLabel,
     scores: Record<string, number>,
-    isDeep = false
+    isDeep = false,
+    parentInfo?: { testType: string; resultName: string }
   ): Promise<SaveResult> {
     const data: TestResultData = {
       id: Date.now() + '_' + Math.random().toString(36).substring(2, 11),
@@ -309,6 +314,8 @@ class ResultServiceClass {
       scores: scores,
       is_deep_mode: isDeep,
       created_at: new Date().toISOString(),
+      parent_test: parentInfo?.testType,
+      parent_result: parentInfo?.resultName,
       meta: {
         user_agent: typeof window !== 'undefined' ? navigator.userAgent : 'server',
         screen_width: typeof window !== 'undefined' ? window.innerWidth : 0,
