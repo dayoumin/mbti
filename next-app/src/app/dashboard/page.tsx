@@ -35,11 +35,16 @@ import {
   ListChecks,
   Microscope,
   Globe,
-  RefreshCw
+  RefreshCw,
+  MessageCircle,
+  Fish,
+  Bird,
+  Bug,
 } from 'lucide-react';
 import { CHEMI_DATA } from '@/data';
 import { SubjectKey } from '@/data/types';
 import { TEST_TYPES, SUBJECT_CONFIG } from '@/data/config';
+import CommunityStrategy from './components/CommunityStrategy';
 
 // ============================================================================
 // Types
@@ -88,14 +93,19 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'simulator', label: '결과 시뮬레이터', icon: <Play className="w-4 h-4" /> },
       { key: 'logic', label: '로직 뷰어', icon: <Code2 className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 토큰', icon: <Palette className="w-4 h-4" /> },
+      { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
+      { key: 'development', label: '개발 가이드', icon: <Settings className="w-4 h-4" /> },
+      { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
     ],
   },
   {
     key: 'strategy',
     label: '전략',
     icon: <Target className="w-5 h-5" />,
+    badge: 'NEW',
     subTabs: [
       { key: 'vision', label: '비전/해자', icon: <Sparkles className="w-4 h-4" /> },
+      { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
       { key: 'aiDefense', label: 'AI 시대 대응', icon: <Brain className="w-4 h-4" /> },
       { key: 'uxFlow', label: 'UX 흐름', icon: <RefreshCw className="w-4 h-4" /> },
       { key: 'monetization', label: '수익화', icon: <TrendingUp className="w-4 h-4" /> },
@@ -111,6 +121,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'newTests', label: '신규 테스트 조사', icon: <Microscope className="w-4 h-4" /> },
       { key: 'references', label: '참고자료', icon: <Globe className="w-4 h-4" /> },
+      { key: 'legacyUI', label: '레거시 UI 참고', icon: <Eye className="w-4 h-4" /> },
     ],
   },
 ];
@@ -130,6 +141,13 @@ const TEST_ICONS: Record<SubjectKey, React.ReactNode> = {
   petMatch: <Star className="w-5 h-5" />,
   coffee: <Coffee className="w-5 h-5" />,
   conflictStyle: <HeartHandshake className="w-5 h-5" />,
+  // petMatch 세부 테스트
+  dogBreed: <Dog className="w-5 h-5" />,
+  catBreed: <Cat className="w-5 h-5" />,
+  smallPet: <Puzzle className="w-5 h-5" />,
+  fishType: <Fish className="w-5 h-5" />,
+  birdType: <Bird className="w-5 h-5" />,
+  reptileType: <Bug className="w-5 h-5" />,
 };
 
 // ============================================================================
@@ -272,7 +290,11 @@ export default function DashboardPage() {
             <LogicViewer selectedTest={selectedTest} onSelectTest={setSelectedTest} />
           )}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
+          {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
+          {activeCategory === 'devtools' && activeSubTab === 'development' && <Development />}
+          {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
           {activeCategory === 'strategy' && activeSubTab === 'vision' && <VisionMoat />}
+          {activeCategory === 'strategy' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'strategy' && activeSubTab === 'aiDefense' && <AIDefense />}
           {activeCategory === 'strategy' && activeSubTab === 'uxFlow' && <UXFlow />}
           {activeCategory === 'strategy' && activeSubTab === 'monetization' && <Monetization />}
@@ -280,6 +302,7 @@ export default function DashboardPage() {
           {activeCategory === 'strategy' && activeSubTab === 'roadmap' && <Roadmap />}
           {activeCategory === 'research' && activeSubTab === 'newTests' && <NewTestResearch />}
           {activeCategory === 'research' && activeSubTab === 'references' && <References />}
+          {activeCategory === 'research' && activeSubTab === 'legacyUI' && <LegacyUI />}
         </div>
       </main>
     </div>
@@ -1386,117 +1409,257 @@ function Monetization() {
 }
 
 function ExpansionPlan() {
-  const plans = [
+  const tracks = [
     {
-      phase: 1,
-      title: '매칭 테스트 확장',
-      items: ['반려동물 매칭', '식물 매칭', '커피 매칭'],
-      status: 'completed',
+      title: '테스트 확장',
+      icon: '🧪',
+      color: '#7aa2ff',
+      items: [
+        { name: '성격 테스트 (human)', status: 'done' },
+        { name: '동물 테스트 (cat/dog/rabbit/hamster)', status: 'done' },
+        { name: '매칭 테스트 (plant/petMatch/coffee)', status: 'done' },
+        { name: '상황 테스트 (idealType/conflictStyle)', status: 'done' },
+        { name: '육아 유형 (childMatch)', status: 'planned' },
+      ],
     },
     {
-      phase: 2,
-      title: '상황 기반 테스트',
-      items: ['육아 유형', '갈등 대처', '반려동물 케어'],
-      status: 'in-progress',
+      title: '소셜 기능',
+      icon: '🔗',
+      color: '#ff6b9d',
+      items: [
+        { name: 'SNS 공유 카드', status: 'next' },
+        { name: '카카오톡 공유', status: 'next' },
+        { name: '친구 비교/궁합', status: 'planned' },
+        { name: '커뮤니티 라운지', status: 'planned' },
+      ],
     },
     {
-      phase: 3,
-      title: '인프라 강화',
-      items: ['Supabase 연동', '분석 대시보드', '공유 기능'],
-      status: 'planned',
+      title: '리텐션',
+      icon: '🔄',
+      color: '#55e6c1',
+      items: [
+        { name: '데일리 퀴즈', status: 'planned' },
+        { name: '스트릭 시스템', status: 'planned' },
+        { name: '뱃지/레벨', status: 'planned' },
+        { name: '리더보드', status: 'planned' },
+      ],
+    },
+    {
+      title: '인프라',
+      icon: '🏗️',
+      color: '#ffd166',
+      items: [
+        { name: 'Supabase 연동', status: 'blocked' },
+        { name: '리퍼럴 추적', status: 'planned' },
+        { name: '분석 대시보드', status: 'planned' },
+      ],
     },
   ];
 
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'completed': return { bg: 'rgba(124,255,138,0.15)', color: 'var(--db-ok)' };
-      case 'in-progress': return { bg: 'rgba(122,162,255,0.15)', color: 'var(--db-brand)' };
-      default: return { bg: 'rgba(169,180,208,0.15)', color: 'var(--db-muted)' };
+      case 'done': return { bg: 'rgba(124,255,138,0.15)', color: 'var(--db-ok)', label: '완료' };
+      case 'next': return { bg: 'rgba(122,162,255,0.15)', color: 'var(--db-brand)', label: '다음' };
+      case 'blocked': return { bg: 'rgba(255,107,107,0.15)', color: 'var(--db-danger)', label: '차단' };
+      default: return { bg: 'rgba(169,180,208,0.15)', color: 'var(--db-muted)', label: '예정' };
     }
   };
 
   return (
     <div className="space-y-6">
-      {plans.map((plan) => {
-        const statusColor = getStatusColor(plan.status);
-        return (
-          <div key={plan.phase} className="db-card p-5">
-            <div className="flex items-center gap-3 mb-4">
-              <span
-                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                style={{ background: statusColor.bg, color: statusColor.color }}
-              >
-                {plan.phase}
-              </span>
-              <h3 className="text-lg font-semibold text-[var(--db-text)]">{plan.title}</h3>
-              <span
-                className="ml-auto px-3 py-1 text-xs font-medium rounded-full"
-                style={{ background: statusColor.bg, color: statusColor.color }}
-              >
-                {plan.status === 'completed' ? '완료' : plan.status === 'in-progress' ? '진행중' : '예정'}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {plan.items.map((item) => (
-                <span key={item} className="db-chip">
-                  {item}
-                </span>
-              ))}
+      {/* 현재 우선순위 */}
+      <div className="db-card p-5">
+        <h3 className="text-lg font-semibold text-[var(--db-text)] mb-4">현재 우선순위</h3>
+        <div className="p-4 rounded-xl" style={{ background: 'rgba(122,162,255,0.1)', border: '1px solid rgba(122,162,255,0.3)' }}>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎯</span>
+            <div>
+              <h4 className="font-bold text-[var(--db-brand)]">Phase 1: 바이럴 루프</h4>
+              <p className="text-sm text-[var(--db-muted)]">SNS 공유 카드 → 카카오톡 공유 → 리퍼럴 추적</p>
             </div>
           </div>
-        );
-      })}
+        </div>
+      </div>
+
+      {/* 트랙별 진행 */}
+      <div className="grid grid-cols-2 gap-4">
+        {tracks.map((track) => (
+          <div key={track.title} className="db-card p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-2xl">{track.icon}</span>
+              <h3 className="font-semibold text-[var(--db-text)]">{track.title}</h3>
+            </div>
+            <div className="space-y-2">
+              {track.items.map((item) => {
+                const style = getStatusStyle(item.status);
+                return (
+                  <div key={item.name} className="flex items-center justify-between p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                    <span className="text-sm text-[var(--db-text)]">{item.name}</span>
+                    <span
+                      className="px-2 py-0.5 rounded text-xs font-medium"
+                      style={{ background: style.bg, color: style.color }}
+                    >
+                      {style.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 function Roadmap() {
   const roadmapItems = [
-    { q: 'Q1 2025', items: ['기본 테스트 완성', 'UI/UX 개선'], done: true },
-    { q: 'Q2 2025', items: ['상황 테스트 추가', '결과 공유'], done: false },
-    { q: 'Q3 2025', items: ['Supabase 연동', '분석 기능'], done: false },
-    { q: 'Q4 2025', items: ['모바일 앱', '소셜 기능'], done: false },
+    {
+      phase: 'Phase 1',
+      title: '바이럴 루프',
+      items: ['SNS 공유 카드', '카카오톡 공유', '리퍼럴 추적'],
+      done: false,
+      current: true,
+      duration: '1-2개월',
+      color: '#7aa2ff'
+    },
+    {
+      phase: 'Phase 2',
+      title: '친구 비교/궁합',
+      items: ['링크 기반 비교', '궁합 점수', '관계 타입별 해석'],
+      done: false,
+      current: false,
+      duration: '2-3개월',
+      color: '#ff6b9d'
+    },
+    {
+      phase: 'Phase 3',
+      title: '게이미피케이션',
+      items: ['데일리 콘텐츠', '스트릭', '뱃지/레벨'],
+      done: false,
+      current: false,
+      duration: '2-3개월',
+      color: '#55e6c1'
+    },
+    {
+      phase: 'Phase 4',
+      title: '커뮤니티',
+      items: ['전체 라운지', '유형 필터', '모더레이션'],
+      done: false,
+      current: false,
+      duration: '3-4개월',
+      color: '#ffd166'
+    },
   ];
 
   return (
-    <div className="db-card">
-      <div className="db-card-header px-5 py-4">
-        <h3 className="text-lg font-semibold text-[var(--db-text)]">2025 로드맵</h3>
+    <div className="space-y-6">
+      {/* 핵심 원칙 */}
+      <div className="db-card p-5">
+        <h3 className="text-lg font-semibold text-[var(--db-text)] mb-4">핵심 전략</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl" style={{ background: 'rgba(122,162,255,0.08)' }}>
+            <span className="text-2xl mb-2 block">🔄</span>
+            <h4 className="font-semibold text-[var(--db-text)]">바이럴 루프 우선</h4>
+            <p className="text-sm text-[var(--db-muted)]">공유 → 유입 → 테스트 → 비교 → 재공유</p>
+          </div>
+          <div className="p-4 rounded-xl" style={{ background: 'rgba(122,162,255,0.08)' }}>
+            <span className="text-2xl mb-2 block">⚡</span>
+            <h4 className="font-semibold text-[var(--db-text)]">마찰 최소화</h4>
+            <p className="text-sm text-[var(--db-muted)]">로그인 없이 비교까지 완료</p>
+          </div>
+          <div className="p-4 rounded-xl" style={{ background: 'rgba(122,162,255,0.08)' }}>
+            <span className="text-2xl mb-2 block">📅</span>
+            <h4 className="font-semibold text-[var(--db-text)]">매일 올 이유</h4>
+            <p className="text-sm text-[var(--db-muted)]">스트릭 전에 데일리 콘텐츠 먼저</p>
+          </div>
+          <div className="p-4 rounded-xl" style={{ background: 'rgba(122,162,255,0.08)' }}>
+            <span className="text-2xl mb-2 block">🏠</span>
+            <h4 className="font-semibold text-[var(--db-text)]">커뮤니티는 마지막</h4>
+            <p className="text-sm text-[var(--db-muted)]">가장 비싸고 위험한 기능</p>
+          </div>
+        </div>
       </div>
-      <div className="p-5 relative">
-        <div className="absolute left-9 top-5 bottom-5 w-0.5" style={{ background: 'var(--db-line)' }} />
-        <div className="space-y-8">
-          {roadmapItems.map((item) => (
-            <div key={item.q} className="relative pl-12">
-              <div
-                className="absolute left-6 w-5 h-5 rounded-full border-2"
-                style={{
-                  background: item.done ? 'var(--db-ok)' : 'var(--db-panel)',
-                  borderColor: item.done ? 'var(--db-ok)' : 'var(--db-line)'
-                }}
-              >
-                {item.done && <CheckCircle2 className="w-4 h-4 text-[#081023] absolute -top-0.5 -left-0.5" />}
-              </div>
-              <div>
-                <h4 className="font-semibold text-[var(--db-text)] mb-2">{item.q}</h4>
-                <div className="flex flex-wrap gap-2">
-                  {item.items.map((i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1.5 rounded-lg text-sm"
-                      style={{
-                        background: item.done ? 'rgba(124,255,138,0.1)' : 'rgba(255,255,255,0.03)',
-                        color: item.done ? 'var(--db-ok)' : 'var(--db-muted)',
-                        border: '1px solid rgba(255,255,255,0.1)'
-                      }}
-                    >
-                      {i}
-                    </span>
-                  ))}
+
+      {/* 타임라인 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">커뮤니티 로드맵</h3>
+          <p className="text-sm text-[var(--db-muted)]">상세: 전략 → 커뮤니티 탭</p>
+        </div>
+        <div className="p-5 relative">
+          <div className="absolute left-9 top-5 bottom-5 w-0.5" style={{ background: 'var(--db-line)' }} />
+          <div className="space-y-8">
+            {roadmapItems.map((item) => (
+              <div key={item.phase} className="relative pl-12">
+                <div
+                  className="absolute left-6 w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                  style={{
+                    background: item.current ? item.color : item.done ? 'var(--db-ok)' : 'var(--db-panel)',
+                    borderColor: item.current ? item.color : item.done ? 'var(--db-ok)' : 'var(--db-line)'
+                  }}
+                >
+                  {item.done && <CheckCircle2 className="w-4 h-4 text-[#081023] absolute -top-0.5 -left-0.5" />}
+                  {item.current && <div className="w-2 h-2 rounded-full bg-white" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h4 className="font-semibold text-[var(--db-text)]">{item.phase}: {item.title}</h4>
+                    {item.current && (
+                      <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: `${item.color}22`, color: item.color }}>
+                        현재
+                      </span>
+                    )}
+                    <span className="text-xs text-[var(--db-muted)]">{item.duration}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {item.items.map((i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1.5 rounded-lg text-sm"
+                        style={{
+                          background: item.current ? `${item.color}15` : item.done ? 'rgba(124,255,138,0.1)' : 'rgba(255,255,255,0.03)',
+                          color: item.current ? item.color : item.done ? 'var(--db-ok)' : 'var(--db-muted)',
+                          border: `1px solid ${item.current ? `${item.color}30` : 'rgba(255,255,255,0.1)'}`
+                        }}
+                      >
+                        {i}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* AI 시대 포지셔닝 */}
+      <div className="db-card p-5">
+        <h3 className="text-lg font-semibold text-[var(--db-text)] mb-4">AI 시대 생존 전략</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl" style={{ background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.2)' }}>
+            <h4 className="font-semibold text-[var(--db-danger)] mb-2">AI가 잘하는 것</h4>
+            <ul className="text-sm text-[var(--db-muted)] space-y-1">
+              <li>• 정보 제공 (유형 특징 설명)</li>
+              <li>• 즉석 대화형 분석</li>
+              <li>• 일반적인 조언</li>
+            </ul>
+          </div>
+          <div className="p-4 rounded-xl" style={{ background: 'rgba(124,255,138,0.08)', border: '1px solid rgba(124,255,138,0.2)' }}>
+            <h4 className="font-semibold text-[var(--db-ok)] mb-2">우리가 이기는 것</h4>
+            <ul className="text-sm text-[var(--db-muted)] space-y-1">
+              <li>• 결과 축적 & 시간별 비교</li>
+              <li>• 친구와 궁합/비교</li>
+              <li>• 커뮤니티 검증 & 집단 지성</li>
+              <li>• 재방문 루프 (스트릭, 랭킹)</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-4 p-3 rounded-lg" style={{ background: 'rgba(122,162,255,0.08)' }}>
+          <p className="text-sm text-[var(--db-text)]">
+            <strong>결론:</strong> &quot;정보 제공&quot;은 AI가 이김. <strong>&quot;경험 + 축적 + 소셜&quot;</strong>은 앱이 이김.
+          </p>
         </div>
       </div>
     </div>
@@ -2083,6 +2246,486 @@ trust = base
           <div className="db-callout" style={{ borderColor: 'rgba(124,255,138,0.35)' }}>
             <strong className="text-[var(--db-ok)]">MVP 팁:</strong>
             <span className="text-[var(--db-muted)] ml-2">초기에는 DB 없이 JSON seed + 간단한 저장부터 시작해도 됨</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Architecture Component (레거시 아키텍처 탭)
+// ============================================================================
+
+function Architecture() {
+  return (
+    <div className="space-y-6">
+      {/* 폴더 구조 & 컴포넌트 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>🗂️</span> 폴더 구조
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li><strong className="text-[var(--db-text)]">next-app/src/data/</strong> · subjects, constants, config, utils, types</li>
+            <li><strong className="text-[var(--db-text)]">next-app/src/components/</strong> · Icons, ModeTabs, TraitBar, TestHeader</li>
+            <li><strong className="text-[var(--db-text)]">next-app/src/services/</strong> · ResultService</li>
+            <li><strong className="text-[var(--db-text)]">scripts/</strong> · 데이터 검증·변환 스크립트 모음</li>
+          </ul>
+        </div>
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>🧩</span> 컴포넌트 목록
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li><strong className="text-[var(--db-text)]">page.tsx</strong> · 메인 테스트 (home/test/result 화면)</li>
+            <li><strong className="text-[var(--db-text)]">ModeTabs</strong> · 탭 및 테스트 스위치</li>
+            <li><strong className="text-[var(--db-text)]">TestHeader</strong> · 진행 중 네비게이션</li>
+            <li><strong className="text-[var(--db-text)]">TraitBar</strong> · 차원별 점수 시각화</li>
+            <li><strong className="text-[var(--db-text)]">Icons</strong> · 테스트별 아이콘 세트</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* 서비스 & 상태 관리 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>🛰️</span> 서비스 목록
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li><strong className="text-[var(--db-text)]">ResultService</strong> · saveResult, getMyResults, getRecommendedTest</li>
+            <li className="text-xs text-[var(--db-muted)] opacity-70">Supabase 예정: StorageProviders.supabase (저장/동기화)</li>
+          </ul>
+        </div>
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>📦</span> 상태 관리
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li>React useState 로컬 상태 (테스트 선택, 점수, 결과)</li>
+            <li>localStorage 저장 → 추후 Supabase 연동 시 동기화</li>
+            <li>서비스 흐름: 질문 응답 → 결과 저장 → 인사이트 생성</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* 데이터 스키마 & API 흐름 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>💾</span> 데이터 스키마
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li>localStorage key: <code className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.3)' }}>chemi_results</code></li>
+            <li>필드: testType, resultLabel, scores, createdAt, userId</li>
+            <li>Supabase(예정): tables <code className="text-xs px-1 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.3)' }}>results</code>, <code className="text-xs px-1 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.3)' }}>insights</code></li>
+          </ul>
+        </div>
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>🔄</span> API / 서비스 흐름
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li>ResultService.save → localStorage / Supabase 저장</li>
+            <li>ResultService.getRecommendedTest → 완료/미완료 테스트 탐색</li>
+            <li>matchResultLabel → 점수 기반 결과 매칭</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* 타입 시스템 */}
+      <div className="db-card p-5">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+          <span>📝</span> 타입 시스템 (TypeScript)
+        </h3>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+            <h4 className="text-sm font-semibold text-[var(--db-brand)] mb-2">SubjectKey</h4>
+            <p className="text-xs text-[var(--db-muted)]">테스트 종류 유니온 타입</p>
+            <code className="text-xs text-[var(--db-brand2)] block mt-1">{`'human' | 'cat' | 'dog' | ...`}</code>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+            <h4 className="text-sm font-semibold text-[var(--db-brand)] mb-2">Question</h4>
+            <p className="text-xs text-[var(--db-muted)]">질문 데이터 타입</p>
+            <code className="text-xs text-[var(--db-brand2)] block mt-1">{`{ q, dimension, a[] }`}</code>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+            <h4 className="text-sm font-semibold text-[var(--db-brand)] mb-2">ResultLabel</h4>
+            <p className="text-xs text-[var(--db-muted)]">결과 라벨 타입</p>
+            <code className="text-xs text-[var(--db-brand2)] block mt-1">{`{ name, emoji, condition }`}</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Development Component (레거시 개발 탭)
+// ============================================================================
+
+function Development() {
+  return (
+    <div className="space-y-6">
+      {/* 코딩 규칙 & 테스트 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>📐</span> 코딩 규칙
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li>컴포넌트: <code className="text-[var(--db-brand)]">{`'use client'`}</code> 명시, Props 인터페이스 정의</li>
+            <li>네이밍: camelCase(TS) / snake_case(DB)</li>
+            <li>타입: SubjectKey 유니온 타입으로 테스트 종류 관리</li>
+            <li>비동기: useEffect 내 async 함수, cancelled 플래그로 cleanup</li>
+          </ul>
+        </div>
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>🧪</span> 테스트 스크립트
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li><code className="text-[var(--db-brand)]">node scripts/validate-test-data.mjs</code></li>
+            <li><code className="text-[var(--db-brand)]">node scripts/compare-data-sync.mjs</code></li>
+            <li><code className="text-[var(--db-brand)]">node scripts/test-matching-logic.mjs</code></li>
+            <li><code className="text-[var(--db-brand)]">node scripts/check-similarity.mjs</code></li>
+          </ul>
+        </div>
+      </div>
+
+      {/* 환경 설정 & 의존성 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>⚙️</span> 환경 설정
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li><strong className="text-[var(--db-text)]">Next.js 16</strong> + TypeScript + Tailwind</li>
+            <li>스타일: Tailwind 유틸리티 + globals.css 커스텀</li>
+            <li>빌드: <code className="text-[var(--db-brand)]">npm run build</code> → 정적 배포 가능</li>
+            <li>데이터: localStorage 저장, 추후 Supabase 연동</li>
+          </ul>
+        </div>
+        <div className="db-card p-5">
+          <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+            <span>📦</span> 의존성
+          </h3>
+          <ul className="space-y-2 text-sm text-[var(--db-muted)]">
+            <li>React 19, Next.js 16</li>
+            <li>TailwindCSS 4</li>
+            <li>Lucide React (아이콘)</li>
+            <li>TypeScript 5</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* 주요 문서 링크 */}
+      <div className="db-card p-5">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4 flex items-center gap-2">
+          <span>📚</span> 문서 링크
+        </h3>
+        <div className="grid grid-cols-2 gap-3">
+          <a href="/docs/planning/QUESTION_BANK.md" className="db-callout hover:border-[var(--db-brand)] transition-colors">
+            <span className="text-[var(--db-brand)]">📋</span>
+            <span className="ml-2 text-[var(--db-text)]">QUESTION_BANK</span>
+            <span className="text-xs text-[var(--db-muted)] ml-2">문제은행, 랜덤 출제 규칙</span>
+          </a>
+          <a href="/docs/design/DESIGN_SYSTEM.md" className="db-callout hover:border-[var(--db-brand)] transition-colors">
+            <span className="text-[var(--db-brand)]">🎨</span>
+            <span className="ml-2 text-[var(--db-text)]">DESIGN_SYSTEM</span>
+            <span className="text-xs text-[var(--db-muted)] ml-2">UI/로직/스타일 규칙</span>
+          </a>
+          <a href="/docs/planning/QUESTION_DESIGN.md" className="db-callout hover:border-[var(--db-brand)] transition-colors">
+            <span className="text-[var(--db-brand)]">✏️</span>
+            <span className="ml-2 text-[var(--db-text)]">QUESTION_DESIGN</span>
+            <span className="text-xs text-[var(--db-muted)] ml-2">질문 작성 원칙</span>
+          </a>
+          <a href="/docs/planning/EXTENSION_ARCHITECTURE.md" className="db-callout hover:border-[var(--db-brand)] transition-colors">
+            <span className="text-[var(--db-brand)]">🏗️</span>
+            <span className="ml-2 text-[var(--db-text)]">EXTENSION_ARCHITECTURE</span>
+            <span className="text-xs text-[var(--db-muted)] ml-2">확장 아키텍처</span>
+          </a>
+        </div>
+      </div>
+
+      {/* 경고 */}
+      <div className="db-card p-5" style={{ borderColor: 'rgba(255,107,107,0.3)', borderWidth: '2px' }}>
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <h4 className="font-bold text-[var(--db-danger)]">데이터 직접 수정 주의</h4>
+            <p className="text-sm text-[var(--db-muted)] mt-1">
+              next-app/src/data/subjects/*.ts 파일 수정 후 반드시 <code className="text-[var(--db-brand)]">npm run build</code>로 검증하세요.
+              인코딩/타입 오류 방지를 위해 검증 스크립트 사용을 권장합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Learning Component (레거시 학습 탭)
+// ============================================================================
+
+function Learning() {
+  return (
+    <div className="space-y-8">
+      <div className="db-card p-6">
+        <h2 className="text-xl font-bold text-[var(--db-text)] mb-2">웹 개발 기초</h2>
+        <p className="text-[var(--db-muted)]">이 프로젝트를 이해하기 위한 핵심 개념들</p>
+      </div>
+
+      {/* JSX */}
+      <div className="db-card p-6">
+        <div className="flex items-baseline gap-4 mb-4">
+          <span className="text-xs font-mono text-[var(--db-muted)]">01</span>
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">JSX란?</h3>
+        </div>
+        <p className="text-[var(--db-muted)] mb-4">
+          HTML처럼 생긴 JavaScript 코드입니다. React에서 UI를 쉽게 작성하기 위해 만든 문법이에요.
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-lg" style={{ background: 'rgba(122,162,255,0.1)', borderLeft: '3px solid var(--db-brand)' }}>
+            <span className="text-xs text-[var(--db-muted)]">JSX 문법</span>
+            <pre className="mt-2 text-sm text-[var(--db-text)] font-mono">{`<button onClick={click}>
+  클릭
+</button>`}</pre>
+            <p className="text-xs text-[var(--db-ok)] mt-2">직관적이고 읽기 쉬움</p>
+          </div>
+          <div className="p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)', borderLeft: '3px solid var(--db-muted)' }}>
+            <span className="text-xs text-[var(--db-muted)]">순수 JavaScript</span>
+            <pre className="mt-2 text-sm text-[var(--db-muted)] font-mono">{`React.createElement(
+  "button",
+  {onClick: click},
+  "클릭"
+)`}</pre>
+            <p className="text-xs text-[var(--db-muted)] mt-2">복잡하고 읽기 어려움</p>
+          </div>
+        </div>
+      </div>
+
+      {/* TypeScript */}
+      <div className="db-card p-6">
+        <div className="flex items-baseline gap-4 mb-4">
+          <span className="text-xs font-mono text-[var(--db-muted)]">02</span>
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">TypeScript란?</h3>
+        </div>
+        <p className="text-[var(--db-muted)] mb-4">
+          JavaScript에 타입을 추가한 언어입니다. 코드 작성 시 오류를 미리 잡아줍니다.
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-lg" style={{ background: 'rgba(122,162,255,0.1)', borderLeft: '3px solid var(--db-brand)' }}>
+            <span className="text-xs text-[var(--db-muted)]">TypeScript</span>
+            <pre className="mt-2 text-sm text-[var(--db-text)] font-mono">{`function add(a: number, b: number): number {
+  return a + b;
+}`}</pre>
+            <p className="text-xs text-[var(--db-ok)] mt-2">타입 오류를 미리 감지</p>
+          </div>
+          <div className="p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)', borderLeft: '3px solid var(--db-muted)' }}>
+            <span className="text-xs text-[var(--db-muted)]">JavaScript</span>
+            <pre className="mt-2 text-sm text-[var(--db-muted)] font-mono">{`function add(a, b) {
+  return a + b;
+}
+// add("1", 2) → "12" 오류!`}</pre>
+            <p className="text-xs text-[var(--db-warning)] mt-2">런타임에 오류 발생</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Next.js */}
+      <div className="db-card p-6">
+        <div className="flex items-baseline gap-4 mb-4">
+          <span className="text-xs font-mono text-[var(--db-muted)]">03</span>
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">Next.js란?</h3>
+        </div>
+        <p className="text-[var(--db-muted)] mb-4">
+          React 기반 프레임워크입니다. 라우팅, 빌드, 최적화를 자동으로 처리해줍니다.
+        </p>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 rounded-lg text-center" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <span className="text-2xl block mb-2">📁</span>
+            <span className="text-sm text-[var(--db-text)]">파일 기반 라우팅</span>
+            <p className="text-xs text-[var(--db-muted)] mt-1">app/page.tsx → /</p>
+          </div>
+          <div className="p-4 rounded-lg text-center" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <span className="text-2xl block mb-2">⚡</span>
+            <span className="text-sm text-[var(--db-text)]">자동 최적화</span>
+            <p className="text-xs text-[var(--db-muted)] mt-1">코드 스플리팅, 이미지</p>
+          </div>
+          <div className="p-4 rounded-lg text-center" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <span className="text-2xl block mb-2">🚀</span>
+            <span className="text-sm text-[var(--db-text)]">정적/동적 렌더링</span>
+            <p className="text-xs text-[var(--db-muted)] mt-1">SSG, SSR 지원</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 프로젝트 실행 방식 */}
+      <div className="db-card p-6">
+        <div className="flex items-baseline gap-4 mb-4">
+          <span className="text-xs font-mono text-[var(--db-muted)]">04</span>
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">이 프로젝트 실행 방법</h3>
+        </div>
+        <div className="p-4 rounded-xl" style={{ background: 'rgba(124,255,138,0.1)', border: '1px solid rgba(124,255,138,0.3)' }}>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">🎯</span>
+            <div>
+              <span className="font-semibold text-[var(--db-text)]">next-app/</span>
+              <span className="text-xs text-[var(--db-ok)] ml-2">권장</span>
+            </div>
+          </div>
+          <p className="text-sm text-[var(--db-muted)] mb-2">Next.js (빌드 시 변환)</p>
+          <code className="block text-sm px-3 py-2 rounded" style={{ background: 'rgba(0,0,0,0.3)', color: 'var(--db-brand)' }}>
+            cd next-app && npm run dev
+          </code>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Legacy UI Reference Component
+// ============================================================================
+
+function LegacyUI() {
+  return (
+    <div className="space-y-6">
+      <div className="db-card p-6">
+        <h2 className="text-xl font-bold text-[var(--db-text)] mb-2">레거시 UI 참고</h2>
+        <p className="text-[var(--db-muted)]">
+          기존 index.html 앱의 디자인 요소들입니다. 향후 디자인 개선 시 참고용으로 사용하세요.
+        </p>
+      </div>
+
+      {/* 디자인 특징 */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4">🎨 디자인 특징</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="db-callout">
+            <h4 className="font-semibold text-[var(--db-text)] mb-2">폰트</h4>
+            <p className="text-sm text-[var(--db-muted)]">Jua (구글 폰트) - 친근하고 부드러운 느낌</p>
+          </div>
+          <div className="db-callout">
+            <h4 className="font-semibold text-[var(--db-text)] mb-2">배경</h4>
+            <p className="text-sm text-[var(--db-muted)]">#F8FAFC (밝은 회색) - 눈의 피로 감소</p>
+          </div>
+          <div className="db-callout">
+            <h4 className="font-semibold text-[var(--db-text)] mb-2">버튼 스타일</h4>
+            <p className="text-sm text-[var(--db-muted)]">doodle-border - 손그림 느낌의 비정형 테두리</p>
+          </div>
+          <div className="db-callout">
+            <h4 className="font-semibold text-[var(--db-text)] mb-2">애니메이션</h4>
+            <p className="text-sm text-[var(--db-muted)]">shake, pop - 인터랙션 피드백</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Doodle Border 예시 */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4">✏️ Doodle Border 스타일</h3>
+        <div className="p-6 rounded-lg" style={{ background: '#F8FAFC' }}>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              className="px-6 py-3 text-gray-800 font-bold"
+              style={{
+                borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+                border: '3px solid #4A4A4A',
+                boxShadow: '4px 4px 0px #4A4A4A',
+                background: '#FCD34D',
+                fontFamily: 'Jua, sans-serif'
+              }}
+            >
+              시작하기
+            </button>
+            <button
+              className="px-6 py-3 text-gray-800 font-bold"
+              style={{
+                borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+                border: '3px solid #4A4A4A',
+                boxShadow: '4px 4px 0px #4A4A4A',
+                background: '#86EFAC',
+                fontFamily: 'Jua, sans-serif'
+              }}
+            >
+              다음
+            </button>
+          </div>
+          <p className="text-center text-sm text-gray-500 mt-4">손그림 느낌의 버튼 스타일</p>
+        </div>
+        <div className="mt-4 p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+          <pre className="text-xs text-[var(--db-brand2)] overflow-x-auto">{`.doodle-border {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  border: 3px solid #4A4A4A;
+  box-shadow: 4px 4px 0px #4A4A4A;
+}`}</pre>
+        </div>
+      </div>
+
+      {/* 컬러 팔레트 */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4">🎨 레거시 컬러 팔레트</h3>
+        <div className="grid grid-cols-5 gap-4">
+          <div className="text-center">
+            <div className="w-full h-16 rounded-lg mb-2" style={{ background: '#FCD34D' }} />
+            <p className="text-sm text-[var(--db-text)]">Primary</p>
+            <p className="text-xs text-[var(--db-muted)]">#FCD34D</p>
+          </div>
+          <div className="text-center">
+            <div className="w-full h-16 rounded-lg mb-2" style={{ background: '#86EFAC' }} />
+            <p className="text-sm text-[var(--db-text)]">Success</p>
+            <p className="text-xs text-[var(--db-muted)]">#86EFAC</p>
+          </div>
+          <div className="text-center">
+            <div className="w-full h-16 rounded-lg mb-2" style={{ background: '#F8FAFC' }} />
+            <p className="text-sm text-[var(--db-text)]">Background</p>
+            <p className="text-xs text-[var(--db-muted)]">#F8FAFC</p>
+          </div>
+          <div className="text-center">
+            <div className="w-full h-16 rounded-lg mb-2" style={{ background: '#4A4A4A' }} />
+            <p className="text-sm text-[var(--db-text)]">Border</p>
+            <p className="text-xs text-[var(--db-muted)]">#4A4A4A</p>
+          </div>
+          <div className="text-center">
+            <div className="w-full h-16 rounded-lg mb-2" style={{ background: '#FDA4AF' }} />
+            <p className="text-sm text-[var(--db-text)]">Accent</p>
+            <p className="text-xs text-[var(--db-muted)]">#FDA4AF</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 애니메이션 */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4">🎬 애니메이션 정의</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+            <h4 className="text-sm font-semibold text-[var(--db-brand)] mb-2">@keyframes shake</h4>
+            <p className="text-xs text-[var(--db-muted)]">선택 시 흔들리는 효과</p>
+            <pre className="text-xs text-[var(--db-brand2)] mt-2">{`transform: translate(1px, 1px) rotate(0deg);`}</pre>
+          </div>
+          <div className="p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+            <h4 className="text-sm font-semibold text-[var(--db-brand)] mb-2">@keyframes pop</h4>
+            <p className="text-xs text-[var(--db-muted)]">등장 시 팝업 효과</p>
+            <pre className="text-xs text-[var(--db-brand2)] mt-2">{`transform: scale(0.8) → scale(1);`}</pre>
+          </div>
+        </div>
+      </div>
+
+      {/* 참고 사항 */}
+      <div className="db-card p-6" style={{ borderColor: 'rgba(122,162,255,0.3)', borderWidth: '2px' }}>
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">💡</span>
+          <div>
+            <h4 className="font-bold text-[var(--db-brand)]">디자인 방향 고려 사항</h4>
+            <ul className="text-sm text-[var(--db-muted)] mt-2 space-y-1">
+              <li>• <strong className="text-[var(--db-text)]">모바일 우선:</strong> max-w-md 컨테이너로 모바일 최적화</li>
+              <li>• <strong className="text-[var(--db-text)]">친근한 느낌:</strong> Jua 폰트 + 손그림 테두리로 부담 없는 UI</li>
+              <li>• <strong className="text-[var(--db-text)]">피드백:</strong> shake/pop 애니메이션으로 인터랙션 강화</li>
+              <li>• <strong className="text-[var(--db-text)]">PC 확장:</strong> 현재 모바일 중심, PC용 레이아웃 확장 필요</li>
+            </ul>
           </div>
         </div>
       </div>
