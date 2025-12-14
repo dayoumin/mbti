@@ -134,6 +134,124 @@ const localStorageProvider: StorageProvider = {
   },
 };
 
+// ========== Supabase Provider (준비됨 - npm install @supabase/supabase-js 후 활성화) ==========
+// 사용법:
+// 1. npm install @supabase/supabase-js
+// 2. .env.local에 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY 설정
+// 3. Supabase에서 001_mbti_results.sql 실행
+
+// Supabase 클라이언트 싱글톤 (패키지 설치 시 활성화)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let supabaseClient: any = null;
+
+async function getSupabaseClient() {
+  if (supabaseClient) return supabaseClient;
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
+
+  try {
+    // 동적 import로 패키지 없이도 빌드 가능하게 함
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const moduleName = '@supabase/supabase-js';
+    const { createClient } = await import(/* webpackIgnore: true */ moduleName);
+    supabaseClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+    return supabaseClient;
+  } catch {
+    // @supabase/supabase-js 패키지 미설치
+    return null;
+  }
+}
+
+const supabaseProvider: StorageProvider = {
+  name: 'supabase',
+
+  async save(_key: string, data: TestResultData): Promise<SaveResult> {
+    const supabase = await getSupabaseClient();
+
+    if (!supabase) {
+      // Supabase 미설정 - localStorage로 폴백
+      return localStorageProvider.save(_key, data);
+    }
+
+    try {
+      const { data: result, error } = await supabase
+        .from('mbti_results')
+        .insert({
+          device_id: data.user_id,  // 익명 사용자는 device_id로 추적
+          subject_key: data.test_type,
+          result_name: data.result_key,
+          result_emoji: data.result_emoji,
+          scores: data.scores,
+          is_deep_mode: data.is_deep_mode,
+        })
+        .select('id')
+        .single();
+
+      if (error) throw error;
+
+      // localStorage에도 백업 저장 (오프라인 대응)
+      await localStorageProvider.save(_key, data);
+
+      return { success: true, id: result?.id };
+    } catch (error) {
+      console.error('[ResultService] Supabase 저장 실패, localStorage로 폴백:', error);
+      return localStorageProvider.save(_key, data);
+    }
+  },
+
+  async getAll(key: string): Promise<TestResultData[]> {
+    return localStorageProvider.getAll(key);
+  },
+
+  async getByUserId(key: string, userId: string): Promise<TestResultData[]> {
+    const supabase = await getSupabaseClient();
+
+    if (!supabase) {
+      return localStorageProvider.getByUserId(key, userId);
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('mbti_results')
+        .select('*')
+        .eq('device_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (data || []).map((row: any) => ({
+        id: row.id,
+        user_id: row.device_id || row.user_id,
+        project: 'chemi-test',
+        test_type: row.subject_key,
+        result_key: row.result_name,
+        result_emoji: row.result_emoji || '',
+        scores: row.scores,
+        is_deep_mode: row.is_deep_mode,
+        created_at: row.created_at,
+        meta: {
+          user_agent: '',
+          screen_width: 0,
+          timestamp: new Date(row.created_at).getTime(),
+        },
+      }));
+    } catch (error) {
+      console.error('[ResultService] Supabase 조회 실패, localStorage로 폴백:', error);
+      return localStorageProvider.getByUserId(key, userId);
+    }
+  },
+
+  async clear(key: string): Promise<SaveResult> {
+    return localStorageProvider.clear(key);
+  },
+};
+
 // ========== ResultService Class ==========
 
 class ResultServiceClass {
@@ -142,7 +260,20 @@ class ResultServiceClass {
   private USER_KEY = 'chemi_user';
 
   constructor() {
-    this.provider = localStorageProvider;
+    // Supabase URL이 설정되어 있으면 supabaseProvider 사용
+    // 그렇지 않으면 localStorageProvider 사용 (개발 환경)
+    this.provider = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? supabaseProvider
+      : localStorageProvider;
+  }
+
+  // Provider 수동 변경 (테스트용)
+  setProvider(name: 'localStorage' | 'supabase'): void {
+    this.provider = name === 'supabase' ? supabaseProvider : localStorageProvider;
+  }
+
+  getProviderName(): string {
+    return this.provider.name;
   }
 
   getUserId(): string {

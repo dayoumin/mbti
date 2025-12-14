@@ -8,10 +8,11 @@ import { matchResultLabel } from '../data/utils';
 import { resultService } from '../services/ResultService';
 import InsightView from '../components/InsightView';
 import Dashboard from '../components/Dashboard';
+import ShareCard from '../components/ShareCard';
 import * as Icons from '../components/Icons';
 import {
     ChevronLeft, ChevronRight, Share2, RefreshCw, BarChart2,
-    Info, Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight
+    Info, Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, Users
 } from 'lucide-react';
 
 // Icons extraction for Result Characters (Keep custom SVGs for character art)
@@ -40,7 +41,7 @@ const GlassButton = ({ children, onClick, className = "", variant = "primary" })
     );
 };
 
-// Next Test Recommendation Card
+// Next Test Recommendation Card - Compact
 const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
     const [recommendation, setRecommendation] = useState(null);
     const [completedCount, setCompletedCount] = useState(0);
@@ -74,40 +75,42 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
     const IconComponent = Icons[config.icon];
 
     return (
-        <div className="mt-8 p-1 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-2xl border border-white/60 shadow-sm backdrop-blur-md">
-            <div className="bg-white/60 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-bold text-indigo-600 flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                        {recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 추천 테스트'}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                        {completedCount}개 완료
-                    </span>
-                </div>
+        <div className="mt-5 w-full">
+            <div className="p-0.5 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-xl border border-white/60">
+                <div className="bg-white/70 rounded-[10px] p-3">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                            {recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 추천'}
+                        </span>
+                        <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                            {completedCount}개 완료
+                        </span>
+                    </div>
 
-                <button
-                    onClick={() => onSelectTest(recommendation.testType)}
-                    className="w-full flex items-center gap-4 text-left group"
-                >
-                    {IconComponent && (
-                        <div className="w-14 h-14 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform duration-300">
-                            <IconComponent mood="happy" className="w-10 h-10" />
+                    <button
+                        onClick={() => onSelectTest(recommendation.testType)}
+                        className="w-full flex items-center gap-3 text-left group"
+                    >
+                        {IconComponent && (
+                            <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                                <IconComponent mood="happy" className="w-7 h-7" />
+                            </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
+                            <p className="text-[10px] text-slate-400 truncate">{data.subtitle}</p>
                         </div>
-                    )}
-                    <div className="flex-1">
-                        <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-lg">{data.title}</h4>
-                        <p className="text-xs text-slate-500 line-clamp-1">{data.subtitle}</p>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                        <ArrowRight className="w-4 h-4" />
-                    </div>
-                </button>
+                        <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all flex-shrink-0">
+                            <ArrowRight className="w-3 h-3" />
+                        </div>
+                    </button>
+                </div>
             </div>
 
             <button
                 onClick={onGoHome}
-                className="w-full mt-2 py-3 text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors"
+                className="w-full mt-2 py-2 text-[10px] font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors"
             >
                 <HomeIcon className="w-3 h-3" />
                 대시보드로 돌아가기
@@ -128,6 +131,7 @@ export default function Home() {
     const [showGraphPopup, setShowGraphPopup] = useState(false);
     const [answers, setAnswers] = useState([]);
     const [showInsight, setShowInsight] = useState(false);
+    const [showShareCard, setShowShareCard] = useState(false);
 
     // Ensure data exists
     useEffect(() => {
@@ -244,6 +248,16 @@ export default function Home() {
         const maxPossible = questionsForDim.length * MAX_SCORE_PER_QUESTION;
         const score = scores[dimension] || 0;
         return maxPossible > 0 ? Math.round((score / maxPossible) * 100) : 0;
+    };
+
+    // 차원별 최대 점수 계산 (ShareCard에 전달)
+    const getMaxScores = () => {
+        const maxScores = {};
+        Object.keys(dimensions).forEach(dim => {
+            const questionsForDim = questions.filter(q => q.dimension === dim);
+            maxScores[dim] = questionsForDim.length * MAX_SCORE_PER_QUESTION;
+        });
+        return maxScores;
     };
 
     const IconComponent = Icons[subjectConfig.icon] || HumanIcon;
@@ -380,120 +394,214 @@ export default function Home() {
                     {step === "result" && finalResult && (
                         <div className={`flex flex-col h-full animate-fade-in relative`}>
                             {/* Fixed Header */}
-                            <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-10 bg-gradient-to-b from-white/80 to-transparent">
+                            <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10 bg-gradient-to-b from-white/90 to-transparent">
                                 <button onClick={() => setView('dashboard')} className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white">
                                     <HomeIcon className="w-5 h-5 text-slate-600" />
                                 </button>
-                                <button className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white text-indigo-600">
+                                <button
+                                    onClick={() => setShowShareCard(true)}
+                                    className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white text-indigo-600"
+                                >
                                     <Share2 className="w-5 h-5" />
                                 </button>
                             </div>
 
                             {/* Scrollable Content */}
-                            <div className="flex-1 overflow-y-auto no-scrollbar pt-20 px-6 pb-24">
-                                {/* Result Card Content */}
+                            <div className="flex-1 overflow-y-auto no-scrollbar pt-14 px-5 pb-20">
+                                {/* Result Card Content - Compact */}
                                 <div className="flex flex-col items-center text-center">
-                                    <div className="text-6xl mb-4 drop-shadow-md animate-pop">{finalResult.emoji}</div>
-                                    <h1 className="text-3xl font-black text-slate-800 mb-2 leading-tight">
-                                        {finalResult.name}
-                                    </h1>
-                                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold text-white mb-8 ${'bg-indigo-400'}`}>
-                                        {finalResult.mood || 'RARE'} TYPE
-                                    </span>
+                                    {/* HERO: 결과 카드 - 매칭 테스트일 때 더 강조 */}
+                                    {subjectConfig.resultFormat === 'matching' ? (
+                                        // 매칭 결과: 카드 스타일로 크게 표시
+                                        <div className="w-full mb-4">
+                                            <div className="relative bg-gradient-to-br from-white to-slate-50 rounded-2xl p-5 border-2 border-indigo-100 shadow-lg overflow-hidden">
+                                                {/* 배경 장식 */}
+                                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100/50 to-pink-100/50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
 
-                                    <div className="relative mb-10 w-full flex justify-center">
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/50 to-pink-200/50 blur-3xl rounded-full scale-125"></div>
-                                        <IconComponent mood={finalResult.mood || "happy"} className="w-48 h-48 relative z-10 drop-shadow-2xl" />
-                                    </div>
-
-                                    {/* Quote Box */}
-                                    <div className="w-full bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-sm mb-6">
-                                        <p className="text-slate-800 font-bold text-lg leading-relaxed break-keep">
-                                            "{finalResult.desc}"
-                                        </p>
-                                    </div>
-
-                                    {/* Deep Mode CTA */}
-                                    {isDeepMode && (
-                                        <GlassButton onClick={() => setShowGraphPopup(true)} variant="secondary" className="mb-8">
-                                            <BarChart2 className="w-5 h-5 text-indigo-500" /> 상세 성향 그래프 보기
-                                        </GlassButton>
-                                    )}
-
-                                    {/* Detailed Content Tabs/List */}
-                                    <div className="w-full space-y-4 text-left">
-                                        {subjectConfig.resultFormat === 'matching' ? (
-                                            <>
-                                                <div className="bg-white/60 rounded-2xl p-5 border border-white/50">
-                                                    <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
-                                                        <Sparkles className="w-4 h-4 text-pink-500" />
-                                                        {subjectConfig.matchPointsTitle || "이런 점이 잘 맞아요"}
-                                                    </h3>
-                                                    <ul className="space-y-2.5">
-                                                        {(finalResult.matchPoints || []).map((point, idx) => (
-                                                            <li key={idx} className="flex items-start gap-2.5 text-sm font-medium text-slate-600 leading-relaxed">
-                                                                <Check className="w-4 h-4 text-pink-500 flex-shrink-0 mt-0.5" />
-                                                                {point}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
+                                                {/* 상단 라벨 */}
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <span className="text-xs font-bold text-slate-400">{currentModeData.title} 결과</span>
+                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500">
+                                                        MATCH
+                                                    </span>
                                                 </div>
 
-                                                <div className="bg-white/60 rounded-2xl p-1 border border-white/50 flex p-1">
+                                                {/* 메인 결과 */}
+                                                <div className="flex items-center gap-4">
+                                                    <div className="relative flex-shrink-0">
+                                                        <IconComponent mood={finalResult.mood || "happy"} className="w-20 h-20 drop-shadow-lg" />
+                                                    </div>
+                                                    <div className="flex-1 text-left">
+                                                        <div className="text-3xl mb-1">{finalResult.emoji}</div>
+                                                        <h1 className="text-xl font-black text-slate-800 leading-tight">
+                                                            {finalResult.name}
+                                                        </h1>
+                                                    </div>
+                                                </div>
+
+                                                {/* 한줄 설명 */}
+                                                <p className="mt-3 text-sm font-medium text-slate-600 leading-relaxed break-keep border-t border-slate-100 pt-3">
+                                                    "{finalResult.desc}"
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        // 성격 테스트: 기존 컴팩트 스타일
+                                        <>
+                                            <div className="flex items-center gap-4 mb-4 w-full">
+                                                <div className="relative flex-shrink-0">
+                                                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/50 to-pink-200/50 blur-2xl rounded-full scale-150"></div>
+                                                    <IconComponent mood={finalResult.mood || "happy"} className="w-24 h-24 relative z-10 drop-shadow-xl" />
+                                                </div>
+                                                <div className="flex-1 text-left">
+                                                    <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold text-white mb-1 bg-indigo-400`}>
+                                                        {finalResult.mood || 'RARE'} TYPE
+                                                    </span>
+                                                    <h1 className="text-2xl font-black text-slate-800 leading-tight">
+                                                        {finalResult.name}
+                                                    </h1>
+                                                    <p className="text-xs text-slate-500 mt-1">{finalResult.emoji} {currentModeData.title}</p>
+                                                </div>
+                                            </div>
+                                            <div className="w-full bg-white/70 backdrop-blur-md rounded-xl p-4 border border-white/50 shadow-sm mb-4">
+                                                <p className="text-slate-700 font-semibold text-sm leading-relaxed break-keep">
+                                                    "{finalResult.desc}"
+                                                </p>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {/* Deep Mode CTA - Inline */}
+                                    {isDeepMode && (
+                                        <button onClick={() => setShowGraphPopup(true)} className="w-full mb-4 py-2.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-bold flex items-center justify-center gap-2 hover:bg-indigo-100 transition-colors">
+                                            <BarChart2 className="w-4 h-4" /> 상세 성향 그래프
+                                        </button>
+                                    )}
+
+                                    {/* Detailed Content - Compact */}
+                                    <div className="w-full space-y-3 text-left">
+                                        {subjectConfig.resultFormat === 'matching' ? (
+                                            <>
+                                                {/* 해석/조언 탭 먼저 (핵심 정보) */}
+                                                <div className="bg-white/60 rounded-xl p-1 border border-white/50 flex">
                                                     {['interpretation', 'guide'].map((tab) => (
                                                         <button
                                                             key={tab}
                                                             onClick={() => setDetailTab(tab)}
-                                                            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${detailTab === tab ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                                            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${detailTab === tab ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                                                         >
-                                                            {tab === 'interpretation' ? '💡 해석' : '🔮 조언'}
+                                                            {tab === 'interpretation' ? '📖 소개' : '💡 팁'}
                                                         </button>
                                                     ))}
                                                 </div>
-                                                <div className="bg-white/60 rounded-2xl p-5 border border-white/50 mt-2 min-h-[100px]">
-                                                    <p className="text-slate-700 text-sm leading-relaxed">
+                                                <div className="bg-white/60 rounded-xl p-4 border border-white/50">
+                                                    <p className="text-slate-600 text-sm leading-relaxed">
                                                         {detailTab === "interpretation" ? finalResult.interpretation : finalResult.guide}
                                                     </p>
                                                 </div>
+
+                                                {/* Match Points - 보조 정보로 축소 */}
+                                                {(finalResult.matchPoints || []).length > 0 && (
+                                                    <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-100">
+                                                        <h3 className="font-bold text-slate-500 mb-2 flex items-center gap-1.5 text-xs">
+                                                            <Check className="w-3 h-3 text-green-500" />
+                                                            {subjectConfig.matchPointsTitle || "추천 포인트"}
+                                                        </h3>
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {(finalResult.matchPoints || []).map((point, idx) => (
+                                                                <span key={idx} className="px-2 py-0.5 bg-white text-slate-600 text-[11px] rounded-full border border-slate-200">
+                                                                    {point}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </>
                                         ) : (
-                                            <div className="bg-white/60 rounded-2xl p-6 border border-white/50">
-                                                <h3 className="font-bold text-slate-800 mb-2">💡 상세 분석</h3>
-                                                <p className="text-slate-600 text-sm leading-relaxed mb-4">{finalResult.interpretation}</p>
-                                                <h3 className="font-bold text-slate-800 mb-2">🍀 팁</h3>
-                                                <p className="text-slate-600 text-sm leading-relaxed">{finalResult.guide}</p>
+                                            <div className="bg-white/60 rounded-xl p-4 border border-white/50 space-y-3">
+                                                <div>
+                                                    <h3 className="font-bold text-slate-800 mb-1 text-sm">💡 상세 분석</h3>
+                                                    <p className="text-slate-600 text-sm leading-relaxed">{finalResult.interpretation}</p>
+                                                </div>
+                                                <div className="border-t border-slate-100 pt-3">
+                                                    <h3 className="font-bold text-slate-800 mb-1 text-sm">🍀 팁</h3>
+                                                    <p className="text-slate-600 text-sm leading-relaxed">{finalResult.guide}</p>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Upgrade to Deep Mode */}
+                                    {/* Upgrade to Deep Mode - Compact */}
                                     {!isDeepMode && deepQuestions.length > 0 && (
                                         <button
                                             onClick={startDeepTest}
-                                            className="w-full mt-8 py-4 rounded-xl relative overflow-hidden group shadow-lg"
+                                            className="w-full mt-4 py-3 rounded-xl relative overflow-hidden group shadow-md"
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-indigo-600 transition-transform group-hover:scale-105 duration-500"></div>
-                                            <div className="relative flex items-center justify-center gap-2 text-white font-bold">
-                                                <Sparkles className="w-5 h-5 animate-pulse" />
+                                            <div className="relative flex items-center justify-center gap-2 text-white font-bold text-sm">
+                                                <Sparkles className="w-4 h-4 animate-pulse" />
                                                 더 소름돋는 결과 보기 (+{deepQuestions.length}문항)
                                             </div>
                                         </button>
                                     )}
 
-                                    {/* Recommendations */}
+                                    {/* Share & Compare CTA - 바이럴 핵심 */}
+                                    <div className="w-full mt-6 space-y-3">
+                                        {/* 친구와 비교하기 - 메인 CTA */}
+                                        <button
+                                            onClick={() => {
+                                                // TODO: 비교 기능 구현 후 연결
+                                                alert('친구와 비교하기 기능이 곧 추가됩니다!');
+                                            }}
+                                            className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-95"
+                                        >
+                                            <Users className="w-5 h-5" />
+                                            친구와 비교하기
+                                        </button>
+
+                                        {/* 결과 공유하기 - 서브 CTA */}
+                                        <button
+                                            onClick={() => setShowShareCard(true)}
+                                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95"
+                                        >
+                                            <Share2 className="w-5 h-5" />
+                                            결과 카드 공유하기
+                                        </button>
+                                    </div>
+
+                                    {/* Recommendations - Compact */}
                                     <NextTestRecommendation currentTest={mode} onSelectTest={handleStartTest} onGoHome={() => setView('dashboard')} />
                                 </div>
                             </div>
 
                             {/* Floating Restart Button */}
-                            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                                 <button
                                     onClick={() => restart()}
-                                    className="px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-white/50 text-slate-600 text-sm font-bold hover:bg-white hover:text-indigo-600 transition-all flex items-center gap-2"
+                                    className="px-4 py-2 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-white/50 text-slate-600 text-xs font-bold hover:bg-white hover:text-indigo-600 transition-all flex items-center gap-1.5"
                                 >
-                                    <RefreshCw className="w-4 h-4" /> 처음으로
+                                    <RefreshCw className="w-3.5 h-3.5" /> 처음으로
                                 </button>
                             </div>
+
+                            {/* Share Card Modal */}
+                            {showShareCard && finalResult && (
+                                <ShareCard
+                                    testTitle={currentModeData.title}
+                                    resultName={finalResult.name}
+                                    resultEmoji={finalResult.emoji}
+                                    resultDesc={finalResult.desc}
+                                    dimensions={dimensions}
+                                    scores={scores}
+                                    maxScores={getMaxScores()}
+                                    onClose={() => setShowShareCard(false)}
+                                    onCompare={() => {
+                                        setShowShareCard(false);
+                                        // TODO: 비교 기능 연결
+                                        alert('친구와 비교하기 기능이 곧 추가됩니다!');
+                                    }}
+                                />
+                            )}
                         </div>
                     )}
 
