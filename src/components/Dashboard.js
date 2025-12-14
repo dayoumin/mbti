@@ -3,9 +3,13 @@ import * as Icons from './Icons';
 import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_DATA } from '../data/index';
 import { getRandomQuiz, getRandomPoll } from '../data/content';
+import { ALL_KNOWLEDGE_QUIZZES } from '../data/content/quizzes';
+import { VS_POLLS } from '../data/content/polls/vs-polls';
 import { gamificationService } from '../services/GamificationService';
+import { contentParticipationService } from '../services/ContentParticipationService';
 import { ChevronRight, ChevronDown, User, HelpCircle, Vote, Flame, Star } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
+import { CompactProfile } from './MyProfile';
 
 // 카테고리 정의
 const CATEGORIES = {
@@ -27,6 +31,7 @@ const TEST_CATEGORIES = {
     petMatch: 'match',
     plant: 'match',
     coffee: 'match',
+    tea: 'match',
     idealType: 'love',
     // 세부 테스트
     dogBreed: 'pet',
@@ -40,20 +45,20 @@ const TEST_CATEGORIES = {
 // 테스트 배지 설정
 const TEST_BADGES = {
     human: 'HOT',
-    coffee: 'NEW'
+    tea: 'NEW'
 };
 
-// Compact Test Item (아이콘 + 제목 + 배지)
+// Compact Test Item (아이콘 + 제목 + 배지) - 더 작게
 const CompactTestItem = ({ item, onStart, badge }) => {
     const IconComponent = Icons[item.icon] || Icons.HumanIcon;
 
     return (
         <button
             onClick={() => onStart(item.key)}
-            className="group flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative"
+            className="group flex flex-col items-center gap-1.5 p-2 rounded-xl bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 relative"
         >
             {badge && (
-                <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[9px] font-bold rounded-full shadow-sm ${
+                <span className={`absolute -top-1 -right-1 px-1 py-0.5 text-[8px] font-bold rounded-full shadow-sm ${
                     badge === 'HOT' ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white' :
                     badge === 'NEW' ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white' :
                     'bg-slate-200 text-slate-600'
@@ -61,10 +66,10 @@ const CompactTestItem = ({ item, onStart, badge }) => {
                     {badge}
                 </span>
             )}
-            <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                <IconComponent mood="happy" className="w-8 h-8" />
+            <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                <IconComponent mood="happy" className="w-7 h-7" />
             </div>
-            <span className="text-xs font-bold text-slate-600 group-hover:text-indigo-600 transition-colors text-center leading-tight">
+            <span className="text-[11px] font-bold text-slate-600 group-hover:text-indigo-600 transition-colors text-center leading-tight">
                 {item.label}
             </span>
         </button>
@@ -111,33 +116,39 @@ const Header = ({ onProfileClick }) => (
 );
 
 // 스트릭 배너 컴포넌트
-const StreakBanner = ({ streak, level, points }) => {
+const StreakBanner = ({ streak, level, points, onClose }) => {
     if (!streak || streak.currentStreak === 0) return null;
 
     return (
-        <div className="mb-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-3 border border-amber-200 animate-fade-in-up">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
-                        <Flame className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-black text-amber-700">
-                                {streak.currentStreak}일 연속!
-                            </span>
-                            {streak.currentStreak >= 7 && (
-                                <span className="text-[10px] bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
-                                    🔥 불타는 중
-                                </span>
-                            )}
-                        </div>
-                        <p className="text-[10px] text-amber-600">
-                            최장 {streak.longestStreak}일 | {level?.emoji} {level?.name} Lv.{level?.level}
-                        </p>
-                    </div>
+        <div className="mb-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-3 border border-amber-200 animate-fade-in-up relative">
+            {/* 닫기 버튼 */}
+            <button
+                onClick={onClose}
+                className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-amber-400 hover:text-amber-600 hover:bg-amber-100 rounded-full transition-colors"
+                aria-label="닫기"
+            >
+                ✕
+            </button>
+            <div className="flex items-center gap-3 pr-6">
+                <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                    <Flame className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-right">
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-black text-amber-700">
+                            {streak.currentStreak}일 연속!
+                        </span>
+                        {streak.currentStreak >= 7 && (
+                            <span className="text-[10px] bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
+                                🔥 불타는 중
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-[10px] text-amber-600">
+                        최장 {streak.longestStreak}일 | {level?.emoji} {level?.name} Lv.{level?.level}
+                    </p>
+                </div>
+                <div className="text-right flex-shrink-0">
                     <div className="flex items-center gap-1 text-amber-600">
                         <Star className="w-3 h-3" />
                         <span className="text-xs font-bold">{points}P</span>
@@ -180,10 +191,15 @@ const BackgroundDecoration = () => (
     </>
 );
 
-// 오늘의 퀴즈 카드
-const DailyQuizCard = ({ quiz, onAnswer }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
-    const [showResult, setShowResult] = useState(false);
+// 오늘의 퀴즈 카드 (접힘/펼침)
+ const DailyQuizCard = ({ quiz, onAnswer, isExpanded, onToggle, isAnswered = false, previousAnswer = null }) => {
+    const [selectedOption, setSelectedOption] = useState(previousAnswer);
+    const [showResult, setShowResult] = useState(isAnswered);
+
+    useEffect(() => {
+        setSelectedOption(previousAnswer);
+        setShowResult(isAnswered);
+    }, [quiz?.id, isAnswered, previousAnswer]);
 
     if (!quiz) return null;
 
@@ -191,22 +207,60 @@ const DailyQuizCard = ({ quiz, onAnswer }) => {
         if (showResult) return;
         setSelectedOption(optionId);
         setShowResult(true);
-        onAnswer?.(optionId);
+        const isCorrect = quiz.options.find(o => o.id === optionId)?.isCorrect || false;
+        onAnswer?.(quiz.id, optionId, isCorrect);
     };
 
     const selectedIsCorrect = quiz.options.find(o => o.id === selectedOption)?.isCorrect;
 
+    // 컴팩트 모드 (접힌 상태)
+    if (!isExpanded) {
+        return (
+            <button
+                onClick={onToggle}
+                className="w-full flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100 hover:border-blue-200 transition-all group"
+            >
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <HelpCircle className="w-4 h-4 text-blue-500" />
+                </div>
+                <div className="flex-1 text-left min-w-0">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-blue-500 block">오늘의 퀴즈</span>
+                        {isAnswered && (
+                            <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                                완료
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-xs font-medium text-slate-600 truncate">{quiz.question}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors flex-shrink-0" />
+            </button>
+        );
+    }
+
+    // 펼쳐진 상태
     return (
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100">
-            <div className="flex items-center gap-2 mb-3">
-                <HelpCircle className="w-4 h-4 text-blue-500" />
-                <span className="text-xs font-bold text-blue-600">오늘의 퀴즈</span>
-                <span className="text-[10px] bg-blue-100 text-blue-500 px-2 py-0.5 rounded-full ml-auto">
-                    {quiz.category === 'cat' ? '🐱 고양이' : quiz.category === 'dog' ? '🐕 강아지' : '📚 상식'}
-                </span>
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100">
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                    <HelpCircle className="w-4 h-4 text-blue-500" />
+                    <span className="text-xs font-bold text-blue-600">오늘의 퀴즈</span>
+                    {isAnswered && (
+                        <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                            완료
+                        </span>
+                    )}
+                    <span className="text-[10px] bg-blue-100 text-blue-500 px-1.5 py-0.5 rounded-full">
+                        {quiz.category === 'cat' ? '🐱' : quiz.category === 'dog' ? '🐕' : '📚'}
+                    </span>
+                </div>
+                <button onClick={onToggle} className="p-1 hover:bg-blue-100 rounded-lg transition-colors">
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                </button>
             </div>
-            <p className="text-sm font-bold text-slate-700 mb-3">{quiz.question}</p>
-            <div className="space-y-2">
+            <p className="text-sm font-bold text-slate-700 mb-2">{quiz.question}</p>
+            <div className="space-y-1.5">
                 {quiz.options.map((option) => {
                     const isSelected = selectedOption === option.id;
                     const isCorrect = option.isCorrect;
@@ -227,16 +281,16 @@ const DailyQuizCard = ({ quiz, onAnswer }) => {
                             key={option.id}
                             onClick={() => handleSelect(option.id)}
                             disabled={showResult}
-                            className={`w-full text-left px-3 py-2 rounded-xl text-sm border transition-all ${bgClass}`}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs border transition-all ${bgClass}`}
                         >
                             {option.text}
-                            {showResult && isCorrect && <span className="ml-2">✓</span>}
+                            {showResult && isCorrect && <span className="ml-1">✓</span>}
                         </button>
                     );
                 })}
             </div>
             {showResult && (
-                <div className={`mt-3 p-3 rounded-xl text-xs ${selectedIsCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                <div className={`mt-2 p-2 rounded-lg text-[11px] ${selectedIsCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                     {selectedIsCorrect ? '🎉 정답!' : '💡 오답!'} {quiz.explanation}
                 </div>
             )}
@@ -244,114 +298,171 @@ const DailyQuizCard = ({ quiz, onAnswer }) => {
     );
 };
 
-// VS 투표 카드
-const VSPollCard = ({ poll, onVote }) => {
-    const [voted, setVoted] = useState(null);
-    const [results, setResults] = useState({ a: 50, b: 50 }); // 임시 결과
+const getStablePollResults = (pollId) => {
+    const seedStr = String(pollId || '');
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+        hash = ((hash << 5) - hash + seedStr.charCodeAt(i)) | 0;
+    }
+    const base = Math.abs(hash) % 41; // 0..40
+    const a = 30 + base; // 30..70
+    return { a, b: 100 - a };
+};
+
+// VS 투표 카드 (접힘/펼침)
+const VSPollCard = ({ poll, onVote, isExpanded, onToggle, isVoted = false, previousVote = null }) => {
+    const [voted, setVoted] = useState(previousVote);
+    const [results, setResults] = useState(() => getStablePollResults(poll?.id));
+
+    useEffect(() => {
+        if (!poll) return;
+        setVoted(previousVote);
+        setResults(getStablePollResults(poll.id));
+    }, [poll?.id, previousVote]);
 
     if (!poll) return null;
 
     const handleVote = (choice) => {
         if (voted) return;
         setVoted(choice);
-        // 임시로 랜덤 결과 생성 (실제로는 서버에서 가져옴)
-        const aPercent = Math.floor(Math.random() * 40) + 30; // 30-70%
-        setResults({ a: aPercent, b: 100 - aPercent });
-        onVote?.(choice);
+        setResults(getStablePollResults(poll.id));
+        onVote?.(poll.id, choice);
     };
 
-    return (
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-100">
-            <div className="flex items-center gap-2 mb-3">
-                <Vote className="w-4 h-4 text-purple-500" />
-                <span className="text-xs font-bold text-purple-600">VS 투표</span>
-            </div>
-            <p className="text-sm font-bold text-slate-700 mb-4 text-center">{poll.question}</p>
+    // 컴팩트 모드 (접힌 상태)
+    if (!isExpanded) {
+        return (
+            <button
+                onClick={onToggle}
+                className="w-full flex items-center gap-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-3 border border-purple-100 hover:border-purple-200 transition-all group"
+            >
+                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Vote className="w-4 h-4 text-purple-500" />
+                </div>
+                <div className="flex-1 text-left min-w-0">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-purple-500 block">VS 투표</span>
+                        {isVoted && (
+                            <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                                완료
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-xs font-medium text-slate-600 truncate">{poll.optionA.text} vs {poll.optionB.text}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-purple-500 transition-colors flex-shrink-0" />
+            </button>
+        );
+    }
 
-            <div className="flex gap-3">
-                {/* Option A */}
+    // 펼쳐진 상태
+    return (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 border border-purple-100">
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                    <Vote className="w-4 h-4 text-purple-500" />
+                    <span className="text-xs font-bold text-purple-600">VS 투표</span>
+                    {isVoted && (
+                        <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                            완료
+                        </span>
+                    )}
+                </div>
+                <button onClick={onToggle} className="p-1 hover:bg-purple-100 rounded-lg transition-colors">
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                </button>
+            </div>
+            <p className="text-xs font-bold text-slate-700 mb-3 text-center">{poll.question}</p>
+
+            <div className="flex gap-2">
                 <button
                     onClick={() => handleVote('a')}
-                    disabled={voted}
-                    className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
+                    disabled={!!voted}
+                    className={`flex-1 relative overflow-hidden rounded-lg border-2 transition-all ${
                         voted === 'a' ? 'border-purple-400 bg-purple-50' :
                         voted ? 'border-slate-200 bg-slate-50' :
-                        'border-purple-200 bg-white hover:border-purple-300 hover:bg-purple-50'
+                        'border-purple-200 bg-white hover:border-purple-300'
                     }`}
                 >
-                    <div className="p-3 text-center relative z-10">
-                        <span className="text-2xl block mb-1">{poll.optionA.emoji}</span>
-                        <span className="text-xs font-bold text-slate-700">{poll.optionA.text}</span>
-                        {voted && (
-                            <div className="mt-2 text-lg font-black text-purple-600">{results.a}%</div>
-                        )}
+                    <div className="p-2 text-center relative z-10">
+                        <span className="text-xl block">{poll.optionA.emoji}</span>
+                        <span className="text-[10px] font-bold text-slate-700">{poll.optionA.text}</span>
+                        {voted && <div className="text-sm font-black text-purple-600">{results.a}%</div>}
                     </div>
                     {voted && (
-                        <div
-                            className="absolute bottom-0 left-0 right-0 bg-purple-200/50 transition-all duration-500"
-                            style={{ height: `${results.a}%` }}
-                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-purple-200/50 transition-all duration-500" style={{ height: `${results.a}%` }} />
                     )}
                 </button>
 
-                {/* VS */}
                 <div className="flex items-center">
-                    <span className="text-xs font-black text-slate-400">VS</span>
+                    <span className="text-[10px] font-black text-slate-400">VS</span>
                 </div>
 
-                {/* Option B */}
                 <button
                     onClick={() => handleVote('b')}
-                    disabled={voted}
-                    className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
+                    disabled={!!voted}
+                    className={`flex-1 relative overflow-hidden rounded-lg border-2 transition-all ${
                         voted === 'b' ? 'border-pink-400 bg-pink-50' :
                         voted ? 'border-slate-200 bg-slate-50' :
-                        'border-pink-200 bg-white hover:border-pink-300 hover:bg-pink-50'
+                        'border-pink-200 bg-white hover:border-pink-300'
                     }`}
                 >
-                    <div className="p-3 text-center relative z-10">
-                        <span className="text-2xl block mb-1">{poll.optionB.emoji}</span>
-                        <span className="text-xs font-bold text-slate-700">{poll.optionB.text}</span>
-                        {voted && (
-                            <div className="mt-2 text-lg font-black text-pink-600">{results.b}%</div>
-                        )}
+                    <div className="p-2 text-center relative z-10">
+                        <span className="text-xl block">{poll.optionB.emoji}</span>
+                        <span className="text-[10px] font-bold text-slate-700">{poll.optionB.text}</span>
+                        {voted && <div className="text-sm font-black text-pink-600">{results.b}%</div>}
                     </div>
                     {voted && (
-                        <div
-                            className="absolute bottom-0 left-0 right-0 bg-pink-200/50 transition-all duration-500"
-                            style={{ height: `${results.b}%` }}
-                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-pink-200/50 transition-all duration-500" style={{ height: `${results.b}%` }} />
                     )}
                 </button>
             </div>
 
-            {voted && (
-                <p className="text-center text-[10px] text-slate-400 mt-3">
-                    투표에 참여해주셔서 감사합니다!
-                </p>
+            {(voted || isVoted) && (
+                <p className="text-center text-[10px] text-slate-400 mt-2">참여 완료!</p>
             )}
         </div>
     );
 };
 
-const Dashboard = ({ onStartTest, onProfileClick }) => {
+const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
     const [activeCategory, setActiveCategory] = useState('all');
     const [showDetailTests, setShowDetailTests] = useState(false);
 
     // 오늘의 퀴즈/투표 (클라이언트에서만 랜덤 선택)
     const [dailyQuiz, setDailyQuiz] = useState(null);
     const [dailyPoll, setDailyPoll] = useState(null);
+    const [contentParticipation, setContentParticipation] = useState(() => contentParticipationService.getParticipation());
+
+    // 퀴즈/투표 펼침 상태 (기본: 접힌 상태)
+    const [quizExpanded, setQuizExpanded] = useState(false);
+    const [pollExpanded, setPollExpanded] = useState(false);
 
     // 게이미피케이션 상태
     const [gameStats, setGameStats] = useState(null);
     const [currentLevel, setCurrentLevel] = useState(null);
     const [pointsToast, setPointsToast] = useState(null);
+    const [showStreakBanner, setShowStreakBanner] = useState(true);
 
     useEffect(() => {
         // 클라이언트 사이드에서만 랜덤 선택 (hydration mismatch 방지)
         /* eslint-disable react-hooks/set-state-in-effect */
-        setDailyQuiz(getRandomQuiz());
-        setDailyPoll(getRandomPoll());
+        const currentParticipation = contentParticipationService.getParticipation();
+        setContentParticipation(currentParticipation);
+
+        const unansweredQuizzes = ALL_KNOWLEDGE_QUIZZES.filter(q => !currentParticipation.quizzes.some(p => p.quizId === q.id));
+        const unvotedPolls = VS_POLLS.filter(p => !currentParticipation.polls.some(v => v.pollId === p.id));
+
+        const nextQuiz = unansweredQuizzes.length > 0
+            ? unansweredQuizzes[Math.floor(Math.random() * unansweredQuizzes.length)]
+            : getRandomQuiz();
+
+        const nextPoll = unvotedPolls.length > 0
+            ? unvotedPolls[Math.floor(Math.random() * unvotedPolls.length)]
+            : getRandomPoll();
+
+        setDailyQuiz(nextQuiz);
+        setDailyPoll(nextPoll);
 
         // 게이미피케이션 초기화 및 방문 기록
         const stats = gamificationService.getStats();
@@ -452,11 +563,12 @@ const Dashboard = ({ onStartTest, onProfileClick }) => {
                 <Header onProfileClick={onProfileClick} />
 
                 {/* 스트릭 배너 */}
-                {gameStats && (
+                {showStreakBanner && gameStats && (
                     <StreakBanner
                         streak={gameStats.streak}
                         level={currentLevel}
                         points={gameStats.totalPoints}
+                        onClose={() => setShowStreakBanner(false)}
                     />
                 )}
 
@@ -489,8 +601,8 @@ const Dashboard = ({ onStartTest, onProfileClick }) => {
                         </div>
                     )}
 
-                    {/* Grid: 모바일 3열, PC 4-5열 */}
-                    <div className="grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    {/* Grid: 모바일 4열, PC 5-6열 */}
+                    <div className="grid gap-1.5 grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
                         {filteredTests.map((item) => (
                             <CompactTestItem
                                 key={item.key}
@@ -509,18 +621,38 @@ const Dashboard = ({ onStartTest, onProfileClick }) => {
                     )}
                 </section>
 
-                {/* 퀴즈/투표 섹션 - 전체 카테고리에서만 표시 */}
+                {/* 퀴즈/투표 섹션 - 전체 카테고리에서만 표시 (컴팩트) */}
                 {activeCategory === 'all' && (dailyQuiz || dailyPoll) && (
-                    <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
-                        <div className="flex items-center gap-2 mb-3 px-1">
-                            <span className="text-sm font-bold text-slate-700">오늘의 참여</span>
-                            <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                NEW
-                            </span>
+                    <section className="mt-4 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
+                        <div className="flex items-center justify-between mb-2 px-1">
+                            <span className="text-xs font-bold text-slate-500">오늘의 참여</span>
+                            {onContentExplore && (
+                                <button
+                                    onClick={onContentExplore}
+                                    className="text-[10px] font-medium text-indigo-500 hover:text-indigo-600 transition-colors flex items-center gap-0.5"
+                                >
+                                    더보기
+                                    <ChevronRight className="w-3 h-3" />
+                                </button>
+                            )}
                         </div>
-                        <div className="grid md:grid-cols-2 gap-3">
-                            {dailyQuiz && <DailyQuizCard quiz={dailyQuiz} onAnswer={handleQuizAnswer} />}
-                            {dailyPoll && <VSPollCard poll={dailyPoll} onVote={handlePollVote} />}
+                        <div className="space-y-2">
+                            {dailyQuiz && (
+                                <DailyQuizCard
+                                    quiz={dailyQuiz}
+                                    onAnswer={handleQuizAnswer}
+                                    isExpanded={quizExpanded}
+                                    onToggle={() => setQuizExpanded(!quizExpanded)}
+                                />
+                            )}
+                            {dailyPoll && (
+                                <VSPollCard
+                                    poll={dailyPoll}
+                                    onVote={handlePollVote}
+                                    isExpanded={pollExpanded}
+                                    onToggle={() => setPollExpanded(!pollExpanded)}
+                                />
+                            )}
                         </div>
                     </section>
                 )}

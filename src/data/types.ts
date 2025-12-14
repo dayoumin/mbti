@@ -69,7 +69,7 @@ export interface SubjectConfig {
 
 export type SubjectKey =
   | 'human' | 'cat' | 'dog' | 'rabbit' | 'hamster'
-  | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'conflictStyle'
+  | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'tea' | 'conflictStyle'
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 

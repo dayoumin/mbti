@@ -245,3 +245,190 @@ export const CoffeeIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4
         </g>)}
     </svg>
 );
+
+export const TeaIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 찻잔 */}
+        <ellipse cx="50" cy="75" rx="28" ry="8" fill="#D2B48C" stroke="#4A4A4A" strokeWidth="2" />
+        <path d="M22 45 Q 22 75 50 75 Q 78 75 78 45" fill="white" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 차 */}
+        <path d="M25 50 Q 25 70 50 70 Q 75 70 75 50 Z" fill="#90EE90" />
+        {/* 손잡이 */}
+        <path d="M78 50 Q 92 50 92 62 Q 92 74 78 70" fill="none" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 찻잎 장식 */}
+        <ellipse cx="50" cy="52" rx="6" ry="3" fill="#228B22" transform="rotate(-20 50 52)" />
+        {mood === "happy" && (<g>
+            {/* 김 */}
+            <path d="M38 35 Q 40 25 38 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M50 35 Q 52 25 50 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M62 35 Q 64 25 62 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 얼굴 */}
+            <circle cx="42" cy="58" r="2" fill="#4A4A4A" />
+            <circle cx="58" cy="58" r="2" fill="#4A4A4A" />
+            <path d="M46 64 Q 50 68 54 64" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            {/* 김 많이 + 하트 */}
+            <path d="M35 35 Q 37 22 35 10" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M50 35 Q 52 22 50 10" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            <path d="M65 35 Q 67 22 65 10" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 하트 */}
+            <path d="M85 20 Q 82 15 78 20 Q 74 15 71 20 Q 71 25 78 32 Q 85 25 85 20 Z" fill="#FF6B9D" />
+            {/* 얼굴 */}
+            <circle cx="42" cy="58" r="3" fill="#4A4A4A" />
+            <circle cx="58" cy="58" r="3" fill="#4A4A4A" />
+            <path d="M44 64 Q 50 72 56 64" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            {/* 김 */}
+            <path d="M50 35 Q 52 25 50 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 선글라스 */}
+            <rect x="35" y="55" width="10" height="5" rx="1" fill="black" />
+            <rect x="55" y="55" width="10" height="5" rx="1" fill="black" />
+            <path d="M45 57 L55 57" stroke="black" strokeWidth="1" />
+            <path d="M46 66 Q 50 66 54 66" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            {/* 김 적게 */}
+            <path d="M50 38 Q 51 32 50 25" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+            {/* 얼굴 */}
+            <circle cx="42" cy="58" r="2" fill="#4A4A4A" />
+            <circle cx="58" cy="58" r="2" fill="#4A4A4A" />
+            <path d="M46 68 Q 50 64 54 68" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const FishIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 물고기 몸통 */}
+        <ellipse cx="45" cy="50" rx="30" ry="20" fill="#4FC3F7" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 꼬리 지느러미 */}
+        <path d="M75 50 L95 35 L95 65 Z" fill="#29B6F6" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 등 지느러미 */}
+        <path d="M35 30 L45 20 L55 30" fill="#29B6F6" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 배 지느러미 */}
+        <path d="M40 70 L45 78 L50 70" fill="#29B6F6" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 비늘 무늬 */}
+        <path d="M30 45 Q 35 50 30 55" fill="none" stroke="#81D4FA" strokeWidth="2" />
+        <path d="M45 45 Q 50 50 45 55" fill="none" stroke="#81D4FA" strokeWidth="2" />
+        <path d="M60 45 Q 65 50 60 55" fill="none" stroke="#81D4FA" strokeWidth="2" />
+        {mood === "happy" && (<g>
+            <circle cx="28" cy="48" r="4" fill="white" stroke="#4A4A4A" strokeWidth="2" />
+            <circle cx="29" cy="47" r="2" fill="#4A4A4A" />
+            <path d="M35 55 Q 38 58 42 55" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="28" cy="48" r="5" fill="white" stroke="#4A4A4A" strokeWidth="2" />
+            <circle cx="29" cy="47" r="2" fill="#4A4A4A" />
+            <path d="M33 55 Q 38 62 43 55" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 물방울 */}
+            <circle cx="10" cy="40" r="3" fill="#B3E5FC" />
+            <circle cx="15" cy="55" r="2" fill="#B3E5FC" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="22" y="44" width="12" height="6" rx="2" fill="black" />
+            <path d="M35 56 Q 38 56 42 56" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "calm" && (<g>
+            <circle cx="28" cy="48" r="4" fill="white" stroke="#4A4A4A" strokeWidth="2" />
+            <circle cx="29" cy="48" r="2" fill="#4A4A4A" />
+            <path d="M35 56 Q 38 56 42 56" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const BirdIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 몸통 */}
+        <ellipse cx="50" cy="60" rx="25" ry="22" fill="#8BC34A" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 머리 */}
+        <circle cx="50" cy="30" r="18" fill="#AED581" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 부리 */}
+        <path d="M50 38 L58 45 L50 48 Z" fill="#FFC107" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 날개 */}
+        <ellipse cx="28" cy="55" rx="10" ry="15" fill="#7CB342" stroke="#4A4A4A" strokeWidth="2" transform="rotate(-20 28 55)" />
+        <ellipse cx="72" cy="55" rx="10" ry="15" fill="#7CB342" stroke="#4A4A4A" strokeWidth="2" transform="rotate(20 72 55)" />
+        {/* 발 */}
+        <path d="M40 80 L40 90 M38 90 L42 90" stroke="#FFC107" strokeWidth="3" strokeLinecap="round" />
+        <path d="M60 80 L60 90 M58 90 L62 90" stroke="#FFC107" strokeWidth="3" strokeLinecap="round" />
+        {mood === "happy" && (<g>
+            <circle cx="42" cy="28" r="3" fill="#4A4A4A" />
+            <circle cx="58" cy="28" r="3" fill="#4A4A4A" />
+            <circle cx="43" cy="27" r="1" fill="white" />
+            <circle cx="59" cy="27" r="1" fill="white" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="42" cy="28" r="4" fill="#4A4A4A" />
+            <circle cx="58" cy="28" r="4" fill="#4A4A4A" />
+            <circle cx="43" cy="27" r="1.5" fill="white" />
+            <circle cx="59" cy="27" r="1.5" fill="white" />
+            {/* 음표 */}
+            <text x="75" y="20" fontSize="12" fill="#FF6B9D">♪</text>
+            <text x="82" y="28" fontSize="10" fill="#FF6B9D">♫</text>
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="35" y="25" width="12" height="6" rx="2" fill="black" />
+            <rect x="53" y="25" width="12" height="6" rx="2" fill="black" />
+            <path d="M47 28 L53 28" stroke="black" strokeWidth="2" />
+        </g>)}
+        {mood === "calm" && (<g>
+            <path d="M39 28 Q 42 26 45 28" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            <path d="M55 28 Q 58 26 61 28" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const ReptileIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 도마뱀 몸통 */}
+        <ellipse cx="50" cy="55" rx="22" ry="18" fill="#66BB6A" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 머리 */}
+        <ellipse cx="50" cy="30" rx="15" ry="12" fill="#81C784" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 꼬리 */}
+        <path d="M50 73 Q 55 85 45 95" fill="none" stroke="#4CAF50" strokeWidth="8" strokeLinecap="round" />
+        {/* 다리 */}
+        <path d="M30 50 L15 45 M15 45 L10 40 M15 45 L12 50 M15 45 L18 50" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+        <path d="M70 50 L85 45 M85 45 L90 40 M85 45 L88 50 M85 45 L82 50" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+        <path d="M35 68 L25 80 M25 80 L20 78 M25 80 L22 85 M25 80 L28 85" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+        <path d="M65 68 L75 80 M75 80 L80 78 M75 80 L78 85 M75 80 L72 85" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+        {/* 등 무늬 */}
+        <circle cx="42" cy="52" r="3" fill="#A5D6A7" />
+        <circle cx="58" cy="52" r="3" fill="#A5D6A7" />
+        <circle cx="50" cy="60" r="3" fill="#A5D6A7" />
+        {mood === "happy" && (<g>
+            <circle cx="43" cy="28" r="3" fill="#4A4A4A" />
+            <circle cx="57" cy="28" r="3" fill="#4A4A4A" />
+            <circle cx="44" cy="27" r="1" fill="white" />
+            <circle cx="58" cy="27" r="1" fill="white" />
+            <path d="M47 35 Q 50 38 53 35" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="43" cy="28" r="4" fill="#4A4A4A" />
+            <circle cx="57" cy="28" r="4" fill="#4A4A4A" />
+            <circle cx="44" cy="27" r="1.5" fill="white" />
+            <circle cx="58" cy="27" r="1.5" fill="white" />
+            <path d="M45 35 Q 50 42 55 35" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="36" y="25" width="12" height="5" rx="1" fill="black" />
+            <rect x="52" y="25" width="12" height="5" rx="1" fill="black" />
+            <path d="M48 27 L52 27" stroke="black" strokeWidth="1" />
+            <path d="M47 36 Q 50 36 53 36" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "calm" && (<g>
+            <circle cx="43" cy="28" r="3" fill="#4A4A4A" />
+            <circle cx="57" cy="28" r="3" fill="#4A4A4A" />
+            <path d="M47 36 Q 50 36 53 36" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const HeartHandshake = ({ className = "w-6 h-6" }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66" />
+        <path d="m18 15-2-2" />
+        <path d="m15 18-2-2" />
+    </svg>
+);

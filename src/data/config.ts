@@ -111,6 +111,19 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     checkColor: "text-amber-700",
     analysisButtonText: "☕ 상세 취향 분석 보기"
   },
+  tea: {
+    testType: "matching",
+    icon: "TeaIcon",
+    label: "차",
+    intro: ["나에게 맞는 차는?", "녹차? 홍차? 허브티?", "내 취향의 차 찾기"],
+    resultFormat: "matching",
+    deepButtonText: "차 취향",
+    matchPointsTitle: "🍵 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "💡 즐기는 팁" },
+    tabActiveColor: "bg-green-100 border-green-500",
+    checkColor: "text-green-600",
+    analysisButtonText: "🍵 상세 취향 분석 보기"
+  },
   conflictStyle: {
     testType: "personality",
     icon: "HeartHandshake",
