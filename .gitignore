@@ -1,7 +1,28 @@
+# Dependencies
 node_modules/
-.DS_Store
-*.log
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment
 .env
+.env.local
+.env*.local
+
+# IDE/Editor
 .vscode/
 .claude/
 *.code-workspace
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+legacy/

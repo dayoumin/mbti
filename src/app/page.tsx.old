@@ -1,0 +1,341 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { CHEMI_DATA, SUBJECT_KEYS } from '@/data';
+import { SUBJECT_CONFIG } from '@/data/config';
+import { SubjectKey, Question } from '@/data/types';
+import { matchResultLabel } from '@/data/utils';
+import { Capsule, getIcon } from '@/components/Icons';
+import { TraitBar } from '@/components/TraitBar';
+import { TestHeader } from '@/components/TestHeader';
+import { resultService } from '@/services/ResultService';
+
+// 레거시처럼 intro가 메인 화면 (탭 + 카드 구조)
+type Screen = 'intro' | 'test' | 'loading' | 'result';
+
+export default function Home() {
+  const [screen, setScreen] = useState<Screen>('intro');
+  const [mode, setMode] = useState<SubjectKey>('human');
+  const [currentQ, setCurrentQ] = useState(0);
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isDeep, setIsDeep] = useState(false);
+  const [answers, setAnswers] = useState<
+    { questionIndex: number; answerIndex: number; score: number; dimension: string }[]
+  >([]);
+
+  const computeDimCounts = (qs: Question[]) => {
+    const dimCounts: Record<string, number> = {};
+    qs.forEach((q) => {
+      dimCounts[q.dimension] = (dimCounts[q.dimension] || 0) + 1;
+    });
+    return dimCounts;
+  };
+
+  // 테스트 선택 (탭 클릭 시)
+  const selectTest = (subject: SubjectKey) => {
+    setMode(subject);
+    setIsDeep(false);
+  };
+
+  // 실제 테스트 시작 (intro에서 시작 버튼 클릭 시)
+  const startTest = (deep = false) => {
+    const data = CHEMI_DATA[mode];
+    if (!data) return;
+
+    // 심화 테스트: 심화 질문만, 기본 테스트: 기본 질문만
+    const qs = deep && data.questions_deep
+      ? data.questions_deep
+      : data.questions;
+
+    // 심화 테스트 시작 시: 기존 점수 유지, 기본 테스트: 초기화
+    if (!deep) {
+      const initialScores: Record<string, number> = {};
+      Object.keys(data.dimensions).forEach((dim) => {
+        initialScores[dim] = 0;
+      });
+      setScores(initialScores);
+    }
+
+    setQuestions(qs);
+    setCurrentQ(0);
+    setIsDeep(deep);
+    setAnswers([]);
+    setScreen('test');
+  };
+
+  // 심화 테스트 시작 (결과 화면에서)
+  const startDeepTest = () => {
+    const data = CHEMI_DATA[mode];
+    if (!data?.questions_deep) return;
+
+    setQuestions(data.questions_deep);
+    setCurrentQ(0);
+    setIsDeep(true);
+    setAnswers([]);
+    setScreen('test');
+  };
+
+  const handleAnswer = (answerIndex: number) => {
+    const question = questions[currentQ];
+    const answer = question.a[answerIndex];
+
+    setScores((prev) => ({
+      ...prev,
+      [question.dimension]: (prev[question.dimension] || 0) + answer.score,
+    }));
+
+    setAnswers((prev) => [
+      ...prev,
+      {
+        questionIndex: currentQ,
+        answerIndex,
+        score: answer.score,
+        dimension: question.dimension,
+      },
+    ]);
+
+    if (currentQ < questions.length - 1) {
+      setCurrentQ((prev) => prev + 1);
+    } else {
+      // 로딩 화면 표시 후 결과로 이동
+      setScreen('loading');
+      setTimeout(() => {
+        setScreen('result');
+      }, 2000);
+    }
+  };
+
+  const handleGoBack = () => {
+    if (answers.length === 0) return;
+
+    const lastAnswer = answers[answers.length - 1];
+
+    setScores((prev) => ({
+      ...prev,
+      [lastAnswer.dimension]: (prev[lastAnswer.dimension] || 0) - lastAnswer.score,
+    }));
+
+    setAnswers((prev) => prev.slice(0, -1));
+    setCurrentQ(lastAnswer.questionIndex);
+  };
+
+  const handleExit = () => {
+    setScreen('intro');
+  };
+
+  const getResult = () => {
+    const data = CHEMI_DATA[mode];
+    if (!data) return null;
+
+    const dimCounts = computeDimCounts(questions);
+    return matchResultLabel(scores, data.dimensions, data.resultLabels, dimCounts);
+  };
+
+  // 결과 저장 (screen 변경 시에만 실행되어야 함)
+  useEffect(() => {
+    if (screen === 'result') {
+      const data = CHEMI_DATA[mode];
+      if (!data) return;
+
+      const dimCounts = computeDimCounts(questions);
+      const result = matchResultLabel(scores, data.dimensions, data.resultLabels, dimCounts);
+      if (result) {
+        resultService.saveResult(mode, result, scores, isDeep);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
+
+  const currentData = CHEMI_DATA[mode];
+  const config = SUBJECT_CONFIG[mode];
+  const result = screen === 'result' ? getResult() : null;
+  const IconComponent = getIcon(config?.icon || 'HumanIcon');
+
+  // 메인 화면 (레거시 스타일: 탭 + 카드 안에 전체 UI)
+  if (screen === 'intro' && currentData && config) {
+    const questionCount = currentData.questions.length;
+
+    return (
+      <main className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* 레거시 스타일 카드 컨테이너 */}
+          <div className="bg-white rounded-3xl border-4 border-gray-800 shadow-xl p-6 relative" style={{ minHeight: '600px' }}>
+            {/* 탭 UI (레거시 스타일: 하단 테두리 강조) */}
+            <div className="flex overflow-x-auto gap-1 mb-6 -mx-2">
+              {SUBJECT_KEYS.map((subject) => {
+                const subjectConfig = SUBJECT_CONFIG[subject];
+                const SubjectIcon = getIcon(subjectConfig.icon);
+                const isActive = mode === subject;
+
+                return (
+                  <button
+                    key={subject}
+                    onClick={() => selectTest(subject)}
+                    className={`mode-tab flex flex-col items-center px-2 py-2 min-w-[50px] transition-all ${
+                      isActive ? 'active' : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    <SubjectIcon mood="happy" className="w-7 h-7" />
+                    <span className="text-xs mt-1">{subjectConfig.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 테스트 소개 콘텐츠 */}
+            <div className="flex flex-col h-full animate-pop">
+              <div className="flex-grow flex flex-col items-center justify-center text-center">
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">{currentData.title}</h1>
+                <p className="text-gray-500 mb-8">{currentData.subtitle}</p>
+
+                <IconComponent mood="happy" className="w-28 h-28 mb-6" />
+
+                <div className="space-y-2 text-gray-600 font-medium mb-8">
+                  {(config.intro || []).map((text, idx) => (
+                    <span key={idx}>{text}</span>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-400 text-center mb-2">⏱️ 약 3분 소요</p>
+
+              <button
+                onClick={() => startTest(false)}
+                className={`doodle-border w-full py-4 ${currentData.themeColor} text-xl font-bold text-gray-800 hover:opacity-90`}
+              >
+                테스트 시작하기 ({questionCount}문항)
+              </button>
+
+              {/* 대시보드 링크 */}
+              <div className="mt-4 text-center">
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-gray-400 hover:text-gray-600 underline"
+                >
+                  대시보드 보기
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Loading 화면
+  if (screen === 'loading' && currentData) {
+    return (
+      <main className={`min-h-screen ${currentData.themeColor} p-4 flex items-center justify-center`}>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-8">결과를 뽑는 중...</h2>
+          <div className="animate-shake">
+            <Capsule />
+          </div>
+          <p className="mt-8 text-gray-500 animate-pulse">두근두근...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (screen === 'test' && currentData) {
+    const question = questions[currentQ];
+
+    return (
+      <main className={`min-h-screen ${currentData.themeColor} p-4`}>
+        <div className="max-w-md mx-auto">
+          <TestHeader
+            testName={isDeep ? `${currentData.title} (심화)` : currentData.title}
+            currentQuestion={currentQ}
+            totalQuestions={questions.length}
+            themeColor={currentData.themeColor}
+            onBack={handleGoBack}
+            onExit={handleExit}
+          />
+
+          <div className="bg-white doodle-border p-6 mb-4 animate-pop">
+            <IconComponent mood="happy" className="w-20 h-20 mx-auto mb-4" />
+            <p className="text-lg font-bold text-gray-800 text-center break-keep">
+              {question.q}
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {question.a.map((answer, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleAnswer(idx)}
+                className="w-full bg-white doodle-border p-4 text-left hover:bg-yellow-50 hover:scale-102 transition-all"
+              >
+                <span className="text-gray-700 break-keep">{answer.text}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (screen === 'result' && currentData && result) {
+    return (
+      <main className={`min-h-screen ${result.color || 'bg-gray-100'} p-4`}>
+        <div className="max-w-md mx-auto">
+          <div className="bg-white doodle-border p-6 mb-4 animate-pop text-center">
+            <IconComponent
+              mood={result.mood as 'happy' | 'cool' | 'sad' | 'excited'}
+              className="w-24 h-24 mx-auto mb-4"
+            />
+            <div className="text-4xl mb-2">{result.emoji}</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">{result.name}</h2>
+            <p className="text-gray-600 break-keep">{result.desc}</p>
+          </div>
+
+          <div className="bg-white doodle-border p-6 mb-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">성향 분석</h3>
+            {Object.entries(currentData.dimensions).map(([key, dim]) => {
+              const score = scores[key] || 0;
+              const dimQuestions = questions.filter((q) => q.dimension === key);
+              const maxScore = dimQuestions.length * 5;
+
+              return (
+                <TraitBar
+                  key={key}
+                  labelLeft={dim.name}
+                  labelRight=""
+                  scoreLeft={score}
+                  scoreRight={maxScore - score}
+                  color="bg-yellow-400"
+                />
+              );
+            })}
+          </div>
+
+          <div className="bg-white doodle-border p-6 mb-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">해석</h3>
+            <p className="text-gray-600 break-keep">{result.interpretation}</p>
+          </div>
+
+          <div className="bg-white doodle-border p-6 mb-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">가이드</h3>
+            <p className="text-gray-600 break-keep">{result.guide}</p>
+          </div>
+
+          <div className="space-y-3">
+            {!isDeep && currentData.questions_deep && currentData.questions_deep.length > 0 && (
+              <button onClick={startDeepTest} className="w-full btn-primary animate-pulse">
+                {config?.deepButtonText || '결과'}, 이게 다가 아니다? (+{currentData.questions_deep.length}문항)
+              </button>
+            )}
+            <button onClick={handleExit} className="w-full btn-secondary">
+              다른 테스트 하기
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return null;
+}
+

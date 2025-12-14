@@ -55,8 +55,9 @@
 - [x] 질문이 차원을 잘 반영하는가?
 - [x] 답변 옵션이 명확한 스펙트럼인가?
 - [x] 결과 조건이 합리적인가?
-- [ ] **검토 필요**: 시바견이 size:high인데 실제로 중형견 - medium이 맞지 않을까?
-- [ ] **검토 필요**: 웰시코기도 중형견인데 size:high로 설정됨
+- [x] ~~**검토 필요**: 시바견이 size:high인데 실제로 중형견~~ → **해결됨**: size 조건 제거, `grooming:low, training:low, independence:high`로 변경
+- [x] ~~**검토 필요**: 웰시코기도 중형견인데 size:high로 설정됨~~ → **해결됨**: size 조건 제거, `energy:high, grooming:high, training:low`로 변경
+- [x] 비글도 중형견 → **해결됨**: size 조건 제거, `energy:high, grooming:low, independence:high`로 변경
 
 ---
 
@@ -113,7 +114,7 @@
 
 ### 기본 정보
 - **연결**: petMatch → "소동물" 결과 후
-- **차원**: 5개 (lifespan, handling, noise, space, social)
+- **차원**: 5개 (lifespan, handling, nocturnal, space, social)
 - **질문**: 6개 기본 + 1개 심화
 - **결과**: 7종
 
@@ -123,8 +124,8 @@
 |---|------|------|-----------------|
 | 1 | 소동물과 얼마나 오래 함께하고 싶나요? | lifespan | 2-3년(1) / 5년 이상(3) / 10년 이상(5) |
 | 2 | 소동물을 손에 올리고 만지고 싶나요? | handling | 바라보기만(1) / 가끔(3) / 자주(5) |
-| 3 | 야행성 동물도 괜찮나요? | noise | 낮에 활동(1) / 상관없음(3) / 밤도 OK(5) |
-| 4 | 밤에 쳇바퀴 소리가 나도 괜찮나요? | noise | 조용해야(1) / 다른 방이면 OK(3) / 상관없음(5) |
+| 3 | 야행성 동물도 괜찮나요? | nocturnal | 낮에 활동(1) / 상관없음(3) / 밤도 OK(5) |
+| 4 | 밤에 쳇바퀴 소리가 나도 괜찮나요? | nocturnal | 조용해야(1) / 다른 방이면 OK(3) / 상관없음(5) |
 | 5 | 사육장을 얼마나 크게 둘 수 있나요? | space | 작은 케이지(1) / 중형(3) / 큰 케이지/방 한쪽(5) |
 | 6 | 여러 마리를 함께 키우고 싶나요? | social | 한 마리(1) / 상관없음(3) / 여러 마리(5) |
 
@@ -132,18 +133,18 @@
 
 | 종류 | 조건 | 대상 사용자 |
 |------|------|------------|
-| 골든 햄스터 | lifespan:low, handling:high, noise:high, social:low | 첫 소동물, 볼주머니, 단독 |
-| 드워프 햄스터 | lifespan:low, handling:low, noise:high, space:low | 작은 공간, 관찰용, 빠름 |
-| 토끼 | lifespan:high, handling:high, space:high, noise:low | 오래 함께, 스킨십, 조용함 |
-| 기니피그 | lifespan:high, handling:high, social:high, noise:low | 여러 마리, 소리 소통, 온순 |
-| 친칠라 | lifespan:high, handling:low, noise:high, space:high | 오래 함께, 부드러운 털, 경험자 |
-| 고슴도치 | lifespan:high, handling:low, noise:high, social:low | 독특함, 단독, 야행성 |
+| 골든 햄스터 | lifespan:low, handling:high, nocturnal:high, social:low | 첫 소동물, 볼주머니, 단독 |
+| 드워프 햄스터 | lifespan:low, handling:low, nocturnal:high, space:low | 작은 공간, 관찰용, 빠름 |
+| 토끼 | lifespan:high, handling:high, space:high, nocturnal:low | 오래 함께, 스킨십, 조용함 |
+| 기니피그 | lifespan:high, handling:high, social:high, nocturnal:low | 여러 마리, 소리 소통, 온순 |
+| 친칠라 | lifespan:high, handling:low, nocturnal:high, space:high | 오래 함께, 부드러운 털, 경험자 |
+| 고슴도치 | lifespan:high, handling:low, nocturnal:high, social:low | 독특함, 단독, 야행성 |
 | 페럿 | lifespan:high, handling:high, space:high, social:high | 활발함, 놀이, 다마리 |
 
 ### 검토 포인트
 - [x] 야행성/주행성 구분이 잘 되어 있는가?
 - [x] 수명 기대치가 반영되어 있는가?
-- [ ] **검토 필요**: noise 차원명이 "활동시간"인데 실제로 "야행성 허용도"에 가까움 - 혼란 가능
+- [x] ~~**검토 필요**: noise 차원명이 "활동시간"인데 실제로 "야행성 허용도"에 가까움~~ → **해결됨**: `noise` → `nocturnal`로 차원명 변경
 
 ---
 
@@ -173,7 +174,7 @@
 | 베타 | difficulty:low, tankSize:low, social:low | 첫 관상어, 작은 공간, 단독 |
 | 구피 | difficulty:low, tankSize:low, social:high | 초보자, 번식, 다양한 색상 |
 | 네온테트라 | difficulty:low, tankSize:high, social:high, visual:high | 군영, 수초 수조, 아쿠아스케이핑 |
-| 금붕어 | difficulty:low, tankSize:high, maintenance:high | 전통적, 오래 함께, 히터 없이 |
+| 금붕어 | tankSize:high, maintenance:high, social:low | 전통적, 오래 함께, 히터 없이 |
 | 코리도라스 | difficulty:low, tankSize:high, social:high, maintenance:low | 청소부, 귀여움, 합사 |
 | 엔젤피시 | difficulty:high, tankSize:high, visual:high | 우아함, 중급자, 존재감 |
 | 디스커스 | difficulty:high, tankSize:high, visual:high, maintenance:high | 상급자, 가장 아름다움, 정성 |
@@ -182,7 +183,7 @@
 ### 검토 포인트
 - [x] 난이도별 적절한 분류인가?
 - [x] 수조 크기 조건이 현실적인가?
-- [ ] **검토 필요**: 금붕어가 difficulty:low인데 실제로 관리가 까다로운 편 - medium이 적절할 수 있음
+- [x] ~~**검토 필요**: 금붕어가 difficulty:low인데 실제로 관리가 까다로운 편~~ → **해결됨**: difficulty 조건 제거, `tankSize:high, maintenance:high, social:low`로 변경
 
 ---
 
@@ -211,7 +212,7 @@
 | 종류 | 조건 | 대상 사용자 |
 |------|------|------------|
 | 십자매/문조 | noise:low, interaction:low, experience:low | 첫 반려조, 조용함, 관찰용 |
-| 카나리아 | noise:high, interaction:low, space:low | 노랫소리, 핸들링 없이, 작은 새 |
+| 카나리아 | noise:medium, interaction:low, space:low | 노랫소리, 핸들링 없이, 작은 새 |
 | 잉꼬 | noise:high, interaction:high, space:low, experience:low | 초보 핸들링, 작은 앵무, 애교 |
 | 코카티엘 | noise:high, interaction:high, time:high, experience:high | 다정함, 휘파람, 스킨십 |
 | 모란앵무 | noise:high, interaction:high, space:high | 활발함, 화려함, 장난감 |
@@ -220,7 +221,7 @@
 ### 검토 포인트
 - [x] 소음 허용도 기준이 명확한가?
 - [x] 초보자/경험자 구분이 적절한가?
-- [ ] **검토 필요**: 카나리아가 noise:high인데 "노래"이지 "시끄러움"은 아님 - 해석 혼란 가능
+- [x] ~~**검토 필요**: 카나리아가 noise:high인데 "노래"이지 "시끄러움"은 아님~~ → **해결됨**: `noise:high` → `noise:medium`으로 변경
 
 ---
 
@@ -251,28 +252,28 @@
 | 레오파드 게코 | handling:high, space:low, feeding:high, experience:low | 첫 파충류, 핸들링, 귀여움 |
 | 크레스티드 게코 | handling:high, space:low, feeding:low, experience:low | 벌레 없이, 초보자, 귀여움 |
 | 비어디드래곤 | handling:high, space:high, feeding:high, maintenance:high | 교감, 주간 활동, 친화력 |
-| 옥수수뱀 | handling:high, space:high, feeding:high, experience:high | 뱀 입문, 핸들링, 다양한 색상 |
+| 옥수수뱀 | handling:high, space:high, feeding:high, experience:low | 뱀 입문, 핸들링, 다양한 색상 |
 | 볼 파이톤 | handling:high, space:high, feeding:high, maintenance:high, experience:high | 다양한 모프, 장수, 습도 관리 |
 | 붉은귀 거북 | handling:low, space:high, feeding:low, maintenance:high | 거북이, 수생 환경, 관찰 |
 
 ### 검토 포인트
 - [x] 먹이 허용도(벌레/쥐) 질문이 중요하게 다뤄지는가?
 - [x] 초보자 추천(레오파드 게코, 크레스티드 게코)이 적절한가?
-- [ ] **검토 필요**: 옥수수뱀이 experience:high인데 실제로 초보 추천종 - low가 맞지 않을까?
+- [x] ~~**검토 필요**: 옥수수뱀이 experience:high인데 실제로 초보 추천종~~ → **해결됨**: `experience:high` → `experience:low`로 변경
 
 ---
 
 ## 전체 검토 요약
 
-### 확인된 이슈
+### 확인된 이슈 (모두 해결됨 ✅)
 
-| # | 테스트 | 이슈 | 심각도 | 제안 |
-|---|--------|------|--------|------|
-| 1 | dogBreed | 시바견/웰시코기 size:high → 실제 중형견 | 낮음 | medium으로 변경 고려 |
-| 2 | smallPet | noise 차원명이 "활동시간"인데 야행성 허용도 | 낮음 | 차원명을 "야행성"으로 변경 고려 |
-| 3 | fishType | 금붕어 difficulty:low → 실제 관리 까다로움 | 중간 | medium으로 변경 고려 |
-| 4 | birdType | 카나리아 noise:high → "노래"이지 "시끄러움" 아님 | 낮음 | 해석 설명 추가 고려 |
-| 5 | reptileType | 옥수수뱀 experience:high → 실제 초보 추천종 | 중간 | low로 변경 고려 |
+| # | 테스트 | 이슈 | 상태 | 조치 |
+|---|--------|------|------|------|
+| 1 | dogBreed | 시바견/웰시코기/비글 size:high → 실제 중형견 | ✅ 해결 | size 조건 제거, 다른 차원 조합 사용 |
+| 2 | smallPet | noise 차원명이 야행성 허용도에 가까움 | ✅ 해결 | `noise` → `nocturnal`로 변경 |
+| 3 | fishType | 금붕어 difficulty:low → 실제 관리 까다로움 | ✅ 해결 | difficulty 조건 제거, tankSize+maintenance+social 사용 |
+| 4 | birdType | 카나리아 noise:high → "노래"이지 "시끄러움" 아님 | ✅ 해결 | `noise:high` → `noise:medium` |
+| 5 | reptileType | 옥수수뱀 experience:high → 실제 초보 추천종 | ✅ 해결 | `experience:high` → `experience:low` |
 
 ### 전체 통계
 
@@ -287,12 +288,13 @@
 
 ### 검토 요청 사항
 
-1. **데이터 정확성**: 각 결과의 condition이 실제 동물 특성과 일치하는가?
-2. **사용자 경험**: 질문 흐름이 자연스러운가?
-3. **결과 설명**: interpretation, guide, matchPoints가 유용한가?
-4. **이슈 처리**: 위 5개 이슈 중 수정이 필요한 것은?
+1. ~~**데이터 정확성**: 각 결과의 condition이 실제 동물 특성과 일치하는가?~~ → ✅ 검토 완료, 5개 이슈 모두 수정됨
+2. **사용자 경험**: 질문 흐름이 자연스러운가? → 브라우저 테스트 필요
+3. **결과 설명**: interpretation, guide, matchPoints가 유용한가? → 브라우저 테스트 필요
+4. ~~**이슈 처리**: 위 5개 이슈 중 수정이 필요한 것은?~~ → ✅ 전부 수정됨
 
 ---
 
 *생성일: 2025-12-14*
+*최종 수정: 2025-12-14*
 *검증 스크립트: `scripts/test-detail-tests.mjs`*
