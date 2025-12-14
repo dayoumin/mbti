@@ -432,3 +432,114 @@ export const HeartHandshake = ({ className = "w-6 h-6" }) => (
         <path d="m15 18-2-2" />
     </svg>
 );
+
+export const FruitIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 사과 */}
+        <ellipse cx="50" cy="55" rx="28" ry="30" fill="#FF6B6B" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 하이라이트 */}
+        <ellipse cx="38" cy="45" rx="8" ry="12" fill="#FF8E8E" opacity="0.6" />
+        {/* 꼭지 */}
+        <path d="M50 25 Q 52 18 50 12" fill="none" stroke="#8B4513" strokeWidth="4" strokeLinecap="round" />
+        {/* 잎 */}
+        <ellipse cx="58" cy="20" rx="10" ry="6" fill="#4CAF50" transform="rotate(30 58 20)" />
+        {mood === "happy" && (<g>
+            <circle cx="40" cy="52" r="3" fill="#4A4A4A" />
+            <circle cx="60" cy="52" r="3" fill="#4A4A4A" />
+            <path d="M44 62 Q 50 68 56 62" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="40" cy="52" r="4" fill="#4A4A4A" />
+            <circle cx="60" cy="52" r="4" fill="#4A4A4A" />
+            <path d="M42 62 Q 50 72 58 62" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 반짝임 */}
+            <path d="M75 35 L80 30 L85 35 L80 40 Z" fill="#FFD700" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="33" y="49" width="14" height="6" rx="2" fill="black" />
+            <rect x="53" y="49" width="14" height="6" rx="2" fill="black" />
+            <path d="M47 52 L53 52" stroke="black" strokeWidth="2" />
+            <path d="M44 64 Q 50 64 56 64" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            <circle cx="40" cy="52" r="3" fill="#4A4A4A" />
+            <circle cx="60" cy="52" r="3" fill="#4A4A4A" />
+            <path d="M44 66 Q 50 60 56 66" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const AlcoholIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 맥주잔 */}
+        <path d="M25 30 L25 80 Q 25 85 30 85 L60 85 Q 65 85 65 80 L65 30 Z" fill="#FFD54F" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 맥주 거품 */}
+        <ellipse cx="32" cy="28" rx="10" ry="8" fill="white" />
+        <ellipse cx="45" cy="25" rx="12" ry="10" fill="white" />
+        <ellipse cx="58" cy="28" rx="10" ry="8" fill="white" />
+        {/* 손잡이 */}
+        <path d="M65 40 Q 82 40 82 55 Q 82 70 65 70" fill="none" stroke="#4A4A4A" strokeWidth="5" />
+        {/* 거품 방울 */}
+        <circle cx="35" cy="50" r="3" fill="#FFECB3" />
+        <circle cx="50" cy="60" r="2" fill="#FFECB3" />
+        <circle cx="40" cy="70" r="2.5" fill="#FFECB3" />
+        {mood === "happy" && (<g>
+            <circle cx="38" cy="55" r="2" fill="#4A4A4A" />
+            <circle cx="52" cy="55" r="2" fill="#4A4A4A" />
+            <path d="M42 65 Q 45 68 48 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="38" cy="55" r="3" fill="#4A4A4A" />
+            <circle cx="52" cy="55" r="3" fill="#4A4A4A" />
+            <path d="M40 65 Q 45 72 50 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 건배 효과 */}
+            <path d="M15 20 L20 15 M10 30 L15 28 M18 38 L12 40" stroke="#FFD700" strokeWidth="2" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="32" y="52" width="10" height="5" rx="1" fill="black" />
+            <rect x="46" y="52" width="10" height="5" rx="1" fill="black" />
+            <path d="M42 54 L46 54" stroke="black" strokeWidth="1" />
+            <path d="M42 66 Q 45 66 48 66" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            <circle cx="38" cy="55" r="2" fill="#4A4A4A" />
+            <circle cx="52" cy="55" r="2" fill="#4A4A4A" />
+            <path d="M42 68 Q 45 64 48 68" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const BreadIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 식빵 몸통 */}
+        <rect x="20" y="30" width="60" height="55" rx="8" fill="#DEB887" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 식빵 윗부분 (둥근 부분) */}
+        <ellipse cx="50" cy="30" rx="30" ry="15" fill="#F5DEB3" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 빵 테두리 (크러스트) */}
+        <rect x="25" y="35" width="50" height="45" rx="5" fill="#FAEBD7" />
+        {mood === "happy" && (<g>
+            <circle cx="40" cy="52" r="3" fill="#4A4A4A" />
+            <circle cx="60" cy="52" r="3" fill="#4A4A4A" />
+            <path d="M44 65 Q 50 72 56 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="40" cy="52" r="4" fill="#4A4A4A" />
+            <circle cx="60" cy="52" r="4" fill="#4A4A4A" />
+            <path d="M42 65 Q 50 76 58 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 빵 향기 */}
+            <path d="M70 20 Q 75 15 72 10" fill="none" stroke="#DEB887" strokeWidth="2" strokeLinecap="round" />
+            <path d="M78 25 Q 83 20 80 15" fill="none" stroke="#DEB887" strokeWidth="2" strokeLinecap="round" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="33" y="49" width="12" height="6" rx="2" fill="black" />
+            <rect x="55" y="49" width="12" height="6" rx="2" fill="black" />
+            <path d="M45 52 L55 52" stroke="black" strokeWidth="2" />
+            <path d="M44 66 Q 50 66 56 66" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            <circle cx="40" cy="52" r="3" fill="#4A4A4A" />
+            <circle cx="60" cy="52" r="3" fill="#4A4A4A" />
+            <path d="M44 70 Q 50 64 56 70" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);

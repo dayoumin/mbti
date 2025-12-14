@@ -132,6 +132,45 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     resultFormat: "simple",
     deepButtonText: "갈등 대처"
   },
+  fruit: {
+    testType: "matching",
+    icon: "FruitIcon",
+    label: "과일",
+    intro: ["나에게 맞는 과일은?", "달달한 과일? 상큼한 과일?", "내 취향의 과일 찾기"],
+    resultFormat: "matching",
+    deepButtonText: "과일 취향",
+    matchPointsTitle: "🍎 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "💡 맛있게 먹는 팁" },
+    tabActiveColor: "bg-red-100 border-red-400",
+    checkColor: "text-red-500",
+    analysisButtonText: "🍎 상세 취향 분석 보기"
+  },
+  alcohol: {
+    testType: "matching",
+    icon: "AlcoholIcon",
+    label: "술",
+    intro: ["나에게 맞는 술은?", "소주? 맥주? 와인?", "내 취향의 술 찾기"],
+    resultFormat: "matching",
+    deepButtonText: "술 취향",
+    matchPointsTitle: "🍺 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "💡 즐기는 팁" },
+    tabActiveColor: "bg-amber-100 border-amber-500",
+    checkColor: "text-amber-600",
+    analysisButtonText: "🍺 상세 취향 분석 보기"
+  },
+  bread: {
+    testType: "matching",
+    icon: "BreadIcon",
+    label: "빵",
+    intro: ["나에게 맞는 빵은?", "달달한 빵? 담백한 빵?", "내 취향의 빵 찾기"],
+    resultFormat: "matching",
+    deepButtonText: "빵 취향",
+    matchPointsTitle: "🍞 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "💡 맛있게 먹는 팁" },
+    tabActiveColor: "bg-amber-100 border-amber-400",
+    checkColor: "text-amber-600",
+    analysisButtonText: "🍞 상세 취향 분석 보기"
+  },
   // === petMatch 세부 테스트 ===
   dogBreed: {
     testType: "matching",

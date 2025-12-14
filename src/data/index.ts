@@ -12,6 +12,9 @@ import { petMatchData } from './subjects/petMatch';
 import { coffeeData } from './subjects/coffee';
 import { teaData } from './subjects/tea';
 import { conflictStyleData } from './subjects/conflictStyle';
+import { fruitData } from './subjects/fruit';
+import { alcoholData } from './subjects/alcohol';
+import { breadData } from './subjects/bread';
 // petMatch 세부 테스트
 import { dogBreedData } from './subjects/dogBreed';
 import { catBreedData } from './subjects/catBreed';
@@ -32,6 +35,9 @@ export const CHEMI_DATA: ChemiData = {
   coffee: coffeeData,
   tea: teaData,
   conflictStyle: conflictStyleData,
+  fruit: fruitData,
+  alcohol: alcoholData,
+  bread: breadData,
   // petMatch 세부 테스트
   dogBreed: dogBreedData,
   catBreed: catBreedData,
@@ -43,6 +49,7 @@ export const CHEMI_DATA: ChemiData = {
 
 export const SUBJECT_KEYS: SubjectKey[] = [
   'human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant', 'petMatch', 'coffee', 'tea', 'conflictStyle',
+  'fruit', 'alcohol', 'bread',
   // petMatch 세부 테스트
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
