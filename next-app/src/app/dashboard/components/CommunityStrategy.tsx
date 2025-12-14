@@ -20,10 +20,8 @@ import {
 import {
   COMMUNITY_STRATEGY,
   CORE_PRINCIPLES,
-  Phase,
   PhaseItem,
   Risk,
-  Metric,
 } from '../data/community';
 
 // ============================================================================

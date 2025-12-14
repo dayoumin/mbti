@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { CHEMI_DATA } from '../data/index';
 import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_CONSTANTS } from '../data/constants';
@@ -11,12 +11,12 @@ import Dashboard from '../components/Dashboard';
 import ShareCard from '../components/ShareCard';
 import * as Icons from '../components/Icons';
 import {
-    ChevronLeft, ChevronRight, Share2, RefreshCw, BarChart2,
-    Info, Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, Users
+    ChevronLeft, Share2, RefreshCw, BarChart2,
+    Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, Users
 } from 'lucide-react';
 
 // Icons extraction for Result Characters (Keep custom SVGs for character art)
-const { Capsule, CloseIcon, HumanIcon } = Icons;
+const { Capsule, HumanIcon } = Icons;
 
 const MAX_SCORE_PER_QUESTION = CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
 
@@ -133,14 +133,10 @@ export default function Home() {
     const [showInsight, setShowInsight] = useState(false);
     const [showShareCard, setShowShareCard] = useState(false);
 
-    // Ensure data exists
-    useEffect(() => {
-        if (!CHEMI_DATA[mode]) {
-            setMode('human');
-        }
-    }, [mode]);
+    // Ensure mode is valid - use useMemo to derive safe mode
+    const safeMode = CHEMI_DATA[mode] ? mode : 'human';
 
-    const currentModeData = CHEMI_DATA[mode] || CHEMI_DATA.human;
+    const currentModeData = CHEMI_DATA[safeMode];
     const dimensions = currentModeData.dimensions;
     const basicQuestions = currentModeData.questions || [];
     const deepQuestions = currentModeData.questions_deep || [];
@@ -156,9 +152,8 @@ export default function Home() {
         return initial;
     }, [dimensions]);
 
-    useEffect(() => {
-        setScores(getInitialScores());
-    }, [mode, getInitialScores]);
+    // Reset scores when mode changes via handleStartTest, not useEffect
+    // The scores are reset in handleStartTest function using getInitialScores()
 
     const subjectConfig = SUBJECT_CONFIG[mode] || {};
 
@@ -441,7 +436,7 @@ export default function Home() {
 
                                                 {/* 한줄 설명 */}
                                                 <p className="mt-3 text-sm font-medium text-slate-600 leading-relaxed break-keep border-t border-slate-100 pt-3">
-                                                    "{finalResult.desc}"
+                                                    &quot;{finalResult.desc}&quot;
                                                 </p>
                                             </div>
                                         </div>
@@ -465,7 +460,7 @@ export default function Home() {
                                             </div>
                                             <div className="w-full bg-white/70 backdrop-blur-md rounded-xl p-4 border border-white/50 shadow-sm mb-4">
                                                 <p className="text-slate-700 font-semibold text-sm leading-relaxed break-keep">
-                                                    "{finalResult.desc}"
+                                                    &quot;{finalResult.desc}&quot;
                                                 </p>
                                             </div>
                                         </>

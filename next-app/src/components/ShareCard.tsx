@@ -129,8 +129,8 @@ export default function ShareCard({
 
       dimEntries.forEach(([key, dim], idx) => {
         const score = Math.max(0, scores[key] || 0); // 음수 방지
-        const maxScore = maxScores?.[key] || 25; // 동적 maxScore, 기본값 25
-        const percentage = Math.min((score / maxScore) * 100, 100);
+        const maxScore = maxScores?.[key] ?? 25; // 동적 maxScore, 기본값 25
+        const percentage = maxScore > 0 ? Math.min((score / maxScore) * 100, 100) : 0;
         const currentY = barY + idx * 50;
 
         // 라벨
@@ -215,7 +215,7 @@ export default function ShareCard({
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (err) {
+      } catch {
         console.log('Share cancelled');
       }
     } else {

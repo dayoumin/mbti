@@ -41,6 +41,7 @@ import {
   Bird,
   Bug,
 } from 'lucide-react';
+import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
 import { SubjectKey } from '@/data/types';
 import { TEST_TYPES, SUBJECT_CONFIG } from '@/data/config';
@@ -393,7 +394,7 @@ function OverviewSummary() {
           <h2 className="text-lg font-semibold text-[var(--db-text)]">빠른 작업</h2>
         </div>
         <div className="p-5 flex gap-3">
-          <a
+          <Link
             href="/"
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200"
             style={{
@@ -403,7 +404,7 @@ function OverviewSummary() {
           >
             <Play className="w-4 h-4" />
             테스트 실행
-          </a>
+          </Link>
           <button className="db-tab flex items-center gap-2 px-4 py-2">
             <Settings className="w-4 h-4" />
             설정

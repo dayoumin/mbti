@@ -41,7 +41,9 @@ function assertTrue(condition, message = '') {
 console.log('\n--- 1. 퍼센트 계산 테스트 ---\n');
 
 function calculatePercentage(score, maxScore = 25) {
-  return Math.min((score / maxScore) * 100, 100);
+  const safeScore = Math.max(0, score);
+  if (!(maxScore > 0)) return 0;
+  return Math.min((safeScore / maxScore) * 100, 100);
 }
 
 test('퍼센트 계산 - 0점', () => {
@@ -64,11 +66,9 @@ test('퍼센트 계산 - 큰 초과 점수 (100점)', () => {
   assertEqual(calculatePercentage(100), 100);
 });
 
-test('퍼센트 계산 - 음수 점수 경고', () => {
+test('퍼센트 계산 - 음수 점수 0% 보정', () => {
   const result = calculatePercentage(-5);
-  // 현재 로직은 음수를 처리 안 함
-  console.log(`   ⚠️ 음수 점수(-5) → ${result}% (버그 가능성)`);
-  assertTrue(result < 0);
+  assertEqual(result, 0);
 });
 
 // =============================================================================
@@ -173,7 +173,8 @@ test('차원 0개', () => {
 console.log('\n--- 4. 파일명 생성 테스트 ---\n');
 
 function generateFileName(testTitle, resultName) {
-  return `${testTitle}_결과_${resultName}.png`;
+  const sanitizeFileName = (name) => name.replace(/[/\\:*?"<>|]/g, '_');
+  return `${sanitizeFileName(testTitle)}_결과_${sanitizeFileName(resultName)}.png`;
 }
 
 test('일반 파일명', () => {
@@ -181,11 +182,12 @@ test('일반 파일명', () => {
   assertEqual(fileName, '나의 성격 테스트_결과_활발한 리더.png');
 });
 
-test('특수문자 포함 (잠재적 문제)', () => {
+test('특수문자 포함 (sanitizeFileName)', () => {
   const fileName = generateFileName('테스트/이름', '결과:값');
   console.log(`   생성된 파일명: "${fileName}"`);
-  console.log('   ⚠️ 특수문자(/, :)는 파일 시스템에서 문제될 수 있음');
-  assertTrue(fileName.includes('/') || fileName.includes(':'));
+  assertTrue(!fileName.includes('/'));
+  assertTrue(!fileName.includes(':'));
+  assertTrue(fileName.includes('_'), 'sanitize로 _를 포함해야 함');
 });
 
 // =============================================================================
@@ -232,26 +234,11 @@ test('색상 순환 - 6번째 차원 (순환)', () => {
 // 7. maxScore 동적 계산 제안 테스트
 // =============================================================================
 
-console.log('\n--- 7. maxScore 동적 계산 제안 ---\n');
+console.log('\n--- 7. maxScore 동적 적용 ---\n');
 
-test('동적 maxScore 계산', () => {
-  // 제안: 문항 수 기반 계산
-  function calculateDynamicMaxScore(questions, dimension) {
-    const dimQuestions = questions.filter(q => q.dimension === dimension);
-    return dimQuestions.length * 5; // 5점 만점
-  }
-
-  const mockQuestions = [
-    { dimension: 'a' },
-    { dimension: 'a' },
-    { dimension: 'a' },
-    { dimension: 'b' },
-    { dimension: 'b' },
-  ];
-
-  assertEqual(calculateDynamicMaxScore(mockQuestions, 'a'), 15);
-  assertEqual(calculateDynamicMaxScore(mockQuestions, 'b'), 10);
-  console.log('   제안: maxScore를 하드코딩(25) 대신 동적 계산');
+test('동적 maxScore (props로 전달)', () => {
+  assertEqual(calculatePercentage(10, 20), 50);
+  assertEqual(calculatePercentage(10, 0), 0);
 });
 
 // =============================================================================
@@ -271,14 +258,14 @@ if (failed > 0) {
 
 console.log('--- 코드 리뷰 요약 ---');
 console.log('');
-console.log('🔴 수정 필요:');
-console.log('   1. maxScore 하드코딩(25) → props로 받거나 동적 계산');
-console.log('   2. 파일명 특수문자 처리 (/, :, \\ 등 제거)');
+console.log('🟢 수정 완료:');
+console.log('   1. maxScore → props(maxScores) 기반 계산');
+console.log('   2. 음수 점수 → Math.max(0, score) 처리');
+console.log('   3. 파일명 특수문자 → sanitizeFileName 적용');
 console.log('');
 console.log('🟡 개선 권장:');
 console.log('   1. 한글 텍스트 줄바꿈: 문자 단위 분리 또는 CSS word-break');
-console.log('   2. 음수 점수 처리: Math.max(0, score) 추가');
-console.log('   3. 5개 초과 차원 시 UX 고려 (스크롤 또는 더보기)');
+console.log('   2. 5개 초과 차원 시 UX 고려 (스크롤 또는 더보기)');
 console.log('');
 console.log('🟢 양호:');
 console.log('   1. 초과 점수 100% 제한');

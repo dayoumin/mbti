@@ -117,20 +117,19 @@ export default function InsightView({ onClose, onSelectTest }) {
     const [activeTab, setActiveTab] = useState('summary');
 
     useEffect(() => {
+        const loadInsights = async () => {
+            setLoading(true);
+            try {
+                const data = await insightService.generateInsights();
+                setInsights(data);
+            } catch (error) {
+                console.error('[InsightView] 인사이트 로드 실패:', error);
+                setInsights({ hasData: false, message: '인사이트를 불러오지 못했어요.' });
+            }
+            setLoading(false);
+        };
         loadInsights();
     }, []);
-
-    const loadInsights = async () => {
-        setLoading(true);
-        try {
-            const data = await insightService.generateInsights();
-            setInsights(data);
-        } catch (error) {
-            console.error('[InsightView] 인사이트 로드 실패:', error);
-            setInsights({ hasData: false, message: '인사이트를 불러오지 못했어요.' });
-        }
-        setLoading(false);
-    };
 
     // 탭 버튼
     const TabButton = ({ id, label, isActive }) => h('button', {
