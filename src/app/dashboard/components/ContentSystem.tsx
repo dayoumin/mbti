@@ -1,0 +1,1083 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  Brain,
+  BarChart3,
+  MessageCircle,
+  ChevronRight,
+  Star,
+  Clock,
+  Zap,
+  Target,
+  TrendingUp,
+  Calendar,
+  Users,
+  CheckCircle2,
+  Eye,
+  Layers,
+  Calculator,
+  Lightbulb,
+} from 'lucide-react';
+import {
+  CONTENT_SYSTEM,
+  ContentTypeDefinition,
+  ContentType,
+  CATEGORIES,
+  CategoryDefinition,
+  CONTENT_ROADMAP,
+  CONTENT_ESTIMATES,
+  calculateContentTotals,
+  ContentEstimate,
+} from '../data/content-system';
+
+// ============================================================================
+// Icons
+// ============================================================================
+
+const TYPE_ICONS: Record<ContentType, React.ReactNode> = {
+  quiz: <Brain className="w-5 h-5" />,
+  poll: <BarChart3 className="w-5 h-5" />,
+  qna: <MessageCircle className="w-5 h-5" />,
+};
+
+// ============================================================================
+// Main Component
+// ============================================================================
+
+export default function ContentSystem() {
+  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap'>('overview');
+  const [selectedType, setSelectedType] = useState<ContentType>('quiz');
+
+  return (
+    <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="flex gap-2 flex-wrap">
+        {[
+          { key: 'overview', label: '개요', icon: <Eye className="w-4 h-4" /> },
+          { key: 'types', label: '콘텐츠 타입', icon: <Layers className="w-4 h-4" /> },
+          { key: 'categories', label: '카테고리', icon: <Target className="w-4 h-4" /> },
+          { key: 'estimates', label: '수량 예측', icon: <Calculator className="w-4 h-4" /> },
+          { key: 'roadmap', label: '구현 로드맵', icon: <Calendar className="w-4 h-4" /> },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key as typeof activeTab)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              activeTab === tab.key
+                ? 'bg-[var(--db-brand)] text-[#081023]'
+                : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {activeTab === 'overview' && <OverviewTab />}
+      {activeTab === 'types' && (
+        <TypesTab selectedType={selectedType} setSelectedType={setSelectedType} />
+      )}
+      {activeTab === 'categories' && <CategoriesTab />}
+      {activeTab === 'estimates' && <EstimatesTab />}
+      {activeTab === 'roadmap' && <RoadmapTab />}
+    </div>
+  );
+}
+
+// ============================================================================
+// Overview Tab
+// ============================================================================
+
+function OverviewTab() {
+  return (
+    <div className="space-y-6">
+      {/* Introduction */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-3">
+          콘텐츠 시스템이란?
+        </h3>
+        <p className="text-[var(--db-muted)] mb-4">
+          테스트만으로는 재방문 이유가 약합니다. <strong className="text-[var(--db-text)]">퀴즈, 투표, Q&A</strong>를
+          통해 매일 올 이유를 만들고, 사용자 간 네트워크를 형성합니다.
+        </p>
+
+        <div className="grid grid-cols-3 gap-4 mt-6">
+          {CONTENT_SYSTEM.types.map((type) => (
+            <div
+              key={type.id}
+              className="p-4 rounded-xl"
+              style={{ background: `${type.color}15` }}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{ background: `${type.color}30`, color: type.color }}
+                >
+                  {TYPE_ICONS[type.id]}
+                </div>
+                <div>
+                  <h4 className="font-semibold text-[var(--db-text)]">
+                    {type.icon} {type.name}
+                  </h4>
+                  <p className="text-xs text-[var(--db-muted)]">
+                    {type.subTypes.length}개 서브타입
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-[var(--db-muted)]">{type.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Flow Diagram */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4">
+          사용자 여정 & 콘텐츠 역할
+        </h3>
+        <div className="flex items-center justify-between">
+          {[
+            { step: '신규 유입', content: '퀴즈 공유', color: '#7aa2ff' },
+            { step: '테스트 완료', content: '결과 기반 투표', color: '#55e6c1' },
+            { step: '친구 초대', content: '케미 퀴즈', color: '#ff6b9d' },
+            { step: '매일 방문', content: '오늘의 퀴즈/투표', color: '#ffd166' },
+            { step: '커뮤니티', content: 'Q&A 참여', color: '#a29bfe' },
+          ].map((item, idx, arr) => (
+            <div key={item.step} className="flex items-center">
+              <div className="text-center">
+                <div
+                  className="w-16 h-16 rounded-xl flex items-center justify-center mb-2 mx-auto"
+                  style={{ background: `${item.color}20` }}
+                >
+                  <span className="text-2xl font-bold" style={{ color: item.color }}>
+                    {idx + 1}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-[var(--db-text)]">{item.step}</p>
+                <p className="text-xs text-[var(--db-muted)]">{item.content}</p>
+              </div>
+              {idx < arr.length - 1 && (
+                <ChevronRight className="w-6 h-6 text-[var(--db-muted)] mx-4" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-4 gap-4">
+        <StatCard
+          label="콘텐츠 타입"
+          value={CONTENT_SYSTEM.types.length}
+          icon={<Layers className="w-5 h-5" />}
+          color="#7aa2ff"
+        />
+        <StatCard
+          label="서브타입 합계"
+          value={CONTENT_SYSTEM.types.reduce((sum, t) => sum + t.subTypes.length, 0)}
+          icon={<Zap className="w-5 h-5" />}
+          color="#55e6c1"
+        />
+        <StatCard
+          label="카테고리"
+          value={CATEGORIES.length}
+          icon={<Target className="w-5 h-5" />}
+          color="#ffd166"
+        />
+        <StatCard
+          label="예시 콘텐츠"
+          value={CONTENT_SYSTEM.types.reduce((sum, t) => sum + t.examples.length, 0)}
+          icon={<Star className="w-5 h-5" />}
+          color="#ff6b6b"
+        />
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  icon,
+  color,
+}: {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+  color: string;
+}) {
+  return (
+    <div className="db-card p-5">
+      <div
+        className="w-10 h-10 rounded-lg flex items-center justify-center mb-3"
+        style={{ background: `${color}22` }}
+      >
+        <span style={{ color }}>{icon}</span>
+      </div>
+      <p className="text-2xl font-bold text-[var(--db-text)]">{value}</p>
+      <p className="text-sm text-[var(--db-muted)]">{label}</p>
+    </div>
+  );
+}
+
+// ============================================================================
+// Types Tab
+// ============================================================================
+
+function TypesTab({
+  selectedType,
+  setSelectedType,
+}: {
+  selectedType: ContentType;
+  setSelectedType: (type: ContentType) => void;
+}) {
+  const typeData = CONTENT_SYSTEM.types.find((t) => t.id === selectedType);
+
+  return (
+    <div className="grid grid-cols-12 gap-6">
+      {/* Type Selector */}
+      <div className="col-span-3 space-y-2">
+        {CONTENT_SYSTEM.types.map((type) => (
+          <button
+            key={type.id}
+            onClick={() => setSelectedType(type.id)}
+            className={`w-full text-left p-4 rounded-xl transition-all ${
+              selectedType === type.id
+                ? 'bg-[var(--db-brand)]/20 border border-[var(--db-brand)]/50'
+                : 'bg-[var(--db-panel)] hover:bg-[var(--db-panel)]/80'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center"
+                style={{ background: `${type.color}22`, color: type.color }}
+              >
+                {TYPE_ICONS[type.id]}
+              </div>
+              <div>
+                <h4 className="font-semibold text-[var(--db-text)] text-sm">
+                  {type.icon} {type.name}
+                </h4>
+                <p className="text-xs text-[var(--db-muted)]">
+                  {type.subTypes.length}개 서브타입
+                </p>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Type Detail */}
+      <div className="col-span-9 space-y-4">
+        {typeData && (
+          <>
+            {/* Header */}
+            <div
+              className="p-5 rounded-xl"
+              style={{ background: `${typeData.color}15` }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-3xl">{typeData.icon}</span>
+                <div>
+                  <h3 className="text-xl font-bold text-[var(--db-text)]">
+                    {typeData.name}
+                  </h3>
+                  <p className="text-sm text-[var(--db-muted)]">
+                    {typeData.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Features */}
+              <div className="mt-4 p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                <h4 className="text-sm font-semibold text-[var(--db-text)] mb-2">
+                  주요 기능
+                </h4>
+                <ul className="grid grid-cols-2 gap-2">
+                  {typeData.features.map((feature, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-sm text-[var(--db-muted)]"
+                    >
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 text-[var(--db-brand)]" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* SubTypes */}
+            <div className="db-card">
+              <div className="db-card-header px-5 py-4">
+                <h3 className="text-lg font-semibold text-[var(--db-text)]">
+                  서브타입
+                </h3>
+              </div>
+              <div className="p-5 grid grid-cols-2 gap-4">
+                {typeData.subTypes.map((subType) => (
+                  <SubTypeCard key={subType.id} subType={subType} color={typeData.color} />
+                ))}
+              </div>
+            </div>
+
+            {/* Examples */}
+            <div className="db-card">
+              <div className="db-card-header px-5 py-4">
+                <h3 className="text-lg font-semibold text-[var(--db-text)]">
+                  예시 콘텐츠
+                </h3>
+              </div>
+              <div className="p-5">
+                <div className="grid grid-cols-2 gap-3">
+                  {typeData.examples.map((example, idx) => {
+                    const category = CATEGORIES.find((c) => c.id === example.category);
+                    return (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg flex items-start gap-3"
+                        style={{ background: 'rgba(0,0,0,0.3)' }}
+                      >
+                        <span className="text-xl">{category?.icon || '💬'}</span>
+                        <div>
+                          <h4 className="font-medium text-[var(--db-text)] text-sm">
+                            {example.title}
+                          </h4>
+                          <p className="text-xs text-[var(--db-muted)]">
+                            {example.description}
+                          </p>
+                          {example.type && (
+                            <span
+                              className="inline-block mt-1 px-2 py-0.5 rounded text-xs"
+                              style={{ background: `${typeData.color}22`, color: typeData.color }}
+                            >
+                              {example.type}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Retention Strategy */}
+            <div className="db-card">
+              <div className="db-card-header px-5 py-4">
+                <h3 className="text-lg font-semibold text-[var(--db-text)]">
+                  재방문 전략
+                </h3>
+              </div>
+              <div className="p-5 grid grid-cols-3 gap-4">
+                <RetentionCard
+                  title="일일"
+                  items={typeData.retention.daily}
+                  icon={<Clock className="w-4 h-4" />}
+                  color="#7aa2ff"
+                />
+                <RetentionCard
+                  title="주간"
+                  items={typeData.retention.weekly}
+                  icon={<Calendar className="w-4 h-4" />}
+                  color="#55e6c1"
+                />
+                <RetentionCard
+                  title="소셜"
+                  items={typeData.retention.social}
+                  icon={<Users className="w-4 h-4" />}
+                  color="#ff6b9d"
+                />
+              </div>
+            </div>
+
+            {/* Data Structure */}
+            <div className="db-card">
+              <div className="db-card-header px-5 py-4">
+                <h3 className="text-lg font-semibold text-[var(--db-text)]">
+                  데이터 구조
+                </h3>
+              </div>
+              <div className="p-5">
+                <pre className="text-xs text-[var(--db-muted)] bg-black/30 p-4 rounded-lg overflow-x-auto">
+                  {typeData.dataStructure}
+                </pre>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SubTypeCard({ subType, color }: { subType: ContentTypeDefinition['subTypes'][0]; color: string }) {
+  const frequencyLabels = {
+    once: '1회',
+    daily: '매일',
+    weekly: '주간',
+    seasonal: '시즌',
+    event: '이벤트',
+  };
+
+  return (
+    <div className="p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)' }}>
+      <div className="flex items-start justify-between mb-2">
+        <h4 className="font-semibold text-[var(--db-text)]">{subType.name}</h4>
+        <span
+          className="px-2 py-0.5 rounded text-xs"
+          style={{ background: `${color}22`, color }}
+        >
+          {frequencyLabels[subType.frequency]}
+        </span>
+      </div>
+      <p className="text-sm text-[var(--db-muted)] mb-3">{subType.description}</p>
+      <div className="flex gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[var(--db-muted)]">난이도</span>
+          <div className="flex gap-0.5">
+            {[1, 2, 3].map((n) => (
+              <div
+                key={n}
+                className="w-2 h-2 rounded-full"
+                style={{
+                  background: n <= subType.difficulty ? '#ff6b6b' : 'rgba(255,255,255,0.1)',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[var(--db-muted)]">임팩트</span>
+          <div className="flex gap-0.5">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <Star
+                key={n}
+                className="w-3 h-3"
+                style={{
+                  color: n <= subType.impact ? '#ffd166' : 'rgba(255,255,255,0.1)',
+                  fill: n <= subType.impact ? '#ffd166' : 'transparent',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RetentionCard({
+  title,
+  items,
+  icon,
+  color,
+}: {
+  title: string;
+  items: string[];
+  icon: React.ReactNode;
+  color: string;
+}) {
+  return (
+    <div className="p-4 rounded-lg" style={{ background: `${color}10` }}>
+      <div className="flex items-center gap-2 mb-3">
+        <span style={{ color }}>{icon}</span>
+        <h4 className="font-semibold text-[var(--db-text)]">{title}</h4>
+      </div>
+      <ul className="space-y-2">
+        {items.map((item, idx) => (
+          <li key={idx} className="flex items-start gap-2 text-sm text-[var(--db-muted)]">
+            <ChevronRight className="w-3 h-3 mt-1" style={{ color }} />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// ============================================================================
+// Categories Tab
+// ============================================================================
+
+function CategoriesTab() {
+  return (
+    <div className="space-y-6">
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            콘텐츠 카테고리
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            각 카테고리별 퀴즈/투표 주제와 관련 테스트
+          </p>
+        </div>
+        <div className="p-5">
+          <div className="grid grid-cols-3 gap-4">
+            {CATEGORIES.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CategoryCard({ category }: { category: CategoryDefinition }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="db-card overflow-hidden">
+      <div
+        className="p-4"
+        style={{ borderTop: `3px solid ${category.color}` }}
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-2xl">{category.icon}</span>
+          <div>
+            <h4 className="font-semibold text-[var(--db-text)]">{category.name}</h4>
+            <p className="text-xs text-[var(--db-muted)]">
+              테스트: {category.relatedTests.join(', ') || '없음'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs text-[var(--db-brand)] hover:underline flex items-center gap-1"
+        >
+          {expanded ? '접기' : '주제 보기'}
+          <ChevronRight
+            className={`w-3 h-3 transition-transform ${expanded ? 'rotate-90' : ''}`}
+          />
+        </button>
+
+        {expanded && (
+          <div className="mt-3 pt-3 border-t border-white/10 space-y-3">
+            <div>
+              <h5 className="text-xs font-semibold text-[var(--db-muted)] mb-2">
+                투표 주제
+              </h5>
+              <div className="flex flex-wrap gap-1">
+                {category.pollTopics.map((topic, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2 py-0.5 rounded text-xs bg-[var(--db-panel)] text-[var(--db-text)]"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h5 className="text-xs font-semibold text-[var(--db-muted)] mb-2">
+                퀴즈 주제
+              </h5>
+              <div className="flex flex-wrap gap-1">
+                {category.quizTopics.map((topic, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2 py-0.5 rounded text-xs"
+                    style={{ background: `${category.color}22`, color: category.color }}
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Estimates Tab
+// ============================================================================
+
+function EstimatesTab() {
+  const totals = calculateContentTotals();
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-5 gap-4">
+        <TotalCard
+          label="시나리오 퀴즈"
+          range={totals.scenarioQuiz}
+          color="#ff6b9d"
+          icon="🎮"
+        />
+        <TotalCard
+          label="지식 퀴즈"
+          range={totals.knowledgeQuiz}
+          color="#7aa2ff"
+          icon="🧠"
+        />
+        <TotalCard
+          label="VS 투표"
+          range={totals.vsPolls}
+          color="#55e6c1"
+          icon="⚔️"
+        />
+        <TotalCard
+          label="선택 투표"
+          range={totals.choicePolls}
+          color="#ffd166"
+          icon="📊"
+        />
+        <TotalCard
+          label="총 콘텐츠"
+          range={totals.totalContent}
+          color="#a29bfe"
+          icon="📦"
+          highlight
+        />
+      </div>
+
+      {/* Category Table */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            카테고리별 수량 예측
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            각 카테고리를 클릭하면 아이디어를 볼 수 있습니다
+          </p>
+        </div>
+        <div className="p-5">
+          {/* Table Header */}
+          <div className="grid grid-cols-6 gap-4 px-4 py-3 bg-black/20 rounded-t-lg text-sm font-semibold text-[var(--db-muted)]">
+            <div>카테고리</div>
+            <div className="text-center">시나리오 퀴즈</div>
+            <div className="text-center">지식 퀴즈</div>
+            <div className="text-center">VS 투표</div>
+            <div className="text-center">선택 투표</div>
+            <div className="text-center">소계</div>
+          </div>
+
+          {/* Table Rows */}
+          <div className="divide-y divide-white/5">
+            {CONTENT_ESTIMATES.map((cat) => {
+              const subtotal = {
+                min: cat.scenarioQuiz.min + cat.knowledgeQuiz.min + cat.vsPolls.min + cat.choicePolls.min,
+                max: cat.scenarioQuiz.max + cat.knowledgeQuiz.max + cat.vsPolls.max + cat.choicePolls.max,
+              };
+              const isExpanded = expandedCategory === cat.category;
+
+              return (
+                <div key={cat.category}>
+                  <button
+                    onClick={() => setExpandedCategory(isExpanded ? null : cat.category)}
+                    className="w-full grid grid-cols-6 gap-4 px-4 py-3 hover:bg-white/5 transition-colors text-sm"
+                  >
+                    <div className="flex items-center gap-2 text-left">
+                      <span className="text-xl">{cat.icon}</span>
+                      <span className="font-medium text-[var(--db-text)]">{cat.name}</span>
+                      <ChevronRight
+                        className={`w-4 h-4 text-[var(--db-muted)] transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                      />
+                    </div>
+                    <RangeCell range={cat.scenarioQuiz} color="#ff6b9d" />
+                    <RangeCell range={cat.knowledgeQuiz} color="#7aa2ff" />
+                    <RangeCell range={cat.vsPolls} color="#55e6c1" />
+                    <RangeCell range={cat.choicePolls} color="#ffd166" />
+                    <RangeCell range={subtotal} color="#a29bfe" highlight />
+                  </button>
+
+                  {/* Expanded Ideas */}
+                  {isExpanded && (
+                    <div className="px-4 pb-4 grid grid-cols-2 gap-4">
+                      <IdeaList
+                        title="시나리오 퀴즈 아이디어"
+                        ideas={cat.ideas.scenarioQuiz}
+                        color="#ff6b9d"
+                        icon="🎮"
+                      />
+                      <IdeaList
+                        title="VS 투표 아이디어"
+                        ideas={cat.ideas.vsPolls}
+                        color="#55e6c1"
+                        icon="⚔️"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Table Footer */}
+          <div className="grid grid-cols-6 gap-4 px-4 py-3 bg-[var(--db-brand)]/10 rounded-b-lg text-sm font-bold">
+            <div className="text-[var(--db-brand)]">합계</div>
+            <RangeCell range={totals.scenarioQuiz} color="#ff6b9d" />
+            <RangeCell range={totals.knowledgeQuiz} color="#7aa2ff" />
+            <RangeCell range={totals.vsPolls} color="#55e6c1" />
+            <RangeCell range={totals.choicePolls} color="#ffd166" />
+            <RangeCell range={totals.totalContent} color="#a29bfe" highlight />
+          </div>
+        </div>
+      </div>
+
+      {/* Implementation Priority */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            구현 우선순위 제안
+          </h3>
+        </div>
+        <div className="p-5 grid grid-cols-3 gap-4">
+          <PriorityCard
+            phase="Phase 1"
+            title="바로 가능"
+            items={[
+              'VS 투표 10~15개 (데이터만 작성)',
+              '지식 퀴즈 20개 (4지선다)',
+            ]}
+            color="#55e6c1"
+          />
+          <PriorityCard
+            phase="Phase 2"
+            title="1~2주"
+            items={[
+              '시나리오 퀴즈 3~5개',
+              '선택 투표 10개',
+            ]}
+            color="#ffd166"
+          />
+          <PriorityCard
+            phase="Phase 3"
+            title="지속"
+            items={[
+              '오늘의 퀴즈 시스템',
+              '결과 통계/트렌드 리포트',
+              '케미 퀴즈 (친구 초대)',
+            ]}
+            color="#a29bfe"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TotalCard({
+  label,
+  range,
+  color,
+  icon,
+  highlight,
+}: {
+  label: string;
+  range: { min: number; max: number };
+  color: string;
+  icon: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`p-4 rounded-xl ${highlight ? 'ring-2 ring-[var(--db-brand)]/50' : ''}`}
+      style={{ background: `${color}15` }}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-xl">{icon}</span>
+        <span className="text-sm text-[var(--db-muted)]">{label}</span>
+      </div>
+      <p className="text-2xl font-bold" style={{ color }}>
+        {range.min}~{range.max}
+      </p>
+    </div>
+  );
+}
+
+function RangeCell({
+  range,
+  color,
+  highlight,
+}: {
+  range: { min: number; max: number };
+  color: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div className={`text-center ${highlight ? 'font-bold' : ''}`}>
+      <span style={{ color }}>
+        {range.min}~{range.max}
+      </span>
+    </div>
+  );
+}
+
+function IdeaList({
+  title,
+  ideas,
+  color,
+  icon,
+}: {
+  title: string;
+  ideas: string[];
+  color: string;
+  icon: string;
+}) {
+  return (
+    <div className="p-4 rounded-lg" style={{ background: `${color}10` }}>
+      <div className="flex items-center gap-2 mb-3">
+        <span>{icon}</span>
+        <h4 className="font-semibold text-[var(--db-text)] text-sm">{title}</h4>
+      </div>
+      <ul className="space-y-1">
+        {ideas.map((idea, idx) => (
+          <li key={idx} className="flex items-center gap-2 text-sm text-[var(--db-muted)]">
+            <Lightbulb className="w-3 h-3" style={{ color }} />
+            {idea}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function PriorityCard({
+  phase,
+  title,
+  items,
+  color,
+}: {
+  phase: string;
+  title: string;
+  items: string[];
+  color: string;
+}) {
+  return (
+    <div className="p-4 rounded-xl" style={{ background: `${color}15` }}>
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="px-2 py-0.5 rounded text-xs font-bold"
+          style={{ background: color, color: '#081023' }}
+        >
+          {phase}
+        </span>
+        <span className="text-sm font-medium text-[var(--db-text)]">{title}</span>
+      </div>
+      <ul className="space-y-2">
+        {items.map((item, idx) => (
+          <li key={idx} className="flex items-start gap-2 text-sm text-[var(--db-muted)]">
+            <CheckCircle2 className="w-4 h-4 mt-0.5" style={{ color }} />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// ============================================================================
+// Roadmap Tab
+// ============================================================================
+
+function RoadmapTab() {
+  return (
+    <div className="space-y-6">
+      {/* Timeline */}
+      <div className="db-card p-6">
+        <h3 className="text-lg font-bold text-[var(--db-text)] mb-4">
+          구현 타임라인
+        </h3>
+        <div className="flex items-start gap-4">
+          {CONTENT_ROADMAP.map((phase, idx) => {
+            const phaseColors = ['#7aa2ff', '#55e6c1', '#ffd166'];
+            return (
+              <div key={phase.id} className="flex-1 relative">
+                {idx < CONTENT_ROADMAP.length - 1 && (
+                  <div
+                    className="absolute top-6 left-1/2 w-full h-0.5"
+                    style={{ background: 'var(--db-muted)', opacity: 0.3 }}
+                  />
+                )}
+                <div className="relative z-10 text-center">
+                  <div
+                    className="w-12 h-12 mx-auto rounded-xl flex items-center justify-center mb-3"
+                    style={{ background: `${phaseColors[idx]}22`, color: phaseColors[idx] }}
+                  >
+                    <span className="text-lg font-bold">{idx + 1}</span>
+                  </div>
+                  <h4 className="font-semibold text-[var(--db-text)] text-sm mb-1">
+                    {phase.name}
+                  </h4>
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs"
+                    style={{ background: `${phaseColors[idx]}22`, color: phaseColors[idx] }}
+                  >
+                    <Clock className="w-3 h-3" />
+                    {phase.duration}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Phase Details */}
+      {CONTENT_ROADMAP.map((phase, idx) => {
+        const phaseColors = ['#7aa2ff', '#55e6c1', '#ffd166'];
+        return (
+          <div key={phase.id} className="db-card">
+            <div
+              className="db-card-header px-5 py-4 flex items-center gap-3"
+              style={{ borderLeftColor: phaseColors[idx], borderLeftWidth: 3 }}
+            >
+              <h3 className="text-lg font-semibold text-[var(--db-text)]">
+                {phase.name}
+              </h3>
+              <span
+                className="px-2 py-0.5 rounded text-xs"
+                style={{ background: `${phaseColors[idx]}22`, color: phaseColors[idx] }}
+              >
+                {phase.items.length}개 항목
+              </span>
+            </div>
+            <div className="p-5">
+              <div className="space-y-3">
+                {phase.items.map((item, itemIdx) => {
+                  const typeData = CONTENT_SYSTEM.types.find((t) => t.id === item.type);
+                  const priorityColors = {
+                    high: '#ff6b6b',
+                    medium: '#ffd166',
+                    low: '#55e6c1',
+                  };
+                  return (
+                    <div
+                      key={itemIdx}
+                      className="flex items-center gap-4 p-3 rounded-lg"
+                      style={{ background: 'rgba(0,0,0,0.3)' }}
+                    >
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: `${typeData?.color}22`, color: typeData?.color }}
+                      >
+                        {TYPE_ICONS[item.type]}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-[var(--db-text)]">
+                            {typeData?.icon} {item.subType}
+                          </h4>
+                          <span
+                            className="px-2 py-0.5 rounded text-xs"
+                            style={{
+                              background: `${priorityColors[item.priority]}22`,
+                              color: priorityColors[item.priority],
+                            }}
+                          >
+                            {item.priority === 'high' ? '높음' : item.priority === 'medium' ? '중간' : '낮음'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-[var(--db-muted)]">{item.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Result Reveal Strategies */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            결과 공개 전략
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            투표 결과를 언제 공개할지 선택하여 재방문 유도
+          </p>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          {CONTENT_SYSTEM.revealStrategies.map((strategy) => (
+            <div
+              key={strategy.id}
+              className="p-4 rounded-lg"
+              style={{ background: 'rgba(0,0,0,0.3)' }}
+            >
+              <h4 className="font-semibold text-[var(--db-text)] mb-1">
+                {strategy.name}
+              </h4>
+              <p className="text-sm text-[var(--db-muted)] mb-2">
+                {strategy.description}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {strategy.examples.map((example, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2 py-0.5 rounded text-xs bg-[var(--db-panel)] text-[var(--db-text)]"
+                  >
+                    {example}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Trend Reports */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            <TrendingUp className="w-5 h-5 inline mr-2" />
+            트렌드 리포트 설계
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            기간별로 보여줄 데이터와 시각화 방식
+          </p>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          {CONTENT_SYSTEM.trendReports.map((report) => {
+            const periodLabels = {
+              daily: '일간',
+              weekly: '주간',
+              monthly: '월간',
+              quarterly: '분기',
+            };
+            const periodColors = {
+              daily: '#7aa2ff',
+              weekly: '#55e6c1',
+              monthly: '#ffd166',
+              quarterly: '#ff6b9d',
+            };
+            return (
+              <div
+                key={report.period}
+                className="p-4 rounded-lg"
+                style={{ background: `${periodColors[report.period]}10` }}
+              >
+                <h4
+                  className="font-semibold mb-3"
+                  style={{ color: periodColors[report.period] }}
+                >
+                  {periodLabels[report.period]} 리포트
+                </h4>
+                <ul className="space-y-2">
+                  {report.metrics.map((metric) => (
+                    <li key={metric.id} className="text-sm">
+                      <span className="text-[var(--db-text)]">{metric.name}</span>
+                      <span className="text-[var(--db-muted)]"> - {metric.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { CHEMI_DATA } from '../data/index';
 import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_CONSTANTS } from '../data/constants';
@@ -9,6 +9,8 @@ import { resultService } from '../services/ResultService';
 import InsightView from '../components/InsightView';
 import Dashboard from '../components/Dashboard';
 import ShareCard from '../components/ShareCard';
+import { FullProfile } from '../components/MyProfile';
+import ContentExplore from '../components/ContentExplore';
 import * as Icons from '../components/Icons';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
@@ -132,6 +134,8 @@ export default function Home() {
     const [answers, setAnswers] = useState([]);
     const [showInsight, setShowInsight] = useState(false);
     const [showShareCard, setShowShareCard] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [showContentExplore, setShowContentExplore] = useState(false);
     const [parentInfo, setParentInfo] = useState(null); // petMatch → 세부 테스트 연결용
 
     // Ensure mode is valid - use useMemo to derive safe mode
@@ -261,8 +265,28 @@ export default function Home() {
 
     return (
         <main className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-4">
+            {/* 프로필 모달 */}
+            {showProfile && (
+                <FullProfile
+                    onClose={() => setShowProfile(false)}
+                    onStartTest={(testKey) => {
+                        setShowProfile(false);
+                        handleStartTest(testKey);
+                    }}
+                />
+            )}
+
+            {/* 퀴즈/투표 더보기 */}
+            {showContentExplore && (
+                <ContentExplore onClose={() => setShowContentExplore(false)} />
+            )}
+
             {view === 'dashboard' ? (
-                <Dashboard onStartTest={handleStartTest} />
+                <Dashboard
+                    onStartTest={handleStartTest}
+                    onProfileClick={() => setShowProfile(true)}
+                    onContentExplore={() => setShowContentExplore(true)}
+                />
             ) : (
                 <div className="glass-card rounded-[2.5rem] overflow-hidden flex flex-col relative transition-all duration-500 w-full h-full max-w-md min-h-[750px] shadow-2xl border border-white/50">
                     {/* Aurora Background Mesh */}

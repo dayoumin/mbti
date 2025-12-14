@@ -32,7 +32,13 @@
       "Bash(npm run dev:*)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(dir \"D:\\Projects\\quiz-app-ecosystem\" /b)"
+      "Bash(dir \"D:\\Projects\\quiz-app-ecosystem\" /b)",
+      "Bash(git merge refactor/componentize-architecture -m \"$(cat <<''EOF''\nMerge branch ''refactor/componentize-architecture''\n\n주요 변경:\n- Next.js 앱을 루트로 이동 (next-app/ 제거)\n- 레거시 코드 legacy/ 폴더로 분리\n- Dashboard 카테고리 UI 개선\n- ResultService parentInfo 저장 로직 추가\n- Supabase 마이그레이션 추가\nEOF\n)\")",
+      "Bash(git stash:*)",
+      "Bash(git stash pop:*)",
+      "Bash(dir:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

@@ -40,18 +40,26 @@ import {
   Fish,
   Bird,
   Bug,
+  Layers,
+  User,
+  PieChart,
+  Activity,
+  Share2,
+  CupSoda,
 } from 'lucide-react';
 import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
 import { SubjectKey } from '@/data/types';
 import { TEST_TYPES, SUBJECT_CONFIG } from '@/data/config';
 import CommunityStrategy from './components/CommunityStrategy';
+import ContentSystem from './components/ContentSystem';
+import ProfileSystem from './components/ProfileSystem';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type SidebarCategory = 'overview' | 'tests' | 'devtools' | 'strategy' | 'research';
+type SidebarCategory = 'overview' | 'tests' | 'devtools' | 'strategy' | 'research' | 'profile';
 
 interface SidebarItem {
   key: SidebarCategory;
@@ -106,6 +114,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     badge: 'NEW',
     subTabs: [
       { key: 'vision', label: '비전/해자', icon: <Sparkles className="w-4 h-4" /> },
+      { key: 'content', label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
       { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
       { key: 'aiDefense', label: 'AI 시대 대응', icon: <Brain className="w-4 h-4" /> },
       { key: 'uxFlow', label: 'UX 흐름', icon: <RefreshCw className="w-4 h-4" /> },
@@ -125,6 +134,19 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'legacyUI', label: '레거시 UI 참고', icon: <Eye className="w-4 h-4" /> },
     ],
   },
+  {
+    key: 'profile',
+    label: '나의 프로필',
+    icon: <User className="w-5 h-5" />,
+    badge: 'NEW',
+    subTabs: [
+      { key: 'concept', label: '핵심 컨셉', icon: <Sparkles className="w-4 h-4" /> },
+      { key: 'sections', label: '프로필 섹션', icon: <Layers className="w-4 h-4" /> },
+      { key: 'visualization', label: '시각화', icon: <PieChart className="w-4 h-4" /> },
+      { key: 'components', label: 'UI 컴포넌트', icon: <Activity className="w-4 h-4" /> },
+      { key: 'share', label: 'SNS 공유', icon: <Share2 className="w-4 h-4" /> },
+    ],
+  },
 ];
 
 // ============================================================================
@@ -141,6 +163,7 @@ const TEST_ICONS: Record<SubjectKey, React.ReactNode> = {
   plant: <Flower2 className="w-5 h-5" />,
   petMatch: <Star className="w-5 h-5" />,
   coffee: <Coffee className="w-5 h-5" />,
+  tea: <CupSoda className="w-5 h-5" />,
   conflictStyle: <HeartHandshake className="w-5 h-5" />,
   // petMatch 세부 테스트
   dogBreed: <Dog className="w-5 h-5" />,
@@ -295,6 +318,7 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'development' && <Development />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
           {activeCategory === 'strategy' && activeSubTab === 'vision' && <VisionMoat />}
+          {activeCategory === 'strategy' && activeSubTab === 'content' && <ContentSystem />}
           {activeCategory === 'strategy' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'strategy' && activeSubTab === 'aiDefense' && <AIDefense />}
           {activeCategory === 'strategy' && activeSubTab === 'uxFlow' && <UXFlow />}
@@ -304,6 +328,7 @@ export default function DashboardPage() {
           {activeCategory === 'research' && activeSubTab === 'newTests' && <NewTestResearch />}
           {activeCategory === 'research' && activeSubTab === 'references' && <References />}
           {activeCategory === 'research' && activeSubTab === 'legacyUI' && <LegacyUI />}
+          {activeCategory === 'profile' && <ProfileSystem />}
         </div>
       </main>
     </div>
@@ -975,7 +1000,7 @@ function LogicViewer({ selectedTest, onSelectTest }: TestSelectorProps) {
                 node scripts/compare-data-sync.mjs
               </code>
               <p className="text-xs text-[var(--db-muted)] mt-1">
-                Legacy(data/) ↔ Next.js(next-app/src/data/) 일치 여부
+                Legacy(legacy/data/) ↔ TypeScript(src/data/) 일치 여부
               </p>
             </div>
 
@@ -2268,9 +2293,9 @@ function Architecture() {
             <span>🗂️</span> 폴더 구조
           </h3>
           <ul className="space-y-2 text-sm text-[var(--db-muted)]">
-            <li><strong className="text-[var(--db-text)]">next-app/src/data/</strong> · subjects, constants, config, utils, types</li>
-            <li><strong className="text-[var(--db-text)]">next-app/src/components/</strong> · Icons, ModeTabs, TraitBar, TestHeader</li>
-            <li><strong className="text-[var(--db-text)]">next-app/src/services/</strong> · ResultService</li>
+            <li><strong className="text-[var(--db-text)]">src/data/</strong> · subjects, constants, config, utils, types</li>
+            <li><strong className="text-[var(--db-text)]">src/components/</strong> · Icons, ModeTabs, TraitBar, TestHeader</li>
+            <li><strong className="text-[var(--db-text)]">src/services/</strong> · ResultService</li>
             <li><strong className="text-[var(--db-text)]">scripts/</strong> · 데이터 검증·변환 스크립트 모음</li>
           </ul>
         </div>
@@ -2457,7 +2482,7 @@ function Development() {
           <div>
             <h4 className="font-bold text-[var(--db-danger)]">데이터 직접 수정 주의</h4>
             <p className="text-sm text-[var(--db-muted)] mt-1">
-              next-app/src/data/subjects/*.ts 파일 수정 후 반드시 <code className="text-[var(--db-brand)]">npm run build</code>로 검증하세요.
+              src/data/subjects/*.ts 파일 수정 후 반드시 <code className="text-[var(--db-brand)]">npm run build</code>로 검증하세요.
               인코딩/타입 오류 방지를 위해 검증 스크립트 사용을 권장합니다.
             </p>
           </div>
@@ -2574,13 +2599,13 @@ function Learning() {
           <div className="flex items-center gap-3 mb-3">
             <span className="text-2xl">🎯</span>
             <div>
-              <span className="font-semibold text-[var(--db-text)]">next-app/</span>
+              <span className="font-semibold text-[var(--db-text)]">루트 디렉토리</span>
               <span className="text-xs text-[var(--db-ok)] ml-2">권장</span>
             </div>
           </div>
           <p className="text-sm text-[var(--db-muted)] mb-2">Next.js (빌드 시 변환)</p>
           <code className="block text-sm px-3 py-2 rounded" style={{ background: 'rgba(0,0,0,0.3)', color: 'var(--db-brand)' }}>
-            cd next-app && npm run dev
+            npm run dev
           </code>
         </div>
       </div>

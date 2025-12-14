@@ -11,29 +11,48 @@ import { ChevronRight, ChevronDown, User, HelpCircle, Vote, Flame, Star } from '
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import { CompactProfile } from './MyProfile';
 
-// 카테고리 정의
-const CATEGORIES = {
+// 1차 필터: 테스트 유형 (심리/매칭)
+const TEST_TYPE_TABS = {
     all: { label: '전체', emoji: '✨' },
-    me: { label: '나', emoji: '🧠' },
+    personality: { label: '심리', emoji: '🧠' },
+    matching: { label: '매칭', emoji: '💫' }
+};
+
+// 2차 필터: 주제별 카테고리
+const SUBJECT_CATEGORIES = {
+    all: { label: '전체', emoji: '✨' },
+    me: { label: '나', emoji: '👤' },
     pet: { label: '반려동물', emoji: '🐾' },
-    match: { label: '매칭', emoji: '💫' },
+    drink: { label: '음료', emoji: '🥤' },
+    food: { label: '음식', emoji: '🍽️' },
+    life: { label: '라이프', emoji: '🌿' },
     love: { label: '연애', emoji: '💕' }
 };
 
-// 테스트별 카테고리 매핑
-const TEST_CATEGORIES = {
+const CATEGORIES = SUBJECT_CATEGORIES;
+
+// 테스트별 주제 카테고리 매핑
+const TEST_SUBJECT_MAP = {
+    // 나
     human: 'me',
     conflictStyle: 'me',
+    // 반려동물
     cat: 'pet',
     dog: 'pet',
     rabbit: 'pet',
     hamster: 'pet',
-    petMatch: 'match',
-    plant: 'match',
-    coffee: 'match',
-    tea: 'match',
+    // 음료
+    coffee: 'drink',
+    tea: 'drink',
+    // 음식 (추후 추가용)
+    // bread: 'food',
+    // fruit: 'food',
+    // 라이프
+    plant: 'life',
+    petMatch: 'life',
+    // 연애
     idealType: 'love',
-    // 세부 테스트
+    // 세부 테스트 (반려동물)
     dogBreed: 'pet',
     catBreed: 'pet',
     smallPet: 'pet',
@@ -76,20 +95,47 @@ const CompactTestItem = ({ item, onStart, badge }) => {
     );
 };
 
-// Category Tab Button
-const CategoryTab = ({ category, isActive, onClick, count }) => (
+// 1차 필터 탭 (심리/매칭)
+const TypeTab = ({ type, isActive, onClick, count }) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
             isActive
                 ? 'bg-indigo-500 text-white shadow-md'
                 : 'bg-white/60 text-slate-600 hover:bg-white hover:shadow-sm'
         }`}
     >
-        <span>{CATEGORIES[category].emoji}</span>
-        <span>{CATEGORIES[category].label}</span>
-        {count > 0 && !isActive && (
-            <span className="text-[10px] bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded-full">
+        <span>{TEST_TYPE_TABS[type].emoji}</span>
+        <span>{TEST_TYPE_TABS[type].label}</span>
+        {count > 0 && (
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'
+            }`}>
+                {count}
+            </span>
+        )}
+    </button>
+);
+
+// 2차 필터 탭 (주제별)
+const SubjectTab = ({ subject, isActive, onClick, count, disabled }) => (
+    <button
+        onClick={onClick}
+        disabled={disabled}
+        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+            disabled
+                ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                : isActive
+                    ? 'bg-slate-700 text-white shadow-sm'
+                    : 'bg-white/60 text-slate-500 hover:bg-white hover:text-slate-700'
+        }`}
+    >
+        <span>{SUBJECT_CATEGORIES[subject].emoji}</span>
+        <span>{SUBJECT_CATEGORIES[subject].label}</span>
+        {count > 0 && !disabled && (
+            <span className={`text-[9px] px-1 py-0.5 rounded-full ${
+                isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-400'
+            }`}>
                 {count}
             </span>
         )}
@@ -193,20 +239,18 @@ const BackgroundDecoration = () => (
 
 // 오늘의 퀴즈 카드 (접힘/펼침)
  const DailyQuizCard = ({ quiz, onAnswer, isExpanded, onToggle, isAnswered = false, previousAnswer = null }) => {
-    const [selectedOption, setSelectedOption] = useState(previousAnswer);
-    const [showResult, setShowResult] = useState(isAnswered);
-
-    useEffect(() => {
-        setSelectedOption(previousAnswer);
-        setShowResult(isAnswered);
-    }, [quiz?.id, isAnswered, previousAnswer]);
+    const [localSelectedOption, setLocalSelectedOption] = useState(null);
+    const [localShowResult, setLocalShowResult] = useState(false);
 
     if (!quiz) return null;
 
+    const selectedOption = previousAnswer ?? localSelectedOption;
+    const showResult = isAnswered || localShowResult;
+
     const handleSelect = (optionId) => {
         if (showResult) return;
-        setSelectedOption(optionId);
-        setShowResult(true);
+        setLocalSelectedOption(optionId);
+        setLocalShowResult(true);
         const isCorrect = quiz.options.find(o => o.id === optionId)?.isCorrect || false;
         onAnswer?.(quiz.id, optionId, isCorrect);
     };
@@ -226,7 +270,7 @@ const BackgroundDecoration = () => (
                 <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-1.5">
                         <span className="text-[10px] font-bold text-blue-500 block">오늘의 퀴즈</span>
-                        {isAnswered && (
+                        {showResult && (
                             <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
                                 완료
                             </span>
@@ -246,7 +290,7 @@ const BackgroundDecoration = () => (
                 <div className="flex items-center gap-2">
                     <HelpCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-xs font-bold text-blue-600">오늘의 퀴즈</span>
-                    {isAnswered && (
+                    {showResult && (
                         <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
                             완료
                         </span>
@@ -311,21 +355,16 @@ const getStablePollResults = (pollId) => {
 
 // VS 투표 카드 (접힘/펼침)
 const VSPollCard = ({ poll, onVote, isExpanded, onToggle, isVoted = false, previousVote = null }) => {
-    const [voted, setVoted] = useState(previousVote);
-    const [results, setResults] = useState(() => getStablePollResults(poll?.id));
-
-    useEffect(() => {
-        if (!poll) return;
-        setVoted(previousVote);
-        setResults(getStablePollResults(poll.id));
-    }, [poll?.id, previousVote]);
+    const [localVoted, setLocalVoted] = useState(null);
 
     if (!poll) return null;
 
+    const voted = previousVote ?? localVoted;
+    const results = getStablePollResults(poll.id);
+
     const handleVote = (choice) => {
         if (voted) return;
-        setVoted(choice);
-        setResults(getStablePollResults(poll.id));
+        setLocalVoted(choice);
         onVote?.(poll.id, choice);
     };
 
@@ -342,7 +381,7 @@ const VSPollCard = ({ poll, onVote, isExpanded, onToggle, isVoted = false, previ
                 <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-1.5">
                         <span className="text-[10px] font-bold text-purple-500 block">VS 투표</span>
-                        {isVoted && (
+                        {(isVoted || voted) && (
                             <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
                                 완료
                             </span>
@@ -362,7 +401,7 @@ const VSPollCard = ({ poll, onVote, isExpanded, onToggle, isVoted = false, previ
                 <div className="flex items-center gap-2">
                     <Vote className="w-4 h-4 text-purple-500" />
                     <span className="text-xs font-bold text-purple-600">VS 투표</span>
-                    {isVoted && (
+                    {(isVoted || voted) && (
                         <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
                             완료
                         </span>
@@ -426,7 +465,9 @@ const VSPollCard = ({ poll, onVote, isExpanded, onToggle, isVoted = false, previ
 };
 
 const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
-    const [activeCategory, setActiveCategory] = useState('all');
+    // 2단계 필터 상태
+    const [activeType, setActiveType] = useState('all');        // 1차: 심리/매칭
+    const [activeCategory, setActiveCategory] = useState('all');  // 2차: 주제별
     const [showDetailTests, setShowDetailTests] = useState(false);
 
     // 오늘의 퀴즈/투표 (클라이언트에서만 랜덤 선택)
@@ -478,18 +519,38 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
         /* eslint-enable react-hooks/set-state-in-effect */
     }, []);
 
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const handleUpdated = () => {
+            setContentParticipation(contentParticipationService.getParticipation());
+        };
+
+        window.addEventListener('chemi_content_participation_updated', handleUpdated);
+        return () => window.removeEventListener('chemi_content_participation_updated', handleUpdated);
+    }, []);
+
     // 퀴즈 정답 처리
-    const handleQuizAnswer = (optionId) => {
+    const handleQuizAnswer = (quizId, optionId, isCorrect) => {
+        if (!quizId || !optionId) return;
+
+        contentParticipationService.recordQuizAnswer(quizId, optionId, !!isCorrect);
+        setContentParticipation(contentParticipationService.getParticipation());
+
         if (!dailyQuiz) return;
-        const isCorrect = dailyQuiz.options.find(o => o.id === optionId)?.isCorrect;
-        const result = gamificationService.recordQuizAnswer(isCorrect, dailyQuiz.category);
+        const result = gamificationService.recordQuizAnswer(!!isCorrect, dailyQuiz.category);
         setPointsToast({ points: result.points, message: isCorrect ? '정답!' : '참여 완료' });
         setGameStats(gamificationService.getStats());
         setCurrentLevel(gamificationService.getLevel());
     };
 
     // 투표 참여 처리
-    const handlePollVote = (_choice) => {
+    const handlePollVote = (pollId, choice) => {
+        if (!pollId || !choice) return;
+
+        contentParticipationService.recordPollVote(pollId, choice);
+        setContentParticipation(contentParticipationService.getParticipation());
+
         const result = gamificationService.recordPollVote();
         setPointsToast({ points: result.points, message: '투표 완료!' });
         setGameStats(gamificationService.getStats());
@@ -528,21 +589,37 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
             .filter(t => DETAIL_TEST_KEYS.includes(t.key));
     }, [groupedConfigs]);
 
-    // Filter tests by category
-    const filteredTests = useMemo(() => {
-        return allTests.filter(t => activeCategory === 'all' || TEST_CATEGORIES[t.key] === activeCategory);
-    }, [allTests, activeCategory]);
+    // 1차 필터 적용 (테스트 유형)
+    const typeFilteredTests = useMemo(() => {
+        if (activeType === 'all') return allTests;
+        return allTests.filter(t => t.testType === activeType);
+    }, [allTests, activeType]);
 
-    // Count tests per category
+    // 2차 필터 적용 (주제별)
+    const filteredTests = useMemo(() => {
+        if (activeCategory === 'all') return typeFilteredTests;
+        return typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === activeCategory);
+    }, [typeFilteredTests, activeCategory]);
+
+    // 1차 필터별 카운트
+    const typeCounts = useMemo(() => {
+        return {
+            all: allTests.length,
+            personality: allTests.filter(t => t.testType === 'personality').length,
+            matching: allTests.filter(t => t.testType === 'matching').length
+        };
+    }, [allTests]);
+
+    // 2차 필터별 카운트 (현재 1차 필터 기준)
     const categoryCounts = useMemo(() => {
-        const counts = { all: allTests.length };
-        Object.keys(CATEGORIES).forEach(cat => {
-            if (cat !== 'all') {
-                counts[cat] = allTests.filter(t => TEST_CATEGORIES[t.key] === cat).length;
+        const counts = { all: typeFilteredTests.length };
+        Object.keys(SUBJECT_CATEGORIES).forEach(sub => {
+            if (sub !== 'all') {
+                counts[sub] = typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === sub).length;
             }
         });
         return counts;
-    }, [allTests]);
+    }, [typeFilteredTests]);
 
     return (
         <>
@@ -572,31 +649,62 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                     />
                 )}
 
-                {/* Category Tabs */}
-                <div className="mb-4 overflow-x-auto no-scrollbar -mx-4 px-4">
+                {/* 1차 필터: 테스트 유형 (심리/매칭) */}
+                <div className="mb-3 overflow-x-auto no-scrollbar -mx-4 px-4">
                     <div className="flex gap-2 pb-2">
-                        {Object.keys(CATEGORIES).map((cat) => (
-                            <CategoryTab
-                                key={cat}
-                                category={cat}
-                                isActive={activeCategory === cat}
-                                onClick={() => setActiveCategory(cat)}
-                                count={categoryCounts[cat]}
+                        {Object.keys(TEST_TYPE_TABS).map((type) => (
+                            <TypeTab
+                                key={type}
+                                type={type}
+                                isActive={activeType === type}
+                                onClick={() => {
+                                    setActiveType(type);
+                                    setActiveSubject('all'); // 1차 필터 변경 시 2차 초기화
+                                }}
+                                count={typeCounts[type]}
                             />
                         ))}
                     </div>
                 </div>
 
+                {/* 2차 필터: 주제별 (테스트가 있는 카테고리만 표시) */}
+                <div className="mb-4 overflow-x-auto no-scrollbar -mx-4 px-4">
+                    <div className="flex gap-1.5 pb-2">
+                        {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
+                            const count = subjectCounts[sub] || 0;
+                            // '전체'는 항상 표시, 나머지는 count > 0일 때만
+                            if (sub !== 'all' && count === 0) return null;
+                            return (
+                                <SubjectTab
+                                    key={sub}
+                                    subject={sub}
+                                    isActive={activeSubject === sub}
+                                    onClick={() => setActiveSubject(sub)}
+                                    count={count}
+                                    disabled={false}
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
+
                 {/* All Tests - Single Grid */}
                 <section className="animate-fade-in-up">
-                    {activeCategory !== 'all' && (
+                    {/* 필터 상태 표시 */}
+                    {(activeType !== 'all' || activeSubject !== 'all') && (
                         <div className="flex items-center gap-2 mb-3 px-1">
-                            <span className="text-lg">{CATEGORIES[activeCategory].emoji}</span>
-                            <span className="text-sm font-bold text-slate-700">
-                                {CATEGORIES[activeCategory].label} 테스트
-                            </span>
-                            <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                {filteredTests.length}
+                            {activeType !== 'all' && (
+                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
+                                    {TEST_TYPE_TABS[activeType].emoji} {TEST_TYPE_TABS[activeType].label}
+                                </span>
+                            )}
+                            {activeSubject !== 'all' && (
+                                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
+                                    {SUBJECT_CATEGORIES[activeSubject].emoji} {SUBJECT_CATEGORIES[activeSubject].label}
+                                </span>
+                            )}
+                            <span className="text-[10px] font-medium text-slate-400">
+                                {filteredTests.length}개
                             </span>
                         </div>
                     )}
@@ -621,8 +729,8 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                     )}
                 </section>
 
-                {/* 퀴즈/투표 섹션 - 전체 카테고리에서만 표시 (컴팩트) */}
-                {activeCategory === 'all' && (dailyQuiz || dailyPoll) && (
+                {/* 퀴즈/투표 섹션 - 전체일 때만 표시 (컴팩트) */}
+                {activeType === 'all' && activeSubject === 'all' && (dailyQuiz || dailyPoll) && (
                     <section className="mt-4 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
                         <div className="flex items-center justify-between mb-2 px-1">
                             <span className="text-xs font-bold text-slate-500">오늘의 참여</span>
@@ -643,6 +751,8 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                                     onAnswer={handleQuizAnswer}
                                     isExpanded={quizExpanded}
                                     onToggle={() => setQuizExpanded(!quizExpanded)}
+                                    isAnswered={!!contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)}
+                                    previousAnswer={contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)?.selectedOption}
                                 />
                             )}
                             {dailyPoll && (
@@ -651,6 +761,8 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                                     onVote={handlePollVote}
                                     isExpanded={pollExpanded}
                                     onToggle={() => setPollExpanded(!pollExpanded)}
+                                    isVoted={!!contentParticipation.polls.find(p => p.pollId === dailyPoll.id)}
+                                    previousVote={contentParticipation.polls.find(p => p.pollId === dailyPoll.id)?.choice}
                                 />
                             )}
                         </div>
@@ -658,7 +770,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 )}
 
                 {/* 세부 테스트 섹션 (접힘 가능) */}
-                {detailTests.length > 0 && (activeCategory === 'all' || activeCategory === 'pet') && (
+                {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (activeSubject === 'all' || activeSubject === 'pet') && (
                     <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         <button
                             onClick={() => setShowDetailTests(!showDetailTests)}
