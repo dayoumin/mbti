@@ -49,6 +49,10 @@ import {
   Apple,
   Wine,
   Croissant,
+  Sparkle,
+  Leaf,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
@@ -59,12 +63,14 @@ import ContentSystem from './components/ContentSystem';
 import ProfileSystem from './components/ProfileSystem';
 import PostDetailTestStrategy from './components/PostDetailTestStrategy';
 import SocialFeatures from './components/SocialFeatures';
+import RetentionStrategy from './components/RetentionStrategy';
+import MarketingStrategy from './components/MarketingStrategy';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type SidebarCategory = 'overview' | 'tests' | 'devtools' | 'strategy' | 'research' | 'profile';
+type SidebarCategory = 'overview' | 'tests' | 'planning' | 'devtools' | 'reference';
 
 interface SidebarItem {
   key: SidebarCategory;
@@ -86,72 +92,49 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'summary', label: '요약', icon: <BarChart3 className="w-4 h-4" /> },
       { key: 'recent', label: '최근 활동', icon: <Clock className="w-4 h-4" /> },
+      { key: 'todos', label: 'TODO', icon: <ListChecks className="w-4 h-4" /> },
     ],
   },
   {
     key: 'tests',
-    label: '테스트 관리',
+    label: '테스트',
     icon: <FlaskConical className="w-5 h-5" />,
     badge: String(Object.keys(CHEMI_DATA).length),
     subTabs: [
-      { key: 'list', label: '테스트 목록', icon: <ListChecks className="w-4 h-4" /> },
+      { key: 'list', label: '목록', icon: <ListChecks className="w-4 h-4" /> },
       { key: 'detail', label: '상세 스펙', icon: <FileText className="w-4 h-4" /> },
       { key: 'questions', label: '질문 미리보기', icon: <Eye className="w-4 h-4" /> },
+      { key: 'simulator', label: '시뮬레이터', icon: <Play className="w-4 h-4" /> },
+      { key: 'logic', label: '로직 뷰어', icon: <Code2 className="w-4 h-4" /> },
+    ],
+  },
+  {
+    key: 'planning',
+    label: '기획',
+    icon: <Target className="w-5 h-5" />,
+    subTabs: [
+      { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
+      { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
+      { key: 'profile', label: '프로필 시스템', icon: <User className="w-4 h-4" /> },
     ],
   },
   {
     key: 'devtools',
-    label: '개발 도구',
+    label: '개발',
     icon: <Wrench className="w-5 h-5" />,
     subTabs: [
-      { key: 'simulator', label: '결과 시뮬레이터', icon: <Play className="w-4 h-4" /> },
-      { key: 'logic', label: '로직 뷰어', icon: <Code2 className="w-4 h-4" /> },
-      { key: 'tokens', label: '디자인 토큰', icon: <Palette className="w-4 h-4" /> },
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
-      { key: 'development', label: '개발 가이드', icon: <Settings className="w-4 h-4" /> },
+      { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
     ],
   },
   {
-    key: 'strategy',
-    label: '전략',
-    icon: <Target className="w-5 h-5" />,
-    badge: 'NEW',
-    subTabs: [
-      { key: 'vision', label: '비전/해자', icon: <Sparkles className="w-4 h-4" /> },
-      { key: 'content', label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
-      { key: 'postDetailTest', label: '세부테스트 후 여정', icon: <RefreshCw className="w-4 h-4" /> },
-      { key: 'social', label: '소셜 기능', icon: <Share2 className="w-4 h-4" /> },
-      { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
-      { key: 'aiDefense', label: 'AI 시대 대응', icon: <Brain className="w-4 h-4" /> },
-      { key: 'uxFlow', label: 'UX 흐름', icon: <RefreshCw className="w-4 h-4" /> },
-      { key: 'monetization', label: '수익화', icon: <TrendingUp className="w-4 h-4" /> },
-      { key: 'expansion', label: '확장 계획', icon: <Zap className="w-4 h-4" /> },
-      { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
-    ],
-  },
-  {
-    key: 'research',
-    label: '조사/근거',
+    key: 'reference',
+    label: '참고',
     icon: <BookOpen className="w-5 h-5" />,
-    badge: 'NEW',
     subTabs: [
-      { key: 'newTests', label: '신규 테스트 조사', icon: <Microscope className="w-4 h-4" /> },
       { key: 'references', label: '참고자료', icon: <Globe className="w-4 h-4" /> },
-      { key: 'legacyUI', label: '레거시 UI 참고', icon: <Eye className="w-4 h-4" /> },
-    ],
-  },
-  {
-    key: 'profile',
-    label: '나의 프로필',
-    icon: <User className="w-5 h-5" />,
-    badge: 'NEW',
-    subTabs: [
-      { key: 'concept', label: '핵심 컨셉', icon: <Sparkles className="w-4 h-4" /> },
-      { key: 'sections', label: '프로필 섹션', icon: <Layers className="w-4 h-4" /> },
-      { key: 'visualization', label: '시각화', icon: <PieChart className="w-4 h-4" /> },
-      { key: 'components', label: 'UI 컴포넌트', icon: <Activity className="w-4 h-4" /> },
-      { key: 'share', label: 'SNS 공유', icon: <Share2 className="w-4 h-4" /> },
+      { key: 'newTests', label: '신규 테스트 조사', icon: <Microscope className="w-4 h-4" /> },
     ],
   },
 ];
@@ -175,6 +158,8 @@ const TEST_ICONS: Record<SubjectKey, React.ReactNode> = {
   fruit: <Apple className="w-5 h-5" />,
   alcohol: <Wine className="w-5 h-5" />,
   bread: <Croissant className="w-5 h-5" />,
+  perfume: <Sparkle className="w-5 h-5" />,
+  aroma: <Leaf className="w-5 h-5" />,
   // petMatch 세부 테스트
   dogBreed: <Dog className="w-5 h-5" />,
   catBreed: <Cat className="w-5 h-5" />,
@@ -192,6 +177,7 @@ export default function DashboardPage() {
   const [activeCategory, setActiveCategory] = useState<SidebarCategory>('overview');
   const [activeSubTab, setActiveSubTab] = useState<string>('summary');
   const [selectedTest, setSelectedTest] = useState<SubjectKey>('human');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const currentSidebarItem = SIDEBAR_ITEMS.find((item) => item.key === activeCategory);
 
@@ -204,7 +190,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen dashboard-dark">
+    <div className={`min-h-screen ${theme === 'dark' ? 'dashboard-dark' : 'dashboard-light'}`}>
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-screen w-72 db-sidebar flex flex-col z-50">
         {/* Logo */}
@@ -276,7 +262,7 @@ export default function DashboardPage() {
       <main className="ml-72">
         {/* Header */}
         <header className="sticky top-0 z-40 h-14 db-header">
-          <div className="h-full px-6 flex items-center justify-between">
+          <div className="h-full px-6 flex items-center gap-6">
             <div className="flex items-center gap-3">
               <h1 className="text-base font-semibold text-[var(--db-text)]">
                 {currentSidebarItem?.label}
@@ -301,6 +287,19 @@ export default function DashboardPage() {
                 </button>
               ))}
             </div>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="ml-auto p-2 rounded-lg hover:bg-[var(--db-panel)] transition-colors"
+              title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-[var(--db-muted)]" />
+              ) : (
+                <Moon className="w-5 h-5 text-[var(--db-muted)]" />
+              )}
+            </button>
           </div>
         </header>
 
@@ -317,30 +316,25 @@ export default function DashboardPage() {
           {activeCategory === 'tests' && activeSubTab === 'questions' && (
             <QuestionPreview selectedTest={selectedTest} onSelectTest={setSelectedTest} />
           )}
-          {activeCategory === 'devtools' && activeSubTab === 'simulator' && (
+          {activeCategory === 'tests' && activeSubTab === 'simulator' && (
             <ResultSimulator selectedTest={selectedTest} onSelectTest={setSelectedTest} />
           )}
-          {activeCategory === 'devtools' && activeSubTab === 'logic' && (
+          {activeCategory === 'tests' && activeSubTab === 'logic' && (
             <LogicViewer selectedTest={selectedTest} onSelectTest={setSelectedTest} />
           )}
-          {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
+          {/* 개요 - TODO */}
+          {activeCategory === 'overview' && activeSubTab === 'todos' && <TodoManagement />}
+          {/* 기획 */}
+          {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
+          {activeCategory === 'planning' && activeSubTab === 'features' && <ProductFeatures />}
+          {activeCategory === 'planning' && activeSubTab === 'profile' && <ProfileSystem />}
+          {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
-          {activeCategory === 'devtools' && activeSubTab === 'development' && <Development />}
+          {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
-          {activeCategory === 'strategy' && activeSubTab === 'vision' && <VisionMoat />}
-          {activeCategory === 'strategy' && activeSubTab === 'content' && <ContentSystem />}
-          {activeCategory === 'strategy' && activeSubTab === 'postDetailTest' && <PostDetailTestStrategy />}
-          {activeCategory === 'strategy' && activeSubTab === 'social' && <SocialFeatures />}
-          {activeCategory === 'strategy' && activeSubTab === 'community' && <CommunityStrategy />}
-          {activeCategory === 'strategy' && activeSubTab === 'aiDefense' && <AIDefense />}
-          {activeCategory === 'strategy' && activeSubTab === 'uxFlow' && <UXFlow />}
-          {activeCategory === 'strategy' && activeSubTab === 'monetization' && <Monetization />}
-          {activeCategory === 'strategy' && activeSubTab === 'expansion' && <ExpansionPlan />}
-          {activeCategory === 'strategy' && activeSubTab === 'roadmap' && <Roadmap />}
-          {activeCategory === 'research' && activeSubTab === 'newTests' && <NewTestResearch />}
-          {activeCategory === 'research' && activeSubTab === 'references' && <References />}
-          {activeCategory === 'research' && activeSubTab === 'legacyUI' && <LegacyUI />}
-          {activeCategory === 'profile' && <ProfileSystem />}
+          {/* 참고 */}
+          {activeCategory === 'reference' && activeSubTab === 'references' && <References />}
+          {activeCategory === 'reference' && activeSubTab === 'newTests' && <NewTestResearch />}
         </div>
       </main>
     </div>
@@ -458,10 +452,12 @@ function OverviewSummary() {
 
 function RecentActivity() {
   const activities = [
-    { type: 'update', message: 'human 테스트 질문 수정', time: '방금 전' },
-    { type: 'add', message: 'coffee 테스트 추가', time: '1시간 전' },
-    { type: 'update', message: 'cat 테스트 결과 라벨 수정', time: '2시간 전' },
-    { type: 'add', message: 'petMatch 테스트 추가', time: '1일 전' },
+    { type: 'add', message: '대시보드 구조 개편 (전략→제품→성장→운영)', time: '2024-12-15' },
+    { type: 'add', message: 'perfume, aroma 테스트 추가', time: '2024-12-14' },
+    { type: 'add', message: '피드백 댓글 기능 (FeedbackComments)', time: '2024-12-14' },
+    { type: 'add', message: 'fruit, alcohol, bread 테스트 추가', time: '2024-12-13' },
+    { type: 'add', message: 'petMatch 세부 테스트 6종 추가', time: '2024-12-12' },
+    { type: 'update', message: 'ResultFeedback 피드백 수집 기능', time: '2024-12-11' },
   ];
 
   return (
@@ -1555,10 +1551,9 @@ function Roadmap() {
     {
       phase: 'Phase 1',
       title: '바이럴 루프',
-      items: ['SNS 공유 카드', '카카오톡 공유', '리퍼럴 추적'],
+      items: ['SNS 공유 카드 ✓', '피드백 수집 ✓', '카카오톡 공유', '리퍼럴 추적'],
       done: false,
       current: true,
-      duration: '1-2개월',
       color: '#7aa2ff'
     },
     {
@@ -1567,7 +1562,6 @@ function Roadmap() {
       items: ['링크 기반 비교', '궁합 점수', '관계 타입별 해석'],
       done: false,
       current: false,
-      duration: '2-3개월',
       color: '#ff6b9d'
     },
     {
@@ -1576,7 +1570,6 @@ function Roadmap() {
       items: ['데일리 콘텐츠', '스트릭', '뱃지/레벨'],
       done: false,
       current: false,
-      duration: '2-3개월',
       color: '#55e6c1'
     },
     {
@@ -1585,7 +1578,6 @@ function Roadmap() {
       items: ['전체 라운지', '유형 필터', '모더레이션'],
       done: false,
       current: false,
-      duration: '3-4개월',
       color: '#ffd166'
     },
   ];
@@ -1623,7 +1615,7 @@ function Roadmap() {
       <div className="db-card">
         <div className="db-card-header px-5 py-4">
           <h3 className="text-lg font-semibold text-[var(--db-text)]">커뮤니티 로드맵</h3>
-          <p className="text-sm text-[var(--db-muted)]">상세: 전략 → 커뮤니티 탭</p>
+          <p className="text-sm text-[var(--db-muted)]">상세: 제품 → 커뮤니티 탭</p>
         </div>
         <div className="p-5 relative">
           <div className="absolute left-9 top-5 bottom-5 w-0.5" style={{ background: 'var(--db-line)' }} />
@@ -1648,7 +1640,6 @@ function Roadmap() {
                         현재
                       </span>
                     )}
-                    <span className="text-xs text-[var(--db-muted)]">{item.duration}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {item.items.map((i) => (
@@ -2764,6 +2755,234 @@ function LegacyUI() {
               <li>• <strong className="text-[var(--db-text)]">피드백:</strong> shake/pop 애니메이션으로 인터랙션 강화</li>
               <li>• <strong className="text-[var(--db-text)]">PC 확장:</strong> 현재 모바일 중심, PC용 레이아웃 확장 필요</li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Operations Components
+// ============================================================================
+
+interface TodoItem {
+  id: string;
+  title: string;
+  description?: string;
+  status: 'todo' | 'in-progress' | 'done';
+  priority: 'high' | 'medium' | 'low';
+  category: string;
+  createdAt: string;
+}
+
+function TodoManagement() {
+  const todos: TodoItem[] = [
+    {
+      id: '1',
+      title: '운영자 피드백 분석 대시보드',
+      description: '테스트별 정확도 통계, 부정적 피드백 목록, AI 개선 제안 생성, CSV 내보내기',
+      status: 'todo',
+      priority: 'medium',
+      category: '운영 도구',
+      createdAt: '2024-12-15',
+    },
+    {
+      id: '2',
+      title: '향수/아로마 테스트 검증',
+      description: 'perfume, aroma 테스트 데이터 검증 및 빌드 확인',
+      status: 'done',
+      priority: 'high',
+      category: '테스트 추가',
+      createdAt: '2024-12-14',
+    },
+    {
+      id: '3',
+      title: '피드백 댓글 기능',
+      description: 'FeedbackComments 컴포넌트로 다른 사용자 의견 표시',
+      status: 'done',
+      priority: 'high',
+      category: '기능 개발',
+      createdAt: '2024-12-14',
+    },
+  ];
+
+  const statusColors = {
+    'todo': { bg: 'rgba(122,162,255,0.15)', text: 'var(--db-brand)', label: '예정' },
+    'in-progress': { bg: 'rgba(255,209,102,0.15)', text: 'var(--db-warning)', label: '진행중' },
+    'done': { bg: 'rgba(124,255,138,0.15)', text: 'var(--db-ok)', label: '완료' },
+  };
+
+  const priorityColors = {
+    'high': { bg: 'rgba(255,107,107,0.15)', text: 'var(--db-danger)' },
+    'medium': { bg: 'rgba(255,209,102,0.15)', text: 'var(--db-warning)' },
+    'low': { bg: 'rgba(122,162,255,0.15)', text: 'var(--db-brand)' },
+  };
+
+  const todoCount = todos.filter(t => t.status === 'todo').length;
+  const inProgressCount = todos.filter(t => t.status === 'in-progress').length;
+  const doneCount = todos.filter(t => t.status === 'done').length;
+
+  return (
+    <div className="space-y-6">
+      {/* 상태 요약 */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="db-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(122,162,255,0.15)' }}>
+              <ListChecks className="w-5 h-5 text-[var(--db-brand)]" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-[var(--db-text)]">{todoCount}</p>
+              <p className="text-xs text-[var(--db-muted)]">예정</p>
+            </div>
+          </div>
+        </div>
+        <div className="db-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,209,102,0.15)' }}>
+              <Clock className="w-5 h-5 text-[var(--db-warning)]" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-[var(--db-text)]">{inProgressCount}</p>
+              <p className="text-xs text-[var(--db-muted)]">진행중</p>
+            </div>
+          </div>
+        </div>
+        <div className="db-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(124,255,138,0.15)' }}>
+              <CheckCircle2 className="w-5 h-5 text-[var(--db-ok)]" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-[var(--db-text)]">{doneCount}</p>
+              <p className="text-xs text-[var(--db-muted)]">완료</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* TODO 목록 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">작업 목록</h3>
+          <p className="text-sm text-[var(--db-muted)] mt-1">프로젝트 진행 상황 관리</p>
+        </div>
+        <div className="p-5 space-y-3">
+          {todos.map((todo) => {
+            const statusStyle = statusColors[todo.status];
+            const priorityStyle = priorityColors[todo.priority];
+
+            return (
+              <div key={todo.id} className="db-callout">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className="px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ background: statusStyle.bg, color: statusStyle.text }}
+                      >
+                        {statusStyle.label}
+                      </span>
+                      <span
+                        className="px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ background: priorityStyle.bg, color: priorityStyle.text }}
+                      >
+                        {todo.priority === 'high' ? '높음' : todo.priority === 'medium' ? '중간' : '낮음'}
+                      </span>
+                      <span className="text-xs text-[var(--db-muted)]">{todo.category}</span>
+                    </div>
+                    <h4 className="font-medium text-[var(--db-text)]">{todo.title}</h4>
+                    {todo.description && (
+                      <p className="text-sm text-[var(--db-muted)] mt-1">{todo.description}</p>
+                    )}
+                  </div>
+                  <span className="text-xs text-[var(--db-muted)] whitespace-nowrap">{todo.createdAt}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 안내 */}
+      <div className="db-callout" style={{ borderColor: 'rgba(122,162,255,0.35)' }}>
+        <div className="flex items-start gap-3">
+          <Lightbulb className="w-5 h-5 text-[var(--db-brand)] shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm text-[var(--db-text)]">
+              <strong>TODO 관리 팁:</strong> AI와 대화하면서 &quot;TODO로 기록해줘&quot;라고 요청하면 이 목록에 추가됩니다.
+            </p>
+            <p className="text-xs text-[var(--db-muted)] mt-1">
+              현재는 정적 데이터입니다. 추후 Supabase 연동 시 실시간 관리 가능.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeedbackAnalysis() {
+  return (
+    <div className="space-y-6">
+      {/* 개요 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">피드백 분석 (예정)</h3>
+          <p className="text-sm text-[var(--db-muted)] mt-1">사용자 피드백 데이터 기반 테스트 개선</p>
+        </div>
+        <div className="p-5">
+          <div className="db-callout mb-4" style={{ borderColor: 'rgba(255,209,102,0.35)' }}>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[var(--db-warning)]" />
+              <span className="text-sm text-[var(--db-warning)]">데이터 축적 중 - 피드백이 충분히 쌓이면 분석 기능 활성화</span>
+            </div>
+          </div>
+
+          <h4 className="font-medium text-[var(--db-text)] mb-3">예정 기능</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl" style={{ background: 'rgba(122,162,255,0.08)' }}>
+              <BarChart3 className="w-6 h-6 text-[var(--db-brand)] mb-2" />
+              <h5 className="font-medium text-[var(--db-text)]">테스트별 정확도</h5>
+              <p className="text-xs text-[var(--db-muted)] mt-1">👍/👎 비율로 테스트 품질 확인</p>
+            </div>
+            <div className="p-4 rounded-xl" style={{ background: 'rgba(255,107,107,0.08)' }}>
+              <MessageCircle className="w-6 h-6 text-[var(--db-danger)] mb-2" />
+              <h5 className="font-medium text-[var(--db-text)]">부정 피드백 목록</h5>
+              <p className="text-xs text-[var(--db-muted)] mt-1">&quot;아니에요&quot; 응답 + 코멘트 모아보기</p>
+            </div>
+            <div className="p-4 rounded-xl" style={{ background: 'rgba(85,230,193,0.08)' }}>
+              <Brain className="w-6 h-6 text-[var(--db-brand2)] mb-2" />
+              <h5 className="font-medium text-[var(--db-text)]">AI 개선 제안</h5>
+              <p className="text-xs text-[var(--db-muted)] mt-1">피드백 패턴 분석 후 질문/결과 수정 제안</p>
+            </div>
+            <div className="p-4 rounded-xl" style={{ background: 'rgba(124,255,138,0.08)' }}>
+              <FileText className="w-6 h-6 text-[var(--db-ok)] mb-2" />
+              <h5 className="font-medium text-[var(--db-text)]">CSV 내보내기</h5>
+              <p className="text-xs text-[var(--db-muted)] mt-1">피드백 데이터 다운로드</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 데이터 소스 */}
+      <div className="db-card p-5">
+        <h4 className="font-medium text-[var(--db-text)] mb-3">연결된 데이터</h4>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <div className="flex items-center gap-3">
+              <Code2 className="w-4 h-4 text-[var(--db-brand)]" />
+              <span className="text-sm text-[var(--db-text)]">mbti_feedback 테이블</span>
+            </div>
+            <span className="text-xs text-[var(--db-muted)]">Supabase</span>
+          </div>
+          <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <div className="flex items-center gap-3">
+              <Code2 className="w-4 h-4 text-[var(--db-brand)]" />
+              <span className="text-sm text-[var(--db-text)]">FeedbackService.ts</span>
+            </div>
+            <span className="text-xs text-[var(--db-muted)]">src/services/</span>
           </div>
         </div>
       </div>
