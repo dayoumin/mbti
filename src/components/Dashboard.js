@@ -655,10 +655,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     </section>
                 )}
 
-                {/* Footer */}
-                <div className="mt-10 text-center text-slate-300 text-[10px]">
-                    <p>© 2025 Chemi Test Lab</p>
-                </div>
         </div>
         </>
     );
