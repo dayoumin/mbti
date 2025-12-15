@@ -1,21 +1,16 @@
 'use client';
 
-import { Home, Compass, Trophy, User, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { NavTab, NAV_ITEMS } from './nav/types';
 
-export type SidebarTab = 'home' | 'explore' | 'ranking' | 'profile';
+// 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
+export type SidebarTab = NavTab;
 
 interface SidebarProps {
   activeTab: SidebarTab;
   onTabChange: (tab: SidebarTab) => void;
   className?: string;
 }
-
-const NAV_ITEMS: { key: SidebarTab; label: string; icon: typeof Home }[] = [
-  { key: 'home', label: '홈', icon: Home },
-  { key: 'explore', label: '퀴즈/투표', icon: Compass },
-  { key: 'ranking', label: '랭킹', icon: Trophy },
-  { key: 'profile', label: '프로필', icon: User },
-];
 
 export default function Sidebar({ activeTab, onTabChange, className = '' }: SidebarProps) {
   return (

@@ -13,6 +13,7 @@ import { FullProfile } from '../components/MyProfile';
 import ContentExplore from '../components/ContentExplore';
 import ResultFeedback from '../components/ResultFeedback';
 import FeedbackComments from '../components/FeedbackComments';
+import FunFactsCard from '../components/FunFactsCard';
 import BottomNav from '../components/BottomNav';
 import Sidebar from '../components/Sidebar';
 import * as Icons from '../components/Icons';
@@ -943,6 +944,15 @@ export default function Home() {
                                                             ))}
                                                         </div>
                                                     </div>
+                                                )}
+
+                                                {/* FunFacts - 바이럴 콘텐츠 (petMatch, plant) */}
+                                                {finalResult.meta?.funFacts && (
+                                                    <FunFactsCard
+                                                        funFacts={finalResult.meta.funFacts}
+                                                        resultName={finalResult.name}
+                                                        resultEmoji={finalResult.emoji}
+                                                    />
                                                 )}
 
                                                 {/* 품종/종류 상세 정보 - 세부 테스트 결과에서만 표시 */}

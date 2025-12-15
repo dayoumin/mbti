@@ -1,21 +1,15 @@
 'use client';
 
-import { Home, Compass, Trophy, User } from 'lucide-react';
+import { NavTab, NAV_ITEMS } from './nav/types';
 
-export type NavTab = 'home' | 'explore' | 'ranking' | 'profile';
+// 타입 재export (기존 import 호환성 유지)
+export type { NavTab };
 
 interface BottomNavProps {
   activeTab: NavTab;
   onTabChange: (tab: NavTab) => void;
   className?: string;
 }
-
-const NAV_ITEMS: { key: NavTab; label: string; icon: typeof Home }[] = [
-  { key: 'home', label: '홈', icon: Home },
-  { key: 'explore', label: '퀴즈/투표', icon: Compass },
-  { key: 'ranking', label: '랭킹', icon: Trophy },
-  { key: 'profile', label: '프로필', icon: User },
-];
 
 export default function BottomNav({ activeTab, onTabChange, className = '' }: BottomNavProps) {
   return (

@@ -508,7 +508,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
                 />
             )}
 
-            <div className="relative max-w-md md:max-w-2xl lg:max-w-4xl mx-auto w-full pb-24 lg:pb-8 px-4 h-[calc(100vh-2rem)] overflow-y-auto">
+            <div className="relative max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8 h-[calc(100vh-2rem)] overflow-y-auto">
                 {/* Header */}
                 <Header onProfileClick={onProfileClick} />
 

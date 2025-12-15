@@ -69,6 +69,7 @@ import SocialFeatures from './components/SocialFeatures';
 import RetentionStrategy from './components/RetentionStrategy';
 import MarketingStrategy from './components/MarketingStrategy';
 import PopularRanking from './components/PopularRanking';
+import ViralContent from './components/ViralContent';
 
 // ============================================================================
 // Types
@@ -121,6 +122,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
       { key: 'profile', label: '프로필 시스템', icon: <User className="w-4 h-4" /> },
       { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
+      { key: 'viral', label: '바이럴 콘텐츠', icon: <Sparkles className="w-4 h-4" /> },
     ],
   },
   {
@@ -331,6 +333,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'features' && <ProductFeatures />}
           {activeCategory === 'planning' && activeSubTab === 'profile' && <ProfileSystem />}
           {activeCategory === 'planning' && activeSubTab === 'ranking' && <PopularRanking />}
+          {activeCategory === 'planning' && activeSubTab === 'viral' && <ViralContent />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
