@@ -261,7 +261,6 @@ const supabaseProvider: StorageProvider = {
 class ResultServiceClass {
   private provider: StorageProvider;
   private RESULTS_KEY = 'chemi_test_results';
-  private USER_KEY = 'chemi_user';
 
   constructor() {
     // Supabase URL이 설정되어 있으면 supabaseProvider 사용
@@ -280,20 +279,14 @@ class ResultServiceClass {
     return this.provider.name;
   }
 
+  // getUserId는 공통 유틸리티 사용
   getUserId(): string {
-    if (typeof window === 'undefined') return 'server';
-
-    let user = localStorage.getItem(this.USER_KEY);
-    if (!user) {
-      user = 'anon_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-      localStorage.setItem(this.USER_KEY, user);
-    }
-    return user;
+    return getDeviceId();
   }
 
   setUserId(userId: string): void {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(this.USER_KEY, userId);
+      localStorage.setItem(USER_KEY, userId);
     }
   }
 
