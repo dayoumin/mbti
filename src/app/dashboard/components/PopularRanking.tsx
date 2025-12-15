@@ -20,6 +20,9 @@ import {
   Leaf,
   Sun,
   AlertTriangle,
+  Share2,
+  Copy,
+  Check,
 } from 'lucide-react';
 import RankingStats from './RankingStats';
 import {
@@ -469,6 +472,26 @@ const ALL_RANKINGS = [...PERSONALITY_RANKINGS, ...PRACTICAL_RANKINGS, ...LIFESTY
 
 type ViewMode = 'ranking' | 'stats' | 'auto';
 
+// 랭킹 공유 텍스트 생성
+function generateRankingShareText(
+  template: RankingTemplate | null,
+  results: ResultLabel[],
+  topN: number = 3
+): string {
+  if (!template || results.length === 0) return '';
+
+  const top = results.slice(0, topN);
+  const rankEmojis = ['🥇', '🥈', '🥉'];
+
+  let text = `${template.title}\n\n`;
+  top.forEach((r, i) => {
+    text += `${rankEmojis[i]} ${r.emoji} ${r.name}\n`;
+  });
+  text += `\n나도 테스트하러 가기 👇\n`;
+
+  return text;
+}
+
 export default function PopularRanking() {
   const [viewMode, setViewMode] = useState<ViewMode>('auto');
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>('quarterly');
@@ -476,6 +499,7 @@ export default function PopularRanking() {
   const [selectedCategory, setSelectedCategory] = useState<string>('most_active');
   const [selectedTest, setSelectedTest] = useState<SubjectKey | 'all'>('all');
   const [selectedAutoTemplate, setSelectedAutoTemplate] = useState<string>(ALL_RANKING_TEMPLATES[0]?.id || '');
+  const [copied, setCopied] = useState(false);
 
   // 그룹별 필터링된 카테고리
   const filteredCategories = useMemo(() => {
@@ -555,6 +579,33 @@ export default function PopularRanking() {
   }, [selectedTemplate]);
 
   const todayRanking = useMemo(() => getTodayRanking(), []);
+
+  // 랭킹 공유 핸들러
+  const handleShareRanking = async () => {
+    const shareText = generateRankingShareText(selectedTemplate, autoRankingResults);
+    const shareUrl = typeof window !== 'undefined' ? window.location.origin : '';
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: selectedTemplate?.title || '인기 랭킹',
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch {
+        // 공유 취소됨
+      }
+    } else {
+      // 네이티브 공유 미지원 → 클립보드 복사
+      try {
+        await navigator.clipboard.writeText(shareText + shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    }
+  };
 
   // 템플릿을 subject별로 그룹화
   const templatesBySubject = useMemo(() => {
@@ -700,15 +751,27 @@ export default function PopularRanking() {
           {selectedTemplate && (
             <div className="space-y-4">
               <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-xl p-4 border border-emerald-500/30">
-                <h3 className="font-bold text-emerald-400 text-lg">{selectedTemplate.title}</h3>
-                <p className="text-sm text-gray-400">{selectedTemplate.description}</p>
-                {selectedTemplate.season && (
-                  <span className="inline-block mt-2 px-2 py-0.5 bg-emerald-500/20 rounded-full text-xs text-emerald-400">
-                    {selectedTemplate.season === 'summer' ? '☀️ 여름' :
-                     selectedTemplate.season === 'winter' ? '❄️ 겨울' :
-                     selectedTemplate.season === 'spring' ? '🌸 봄' : '🍂 가을'} 시즌
-                  </span>
-                )}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-emerald-400 text-lg">{selectedTemplate.title}</h3>
+                    <p className="text-sm text-gray-400">{selectedTemplate.description}</p>
+                    {selectedTemplate.season && (
+                      <span className="inline-block mt-2 px-2 py-0.5 bg-emerald-500/20 rounded-full text-xs text-emerald-400">
+                        {selectedTemplate.season === 'summer' ? '☀️ 여름' :
+                         selectedTemplate.season === 'winter' ? '❄️ 겨울' :
+                         selectedTemplate.season === 'spring' ? '🌸 봄' : '🍂 가을'} 시즌
+                      </span>
+                    )}
+                  </div>
+                  {/* 공유 버튼 */}
+                  <button
+                    onClick={handleShareRanking}
+                    className="ml-3 px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 flex items-center gap-2 text-sm font-medium transition-all"
+                  >
+                    {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                    {copied ? '복사됨!' : '공유'}
+                  </button>
+                </div>
               </div>
 
               {/* 랭킹 리스트 */}

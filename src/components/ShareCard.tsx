@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Download, Share2, Copy, Check, X, Users } from 'lucide-react';
+import { Download, Share2, Copy, Check, X, Users, MessageCircle } from 'lucide-react';
+import { kakaoShareService } from '@/services/KakaoShareService';
 
 interface ShareCardProps {
   testTitle: string;
@@ -30,6 +31,20 @@ export default function ShareCard({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [generating, setGenerating] = useState(true);
+  const [kakaoReady, setKakaoReady] = useState(false);
+
+  // 카카오 SDK 초기화
+  useEffect(() => {
+    const initKakao = async () => {
+      // 환경변수에서 앱키 가져오기 (없으면 비활성화 상태로 유지)
+      const kakaoAppKey = process.env.NEXT_PUBLIC_KAKAO_APP_KEY;
+      if (kakaoAppKey) {
+        const ready = await kakaoShareService.init(kakaoAppKey);
+        setKakaoReady(ready);
+      }
+    };
+    initKakao();
+  }, []);
 
   // 캔버스에 결과 카드 그리기
   useEffect(() => {
@@ -223,6 +238,22 @@ export default function ShareCard({
     }
   };
 
+  // 카카오톡 공유
+  const handleKakaoShare = async () => {
+    if (!kakaoReady) {
+      // 카카오 미설정 시 일반 공유로 폴백
+      handleShare();
+      return;
+    }
+
+    await kakaoShareService.shareTestResult({
+      testTitle,
+      resultEmoji,
+      resultName,
+      resultDesc,
+    });
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
       <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-slide-up">
@@ -267,7 +298,7 @@ export default function ShareCard({
           )}
 
           {/* 공유 버튼들 */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             <button
               onClick={handleDownload}
               disabled={!imageUrl}
@@ -281,7 +312,14 @@ export default function ShareCard({
               className="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium flex flex-col items-center gap-1 text-xs"
             >
               {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
-              {copied ? '복사됨!' : '링크 복사'}
+              {copied ? '복사됨!' : '링크'}
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="py-3 rounded-xl bg-[#FEE500] hover:bg-[#FDD835] text-[#3C1E1E] font-medium flex flex-col items-center gap-1 text-xs"
+            >
+              <MessageCircle className="w-5 h-5" />
+              카톡
             </button>
             <button
               onClick={handleShare}
@@ -289,14 +327,16 @@ export default function ShareCard({
               className="py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium flex flex-col items-center gap-1 text-xs disabled:opacity-50"
             >
               <Share2 className="w-5 h-5" />
-              공유
+              더보기
             </button>
           </div>
 
           {/* 안내 문구 */}
-          <p className="text-center text-xs text-slate-400 mt-2">
-            카카오톡 공유는 준비 중입니다
-          </p>
+          {!kakaoReady && (
+            <p className="text-center text-xs text-slate-400 mt-2">
+              카카오톡 공유는 앱 설정 후 사용 가능합니다
+            </p>
+          )}
         </div>
       </div>
     </div>

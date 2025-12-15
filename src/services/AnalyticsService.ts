@@ -110,6 +110,13 @@ function saveToLocalStorage(event: EventData): void {
   }
 }
 
+// ========== Rate Limiting ==========
+
+const RATE_LIMIT = {
+  MAX_EVENTS_PER_MINUTE: 100,
+  WINDOW_MS: 60000, // 1분
+};
+
 // ========== AnalyticsService Class ==========
 
 class AnalyticsServiceClass {
@@ -117,11 +124,40 @@ class AnalyticsServiceClass {
   private isProcessing = false;
   private batchTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  // Rate limiting
+  private eventCount = 0;
+  private windowStart = Date.now();
+
+  /**
+   * Rate limit 체크
+   */
+  private checkRateLimit(): boolean {
+    const now = Date.now();
+
+    // 윈도우 리셋
+    if (now - this.windowStart > RATE_LIMIT.WINDOW_MS) {
+      this.eventCount = 0;
+      this.windowStart = now;
+    }
+
+    // 한도 초과 체크
+    if (this.eventCount >= RATE_LIMIT.MAX_EVENTS_PER_MINUTE) {
+      console.warn('[AnalyticsService] Rate limit exceeded, event dropped');
+      return false;
+    }
+
+    this.eventCount++;
+    return true;
+  }
+
   /**
    * 이벤트 추적
    */
   track(event: AnalyticsEvent): void {
     if (typeof window === 'undefined') return;
+
+    // Rate limiting 체크
+    if (!this.checkRateLimit()) return;
 
     const eventData: EventData = {
       device_id: resultService.getUserId(),
