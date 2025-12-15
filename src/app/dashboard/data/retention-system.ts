@@ -498,21 +498,15 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
         task: '커뮤니티 → 테스트 연결',
         endpoint: 'community_view',
         priority: 'medium',
-        description: '게시글 조회 후 관련 테스트 추천 (미구현 - Phase 3로 이동)'
+        description: '게시글 조회 후 관련 테스트 추천 (TipCard, QnACard에 구현)'
       },
     ],
   },
   {
     id: 'phase-3',
     name: 'Phase 3: 개인화 & 확장',
-    status: 'planned',
+    status: 'in_progress',
     items: [
-      {
-        task: '커뮤니티 → 테스트 연결',
-        endpoint: 'community_view',
-        priority: 'medium',
-        description: '게시글 조회 후 관련 테스트 추천'
-      },
       {
         task: '사용자 선호도 기반 추천',
         endpoint: 'test_result',
@@ -571,10 +565,10 @@ export const CURRENT_STATE_ANALYSIS: EndpointAnalysis[] = [
   },
   {
     endpoint: 'community_view',
-    currentStatus: 'needs_improvement',
-    currentActions: ['댓글 달기'],
-    missingActions: ['관련 테스트', '관련 투표', '관련 퀴즈'],
-    priority: 'medium',
+    currentStatus: 'good',
+    currentActions: ['관련 테스트', '관련 퀴즈', '관련 투표'],
+    missingActions: ['댓글 달기 UI 개선'],
+    priority: 'low',
   },
   {
     endpoint: 'ranking_view',

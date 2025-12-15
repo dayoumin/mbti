@@ -264,7 +264,18 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
 // 커뮤니티 - 팁 카드 컴포넌트
 // ============================================================================
 
-function TipCard({ tip }: { tip: Tip }) {
+interface TipCardProps {
+  tip: Tip;
+  onNextAction?: (action: NextAction) => void;
+}
+
+function TipCard({ tip, onNextAction }: TipCardProps) {
+  // 팁 카테고리 기반 다음 액션
+  const nextActions = nextActionService.getRecommendations({
+    endpoint: 'community_view',
+    category: tip.category,
+  }).filter(a => a.type === 'test').slice(0, 1);
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-start gap-3">
@@ -302,6 +313,13 @@ function TipCard({ tip }: { tip: Tip }) {
               ))}
             </div>
           </div>
+
+          {/* 관련 테스트 추천 */}
+          {nextActions.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <NextActionInline actions={nextActions} onActionClick={onNextAction} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -312,7 +330,18 @@ function TipCard({ tip }: { tip: Tip }) {
 // 커뮤니티 - Q&A 카드 컴포넌트
 // ============================================================================
 
-function QnACard({ question }: { question: Question }) {
+interface QnACardProps {
+  question: Question;
+  onNextAction?: (action: NextAction) => void;
+}
+
+function QnACard({ question, onNextAction }: QnACardProps) {
+  // Q&A 카테고리 기반 다음 액션
+  const nextActions = nextActionService.getRecommendations({
+    endpoint: 'community_view',
+    category: question.category,
+  }).filter(a => a.type === 'test').slice(0, 1);
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-start gap-3">
@@ -345,6 +374,13 @@ function QnACard({ question }: { question: Question }) {
             <span>{formatRelativeTime(question.createdAt)}</span>
             <ChevronRight className="w-4 h-4 ml-auto text-gray-300" />
           </div>
+
+          {/* 관련 테스트 추천 */}
+          {nextActions.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <NextActionInline actions={nextActions} onActionClick={onNextAction} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -355,11 +391,24 @@ function QnACard({ question }: { question: Question }) {
 // 커뮤니티 - 토론/밸런스 카드 컴포넌트
 // ============================================================================
 
-function DebateCard({ debate }: { debate: Debate }) {
+interface DebateCardProps {
+  debate: Debate;
+  onNextAction?: (action: NextAction) => void;
+}
+
+function DebateCard({ debate, onNextAction }: DebateCardProps) {
   const [voted, setVoted] = useState<'a' | 'b' | null>(null);
   const totalVotes = debate.totalVotes + (voted ? 1 : 0);
   const aPercent = Math.round(((debate.optionA.votes + (voted === 'a' ? 1 : 0)) / totalVotes) * 100);
   const bPercent = 100 - aPercent;
+
+  // 투표 후 다음 액션 추천
+  const nextActions = voted
+    ? nextActionService.getRecommendations({
+        endpoint: 'community_view',
+        category: debate.category,
+      }).filter(a => a.type === 'test').slice(0, 1)
+    : [];
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
@@ -430,6 +479,13 @@ function DebateCard({ debate }: { debate: Debate }) {
       <div className="mt-3 text-center text-[10px] text-gray-400">
         {formatNumber(totalVotes)}명 참여
       </div>
+
+      {/* 투표 후 관련 테스트 추천 */}
+      {voted && nextActions.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <NextActionInline actions={nextActions} onActionClick={onNextAction} />
+        </div>
+      )}
     </div>
   );
 }
@@ -438,7 +494,11 @@ function DebateCard({ debate }: { debate: Debate }) {
 // 커뮤니티 탭 콘텐츠
 // ============================================================================
 
-function CommunityContent() {
+interface CommunityContentProps {
+  onNextAction?: (action: NextAction) => void;
+}
+
+function CommunityContent({ onNextAction }: CommunityContentProps) {
   const [subTab, setSubTab] = useState<CommunitySubTab>('tips');
 
   return (
@@ -484,7 +544,7 @@ function CommunityContent() {
         {subTab === 'tips' && (
           <>
             {SAMPLE_TIPS.filter(t => t.featured).map(tip => (
-              <TipCard key={tip.id} tip={tip} />
+              <TipCard key={tip.id} tip={tip} onNextAction={onNextAction} />
             ))}
             <div className="text-center py-4">
               <button className="text-xs text-indigo-500 font-medium hover:underline">
@@ -496,7 +556,7 @@ function CommunityContent() {
         {subTab === 'qna' && (
           <>
             {SAMPLE_QUESTIONS.map(question => (
-              <QnACard key={question.id} question={question} />
+              <QnACard key={question.id} question={question} onNextAction={onNextAction} />
             ))}
             <div className="text-center py-4">
               <button className="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-xl hover:bg-emerald-600 transition-colors">
@@ -508,7 +568,7 @@ function CommunityContent() {
         {subTab === 'debate' && (
           <>
             {SAMPLE_DEBATES.map(debate => (
-              <DebateCard key={debate.id} debate={debate} />
+              <DebateCard key={debate.id} debate={debate} onNextAction={onNextAction} />
             ))}
           </>
         )}
@@ -761,7 +821,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             )
           )}
           {activeTab === 'community' && (
-            <CommunityContent />
+            <CommunityContent onNextAction={handleNextAction} />
           )}
         </div>
       </div>

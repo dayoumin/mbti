@@ -44,6 +44,9 @@ export interface RecommendationContext {
   contentId?: string;          // 현재 콘텐츠 ID (테스트 타입, 퀴즈 ID 등)
   category?: string;           // 카테고리
   resultKey?: string;          // 결과 키 (테스트 결과 등)
+  // 개인화 정보 (선택적)
+  completedTests?: string[];   // 완료한 테스트 목록
+  incompleteTests?: string[];  // 미완료 테스트 목록
 }
 
 // ============================================================================
@@ -106,11 +109,61 @@ const CATEGORY_META: Record<string, { label: string; icon: string }> = {
   pet: { label: '반려동물', icon: '🐾' },
   cat: { label: '고양이', icon: '🐱' },
   dog: { label: '강아지', icon: '🐕' },
+  rabbit: { label: '토끼', icon: '🐰' },
+  hamster: { label: '햄스터', icon: '🐹' },
   plant: { label: '식물', icon: '🌱' },
   love: { label: '연애', icon: '💕' },
+  relationship: { label: '연애', icon: '💕' },
   personality: { label: '성격', icon: '🧠' },
   lifestyle: { label: '라이프스타일', icon: '☕' },
+  coffee: { label: '커피', icon: '☕' },
+  general: { label: '일반', icon: '💬' },
 };
+
+// 커뮤니티 카테고리 → 테스트 매핑 (CommunityCategory 지원)
+const COMMUNITY_CATEGORY_TO_TEST: Record<string, SubjectKey[]> = {
+  cat: ['catBreed', 'petMatch'],
+  dog: ['dogBreed', 'petMatch'],
+  rabbit: ['petMatch'],
+  hamster: ['petMatch'],
+  fish: ['petMatch'],
+  bird: ['petMatch'],
+  reptile: ['petMatch'],
+  smallPet: ['petMatch'],
+  plant: ['plant'],
+  coffee: ['coffee'],
+  personality: ['human'],
+  relationship: ['idealType', 'conflictStyle'],
+  general: ['petMatch', 'human'],
+};
+
+// 테스트별 메타 정보
+const TEST_META: Record<string, { label: string; icon: string; category: string }> = {
+  human: { label: '성격 유형', icon: '🧠', category: 'personality' },
+  cat: { label: '고양이 성격', icon: '🐱', category: 'pet' },
+  dog: { label: '강아지 성격', icon: '🐕', category: 'pet' },
+  rabbit: { label: '토끼 성격', icon: '🐰', category: 'pet' },
+  hamster: { label: '햄스터 성격', icon: '🐹', category: 'pet' },
+  petMatch: { label: '반려동물 매칭', icon: '🐾', category: 'pet' },
+  dogBreed: { label: '강아지 품종', icon: '🦮', category: 'pet' },
+  catBreed: { label: '고양이 품종', icon: '🐈', category: 'pet' },
+  idealType: { label: '이상형', icon: '💕', category: 'love' },
+  conflictStyle: { label: '갈등 대처', icon: '🤝', category: 'love' },
+  plant: { label: '반려식물', icon: '🌱', category: 'lifestyle' },
+  coffee: { label: '커피 성향', icon: '☕', category: 'lifestyle' },
+  tea: { label: '차 성향', icon: '🍵', category: 'lifestyle' },
+  fruit: { label: '과일 성향', icon: '🍎', category: 'lifestyle' },
+  alcohol: { label: '술 성향', icon: '🍺', category: 'lifestyle' },
+  bread: { label: '빵 성향', icon: '🍞', category: 'lifestyle' },
+  perfume: { label: '향수 성향', icon: '🌸', category: 'lifestyle' },
+  aroma: { label: '아로마 성향', icon: '🕯️', category: 'lifestyle' },
+};
+
+// 추천 우선순위 (미완료 테스트 추천 시 사용)
+const RECOMMENDATION_PRIORITY: SubjectKey[] = [
+  'human', 'petMatch', 'idealType', 'coffee', 'plant',
+  'cat', 'dog', 'conflictStyle', 'rabbit', 'hamster',
+];
 
 // ============================================================================
 // NextActionService
@@ -121,11 +174,11 @@ class NextActionService {
    * 다음 액션 추천 가져오기
    */
   getRecommendations(context: RecommendationContext): NextAction[] {
-    const { endpoint, contentId, category } = context;
+    const { endpoint, contentId, category, completedTests, incompleteTests } = context;
 
     switch (endpoint) {
       case 'test_result':
-        return this.getTestResultActions(contentId as SubjectKey, category);
+        return this.getTestResultActions(contentId as SubjectKey, category, completedTests, incompleteTests);
 
       case 'quiz_result':
         return this.getQuizResultActions(category);
@@ -140,6 +193,13 @@ class NextActionService {
         return this.getRankingActions(contentId as SubjectKey);
 
       case 'profile_view':
+        // 개인화 정보가 있으면 개인화 추천 사용
+        if (context.completedTests || context.incompleteTests) {
+          return this.getPersonalizedProfileActions(
+            context.completedTests || [],
+            context.incompleteTests || []
+          );
+        }
         return this.getProfileActions();
 
       default:
@@ -150,7 +210,12 @@ class NextActionService {
   /**
    * 테스트 결과 후 다음 액션
    */
-  private getTestResultActions(testType?: SubjectKey, category?: string): NextAction[] {
+  private getTestResultActions(
+    testType?: SubjectKey,
+    category?: string,
+    completedTests?: string[],
+    incompleteTests?: string[]
+  ): NextAction[] {
     const actions: NextAction[] = [];
 
     // 1. 공유 (항상 Primary)
@@ -206,18 +271,31 @@ class NextActionService {
         });
       }
 
-      // 다음 테스트 추천
-      const testConn = connections.find(c => c.type === 'test');
-      if (testConn) {
-        actions.push({
-          type: 'test',
-          targetId: testConn.to,
-          priority: 'tertiary',
-          label: '다른 테스트 하기',
-          description: testConn.reason,
-          icon: '✨',
-          ctaText: '테스트하기',
-        });
+      // 다음 테스트 추천 - 개인화 정보 있으면 미완료 테스트 중 추천
+      if (incompleteTests && incompleteTests.length > 0) {
+        const personalizedTest = this.getPersonalizedTestRecommendation(
+          testType,
+          completedTests || [],
+          incompleteTests
+        );
+        if (personalizedTest) {
+          personalizedTest.priority = 'tertiary';
+          actions.push(personalizedTest);
+        }
+      } else {
+        // 개인화 정보 없으면 기존 연결 기반 추천
+        const testConn = connections.find(c => c.type === 'test');
+        if (testConn) {
+          actions.push({
+            type: 'test',
+            targetId: testConn.to,
+            priority: 'tertiary',
+            label: '다른 테스트 하기',
+            description: testConn.reason,
+            icon: '✨',
+            ctaText: '테스트하기',
+          });
+        }
       }
     }
 
@@ -324,38 +402,53 @@ class NextActionService {
    */
   private getCommunityActions(category?: string): NextAction[] {
     const actions: NextAction[] = [];
+    const meta = category ? CATEGORY_META[category] : undefined;
 
-    // 1. 댓글 달기
-    actions.push({
-      type: 'community',
-      priority: 'primary',
-      label: '댓글 달기',
-      description: '의견을 남겨보세요',
-      icon: '💬',
-      ctaText: '댓글 달기',
-    });
-
-    // 2. 관련 테스트
+    // 1. 관련 테스트 (Primary) - 커뮤니티 카테고리 기반
     if (category) {
-      const relatedTests = CATEGORY_TO_TEST[category];
+      const relatedTests = COMMUNITY_CATEGORY_TO_TEST[category] || CATEGORY_TO_TEST[category];
       if (relatedTests && relatedTests.length > 0) {
         actions.push({
           type: 'test',
           targetId: relatedTests[0],
-          priority: 'secondary',
-          label: '관련 테스트',
-          description: '이 주제의 테스트',
-          icon: '📋',
+          priority: 'primary',
+          label: `${meta?.label || ''} 테스트`,
+          description: '이 주제의 테스트 해보기',
+          icon: meta?.icon || '📋',
           ctaText: '테스트하기',
         });
+
+        // 두 번째 관련 테스트가 있으면 추가
+        if (relatedTests.length > 1) {
+          actions.push({
+            type: 'test',
+            targetId: relatedTests[1],
+            priority: 'secondary',
+            label: '다른 테스트',
+            description: '비슷한 주제 테스트',
+            icon: '✨',
+            ctaText: '테스트하기',
+          });
+        }
       }
     }
+
+    // 2. 관련 퀴즈
+    actions.push({
+      type: 'quiz',
+      targetCategory: category,
+      priority: 'secondary',
+      label: '관련 퀴즈',
+      description: '이 주제로 퀴즈',
+      icon: '🧠',
+      ctaText: '퀴즈 풀기',
+    });
 
     // 3. 관련 투표
     actions.push({
       type: 'poll',
       targetCategory: category,
-      priority: 'secondary',
+      priority: 'tertiary',
       label: '관련 투표',
       description: '이 주제로 투표',
       icon: '📊',
@@ -436,6 +529,151 @@ class NextActionService {
         ctaText: '시작하기',
       },
     ];
+  }
+
+  // ============================================================================
+  // 개인화 추천 메서드
+  // ============================================================================
+
+  /**
+   * 개인화된 다음 테스트 추천
+   * - 미완료 테스트 중 우선순위 높은 것 추천
+   * - 현재 테스트와 같은 카테고리 우선
+   */
+  getPersonalizedTestRecommendation(
+    currentTest?: string,
+    completedTests: string[] = [],
+    incompleteTests: string[] = []
+  ): NextAction | null {
+    if (incompleteTests.length === 0) return null;
+
+    // 현재 테스트의 카테고리
+    const currentCategory = currentTest ? TEST_META[currentTest]?.category : undefined;
+
+    // 같은 카테고리의 미완료 테스트 우선
+    let recommended: string | undefined;
+
+    if (currentCategory) {
+      recommended = incompleteTests.find(t => TEST_META[t]?.category === currentCategory);
+    }
+
+    // 없으면 우선순위 순
+    if (!recommended) {
+      recommended = RECOMMENDATION_PRIORITY.find(t => incompleteTests.includes(t));
+    }
+
+    // 그래도 없으면 첫 번째
+    if (!recommended) {
+      recommended = incompleteTests[0];
+    }
+
+    const meta = TEST_META[recommended];
+
+    return {
+      type: 'test',
+      targetId: recommended,
+      priority: 'primary',
+      label: meta?.label ? `${meta.label} 테스트` : '다음 테스트',
+      description: '아직 안 해본 테스트예요!',
+      icon: meta?.icon || '✨',
+      ctaText: '테스트하기',
+    };
+  }
+
+  /**
+   * 완료한 테스트 기반 관련 콘텐츠 추천
+   * - 최근 완료한 테스트와 연관된 퀴즈/투표 추천
+   */
+  getRelatedContentFromHistory(
+    completedTests: string[] = []
+  ): NextAction[] {
+    if (completedTests.length === 0) return [];
+
+    const actions: NextAction[] = [];
+    const recentTest = completedTests[0]; // 가장 최근
+    const connections = TEST_TO_CONTENT.filter(c => c.from === recentTest);
+
+    // 관련 퀴즈
+    const quizConn = connections.find(c => c.type === 'quiz');
+    if (quizConn) {
+      actions.push({
+        type: 'quiz',
+        targetCategory: quizConn.to,
+        priority: 'secondary',
+        label: '추천 퀴즈',
+        description: quizConn.reason,
+        icon: '🧠',
+        ctaText: '퀴즈 풀기',
+      });
+    }
+
+    // 관련 투표
+    const pollConn = connections.find(c => c.type === 'poll');
+    if (pollConn) {
+      actions.push({
+        type: 'poll',
+        targetCategory: pollConn.to,
+        priority: 'secondary',
+        label: '추천 투표',
+        description: pollConn.reason,
+        icon: '📊',
+        ctaText: '투표하기',
+      });
+    }
+
+    return actions;
+  }
+
+  /**
+   * 프로필 화면용 개인화 추천
+   */
+  getPersonalizedProfileActions(
+    completedTests: string[] = [],
+    incompleteTests: string[] = []
+  ): NextAction[] {
+    const actions: NextAction[] = [];
+
+    // 1. 공유 (항상)
+    actions.push({
+      type: 'share',
+      priority: 'primary',
+      label: '프로필 공유',
+      description: '내 프로필 공유하기',
+      icon: '📤',
+      ctaText: '공유하기',
+    });
+
+    // 2. 미완료 테스트 추천
+    if (incompleteTests.length > 0) {
+      const recommended = this.getPersonalizedTestRecommendation(
+        completedTests[0],
+        completedTests,
+        incompleteTests
+      );
+      if (recommended) {
+        recommended.priority = 'primary';
+        recommended.description = `${incompleteTests.length}개 테스트가 남았어요`;
+        actions.push(recommended);
+      }
+    }
+
+    // 3. 관련 콘텐츠
+    const relatedContent = this.getRelatedContentFromHistory(completedTests);
+    actions.push(...relatedContent.slice(0, 1));
+
+    // 4. 친구 비교
+    if (completedTests.length > 0) {
+      actions.push({
+        type: 'compare',
+        priority: 'tertiary',
+        label: '친구와 비교',
+        description: '친구 결과와 비교하기',
+        icon: '👥',
+        ctaText: '비교하기',
+      });
+    }
+
+    return actions;
   }
 
   /**
