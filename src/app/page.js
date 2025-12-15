@@ -568,16 +568,16 @@ export default function Home() {
 
             {view === 'dashboard' && showRanking && (
                 <ResultRankingView
-                    testType={mode}
+                    testType={null}
                     viewMode="preview"
                     onClose={() => {
                         setShowRanking(false);
                         setActiveNavTab('home');
                     }}
-                    onStartTest={() => {
+                    onStartTest={(testKey) => {
                         setShowRanking(false);
                         setActiveNavTab('home');
-                        handleStartTest(mode);
+                        handleStartTest(testKey || mode);
                     }}
                 />
             )}
@@ -587,6 +587,10 @@ export default function Home() {
                 <Sidebar
                     activeTab={activeNavTab}
                     onTabChange={handleNavTabChange}
+                    onStartTest={(testKey) => {
+                        setActiveNavTab('home');
+                        handleStartTest(testKey);
+                    }}
                 />
             )}
 

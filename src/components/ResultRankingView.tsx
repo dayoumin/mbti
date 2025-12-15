@@ -258,17 +258,20 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
 // ============================================================================
 
 interface ResultRankingViewProps {
-  testType: SubjectKey;
+  testType?: SubjectKey | null;  // null이면 테스트 선택 UI 표시
   viewMode?: ViewMode;        // 'preview' (기본) | 'compare'
   myResult?: ResultLabel;     // compare 모드일 때 내 결과
   onClose: () => void;
-  onStartTest?: () => void;   // preview 모드
+  onStartTest?: (testKey?: SubjectKey) => void;   // preview 모드
   onRestart?: () => void;     // compare 모드
   onShare?: () => void;       // compare 모드
 }
 
+// 랭킹 있는 테스트만 필터링
+const RANKABLE_TESTS: SubjectKey[] = ['petMatch', 'plant', 'coffee', 'idealType'];
+
 export default function ResultRankingView({
-  testType,
+  testType: initialTestType,
   viewMode = 'preview',
   myResult,
   onClose,
@@ -276,6 +279,13 @@ export default function ResultRankingView({
   onRestart,
   onShare
 }: ResultRankingViewProps) {
+  // testType이 없으면 내부에서 선택 가능
+  const [internalTestType, setInternalTestType] = useState<SubjectKey>(
+    initialTestType || 'petMatch'
+  );
+  const testType = initialTestType || internalTestType;
+  const showTestSelector = !initialTestType;
+
   const data = CHEMI_DATA[testType] as SubjectData | undefined;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const isCompareMode = viewMode === 'compare' && myResult;
@@ -360,6 +370,36 @@ export default function ResultRankingView({
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* 테스트 선택 탭 (testType이 없을 때만 표시) */}
+        {showTestSelector && (
+          <div className="px-4 pt-3 pb-2 bg-gray-50 border-b border-gray-200 shrink-0">
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {RANKABLE_TESTS.map((key) => {
+                const testData = CHEMI_DATA[key] as SubjectData | undefined;
+                if (!testData) return null;
+                const isActive = key === testType;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setInternalTestType(key);
+                      setSelectedCategory(null);
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                      isActive
+                        ? 'bg-indigo-500 text-white shadow-md'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300'
+                    }`}
+                  >
+                    <span>{testData.resultLabels[0]?.emoji || '📊'}</span>
+                    <span>{testData.title.replace(' 테스트', '').replace(' 매칭', '')}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* 콘텐츠 */}
         <div className="flex-1 overflow-y-auto p-4">
