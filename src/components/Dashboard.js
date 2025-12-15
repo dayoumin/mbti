@@ -494,8 +494,8 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
 
         switch (action.type) {
             case 'test':
-                // 테스트 추천 → 인기 테스트 시작
-                onStartTest?.('human');
+                // 테스트 추천 → targetId가 있으면 해당 테스트, 없으면 인기 테스트
+                onStartTest?.(action.targetId || 'human');
                 break;
             case 'quiz':
                 // 퀴즈 추천 → 퀴즈 펼치기
@@ -506,7 +506,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 setPollExpanded(true);
                 break;
             case 'share':
-                // 공유 추천 → 프로필로 이동 (실제 구현 시 onContentExplore 등 연결)
+                // 공유 추천 → 프로필로 이동
                 onContentExplore?.();
                 break;
             default:

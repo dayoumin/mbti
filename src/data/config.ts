@@ -9,6 +9,17 @@ export const MAIN_TEST_KEYS: SubjectKey[] = [
   'conflictStyle', 'fruit', 'alcohol', 'bread', 'perfume', 'aroma'
 ];
 
+// 랭킹 지원 테스트 목록
+export const RANKABLE_TESTS: { key: SubjectKey; emoji: string; name: string }[] = [
+  { key: 'petMatch', emoji: '🐾', name: '반려동물' },
+  { key: 'plant', emoji: '🌱', name: '식물' },
+  { key: 'coffee', emoji: '☕', name: '커피' },
+  { key: 'idealType', emoji: '💕', name: '이상형' },
+];
+
+// 랭킹 지원 테스트 키만 (SubjectKey 배열)
+export const RANKABLE_TEST_KEYS: SubjectKey[] = RANKABLE_TESTS.map(t => t.key);
+
 // 테스트 타입 정의
 export const TEST_TYPES: Record<string, TestType> = {
   personality: {

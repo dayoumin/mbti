@@ -10,6 +10,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { getDeviceId } from '@/utils/device';
 
 // ========== 타입 정의 ==========
 
@@ -96,19 +97,7 @@ async function getAuthedUserId(supabase: unknown): Promise<string | null> {
   }
 }
 
-// ========== 유틸리티 ==========
-
-function getDeviceId(): string {
-  if (typeof window === 'undefined') return 'server';
-
-  const USER_KEY = 'chemi_user';
-  let user = localStorage.getItem(USER_KEY);
-  if (!user) {
-    user = 'anon_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-    localStorage.setItem(USER_KEY, user);
-  }
-  return user;
-}
+// getDeviceId는 @/utils/device에서 import
 
 // ========== FeedbackService Class ==========
 

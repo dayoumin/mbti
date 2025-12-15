@@ -5,6 +5,7 @@ import { Sparkles, Clock, TrendingUp } from 'lucide-react';
 import { NavTab, NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
+import { formatRelativeTime } from '@/utils/format';
 
 // 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
 export type SidebarTab = NavTab;
@@ -46,20 +47,7 @@ export default function Sidebar({ activeTab, onTabChange, onStartTest, className
     loadData();
   }, []);
 
-  const formatTimeAgo = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return '방금 전';
-    if (diffMins < 60) return `${diffMins}분 전`;
-    if (diffHours < 24) return `${diffHours}시간 전`;
-    if (diffDays < 7) return `${diffDays}일 전`;
-    return `${date.getMonth() + 1}/${date.getDate()}`;
-  };
+  // formatRelativeTime은 @/utils/format에서 import
 
   return (
     <aside
@@ -138,7 +126,7 @@ export default function Sidebar({ activeTab, onTabChange, onStartTest, className
                           {data?.title || test.testType}
                         </p>
                         <p className="text-[10px] text-slate-400">
-                          {formatTimeAgo(test.createdAt)}
+                          {formatRelativeTime(test.createdAt)}
                         </p>
                       </div>
                     </button>

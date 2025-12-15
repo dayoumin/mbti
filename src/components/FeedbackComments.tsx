@@ -3,23 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp } from 'lucide-react';
 import { feedbackService, FeedbackComment } from '../services/FeedbackService';
+import { formatRelativeTime } from '@/utils/format';
 
 interface FeedbackCommentsProps {
   testType: string;
   resultName?: string;
   maxDisplay?: number;
-}
-
-function timeAgo(dateString: string): string {
-  const now = new Date();
-  const date = new Date(dateString);
-  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (seconds < 60) return '방금 전';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}분 전`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}시간 전`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}일 전`;
-  return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
 }
 
 export default function FeedbackComments({ testType, resultName, maxDisplay = 5 }: FeedbackCommentsProps) {
@@ -94,7 +83,7 @@ export default function FeedbackComments({ testType, resultName, maxDisplay = 5 
                     {comment.resultName}
                   </span>
                   <span className="text-xs text-slate-400">
-                    {timeAgo(comment.createdAt)}
+                    {formatRelativeTime(comment.createdAt)}
                   </span>
                 </div>
                 <p className="text-sm text-slate-700 break-words">

@@ -7,6 +7,7 @@
 
 import { ResultLabel } from '@/data/types';
 import { CHEMI_DATA } from '@/data';
+import { getDeviceId, USER_KEY } from '@/utils/device';
 
 // ========== 타입 정의 ==========
 

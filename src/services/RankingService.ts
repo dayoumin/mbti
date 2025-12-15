@@ -6,6 +6,7 @@
  */
 
 import { SubjectKey } from '@/data/types';
+import { getDeviceId } from '@/utils/device';
 
 // ========== 타입 정의 ==========
 
@@ -231,7 +232,6 @@ const localStorageProvider: StorageProvider = {
 
 class RankingServiceClass {
   private provider: StorageProvider;
-  private USER_KEY = 'chemi_user';
 
   constructor() {
     this.provider = localStorageProvider;
@@ -246,15 +246,9 @@ class RankingServiceClass {
     return this.provider.name;
   }
 
+  // getUserId는 공통 유틸리티 사용
   private getUserId(): string {
-    if (typeof window === 'undefined') return 'server';
-
-    let user = localStorage.getItem(this.USER_KEY);
-    if (!user) {
-      user = 'anon_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-      localStorage.setItem(this.USER_KEY, user);
-    }
-    return user;
+    return getDeviceId();
   }
 
   // ========== 투표 ==========

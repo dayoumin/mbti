@@ -1,16 +1,25 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { ChevronRight } from 'lucide-react';
 import type { NextAction, ActionPriority } from '@/services/NextActionService';
+import { analyticsService, SourceEndpoint } from '@/services/AnalyticsService';
 
 // ============================================================================
 // Types
 // ============================================================================
 
+interface TrackingContext {
+  sourceEndpoint: SourceEndpoint;
+  sourceCategory?: string;
+}
+
 interface NextActionCardProps {
   action: NextAction;
   onClick?: (action: NextAction) => void;
   variant?: 'default' | 'compact' | 'prominent';
+  position?: number;
+  tracking?: TrackingContext;
 }
 
 interface NextActionListProps {
@@ -19,6 +28,7 @@ interface NextActionListProps {
   maxItems?: number;
   title?: string;
   variant?: 'default' | 'compact' | 'prominent';
+  tracking?: TrackingContext;
 }
 
 // ============================================================================
@@ -47,11 +57,39 @@ const PRIORITY_STYLES: Record<ActionPriority, { bg: string; border: string; text
 // NextActionCard - 단일 액션 카드
 // ============================================================================
 
-export function NextActionCard({ action, onClick, variant = 'default' }: NextActionCardProps) {
+export function NextActionCard({ action, onClick, variant = 'default', position = 0, tracking }: NextActionCardProps) {
   const styles = PRIORITY_STYLES[action.priority];
   const isPrimary = action.priority === 'primary';
+  const hasTrackedView = useRef(false);
+
+  // 노출 추적 (한 번만)
+  useEffect(() => {
+    if (tracking && !hasTrackedView.current) {
+      hasTrackedView.current = true;
+      analyticsService.trackRecommendationView(
+        tracking.sourceEndpoint,
+        tracking.sourceCategory,
+        action.type,
+        action.targetCategory || action.targetId || '',
+        action.priority,
+        position
+      );
+    }
+  }, [tracking, action, position]);
 
   const handleClick = () => {
+    // 클릭 추적
+    if (tracking) {
+      analyticsService.trackRecommendationClick(
+        tracking.sourceEndpoint,
+        tracking.sourceCategory,
+        action.type,
+        action.targetId || '',
+        action.targetCategory || '',
+        action.priority,
+        position
+      );
+    }
     onClick?.(action);
   };
 
@@ -142,7 +180,8 @@ export function NextActionList({
   onActionClick,
   maxItems = 4,
   title,
-  variant = 'default'
+  variant = 'default',
+  tracking
 }: NextActionListProps) {
   const displayActions = actions.slice(0, maxItems);
 
@@ -165,6 +204,8 @@ export function NextActionList({
             action={action}
             onClick={onActionClick}
             variant={variant}
+            position={index}
+            tracking={tracking}
           />
         ))}
       </div>
@@ -180,12 +221,14 @@ interface NextActionBannerProps {
   primaryAction: NextAction;
   secondaryActions?: NextAction[];
   onActionClick?: (action: NextAction) => void;
+  tracking?: TrackingContext;
 }
 
 export function NextActionBanner({
   primaryAction,
   secondaryActions = [],
-  onActionClick
+  onActionClick,
+  tracking
 }: NextActionBannerProps) {
   return (
     <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-2xl p-4 space-y-3">
@@ -196,6 +239,8 @@ export function NextActionBanner({
         action={primaryAction}
         onClick={onActionClick}
         variant="prominent"
+        position={0}
+        tracking={tracking}
       />
 
       {/* Secondary Actions */}
@@ -207,6 +252,8 @@ export function NextActionBanner({
               action={action}
               onClick={onActionClick}
               variant="compact"
+              position={index + 1}
+              tracking={tracking}
             />
           ))}
         </div>
@@ -222,9 +269,44 @@ export function NextActionBanner({
 interface NextActionInlineProps {
   actions: NextAction[];
   onActionClick?: (action: NextAction) => void;
+  tracking?: TrackingContext;
 }
 
-export function NextActionInline({ actions, onActionClick }: NextActionInlineProps) {
+export function NextActionInline({ actions, onActionClick, tracking }: NextActionInlineProps) {
+  const hasTrackedView = useRef(false);
+
+  // 노출 추적 (한 번만, 첫 번째 액션 기준)
+  useEffect(() => {
+    if (tracking && actions.length > 0 && !hasTrackedView.current) {
+      hasTrackedView.current = true;
+      actions.slice(0, 3).forEach((action, index) => {
+        analyticsService.trackRecommendationView(
+          tracking.sourceEndpoint,
+          tracking.sourceCategory,
+          action.type,
+          action.targetCategory || action.targetId || '',
+          action.priority,
+          index
+        );
+      });
+    }
+  }, [tracking, actions]);
+
+  const handleClick = (action: NextAction, index: number) => {
+    if (tracking) {
+      analyticsService.trackRecommendationClick(
+        tracking.sourceEndpoint,
+        tracking.sourceCategory,
+        action.type,
+        action.targetId || '',
+        action.targetCategory || '',
+        action.priority,
+        index
+      );
+    }
+    onActionClick?.(action);
+  };
+
   if (actions.length === 0) return null;
 
   return (
@@ -232,7 +314,7 @@ export function NextActionInline({ actions, onActionClick }: NextActionInlinePro
       {actions.slice(0, 3).map((action, index) => (
         <button
           key={`${action.type}-${index}`}
-          onClick={() => onActionClick?.(action)}
+          onClick={() => handleClick(action, index)}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-slate-200
                      text-xs font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
         >
@@ -244,4 +326,5 @@ export function NextActionInline({ actions, onActionClick }: NextActionInlinePro
   );
 }
 
+export type { TrackingContext };
 export default NextActionCard;

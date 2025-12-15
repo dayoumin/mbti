@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { CHEMI_DATA } from '@/data';
 import { SubjectKey, ResultLabel, SubjectData } from '@/data/types';
+import { RANKABLE_TESTS } from '@/data/config';
 import { resultService } from '@/services/ResultService';
 import {
   ChevronLeft,
@@ -154,12 +155,7 @@ const RANKING_CATEGORIES: Record<string, { id: string; name: string; emoji: stri
   ],
 };
 
-const RANKABLE_TESTS: { key: SubjectKey; emoji: string; name: string }[] = [
-  { key: 'petMatch', emoji: '🐾', name: '반려동물' },
-  { key: 'plant', emoji: '🌱', name: '식물' },
-  { key: 'coffee', emoji: '☕', name: '커피' },
-  { key: 'idealType', emoji: '💕', name: '이상형' },
-];
+// RANKABLE_TESTS는 @/data/config에서 import
 
 // ============================================================================
 // 내 테스트 결과 기반 랭킹 계산

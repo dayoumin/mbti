@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { CHEMI_DATA } from '@/data';
 import { SubjectKey, ResultLabel, SubjectData } from '@/data/types';
+import { RANKABLE_TEST_KEYS } from '@/data/config';
 import { X, Trophy, Sparkles, RefreshCw, Share2, Star } from 'lucide-react';
 
 // 뷰 모드 타입
@@ -267,8 +268,7 @@ interface ResultRankingViewProps {
   onShare?: () => void;       // compare 모드
 }
 
-// 랭킹 있는 테스트만 필터링
-const RANKABLE_TESTS: SubjectKey[] = ['petMatch', 'plant', 'coffee', 'idealType'];
+// RANKABLE_TEST_KEYS는 @/data/config에서 import
 
 export default function ResultRankingView({
   testType: initialTestType,
@@ -375,7 +375,7 @@ export default function ResultRankingView({
         {showTestSelector && (
           <div className="px-4 pt-3 pb-2 bg-gray-50 border-b border-gray-200 shrink-0">
             <div className="flex gap-2 overflow-x-auto pb-1">
-              {RANKABLE_TESTS.map((key) => {
+              {RANKABLE_TEST_KEYS.map((key) => {
                 const testData = CHEMI_DATA[key] as SubjectData | undefined;
                 if (!testData) return null;
                 const isActive = key === testType;
