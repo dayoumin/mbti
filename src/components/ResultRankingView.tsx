@@ -3,7 +3,10 @@
 import { useState, useMemo } from 'react';
 import { CHEMI_DATA } from '@/data';
 import { SubjectKey, ResultLabel, SubjectData } from '@/data/types';
-import { X, Trophy, Sparkles, Heart, Zap, Home, Volume2 } from 'lucide-react';
+import { X, Trophy, Sparkles, RefreshCw, Share2, Star } from 'lucide-react';
+
+// 뷰 모드 타입
+type ViewMode = 'preview' | 'compare';
 
 // 점수 계산 최댓값 (바 시각화용)
 const MAX_SCORE_FOR_DISPLAY = 6;
@@ -16,7 +19,6 @@ interface RankingCategory {
   id: string;
   name: string;
   emoji: string;
-  icon: typeof Trophy;
   description: string;
   // 점수 계산 함수: 높을수록 해당 카테고리에서 높은 순위
   getScore: (result: ResultLabel, data: SubjectData) => number;
@@ -30,7 +32,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'activity',
       name: '활동성',
       emoji: '🏃',
-      icon: Zap,
       description: '활발하고 에너지 넘치는 순',
       getScore: (result) => {
         const c = result.condition;
@@ -47,7 +48,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'skinship',
       name: '스킨십',
       emoji: '🤗',
-      icon: Heart,
       description: '교감과 스킨십을 좋아하는 순',
       getScore: (result) => {
         const c = result.condition;
@@ -63,7 +63,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'easy',
       name: '초보 친화',
       emoji: '🌱',
-      icon: Sparkles,
       description: '키우기 쉬운 순',
       getScore: (result) => {
         const c = result.condition;
@@ -80,7 +79,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'space',
       name: '공간',
       emoji: '🏠',
-      icon: Home,
       description: '작은 공간에서도 가능한 순',
       getScore: (result) => {
         const c = result.condition;
@@ -96,7 +94,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'quiet',
       name: '조용함',
       emoji: '🔇',
-      icon: Volume2,
       description: '조용하고 독립적인 순',
       getScore: (result) => {
         const c = result.condition;
@@ -116,7 +113,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'easy',
       name: '초보 추천',
       emoji: '🌱',
-      icon: Sparkles,
       description: '관리가 쉬운 순',
       getScore: (result) => {
         const c = result.condition;
@@ -131,7 +127,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'lowlight',
       name: '음지 OK',
       emoji: '🌙',
-      icon: Home,
       description: '햇빛 적어도 되는 순',
       getScore: (result) => {
         const c = result.condition;
@@ -145,7 +140,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'neglect',
       name: '방치 가능',
       emoji: '😴',
-      icon: Zap,
       description: '물 잘 안 줘도 되는 순',
       getScore: (result) => {
         const c = result.condition;
@@ -164,7 +158,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'strong',
       name: '진한 맛',
       emoji: '💪',
-      icon: Zap,
       description: '진하고 강한 맛 순',
       getScore: (result) => {
         const c = result.condition;
@@ -179,7 +172,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'sweet',
       name: '달달함',
       emoji: '🍬',
-      icon: Heart,
       description: '달콤한 순',
       getScore: (result) => {
         const c = result.condition;
@@ -194,7 +186,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'refresh',
       name: '상쾌함',
       emoji: '🧊',
-      icon: Sparkles,
       description: '시원하고 상쾌한 순',
       getScore: (result) => {
         const c = result.condition;
@@ -213,7 +204,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'energy',
       name: '에너지',
       emoji: '⚡',
-      icon: Zap,
       description: '활발하고 에너지 넘치는 순',
       getScore: (result) => {
         const c = result.condition;
@@ -230,7 +220,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'social',
       name: '사교성',
       emoji: '💬',
-      icon: Heart,
       description: '사교적이고 친화적인 순',
       getScore: (result) => {
         const c = result.condition;
@@ -246,7 +235,6 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       id: 'calm',
       name: '차분함',
       emoji: '🧘',
-      icon: Sparkles,
       description: '차분하고 신중한 순',
       getScore: (result) => {
         const c = result.condition;
@@ -271,13 +259,26 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
 
 interface ResultRankingViewProps {
   testType: SubjectKey;
+  viewMode?: ViewMode;        // 'preview' (기본) | 'compare'
+  myResult?: ResultLabel;     // compare 모드일 때 내 결과
   onClose: () => void;
-  onStartTest?: () => void;
+  onStartTest?: () => void;   // preview 모드
+  onRestart?: () => void;     // compare 모드
+  onShare?: () => void;       // compare 모드
 }
 
-export default function ResultRankingView({ testType, onClose, onStartTest }: ResultRankingViewProps) {
+export default function ResultRankingView({
+  testType,
+  viewMode = 'preview',
+  myResult,
+  onClose,
+  onStartTest,
+  onRestart,
+  onShare
+}: ResultRankingViewProps) {
   const data = CHEMI_DATA[testType] as SubjectData | undefined;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const isCompareMode = viewMode === 'compare' && myResult;
 
   // 해당 테스트의 랭킹 카테고리 가져오기
   const categories = useMemo(() => {
@@ -293,7 +294,8 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
 
     const resultsWithScores = data.resultLabels.map(result => ({
       result,
-      score: category.getScore(result, data)
+      score: category.getScore(result, data),
+      isMyResult: isCompareMode && result.name === myResult?.name
     }));
 
     // 점수순 정렬
@@ -303,7 +305,14 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
         ...item,
         rank: index + 1
       }));
-  }, [data, selectedCategory, categories]);
+  }, [data, selectedCategory, categories, isCompareMode, myResult]);
+
+  // 내 결과의 순위 찾기 (compare 모드용)
+  const myRank = useMemo(() => {
+    if (!rankedResults || !isCompareMode) return null;
+    const found = rankedResults.find(r => r.isMyResult);
+    return found?.rank || null;
+  }, [rankedResults, isCompareMode]);
 
   if (!data) {
     return (
@@ -324,14 +333,24 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-xl overflow-hidden">
         {/* 헤더 */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-4 flex items-center justify-between shrink-0">
+        <div className={`px-5 py-4 flex items-center justify-between shrink-0 ${
+          isCompareMode
+            ? 'bg-gradient-to-r from-amber-500 to-orange-500'
+            : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+        }`}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Trophy className="w-5 h-5 text-white" />
+              {isCompareMode ? <Star className="w-5 h-5 text-white" /> : <Trophy className="w-5 h-5 text-white" />}
             </div>
             <div className="text-white">
-              <h2 className="font-bold">{data.title}</h2>
-              <p className="text-white/80 text-xs">{totalResults}가지 결과 미리보기</p>
+              <h2 className="font-bold">
+                {isCompareMode ? '내 결과 순위 비교' : data.title}
+              </h2>
+              <p className="text-white/80 text-xs">
+                {isCompareMode
+                  ? `${myResult?.emoji} ${myResult?.name}`
+                  : `${totalResults}가지 결과 미리보기`}
+              </p>
             </div>
           </div>
           <button
@@ -347,24 +366,51 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
           {!selectedCategory ? (
             // 카테고리 선택 화면
             <div className="space-y-4">
+              {/* compare 모드: 내 결과 카드 */}
+              {isCompareMode && myResult && (
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-300">
+                  <div className="flex items-center gap-3">
+                    <span className="text-4xl">{myResult.emoji}</span>
+                    <div className="flex-1">
+                      <p className="text-xs text-amber-600 font-bold mb-1">내 결과</p>
+                      <p className="font-bold text-gray-800 text-lg">{myResult.name}</p>
+                      <p className="text-xs text-gray-500 line-clamp-1">{myResult.desc}</p>
+                    </div>
+                    <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
+                  </div>
+                </div>
+              )}
+
               {/* 전체 결과 미리보기 */}
               <div className="bg-gray-50 rounded-xl p-4">
                 <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-purple-500" />
-                  모든 결과 타입
+                  {isCompareMode ? '다른 결과들' : '모든 결과 타입'}
                 </h3>
                 <div className="grid grid-cols-3 gap-2">
-                  {data.resultLabels.map((result, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-white rounded-lg p-2 text-center border border-gray-100"
-                    >
-                      <span className="text-2xl block mb-1">{result.emoji}</span>
-                      <span className="text-xs text-gray-700 font-medium line-clamp-1">
-                        {result.name}
-                      </span>
-                    </div>
-                  ))}
+                  {data.resultLabels.map((result, idx) => {
+                    const isMyResultItem = isCompareMode && result.name === myResult?.name;
+                    return (
+                      <div
+                        key={idx}
+                        className={`rounded-lg p-2 text-center border transition-all ${
+                          isMyResultItem
+                            ? 'bg-amber-100 border-amber-300 ring-2 ring-amber-400'
+                            : 'bg-white border-gray-100'
+                        }`}
+                      >
+                        <span className="text-2xl block mb-1">{result.emoji}</span>
+                        <span className={`text-xs font-medium line-clamp-1 ${
+                          isMyResultItem ? 'text-amber-700' : 'text-gray-700'
+                        }`}>
+                          {result.name}
+                        </span>
+                        {isMyResultItem && (
+                          <span className="text-[10px] text-amber-600 font-bold">← 나</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -372,7 +418,7 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
               <div>
                 <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <Trophy className="w-4 h-4 text-amber-500" />
-                  재미있는 랭킹 보기
+                  {isCompareMode ? '카테고리별 내 순위 확인' : '재미있는 랭킹 보기'}
                 </h3>
                 <div className="space-y-2">
                   {categories.map((category) => (
@@ -405,24 +451,37 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
                 ← 카테고리 선택으로
               </button>
 
-              {/* 랭킹 타이틀 */}
-              {categories.find(c => c.id === selectedCategory) && (
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">{categories.find(c => c.id === selectedCategory)!.emoji}</span>
-                    <h3 className="font-bold text-gray-800">{categories.find(c => c.id === selectedCategory)!.name} 랭킹</h3>
+              {/* 랭킹 타이틀 + compare 모드일 때 내 순위 표시 */}
+              {(() => {
+                const selected = categories.find(c => c.id === selectedCategory);
+                if (!selected) return null;
+                return (
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{selected.emoji}</span>
+                        <h3 className="font-bold text-gray-800">{selected.name} 랭킹</h3>
+                      </div>
+                      {isCompareMode && myRank && (
+                        <span className="px-3 py-1 bg-amber-500 text-white text-sm font-bold rounded-full">
+                          내 순위: {myRank}위
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600">{selected.description}</p>
                   </div>
-                  <p className="text-sm text-gray-600">{categories.find(c => c.id === selectedCategory)!.description}</p>
-                </div>
-              )}
+                );
+              })()}
 
               {/* 랭킹 리스트 */}
               <div className="space-y-2">
-                {rankedResults?.map(({ result, rank, score }) => (
+                {rankedResults?.map(({ result, rank, score, isMyResult }) => (
                   <div
                     key={result.name}
                     className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                      rank === 1
+                      isMyResult
+                        ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-400 shadow-md'
+                        : rank === 1
                         ? 'bg-amber-50 border-amber-300'
                         : rank === 2
                         ? 'bg-gray-50 border-gray-300'
@@ -433,7 +492,9 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
                   >
                     {/* 순위 */}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                      rank === 1
+                      isMyResult
+                        ? 'bg-amber-500 text-white'
+                        : rank === 1
                         ? 'bg-amber-400 text-white'
                         : rank === 2
                         ? 'bg-gray-400 text-white'
@@ -447,7 +508,16 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
                     {/* 결과 정보 */}
                     <span className="text-2xl">{result.emoji}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-gray-800">{result.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className={`font-bold ${isMyResult ? 'text-amber-800' : 'text-gray-800'}`}>
+                          {result.name}
+                        </p>
+                        {isMyResult && (
+                          <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded">
+                            나
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-500 line-clamp-1">{result.desc}</p>
                     </div>
 
@@ -456,7 +526,9 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
                       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
-                            rank === 1
+                            isMyResult
+                              ? 'bg-amber-500'
+                              : rank === 1
                               ? 'bg-amber-400'
                               : rank === 2
                               ? 'bg-gray-400'
@@ -475,18 +547,46 @@ export default function ResultRankingView({ testType, onClose, onStartTest }: Re
           )}
         </div>
 
-        {/* 하단 CTA */}
-        {onStartTest && (
+        {/* 하단 CTA - 모드별 다른 버튼 (버튼 없으면 영역 숨김) */}
+        {(isCompareMode ? (onRestart || onShare) : onStartTest) && (
           <div className="shrink-0 p-4 border-t border-gray-100 bg-gray-50">
-            <button
-              onClick={() => {
-                onStartTest();
-                onClose();
-              }}
-              className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all active:scale-[0.98]"
-            >
-              테스트하고 내 결과 확인하기 →
-            </button>
+            {isCompareMode ? (
+              // compare 모드: 다시하기 + 공유 버튼
+              <div className="flex gap-2">
+                {onRestart && (
+                  <button
+                    onClick={() => {
+                      onRestart();
+                      onClose();
+                    }}
+                    className="flex-1 py-3 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    다시하기
+                  </button>
+                )}
+                {onShare && (
+                  <button
+                    onClick={onShare}
+                    className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    공유하기
+                  </button>
+                )}
+              </div>
+            ) : (
+              // preview 모드: 테스트 시작 버튼
+              <button
+                onClick={() => {
+                  onStartTest!();
+                  onClose();
+                }}
+                className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all active:scale-[0.98]"
+              >
+                테스트하고 내 결과 확인하기 →
+              </button>
+            )}
           </div>
         )}
       </div>

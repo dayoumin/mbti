@@ -1,0 +1,65 @@
+'use client';
+
+import { Home, Compass, Trophy, User } from 'lucide-react';
+
+export type NavTab = 'home' | 'explore' | 'ranking' | 'profile';
+
+interface BottomNavProps {
+  activeTab: NavTab;
+  onTabChange: (tab: NavTab) => void;
+  className?: string;
+}
+
+const NAV_ITEMS: { key: NavTab; label: string; icon: typeof Home }[] = [
+  { key: 'home', label: '홈', icon: Home },
+  { key: 'explore', label: '퀴즈/투표', icon: Compass },
+  { key: 'ranking', label: '랭킹', icon: Trophy },
+  { key: 'profile', label: '프로필', icon: User },
+];
+
+export default function BottomNav({ activeTab, onTabChange, className = '' }: BottomNavProps) {
+  return (
+    <nav
+      className={`fixed bottom-0 left-0 right-0 z-40 lg:hidden ${className}`}
+      role="navigation"
+      aria-label="하단 네비게이션"
+    >
+      {/* 배경 블러 + 그라데이션 */}
+      <div className="absolute inset-0 bg-white/80 backdrop-blur-xl border-t border-slate-200/50" />
+
+      {/* Safe Area 패딩 (iPhone 등) */}
+      <div className="relative flex items-center justify-around px-2 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
+        {NAV_ITEMS.map(({ key, label, icon: Icon }) => {
+          const isActive = activeTab === key;
+          return (
+            <button
+              key={key}
+              onClick={() => onTabChange(key)}
+              className={`flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[52px] px-3 py-2 rounded-xl transition-all ${
+                isActive
+                  ? 'text-indigo-600'
+                  : 'text-slate-400 hover:text-slate-600 active:bg-slate-100'
+              }`}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <div className={`p-1.5 rounded-lg transition-all ${
+                isActive ? 'bg-indigo-100' : ''
+              }`}>
+                <Icon
+                  className={`w-5 h-5 transition-all ${
+                    isActive ? 'stroke-[2.5px]' : 'stroke-[1.5px]'
+                  }`}
+                />
+              </div>
+              <span className={`text-[10px] font-medium ${
+                isActive ? 'font-bold' : ''
+              }`}>
+                {label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}

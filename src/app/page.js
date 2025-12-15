@@ -13,6 +13,8 @@ import { FullProfile } from '../components/MyProfile';
 import ContentExplore from '../components/ContentExplore';
 import ResultFeedback from '../components/ResultFeedback';
 import FeedbackComments from '../components/FeedbackComments';
+import BottomNav from '../components/BottomNav';
+import Sidebar from '../components/Sidebar';
 import * as Icons from '../components/Icons';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
@@ -385,6 +387,7 @@ export default function Home() {
     const [showProfile, setShowProfile] = useState(false);
     const [showContentExplore, setShowContentExplore] = useState(false);
     const [parentInfo, setParentInfo] = useState(null); // petMatch → 세부 테스트 연결용
+    const [activeNavTab, setActiveNavTab] = useState('home'); // 하단 내비게이션 상태
 
     // Ensure mode is valid - use useMemo to derive safe mode
     const safeMode = CHEMI_DATA[mode] ? mode : 'human';
@@ -449,6 +452,33 @@ export default function Home() {
         setStep('intro');
         setQIdx(0);
         setIsDeepMode(false);
+        setActiveNavTab('home');
+    };
+
+    // 하단 내비게이션 탭 변경 핸들러
+    const handleNavTabChange = (tab) => {
+        setActiveNavTab(tab);
+        if (tab === 'home') {
+            setView('dashboard');
+            setShowProfile(false);
+            setShowContentExplore(false);
+            setShowRanking(false);
+        } else if (tab === 'explore') {
+            setView('dashboard');
+            setShowContentExplore(true);
+            setShowProfile(false);
+            setShowRanking(false);
+        } else if (tab === 'ranking') {
+            setView('dashboard');
+            setShowRanking(true);
+            setShowProfile(false);
+            setShowContentExplore(false);
+        } else if (tab === 'profile') {
+            setView('dashboard');
+            setShowProfile(true);
+            setShowContentExplore(false);
+            setShowRanking(false);
+        }
     };
 
     const calculateResult = (finalScores) => {
@@ -512,28 +542,68 @@ export default function Home() {
     const IconComponent = Icons[subjectConfig.icon] || HumanIcon;
 
     return (
-        <main className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-4">
-            {/* 프로필 모달 */}
+        <div className="min-h-screen bg-[#F0F2F5] flex">
+            {/* 전역 모달들 - 사이드바 포함 전체 화면에 오버레이 */}
             {showProfile && (
                 <FullProfile
-                    onClose={() => setShowProfile(false)}
+                    onClose={() => {
+                        setShowProfile(false);
+                        setActiveNavTab('home');
+                    }}
                     onStartTest={(testKey) => {
                         setShowProfile(false);
+                        setActiveNavTab('home');
                         handleStartTest(testKey);
                     }}
                 />
             )}
 
-            {/* 퀴즈/투표 더보기 */}
             {showContentExplore && (
-                <ContentExplore onClose={() => setShowContentExplore(false)} />
+                <ContentExplore onClose={() => {
+                    setShowContentExplore(false);
+                    setActiveNavTab('home');
+                }} />
             )}
 
+            {view === 'dashboard' && showRanking && (
+                <ResultRankingView
+                    testType={mode}
+                    viewMode="preview"
+                    onClose={() => {
+                        setShowRanking(false);
+                        setActiveNavTab('home');
+                    }}
+                    onStartTest={() => {
+                        setShowRanking(false);
+                        setActiveNavTab('home');
+                        handleStartTest(mode);
+                    }}
+                />
+            )}
+
+            {/* PC 사이드바 */}
+            {view === 'dashboard' && (
+                <Sidebar
+                    activeTab={activeNavTab}
+                    onTabChange={handleNavTabChange}
+                />
+            )}
+
+            <main className="flex-1 min-h-screen flex items-center justify-center p-4 pb-20 lg:pb-4">
             {view === 'dashboard' ? (
                 <Dashboard
-                    onStartTest={handleStartTest}
-                    onProfileClick={() => setShowProfile(true)}
-                    onContentExplore={() => setShowContentExplore(true)}
+                    onStartTest={(testKey) => {
+                        setActiveNavTab('home');
+                        handleStartTest(testKey);
+                    }}
+                    onProfileClick={() => {
+                        setShowProfile(true);
+                        setActiveNavTab('profile');
+                    }}
+                    onContentExplore={() => {
+                        setShowContentExplore(true);
+                        setActiveNavTab('explore');
+                    }}
                 />
             ) : (
                 <div className="glass-card rounded-[2.5rem] overflow-hidden flex flex-col relative transition-all duration-500 w-full h-full max-w-md min-h-[750px] shadow-2xl border border-white/50">
@@ -957,6 +1027,15 @@ export default function Home() {
                                             친구와 비교하기
                                         </button>
 
+                                        {/* 내 순위 보기 */}
+                                        <button
+                                            onClick={() => setShowRanking(true)}
+                                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95"
+                                        >
+                                            <Trophy className="w-5 h-5" />
+                                            전체 랭킹에서 내 순위 보기
+                                        </button>
+
                                         {/* 결과 공유하기 - 서브 CTA */}
                                         <button
                                             onClick={() => setShowShareCard(true)}
@@ -1050,12 +1129,28 @@ export default function Home() {
                     {showRanking && (
                         <ResultRankingView
                             testType={mode}
+                            viewMode={step === 'result' && finalResult ? 'compare' : 'preview'}
+                            myResult={step === 'result' ? finalResult : undefined}
                             onClose={() => setShowRanking(false)}
-                            onStartTest={() => handleStartTest(mode)}
+                            onStartTest={step !== 'result' ? () => handleStartTest(mode) : undefined}
+                            onRestart={step === 'result' ? () => restart() : undefined}
+                            onShare={step === 'result' ? () => {
+                                setShowRanking(false);
+                                setShowShareCard(true);
+                            } : undefined}
                         />
                     )}
                 </div>
             )}
+
+            {/* 하단 내비게이션 - 대시보드에서만 표시, 테스트 중에는 숨김 */}
+            {view === 'dashboard' && (
+                <BottomNav
+                    activeTab={activeNavTab}
+                    onTabChange={handleNavTabChange}
+                />
+            )}
         </main>
+        </div>
     );
 }

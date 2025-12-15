@@ -22,19 +22,19 @@ console.log('='.repeat(60));
 let passed = 0;
 let failed = 0;
 
-function test(name, fn) {
+function test(name: string, fn: () => void) {
   try {
     fn();
     console.log(`✅ ${name}`);
     passed++;
   } catch (e) {
     console.log(`❌ ${name}`);
-    console.log(`   Error: ${e.message}`);
+    console.log(`   Error: ${(e as Error).message}`);
     failed++;
   }
 }
 
-function assert(condition, message) {
+function assert(condition: boolean, message: string) {
   if (!condition) throw new Error(message);
 }
 
@@ -56,32 +56,32 @@ test('plant 모든 결과에 meta 존재', () => {
 });
 
 test('petMatch meta 필수 필드 검증', () => {
-  const requiredFields = ['heatTolerance', 'coldTolerance', 'beginnerFriendly', 'careLevel'];
+  const requiredFields = ['heatTolerance', 'coldTolerance', 'beginnerFriendly', 'careLevel'] as const;
   for (const result of petMatchData.resultLabels) {
     for (const field of requiredFields) {
-      assert(result.meta?.[field] !== undefined,
+      assert((result.meta as Record<string, unknown>)?.[field] !== undefined,
         `${result.name}에 ${field} 없음`);
     }
   }
 });
 
 test('plant meta 필수 필드 검증', () => {
-  const requiredFields = ['heatTolerance', 'coldTolerance', 'beginnerFriendly', 'careLevel'];
+  const requiredFields = ['heatTolerance', 'coldTolerance', 'beginnerFriendly', 'careLevel'] as const;
   for (const result of plantData.resultLabels) {
     for (const field of requiredFields) {
-      assert(result.meta?.[field] !== undefined,
+      assert((result.meta as Record<string, unknown>)?.[field] !== undefined,
         `${result.name}에 ${field} 없음`);
     }
   }
 });
 
 test('seasonalTips 4계절 모두 존재', () => {
-  const seasons = ['spring', 'summer', 'fall', 'winter'];
+  const seasons = ['spring', 'summer', 'fall', 'winter'] as const;
   const allResults = [...petMatchData.resultLabels, ...plantData.resultLabels];
   for (const result of allResults) {
     if (result.meta?.seasonalTips) {
       for (const season of seasons) {
-        assert(result.meta.seasonalTips[season],
+        assert(!!result.meta.seasonalTips[season],
           `${result.name}의 ${season} 팁 없음`);
       }
     }
@@ -109,13 +109,13 @@ test('모든 템플릿 ID 고유성', () => {
 
 test('모든 템플릿 필수 필드 존재', () => {
   for (const template of ALL_RANKING_TEMPLATES) {
-    assert(template.id, `id 없음`);
-    assert(template.title, `${template.id}의 title 없음`);
-    assert(template.description, `${template.id}의 description 없음`);
-    assert(template.subject, `${template.id}의 subject 없음`);
-    assert(template.sort, `${template.id}의 sort 없음`);
-    assert(template.sort.field, `${template.id}의 sort.field 없음`);
-    assert(template.sort.order, `${template.id}의 sort.order 없음`);
+    assert(!!template.id, `id 없음`);
+    assert(!!template.title, `${template.id}의 title 없음`);
+    assert(!!template.description, `${template.id}의 description 없음`);
+    assert(!!template.subject, `${template.id}의 subject 없음`);
+    assert(!!template.sort, `${template.id}의 sort 없음`);
+    assert(!!template.sort.field, `${template.id}의 sort.field 없음`);
+    assert(!!template.sort.order, `${template.id}의 sort.order 없음`);
   }
 });
 
@@ -124,6 +124,7 @@ console.log('\n📋 3. 랭킹 생성 로직 검증');
 
 test('generateRanking - 초보자 추천 정렬 (desc)', () => {
   const template = PET_RANKING_TEMPLATES.find(t => t.id === 'pet-beginner-friendly');
+  if (!template) throw new Error('템플릿을 찾을 수 없음: pet-beginner-friendly');
   const results = generateRanking(template, petMatchData.resultLabels);
 
   // beginnerFriendly 내림차순 확인
@@ -136,6 +137,7 @@ test('generateRanking - 초보자 추천 정렬 (desc)', () => {
 
 test('generateRanking - 더위 약한 순 정렬 (asc)', () => {
   const template = PET_RANKING_TEMPLATES.find(t => t.id === 'pet-summer-danger');
+  if (!template) throw new Error('템플릿을 찾을 수 없음: pet-summer-danger');
   const results = generateRanking(template, petMatchData.resultLabels);
 
   // heatTolerance 오름차순 확인 (낮을수록 더위에 약함)
@@ -148,6 +150,7 @@ test('generateRanking - 더위 약한 순 정렬 (asc)', () => {
 
 test('generateRanking - 필터 적용 (spaceNeeded = small)', () => {
   const template = PET_RANKING_TEMPLATES.find(t => t.id === 'pet-small-space');
+  if (!template) throw new Error('템플릿을 찾을 수 없음: pet-small-space');
   const results = generateRanking(template, petMatchData.resultLabels);
 
   for (const result of results) {
@@ -158,24 +161,26 @@ test('generateRanking - 필터 적용 (spaceNeeded = small)', () => {
 
 test('generateRanking - 필터 in 연산자 (suitableFor 배열)', () => {
   const template = PLANT_RANKING_TEMPLATES.find(t => t.id === 'plant-dark-room');
+  if (!template) throw new Error('템플릿을 찾을 수 없음: plant-dark-room');
   const results = generateRanking(template, plantData.resultLabels);
 
   // 결과가 있거나 비어있을 수 있음 (필터 조건에 따라)
   for (const result of results) {
     const suitableFor = result.meta?.suitableFor || [];
-    const hasMatch = suitableFor.some(s => ['어두운방', '저조도'].includes(s));
+    const hasMatch = suitableFor.some((s: string) => ['어두운방', '저조도'].includes(s));
     assert(hasMatch, `${result.name}이 필터 조건을 만족하지 않음`);
   }
 });
 
 test('generateRanking - noiseLevel enum 정렬', () => {
   const template = PET_RANKING_TEMPLATES.find(t => t.id === 'pet-quiet');
+  if (!template) throw new Error('템플릿을 찾을 수 없음: pet-quiet');
   const results = generateRanking(template, petMatchData.resultLabels);
 
-  const orderMap = { 'silent': 0, 'low': 1, 'medium': 2, 'high': 3 };
+  const orderMap: Record<string, number> = { 'silent': 0, 'low': 1, 'medium': 2, 'high': 3 };
   for (let i = 0; i < results.length - 1; i++) {
-    const curr = orderMap[results[i].meta?.noiseLevel] ?? 0;
-    const next = orderMap[results[i + 1].meta?.noiseLevel] ?? 0;
+    const curr = orderMap[results[i].meta?.noiseLevel as string] ?? 0;
+    const next = orderMap[results[i + 1].meta?.noiseLevel as string] ?? 0;
     assert(curr <= next, `정렬 오류: ${results[i].name}(${results[i].meta?.noiseLevel}) > ${results[i+1].name}(${results[i+1].meta?.noiseLevel})`);
   }
 });
@@ -203,9 +208,9 @@ test('getCurrentSeasonTemplates - 계절 시즌 템플릿 필터링', () => {
 
 test('getTodayRanking - 오늘의 랭킹 반환', () => {
   const today = getTodayRanking();
-  assert(today, '오늘의 랭킹이 없음');
-  assert(today.id, '랭킹 ID 없음');
-  assert(today.title, '랭킹 제목 없음');
+  assert(!!today, '오늘의 랭킹이 없음');
+  assert(!!today.id, '랭킹 ID 없음');
+  assert(!!today.title, '랭킹 제목 없음');
   console.log(`   오늘의 랭킹: ${today.title}`);
 });
 
@@ -215,8 +220,8 @@ test('getSeasonalTips - 계절별 팁 반환', () => {
 
   assert(tips.length > 0, '계절별 팁이 없음');
   for (const item of tips) {
-    assert(item.result, 'result 없음');
-    assert(item.tip, 'tip 없음');
+    assert(!!item.result, 'result 없음');
+    assert(!!item.tip, 'tip 없음');
   }
   console.log(`   계절별 팁 ${tips.length}개 생성됨`);
 });
@@ -225,31 +230,31 @@ test('getSeasonalTips - 계절별 팁 반환', () => {
 console.log('\n📋 5. 랭킹 결과 미리보기');
 
 console.log('\n🐾 초보자에게 추천하는 반려동물:');
-const beginnerPets = generateRanking(
-  PET_RANKING_TEMPLATES.find(t => t.id === 'pet-beginner-friendly'),
-  petMatchData.resultLabels
-);
-beginnerPets.forEach((r, i) => {
-  console.log(`   ${i + 1}. ${r.emoji} ${r.name} (친화도: ${r.meta?.beginnerFriendly})`);
-});
+const beginnerPetTemplate = PET_RANKING_TEMPLATES.find(t => t.id === 'pet-beginner-friendly');
+if (beginnerPetTemplate) {
+  const beginnerPets = generateRanking(beginnerPetTemplate, petMatchData.resultLabels);
+  beginnerPets.forEach((r, i) => {
+    console.log(`   ${i + 1}. ${r.emoji} ${r.name} (친화도: ${r.meta?.beginnerFriendly})`);
+  });
+}
 
 console.log('\n🌱 초보 식집사 추천 식물:');
-const beginnerPlants = generateRanking(
-  PLANT_RANKING_TEMPLATES.find(t => t.id === 'plant-beginner'),
-  plantData.resultLabels
-);
-beginnerPlants.slice(0, 5).forEach((r, i) => {
-  console.log(`   ${i + 1}. ${r.emoji} ${r.name} (친화도: ${r.meta?.beginnerFriendly})`);
-});
+const beginnerPlantTemplate = PLANT_RANKING_TEMPLATES.find(t => t.id === 'plant-beginner');
+if (beginnerPlantTemplate) {
+  const beginnerPlants = generateRanking(beginnerPlantTemplate, plantData.resultLabels);
+  beginnerPlants.slice(0, 5).forEach((r, i) => {
+    console.log(`   ${i + 1}. ${r.emoji} ${r.name} (친화도: ${r.meta?.beginnerFriendly})`);
+  });
+}
 
 console.log('\n🤫 층간소음 걱정 없는 반려동물:');
-const quietPets = generateRanking(
-  PET_RANKING_TEMPLATES.find(t => t.id === 'pet-quiet'),
-  petMatchData.resultLabels
-);
-quietPets.forEach((r, i) => {
-  console.log(`   ${i + 1}. ${r.emoji} ${r.name} (소음: ${r.meta?.noiseLevel})`);
-});
+const quietPetTemplate = PET_RANKING_TEMPLATES.find(t => t.id === 'pet-quiet');
+if (quietPetTemplate) {
+  const quietPets = generateRanking(quietPetTemplate, petMatchData.resultLabels);
+  quietPets.forEach((r, i) => {
+    console.log(`   ${i + 1}. ${r.emoji} ${r.name} (소음: ${r.meta?.noiseLevel})`);
+  });
+}
 
 // === 결과 ===
 console.log('\n' + '='.repeat(60));
