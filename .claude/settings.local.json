@@ -38,7 +38,19 @@
       "Bash(git stash pop:*)",
       "Bash(dir:*)",
       "Bash(curl:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(cmd /c \"taskkill /F /PID 140868\")",
+      "Bash(powershell -Command \"Stop-Process -Id 140868 -Force\")",
+      "Bash(npx playwright install:*)",
+      "Bash(powershell -Command \"Get-Process -Id 78588 | Stop-Process -Force\")",
+      "Bash(powershell -Command:*)",
+      "Bash(del \"D:\\Projects\\MBTI\\.next\\dev\\lock\")",
+      "Bash(rm:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git rm:*)",
+      "Bash(git reset:*)",
+      "Bash(git restore:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

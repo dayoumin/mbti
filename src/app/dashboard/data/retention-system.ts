@@ -449,7 +449,7 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
   {
     id: 'phase-1',
     name: 'Phase 1: 기반 구축',
-    status: 'in_progress',
+    status: 'done',
     items: [
       {
         task: 'NextActionService 생성',
@@ -480,33 +480,39 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
   {
     id: 'phase-2',
     name: 'Phase 2: 횡단 연결',
-    status: 'planned',
+    status: 'done',
     items: [
       {
         task: '테스트 결과 → 투표 연결',
         endpoint: 'test_result',
         priority: 'medium',
-        description: '테스트 결과 후 관련 투표 추천'
+        description: '테스트 결과 후 관련 투표 추천 (ContentActions 컴포넌트)'
       },
       {
         task: '테스트 결과 → 퀴즈 연결',
         endpoint: 'test_result',
         priority: 'medium',
-        description: '테스트 결과 후 관련 퀴즈 추천'
+        description: '테스트 결과 후 관련 퀴즈 추천 (ContentActions 컴포넌트)'
       },
+      {
+        task: '커뮤니티 → 테스트 연결',
+        endpoint: 'community_view',
+        priority: 'medium',
+        description: '게시글 조회 후 관련 테스트 추천 (미구현 - Phase 3로 이동)'
+      },
+    ],
+  },
+  {
+    id: 'phase-3',
+    name: 'Phase 3: 개인화 & 확장',
+    status: 'planned',
+    items: [
       {
         task: '커뮤니티 → 테스트 연결',
         endpoint: 'community_view',
         priority: 'medium',
         description: '게시글 조회 후 관련 테스트 추천'
       },
-    ],
-  },
-  {
-    id: 'phase-3',
-    name: 'Phase 3: 개인화',
-    status: 'planned',
-    items: [
       {
         task: '사용자 선호도 기반 추천',
         endpoint: 'test_result',
@@ -545,30 +551,30 @@ export const CURRENT_STATE_ANALYSIS: EndpointAnalysis[] = [
   {
     endpoint: 'test_result',
     currentStatus: 'good',
-    currentActions: ['공유', '랭킹', '다음 테스트', '친구 비교(TODO)'],
-    missingActions: ['관련 투표', '관련 퀴즈'],
-    priority: 'medium',
+    currentActions: ['공유', '랭킹', '다음 테스트', '관련 투표', '관련 퀴즈'],
+    missingActions: ['친구 비교'],
+    priority: 'low',
   },
   {
     endpoint: 'quiz_result',
-    currentStatus: 'missing',
-    currentActions: ['다음 퀴즈로 슬라이드'],
-    missingActions: ['관련 테스트', '관련 투표', '공유'],
-    priority: 'high',
+    currentStatus: 'good',
+    currentActions: ['다음 퀴즈', '관련 테스트', '관련 투표'],
+    missingActions: ['공유'],
+    priority: 'low',
   },
   {
     endpoint: 'poll_result',
-    currentStatus: 'missing',
-    currentActions: ['다음 투표로 슬라이드'],
-    missingActions: ['관련 테스트', '관련 퀴즈', '공유'],
-    priority: 'high',
+    currentStatus: 'good',
+    currentActions: ['다른 투표', '관련 테스트', '공유'],
+    missingActions: ['관련 퀴즈'],
+    priority: 'low',
   },
   {
     endpoint: 'community_view',
-    currentStatus: 'missing',
+    currentStatus: 'needs_improvement',
     currentActions: ['댓글 달기'],
     missingActions: ['관련 테스트', '관련 투표', '관련 퀴즈'],
-    priority: 'high',
+    priority: 'medium',
   },
   {
     endpoint: 'ranking_view',
