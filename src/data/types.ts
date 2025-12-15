@@ -51,6 +51,21 @@ export interface ResultMeta {
 
   // === 특수 태그 (자유롭게 확장 가능) ===
   tags?: string[];  // ["공기정화", "야행성", "저소음", "저관리"]
+
+  // === 바이럴 콘텐츠용 ===
+  funFacts?: FunFacts;
+}
+
+// 바이럴 콘텐츠용 재미있는 사실들
+export interface FunFacts {
+  // 알고 계셨나요? (놀라운 사실)
+  didYouKnow?: string[];
+  // 흔한 오해 (틀린 상식 바로잡기)
+  commonMistakes?: string[];
+  // 프로 팁 (양육 꿀팁)
+  proTips?: string[];
+  // SNS용 한 줄 (짧고 임팩트 있는)
+  viralOneLiner?: string;
 }
 
 // 품종/결과 상세 정보 (세부 테스트용)
