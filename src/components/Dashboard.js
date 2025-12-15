@@ -591,7 +591,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 />
             )}
 
-            <div className="relative max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8 h-[calc(100vh-2rem)] overflow-y-auto">
+            <div className="relative max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8">
                 {/* Header */}
                 <Header />
 
@@ -607,7 +607,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     />
                 )}
 
-                {/* 오늘의 참여 섹션 - 상단 배치 */}
+                {/* 오늘의 참여 섹션 - 가로 스크롤 컴팩트 형태 */}
                 {(dailyQuiz || dailyPoll || timeBasedAction) && (
                     <section className="mb-4 animate-fade-in-up">
                         <div className="flex items-center justify-between mb-2 px-1">
@@ -622,35 +622,86 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                                 </button>
                             )}
                         </div>
-                        <div className="space-y-2">
-                            {/* 시간대별 추천 - 퀴즈/투표가 없거나, 시간대에 맞는 추천이면 표시 */}
-                            {timeBasedAction && !quizExpanded && !pollExpanded && (
-                                <TimeBasedCard
-                                    action={timeBasedAction}
-                                    onAction={handleBonusAction}
-                                />
-                            )}
-                            {dailyQuiz && (
-                                <DailyQuizCard
-                                    quiz={dailyQuiz}
-                                    onAnswer={handleQuizAnswer}
-                                    isExpanded={quizExpanded}
-                                    onToggle={() => setQuizExpanded(!quizExpanded)}
-                                    isAnswered={!!contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)}
-                                    previousAnswer={contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)?.selectedOption}
-                                />
-                            )}
-                            {dailyPoll && (
-                                <VSPollCard
-                                    poll={dailyPoll}
-                                    onVote={handlePollVote}
-                                    isExpanded={pollExpanded}
-                                    onToggle={() => setPollExpanded(!pollExpanded)}
-                                    isVoted={!!contentParticipation.polls.find(p => p.pollId === dailyPoll.id)}
-                                    previousVote={contentParticipation.polls.find(p => p.pollId === dailyPoll.id)?.choice}
-                                />
-                            )}
-                        </div>
+
+                        {/* 펼쳐진 카드가 있으면 세로 표시, 아니면 가로 스크롤 */}
+                        {(quizExpanded || pollExpanded) ? (
+                            <div className="space-y-2">
+                                {quizExpanded && dailyQuiz && (
+                                    <DailyQuizCard
+                                        quiz={dailyQuiz}
+                                        onAnswer={handleQuizAnswer}
+                                        isExpanded={true}
+                                        onToggle={() => setQuizExpanded(false)}
+                                        isAnswered={!!contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)}
+                                        previousAnswer={contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)?.selectedOption}
+                                    />
+                                )}
+                                {pollExpanded && dailyPoll && (
+                                    <VSPollCard
+                                        poll={dailyPoll}
+                                        onVote={handlePollVote}
+                                        isExpanded={true}
+                                        onToggle={() => setPollExpanded(false)}
+                                        isVoted={!!contentParticipation.polls.find(p => p.pollId === dailyPoll.id)}
+                                        previousVote={contentParticipation.polls.find(p => p.pollId === dailyPoll.id)?.choice}
+                                    />
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                {/* 시간대별 추천 - 컴팩트 칩 */}
+                                {timeBasedAction && (
+                                    <button
+                                        onClick={() => handleBonusAction?.(timeBasedAction)}
+                                        className="flex-shrink-0 flex items-center gap-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full pl-2 pr-3 py-1.5 border border-indigo-100 hover:border-indigo-200 transition-all group"
+                                    >
+                                        <span className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-xs">
+                                            {timeBasedAction.icon}
+                                        </span>
+                                        <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{timeBasedAction.label}</span>
+                                        <ChevronRight className="w-3 h-3 text-slate-400" />
+                                    </button>
+                                )}
+                                {/* 퀴즈 - 컴팩트 칩 */}
+                                {dailyQuiz && (
+                                    <button
+                                        onClick={() => setQuizExpanded(true)}
+                                        className="flex-shrink-0 flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full pl-2 pr-3 py-1.5 border border-blue-100 hover:border-blue-200 transition-all group"
+                                    >
+                                        <span className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <HelpCircle className="w-3 h-3 text-blue-500" />
+                                        </span>
+                                        <span className="text-xs font-medium text-slate-700 whitespace-nowrap max-w-[120px] truncate">{dailyQuiz.question}</span>
+                                        {contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id) && (
+                                            <span className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center">
+                                                <Check className="w-2.5 h-2.5 text-emerald-600" />
+                                            </span>
+                                        )}
+                                        <ChevronRight className="w-3 h-3 text-slate-400" />
+                                    </button>
+                                )}
+                                {/* VS 투표 - 컴팩트 칩 */}
+                                {dailyPoll && (
+                                    <button
+                                        onClick={() => setPollExpanded(true)}
+                                        className="flex-shrink-0 flex items-center gap-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full pl-2 pr-3 py-1.5 border border-purple-100 hover:border-purple-200 transition-all group"
+                                    >
+                                        <span className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-[10px] font-bold text-purple-600">
+                                            VS
+                                        </span>
+                                        <span className="text-xs font-medium text-slate-700 whitespace-nowrap">
+                                            {dailyPoll.optionA?.text?.slice(0, 6)} vs {dailyPoll.optionB?.text?.slice(0, 6)}
+                                        </span>
+                                        {contentParticipation.polls.find(p => p.pollId === dailyPoll.id) && (
+                                            <span className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center">
+                                                <Check className="w-2.5 h-2.5 text-emerald-600" />
+                                            </span>
+                                        )}
+                                        <ChevronRight className="w-3 h-3 text-slate-400" />
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </section>
                 )}
 
