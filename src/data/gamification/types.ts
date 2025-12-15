@@ -43,6 +43,15 @@ export interface StreakInfo {
   streakStartDate: string;
 }
 
+// 일일 활동 추적
+export interface DailyActivity {
+  date: string; // YYYY-MM-DD
+  testsCompleted: number;
+  quizzesAnswered: number;
+  quizzesCorrect: number;
+  pollsVoted: number;
+}
+
 // 사용자 게임 통계
 export interface UserGameStats {
   // 테스트 관련
@@ -52,6 +61,8 @@ export interface UserGameStats {
   // 퀴즈 관련
   quizzesAnswered: number;
   quizzesCorrect: number;
+  quizCorrectStreak: number; // 현재 연속 정답 수
+  quizzesByCategory: Record<string, { answered: number; correct: number }>;
 
   // 투표 관련
   pollsVoted: number;
@@ -64,6 +75,9 @@ export interface UserGameStats {
 
   // 포인트
   totalPoints: number;
+
+  // 일일 활동 (최근 7일)
+  dailyActivities: DailyActivity[];
 }
 
 // 레벨 정의

@@ -2,6 +2,13 @@
 
 import { TestType, SubjectConfig, SubjectKey } from './types';
 
+// 메인 테스트 목록 (세부 테스트 제외, 게이미피케이션 all-rounder 배지 등에 사용)
+export const MAIN_TEST_KEYS: SubjectKey[] = [
+  'human', 'cat', 'dog', 'rabbit', 'hamster',
+  'idealType', 'plant', 'petMatch', 'coffee', 'tea',
+  'conflictStyle', 'fruit', 'alcohol', 'bread', 'perfume', 'aroma'
+];
+
 // 테스트 타입 정의
 export const TEST_TYPES: Record<string, TestType> = {
   personality: {

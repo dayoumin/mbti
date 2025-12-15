@@ -2,9 +2,11 @@
 // 게이미피케이션 서비스
 // ============================================================================
 
-import type { UserGameStats, StreakInfo } from '../data/gamification/types';
+import type { UserGameStats, StreakInfo, DailyActivity } from '../data/gamification/types';
+import type { SubjectKey } from '../data/types';
 import { BADGES, getBadgeById } from '../data/gamification/badges';
 import { getLevelByPoints, getPointsToNextLevel, DAILY_MISSIONS } from '../data/gamification/levels';
+import { MAIN_TEST_KEYS } from '../data/config';
 
 const STORAGE_KEY = 'chemi_game_stats';
 
@@ -15,6 +17,8 @@ function createDefaultStats(): UserGameStats {
     testsByType: {},
     quizzesAnswered: 0,
     quizzesCorrect: 0,
+    quizCorrectStreak: 0,
+    quizzesByCategory: {},
     pollsVoted: 0,
     streak: {
       currentStreak: 0,
@@ -24,6 +28,7 @@ function createDefaultStats(): UserGameStats {
     },
     badges: [],
     totalPoints: 0,
+    dailyActivities: [],
   };
 }
 
@@ -89,13 +94,67 @@ class GamificationService {
   }
 
   // ============================================================================
+  // 일일 활동 추적
+  // ============================================================================
+
+  // 읽기 전용: 상태 변경 없이 오늘 활동 조회
+  private peekTodayActivity(): DailyActivity {
+    const today = this.getToday();
+    const activity = this.stats.dailyActivities.find(a => a.date === today);
+    return activity || {
+      date: today,
+      testsCompleted: 0,
+      quizzesAnswered: 0,
+      quizzesCorrect: 0,
+      pollsVoted: 0,
+    };
+  }
+
+  // 수정용: 오늘 활동이 없으면 생성하고 반환 (save 필요)
+  private getOrCreateTodayActivity(): DailyActivity {
+    const today = this.getToday();
+    let activity = this.stats.dailyActivities.find(a => a.date === today);
+
+    if (!activity) {
+      activity = {
+        date: today,
+        testsCompleted: 0,
+        quizzesAnswered: 0,
+        quizzesCorrect: 0,
+        pollsVoted: 0,
+      };
+      this.stats.dailyActivities.push(activity);
+
+      // 최근 7일만 유지
+      this.stats.dailyActivities = this.stats.dailyActivities
+        .filter(a => {
+          const activityDate = new Date(a.date);
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return activityDate >= weekAgo;
+        })
+        .sort((a, b) => b.date.localeCompare(a.date));
+    }
+
+    return activity;
+  }
+
+  getTodayStats(): DailyActivity {
+    return { ...this.peekTodayActivity() };
+  }
+
+  // ============================================================================
   // 활동 기록
   // ============================================================================
 
   // 테스트 완료
-  recordTestComplete(testType: string): { points: number; newBadges: string[] } {
+  recordTestComplete(testType: SubjectKey | string): { points: number; newBadges: string[] } {
     this.stats.testsCompleted++;
     this.stats.testsByType[testType] = (this.stats.testsByType[testType] || 0) + 1;
+
+    // 오늘 활동 업데이트
+    const todayActivity = this.getOrCreateTodayActivity();
+    todayActivity.testsCompleted++;
 
     const points = 20; // 테스트 완료 포인트
     this.stats.totalPoints += points;
@@ -112,6 +171,27 @@ class GamificationService {
     this.stats.quizzesAnswered++;
     if (isCorrect) {
       this.stats.quizzesCorrect++;
+      this.stats.quizCorrectStreak++; // 연속 정답 증가
+    } else {
+      this.stats.quizCorrectStreak = 0; // 오답 시 연속 정답 리셋
+    }
+
+    // 카테고리별 추적
+    if (category) {
+      if (!this.stats.quizzesByCategory[category]) {
+        this.stats.quizzesByCategory[category] = { answered: 0, correct: 0 };
+      }
+      this.stats.quizzesByCategory[category].answered++;
+      if (isCorrect) {
+        this.stats.quizzesByCategory[category].correct++;
+      }
+    }
+
+    // 오늘 활동 업데이트
+    const todayActivity = this.getOrCreateTodayActivity();
+    todayActivity.quizzesAnswered++;
+    if (isCorrect) {
+      todayActivity.quizzesCorrect++;
     }
 
     const points = isCorrect ? 10 : 2; // 정답 10점, 오답 2점
@@ -127,6 +207,10 @@ class GamificationService {
   // 투표 참여
   recordPollVote(): { points: number; newBadges: string[] } {
     this.stats.pollsVoted++;
+
+    // 오늘 활동 업데이트
+    const todayActivity = this.getOrCreateTodayActivity();
+    todayActivity.pollsVoted++;
 
     const points = 5; // 투표 포인트
     this.stats.totalPoints += points;
@@ -161,12 +245,17 @@ class GamificationService {
   // ============================================================================
 
   private getToday(): string {
-    return new Date().toISOString().split('T')[0];
+    // 로컬 시간대 기준 날짜 (YYYY-MM-DD)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private updateStreak(): void {
     const today = this.getToday();
-    const { lastActivityDate, currentStreak, longestStreak, streakStartDate } = this.stats.streak;
+    const { lastActivityDate, currentStreak, longestStreak } = this.stats.streak;
 
     if (lastActivityDate === today) {
       return; // 오늘 이미 활동함
@@ -174,7 +263,10 @@ class GamificationService {
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const yYear = yesterday.getFullYear();
+    const yMonth = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const yDay = String(yesterday.getDate()).padStart(2, '0');
+    const yesterdayStr = `${yYear}-${yMonth}-${yDay}`;
 
     if (lastActivityDate === yesterdayStr) {
       // 연속 유지
@@ -231,8 +323,8 @@ class GamificationService {
           return this.stats.testsCompleted >= condition.value;
         }
         if (condition.type === 'special' && badge.id === 'all-rounder') {
-          // TODO: 모든 메인 테스트 완료 체크
-          return Object.keys(this.stats.testsByType).length >= 10;
+          // 모든 메인 테스트 완료 체크
+          return MAIN_TEST_KEYS.every(test => (this.stats.testsByType[test] || 0) > 0);
         }
         break;
 
@@ -240,10 +332,15 @@ class GamificationService {
         if (condition.type === 'first') {
           return this.stats.quizzesCorrect >= 1;
         }
+        if (condition.type === 'streak' && condition.value) {
+          // 퀴즈 연속 정답 체크
+          return this.stats.quizCorrectStreak >= condition.value;
+        }
         if (condition.type === 'count' && condition.value) {
           if (condition.target) {
-            // TODO: 카테고리별 정답 수 추적 필요
-            return false;
+            // 카테고리별 정답 수 체크
+            const categoryStats = this.stats.quizzesByCategory[condition.target];
+            return categoryStats ? categoryStats.correct >= condition.value : false;
           }
           return this.stats.quizzesCorrect >= condition.value;
         }
@@ -275,6 +372,7 @@ class GamificationService {
   getDailyMissionStatus(): Array<{ mission: typeof DAILY_MISSIONS[0]; completed: boolean }> {
     const today = this.getToday();
     const visitedToday = this.stats.streak.lastActivityDate === today;
+    const todayActivity = this.peekTodayActivity(); // 읽기 전용 - 상태 변경 없음
 
     return DAILY_MISSIONS.map(mission => {
       let completed = false;
@@ -284,16 +382,16 @@ class GamificationService {
           completed = visitedToday;
           break;
         case 'quiz':
-          // TODO: 오늘 푼 퀴즈 수 추적 필요
-          completed = false;
+          // 오늘 푼 퀴즈 수 체크 (미션 목표값과 비교)
+          completed = todayActivity.quizzesAnswered >= (mission.target || 1);
           break;
         case 'poll':
-          // TODO: 오늘 참여한 투표 수 추적 필요
-          completed = false;
+          // 오늘 참여한 투표 수 체크
+          completed = todayActivity.pollsVoted >= (mission.target || 1);
           break;
         case 'test':
-          // TODO: 오늘 완료한 테스트 수 추적 필요
-          completed = false;
+          // 오늘 완료한 테스트 수 체크
+          completed = todayActivity.testsCompleted >= (mission.target || 1);
           break;
       }
 
@@ -320,9 +418,9 @@ export function getGamificationService(): GamificationService | null {
   return instance;
 }
 
-// 하위 호환성을 위한 export (SSR에서는 빈 객체 반환하지 않도록 주의)
+// 하위 호환성을 위한 export (getGamificationService와 동일한 인스턴스 사용)
 export const gamificationService = typeof window !== 'undefined'
-  ? new GamificationService()
-  : (null as unknown as GamificationService);
+  ? getGamificationService()
+  : null;
 
 export default gamificationService;
