@@ -505,25 +505,25 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
   {
     id: 'phase-3',
     name: 'Phase 3: 개인화 & 확장',
-    status: 'in_progress',
+    status: 'done',
     items: [
       {
         task: '사용자 선호도 기반 추천',
         endpoint: 'test_result',
         priority: 'medium',
-        description: '완료한 테스트 기반 맞춤 추천 (NextTestRecommendation에 적용 완료)'
+        description: 'getPersonalizedTestRecommendation() 구현'
       },
       {
         task: '스트릭 연동 추천',
         endpoint: 'quiz_result',
         priority: 'low',
-        description: '연속 참여 시 특별 콘텐츠 추천'
+        description: 'getStreakBonusAction() - 3/7/14일 연속 보너스'
       },
       {
         task: '시간대별 추천',
         endpoint: 'test_result',
         priority: 'low',
-        description: '시간대에 따른 콘텐츠 추천'
+        description: 'getTimeBasedAction() - 아침/낮/저녁/밤 맞춤'
       },
     ],
   },

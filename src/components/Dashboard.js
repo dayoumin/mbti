@@ -7,7 +7,8 @@ import { ALL_KNOWLEDGE_QUIZZES } from '../data/content/quizzes';
 import { VS_POLLS } from '../data/content/polls/vs-polls';
 import { gamificationService } from '../services/GamificationService';
 import { contentParticipationService } from '../services/ContentParticipationService';
-import { ChevronRight, ChevronDown, HelpCircle, Flame, Star } from 'lucide-react';
+import { nextActionService } from '../services/NextActionService';
+import { ChevronRight, ChevronDown, HelpCircle, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import { VSPollCard } from '../modules/vote';
 
@@ -144,10 +145,10 @@ const Header = () => (
     </div>
 );
 
-// 스트릭 배너 컴포넌트 (5초 후 자동 사라짐)
-const StreakBanner = ({ streak, level, points, onClose }) => {
+// 스트릭 배너 컴포넌트 (5초 후 자동 사라짐) + 보너스 액션 CTA
+const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusAction }) => {
     useEffect(() => {
-        const timer = setTimeout(onClose, 5000); // 5초 후 자동 닫힘
+        const timer = setTimeout(onClose, 8000); // 보너스 액션 있으면 8초로 연장
         return () => clearTimeout(timer);
     }, [onClose]);
 
@@ -189,7 +190,53 @@ const StreakBanner = ({ streak, level, points, onClose }) => {
                     </div>
                 </div>
             </div>
+            {/* 스트릭 보너스 CTA */}
+            {bonusAction && (
+                <button
+                    onClick={() => onBonusAction?.(bonusAction)}
+                    className="mt-2 w-full py-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-bold flex items-center justify-center gap-1.5 hover:from-amber-500 hover:to-orange-500 transition-all active:scale-95"
+                >
+                    <span>{bonusAction.icon}</span>
+                    <span>{bonusAction.label}</span>
+                    <ChevronRight className="w-3 h-3" />
+                </button>
+            )}
         </div>
+    );
+};
+
+// 시간대별 추천 카드
+const TimeBasedCard = ({ action, onAction }) => {
+    if (!action) return null;
+
+    // 시간대별 아이콘/색상
+    const getTimeStyle = () => {
+        const hour = new Date().getHours();
+        if (hour >= 6 && hour < 9) return { icon: Sunrise, gradient: 'from-amber-100 to-orange-100', border: 'border-amber-200', text: 'text-amber-700' };
+        if (hour >= 9 && hour < 18) return { icon: Sun, gradient: 'from-yellow-100 to-amber-100', border: 'border-yellow-200', text: 'text-yellow-700' };
+        if (hour >= 18 && hour < 22) return { icon: Moon, gradient: 'from-indigo-100 to-purple-100', border: 'border-indigo-200', text: 'text-indigo-700' };
+        return { icon: Sparkles, gradient: 'from-slate-100 to-blue-100', border: 'border-slate-200', text: 'text-slate-700' };
+    };
+
+    const style = getTimeStyle();
+    const TimeIcon = style.icon;
+
+    return (
+        <button
+            onClick={() => onAction?.(action)}
+            className={`w-full flex items-center gap-3 bg-gradient-to-r ${style.gradient} rounded-xl p-3 border ${style.border} hover:shadow-md transition-all group`}
+        >
+            <div className={`w-8 h-8 bg-white/70 rounded-lg flex items-center justify-center flex-shrink-0`}>
+                <TimeIcon className={`w-4 h-4 ${style.text}`} />
+            </div>
+            <div className="flex-1 text-left min-w-0">
+                <div className="flex items-center gap-1.5">
+                    <span className={`text-[10px] font-bold ${style.text}`}>{action.icon} {action.label}</span>
+                </div>
+                <p className="text-xs font-medium text-slate-600 truncate">{action.description}</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors flex-shrink-0" />
+        </button>
     );
 };
 
@@ -353,6 +400,10 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     const [pointsToast, setPointsToast] = useState(null);
     const [showStreakBanner, setShowStreakBanner] = useState(true);
 
+    // 시간대/스트릭 기반 추천
+    const [timeBasedAction, setTimeBasedAction] = useState(null);
+    const [streakBonusAction, setStreakBonusAction] = useState(null);
+
     useEffect(() => {
         // 클라이언트 사이드에서만 랜덤 선택 (hydration mismatch 방지)
         /* eslint-disable react-hooks/set-state-in-effect */
@@ -383,6 +434,18 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
         if (visitResult.streakUpdated && visitResult.points > 0) {
             setPointsToast({ points: visitResult.points, message: '오늘도 방문!' });
             setGameStats(gamificationService.getStats());
+        }
+
+        // 시간대별 추천 초기화
+        const currentHour = new Date().getHours();
+        const timeAction = nextActionService.getTimeBasedAction(currentHour);
+        setTimeBasedAction(timeAction);
+
+        // 스트릭 보너스 초기화
+        const streakCount = stats.streak?.currentStreak || 0;
+        if (streakCount >= 3) {
+            const bonusAction = nextActionService.getStreakBonusAction(streakCount);
+            setStreakBonusAction(bonusAction);
         }
         /* eslint-enable react-hooks/set-state-in-effect */
     }, []);
@@ -423,6 +486,32 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
         setPointsToast({ points: result.points, message: '투표 완료!' });
         setGameStats(gamificationService.getStats());
         setCurrentLevel(gamificationService.getLevel());
+    };
+
+    // 시간대/스트릭 보너스 액션 처리
+    const handleBonusAction = (action) => {
+        if (!action) return;
+
+        switch (action.type) {
+            case 'test':
+                // 테스트 추천 → 인기 테스트 시작
+                onStartTest?.('human');
+                break;
+            case 'quiz':
+                // 퀴즈 추천 → 퀴즈 펼치기
+                setQuizExpanded(true);
+                break;
+            case 'poll':
+                // 투표 추천 → 투표 펼치기
+                setPollExpanded(true);
+                break;
+            case 'share':
+                // 공유 추천 → 프로필로 이동 (실제 구현 시 onContentExplore 등 연결)
+                onContentExplore?.();
+                break;
+            default:
+                break;
+        }
     };
 
     // Group configs by testType (excluding detail tests from main list)
@@ -505,18 +594,20 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 {/* Header */}
                 <Header />
 
-                {/* 스트릭 배너 */}
+                {/* 스트릭 배너 + 보너스 액션 */}
                 {showStreakBanner && gameStats && (
                     <StreakBanner
                         streak={gameStats.streak}
                         level={currentLevel}
                         points={gameStats.totalPoints}
                         onClose={() => setShowStreakBanner(false)}
+                        bonusAction={streakBonusAction}
+                        onBonusAction={handleBonusAction}
                     />
                 )}
 
                 {/* 오늘의 참여 섹션 - 상단 배치 */}
-                {(dailyQuiz || dailyPoll) && (
+                {(dailyQuiz || dailyPoll || timeBasedAction) && (
                     <section className="mb-4 animate-fade-in-up">
                         <div className="flex items-center justify-between mb-2 px-1">
                             <span className="text-xs font-bold text-slate-500">오늘의 참여</span>
@@ -531,6 +622,13 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                             )}
                         </div>
                         <div className="space-y-2">
+                            {/* 시간대별 추천 - 퀴즈/투표가 없거나, 시간대에 맞는 추천이면 표시 */}
+                            {timeBasedAction && !quizExpanded && !pollExpanded && (
+                                <TimeBasedCard
+                                    action={timeBasedAction}
+                                    onAction={handleBonusAction}
+                                />
+                            )}
                             {dailyQuiz && (
                                 <DailyQuizCard
                                     quiz={dailyQuiz}
