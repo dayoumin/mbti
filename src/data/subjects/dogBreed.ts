@@ -196,7 +196,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-yellow-100",
             "interpretation": "사교적이고 에너지 넘치는 래브라도는 누구와도 잘 지내요! 안내견, 구조견으로도 활약할 만큼 똑똑하고 충성스러워요. 활동적인 가정에 딱 맞아요.",
             "guide": "매일 충분한 운동이 필요해요. 먹는 걸 좋아해서 비만 주의! 물놀이와 가져오기 놀이를 좋아해요.",
-            "matchPoints": ["활동적인 가정", "아이가 있는 가정", "첫 대형견으로 추천", "야외활동을 좋아하는 분"]
+            "matchPoints": ["활동적인 가정", "아이가 있는 가정", "첫 대형견으로 추천", "야외활동을 좋아하는 분"],
+            "detailInfo": {
+                "origin": "캐나다 뉴펀들랜드",
+                "lifespan": "10-12년",
+                "size": "대형",
+                "weight": "25-36kg",
+                "personality": ["친근함", "활발함", "충성스러움", "온순함", "지능적"],
+                "goodWith": ["어린이", "노인", "다른 반려동물", "초보 양육자"],
+                "notGoodWith": ["좁은 공간", "운동 부족 환경"],
+                "exerciseNeeds": "high",
+                "groomingNeeds": "medium",
+                "sheddingLevel": "high",
+                "trainingDifficulty": "easy",
+                "healthIssues": ["고관절 이형성증", "비만", "귀 감염", "운동 유발성 허탈"],
+                "monthlyCost": { "min": 15, "max": 25, "note": "대형견 기준, 사료비 높음" },
+                "initialCost": { "min": 50, "max": 150, "note": "분양비+용품" },
+                "tips": [
+                    "먹는 걸 너무 좋아해서 비만 관리 필수!",
+                    "물놀이를 좋아하니 수영 기회를 주세요",
+                    "입에 물건 물고 다니는 습관이 있어요",
+                    "안내견, 치료견으로도 활약할 만큼 똑똒해요"
+                ]
+            }
         },
         {
             "name": "푸들",
@@ -207,7 +229,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-purple-100",
             "interpretation": "지능이 매우 높고 털이 빠지지 않아 알레르기가 있어도 키울 수 있어요! 토이/미니/스탠다드 다양한 크기가 있어 원하는 크기를 선택할 수 있어요.",
             "guide": "정기적인 미용이 필수예요 (4-6주마다). 지능이 높아 다양한 훈련이 가능하고, 지루하지 않게 해주는 게 중요해요.",
-            "matchPoints": ["알레르기가 있는 분", "미용에 투자할 수 있는 분", "똑똑한 강아지를 원하는 분", "다양한 훈련에 관심 있는 분"]
+            "matchPoints": ["알레르기가 있는 분", "미용에 투자할 수 있는 분", "똑똑한 강아지를 원하는 분", "다양한 훈련에 관심 있는 분"],
+            "detailInfo": {
+                "origin": "독일/프랑스",
+                "lifespan": "12-15년",
+                "size": "다양 (토이/미니/스탠다드)",
+                "weight": "토이 2-4kg / 미니 5-9kg / 스탠다드 20-30kg",
+                "personality": ["지능적", "활발함", "우아함", "애교많음", "민첩함"],
+                "goodWith": ["알레르기 있는 분", "어린이", "노인", "다른 반려동물"],
+                "notGoodWith": ["방치되는 환경", "자극 없는 환경"],
+                "exerciseNeeds": "medium",
+                "groomingNeeds": "high",
+                "sheddingLevel": "low",
+                "trainingDifficulty": "easy",
+                "healthIssues": ["슬개골 탈구", "진행성 망막위축", "애디슨병", "갑상선 문제"],
+                "monthlyCost": { "min": 10, "max": 20, "note": "미용비 별도 4-8만원/월" },
+                "initialCost": { "min": 80, "max": 250, "note": "크기별 분양가 차이" },
+                "tips": [
+                    "털이 계속 자라서 4-6주마다 미용 필수",
+                    "지능이 높아 다양한 트릭 훈련 가능",
+                    "원래 수렵견이라 물놀이도 잘해요",
+                    "지루하면 문제 행동이 생길 수 있어요"
+                ]
+            }
         },
         {
             "name": "말티즈",
@@ -251,7 +295,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-gray-100",
             "interpretation": "얌전하고 조용한 시츄는 아파트 생활에 딱이에요! 운동량이 적고 낯선 사람에게도 친근해요. 처음 강아지를 키우는 분에게 추천해요.",
             "guide": "더위에 약하니 여름철 주의하세요. 긴 털은 정기적 관리가 필요하지만, 짧게 미용하면 관리가 쉬워요.",
-            "matchPoints": ["조용한 환경을 원하는 분", "처음 강아지를 키우는 분", "노년층에게 추천", "실내 생활 중심인 분"]
+            "matchPoints": ["조용한 환경을 원하는 분", "처음 강아지를 키우는 분", "노년층에게 추천", "실내 생활 중심인 분"],
+            "detailInfo": {
+                "origin": "중국 (티베트)",
+                "lifespan": "10-16년",
+                "size": "소형",
+                "weight": "4-7kg",
+                "personality": ["온순함", "친근함", "느긋함", "애교많음", "적응력좋음"],
+                "goodWith": ["노인", "어린이", "아파트 생활", "초보 양육자"],
+                "notGoodWith": ["더운 날씨", "격렬한 운동"],
+                "exerciseNeeds": "low",
+                "groomingNeeds": "high",
+                "sheddingLevel": "low",
+                "trainingDifficulty": "medium",
+                "healthIssues": ["안구 돌출 문제", "호흡기 문제", "귀 감염", "치아 문제"],
+                "monthlyCost": { "min": 8, "max": 15, "note": "소형견 기준" },
+                "initialCost": { "min": 60, "max": 150, "note": "분양비+용품" },
+                "tips": [
+                    "더위에 약해서 여름엔 에어컨 필수",
+                    "눈이 크고 돌출되어 눈 관리 중요",
+                    "짧게 미용하면 관리가 훨씬 쉬워요",
+                    "잘 안 짖어서 아파트에 최적!"
+                ]
+            }
         },
         {
             "name": "포메라니안",
@@ -262,7 +328,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-orange-100",
             "interpretation": "작지만 용감하고 활발한 포메라니안! 호기심이 많고 영리해서 재롱을 잘 부려요. 풍성한 털이 매력적이지만 관리가 필요해요.",
             "guide": "작아도 자기 주장이 강하니 어릴 때 훈련이 중요해요. 털빠짐이 있고 정기적 빗질이 필요해요. 경계심이 있어 짖을 수 있어요.",
-            "matchPoints": ["활발한 소형견을 원하는 분", "털 관리를 즐기는 분", "영리한 강아지를 원하는 분", "아파트 거주자"]
+            "matchPoints": ["활발한 소형견을 원하는 분", "털 관리를 즐기는 분", "영리한 강아지를 원하는 분", "아파트 거주자"],
+            "detailInfo": {
+                "origin": "독일 (포메라니아 지방)",
+                "lifespan": "12-16년",
+                "size": "소형",
+                "weight": "1.5-3kg",
+                "personality": ["활발함", "용감함", "호기심많음", "영리함", "경계심강함"],
+                "goodWith": ["1인 가구", "조용한 가정", "노인"],
+                "notGoodWith": ["어린 아이", "큰 강아지와 거친 놀이"],
+                "exerciseNeeds": "medium",
+                "groomingNeeds": "high",
+                "sheddingLevel": "high",
+                "trainingDifficulty": "medium",
+                "healthIssues": ["슬개골 탈구", "기관 허탈", "저혈당", "탈모증"],
+                "monthlyCost": { "min": 8, "max": 15, "note": "소형견 기준" },
+                "initialCost": { "min": 100, "max": 300, "note": "인기견종이라 분양가 높음" },
+                "tips": [
+                    "작지만 짖음이 있어 이웃 배려 필요",
+                    "풍성한 털 유지엔 매일 빗질 필수",
+                    "높은 곳에서 뛰어내리면 위험해요",
+                    "자기가 작다는 걸 몰라서 대형견에게도 덤벼요"
+                ]
+            }
         },
         {
             "name": "웰시코기",
@@ -273,7 +361,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-amber-200",
             "interpretation": "귀여운 외모와 달리 에너지가 넘치는 목양견이에요! 똑똑하고 충성스러우며, 가족을 '몰이'하려는 본능이 있어요. 활동적인 분에게 잘 맞아요.",
             "guide": "허리가 길어 뛰어내리기는 조심! 털빠짐이 많아요. 충분한 운동과 정신적 자극이 필요해요.",
-            "matchPoints": ["활동적인 분", "귀여운 외모를 좋아하는 분", "훈련에 관심 있는 분", "털빠짐을 감당할 수 있는 분"]
+            "matchPoints": ["활동적인 분", "귀여운 외모를 좋아하는 분", "훈련에 관심 있는 분", "털빠짐을 감당할 수 있는 분"],
+            "detailInfo": {
+                "origin": "영국 웨일즈",
+                "lifespan": "12-15년",
+                "size": "중형",
+                "weight": "10-14kg",
+                "personality": ["활발함", "지능적", "충성스러움", "독립적", "장난기많음"],
+                "goodWith": ["활동적인 가정", "어린이", "다른 반려동물"],
+                "notGoodWith": ["계단 많은 환경", "운동 부족"],
+                "exerciseNeeds": "high",
+                "groomingNeeds": "medium",
+                "sheddingLevel": "high",
+                "trainingDifficulty": "medium",
+                "healthIssues": ["추간판 질환", "고관절 이형성증", "진행성 망막위축", "비만"],
+                "monthlyCost": { "min": 12, "max": 20, "note": "중형견 기준" },
+                "initialCost": { "min": 80, "max": 200, "note": "분양비+용품" },
+                "tips": [
+                    "허리가 길어서 계단, 점프는 최소화!",
+                    "목양견 본능으로 사람 발목을 물 수 있어요",
+                    "털빠짐이 정말 많아요 - 로봇청소기 추천",
+                    "엉덩이가 귀여운 '코기 엉덩이' 유명해요"
+                ]
+            }
         },
         {
             "name": "프렌치 불독",
@@ -284,7 +394,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-slate-100",
             "interpretation": "조용하고 느긋한 프렌치 불독은 아파트 생활의 왕이에요! 운동량이 적고 짖지 않아 이웃 걱정이 없어요. 특유의 표정이 매력적이에요.",
             "guide": "더위에 매우 약하니 여름철 에어컨 필수! 단두종이라 호흡기 주의가 필요해요. 짧은 털이라 관리는 쉬워요.",
-            "matchPoints": ["아파트 거주자", "조용한 강아지를 원하는 분", "운동량 적은 분", "독특한 외모를 좋아하는 분"]
+            "matchPoints": ["아파트 거주자", "조용한 강아지를 원하는 분", "운동량 적은 분", "독특한 외모를 좋아하는 분"],
+            "detailInfo": {
+                "origin": "프랑스/영국",
+                "lifespan": "10-12년",
+                "size": "소형",
+                "weight": "8-14kg",
+                "personality": ["느긋함", "애교많음", "장난기있음", "고집있음", "사람좋아함"],
+                "goodWith": ["아파트 생활", "1인 가구", "노인", "초보 양육자"],
+                "notGoodWith": ["더운 날씨", "격렬한 운동", "수영"],
+                "exerciseNeeds": "low",
+                "groomingNeeds": "low",
+                "sheddingLevel": "medium",
+                "trainingDifficulty": "medium",
+                "healthIssues": ["단두증후군", "척추 문제", "피부 알레르기", "눈 문제"],
+                "monthlyCost": { "min": 15, "max": 25, "note": "의료비 높을 수 있음" },
+                "initialCost": { "min": 150, "max": 400, "note": "인기견종, 분양가 높음" },
+                "tips": [
+                    "더위에 매우 약해요 - 여름엔 에어컨 필수!",
+                    "코골이가 심한 편이에요",
+                    "수영을 못하니 물가 주의",
+                    "주름 사이 청결 관리 중요해요"
+                ]
+            }
         },
         {
             "name": "비글",
@@ -295,7 +427,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-amber-100",
             "interpretation": "뛰어난 후각과 넘치는 호기심! 비글은 항상 새로운 냄새를 찾아다니는 탐험가예요. 활발하고 사교적이지만 독립적인 면도 있어요.",
             "guide": "후각이 발달해 산책 시 리드줄 필수! 먹는 걸 좋아해서 음식 관리 중요해요. 충분한 운동으로 에너지 발산이 필요해요.",
-            "matchPoints": ["활동적인 분", "야외활동을 좋아하는 분", "독립적인 성격을 이해하는 분", "중형견을 원하는 분"]
+            "matchPoints": ["활동적인 분", "야외활동을 좋아하는 분", "독립적인 성격을 이해하는 분", "중형견을 원하는 분"],
+            "detailInfo": {
+                "origin": "영국",
+                "lifespan": "12-15년",
+                "size": "중형",
+                "weight": "9-11kg",
+                "personality": ["호기심많음", "활발함", "친근함", "독립적", "끈기있음"],
+                "goodWith": ["어린이", "다른 강아지", "활동적인 가정"],
+                "notGoodWith": ["혼자 오래 있는 것", "울타리 없는 마당"],
+                "exerciseNeeds": "high",
+                "groomingNeeds": "low",
+                "sheddingLevel": "medium",
+                "trainingDifficulty": "hard",
+                "healthIssues": ["비만", "귀 감염", "갑상선 문제", "간질"],
+                "monthlyCost": { "min": 10, "max": 18, "note": "중형견 기준" },
+                "initialCost": { "min": 50, "max": 150, "note": "분양비+용품" },
+                "tips": [
+                    "후각이 뛰어나 냄새 따라 도망갈 수 있어요",
+                    "먹보라 비만 관리 필수!",
+                    "울타리 없으면 절대 풀어놓으면 안돼요",
+                    "스누피의 모델이 비글이에요!"
+                ]
+            }
         },
         {
             "name": "시바견",
@@ -306,7 +460,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-red-100",
             "interpretation": "고양이 같은 강아지! 시바견은 독립적이고 깔끔해서 자기 털 관리도 스스로 해요. 충성스럽지만 고집이 있어 경험자에게 추천해요.",
             "guide": "고집이 세서 훈련에 인내가 필요해요. 털빠짐이 많은 편이에요. 낯선 사람에게는 경계심이 있어요.",
-            "matchPoints": ["독립적인 강아지를 원하는 분", "깔끔한 강아지를 좋아하는 분", "강아지 경험이 있는 분", "고집을 이해할 수 있는 분"]
+            "matchPoints": ["독립적인 강아지를 원하는 분", "깔끔한 강아지를 좋아하는 분", "강아지 경험이 있는 분", "고집을 이해할 수 있는 분"],
+            "detailInfo": {
+                "origin": "일본",
+                "lifespan": "12-15년",
+                "size": "중형",
+                "weight": "8-11kg",
+                "personality": ["독립적", "깔끔함", "충성스러움", "경계심강함", "고집있음"],
+                "goodWith": ["경험 있는 양육자", "성인 가정"],
+                "notGoodWith": ["초보 양육자", "어린 아이", "다른 강아지"],
+                "exerciseNeeds": "medium",
+                "groomingNeeds": "medium",
+                "sheddingLevel": "high",
+                "trainingDifficulty": "hard",
+                "healthIssues": ["알레르기", "슬개골 탈구", "녹내장", "갑상선 문제"],
+                "monthlyCost": { "min": 10, "max": 18, "note": "중형견 기준" },
+                "initialCost": { "min": 100, "max": 300, "note": "순수 혈통은 더 비쌈" },
+                "tips": [
+                    "고양이처럼 자기 털 관리를 스스로 해요",
+                    "시바 스크림 - 불만 있으면 특유의 소리를 내요",
+                    "리드줄 풀면 안 돌아올 수 있어요",
+                    "도게(doge) 밈의 주인공이에요!"
+                ]
+            }
         },
         {
             "name": "보더 콜리",
@@ -317,7 +493,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-blue-100",
             "interpretation": "강아지계의 천재! 보더 콜리는 지능과 운동능력이 최고예요. 다양한 훈련과 활동에 관심 있고, 함께 도전하고 싶은 분에게 딱이에요.",
             "guide": "매우 높은 운동량과 정신적 자극이 필요해요. 지루하면 문제 행동이 생길 수 있어요. 어질리티 등 스포츠 추천!",
-            "matchPoints": ["매우 활동적인 분", "훈련에 열정이 있는 분", "독스포츠에 관심 있는 분", "시간 투자가 가능한 분"]
+            "matchPoints": ["매우 활동적인 분", "훈련에 열정이 있는 분", "독스포츠에 관심 있는 분", "시간 투자가 가능한 분"],
+            "detailInfo": {
+                "origin": "영국 (스코틀랜드-잉글랜드 국경)",
+                "lifespan": "12-15년",
+                "size": "중형",
+                "weight": "14-20kg",
+                "personality": ["지능적", "활발함", "집중력높음", "충성스러움", "민첩함"],
+                "goodWith": ["활동적인 양육자", "독스포츠 애호가"],
+                "notGoodWith": ["운동 부족 환경", "지루한 환경", "아파트"],
+                "exerciseNeeds": "high",
+                "groomingNeeds": "medium",
+                "sheddingLevel": "high",
+                "trainingDifficulty": "easy",
+                "healthIssues": ["고관절 이형성증", "콜리 아이 질환", "간질", "청력 문제"],
+                "monthlyCost": { "min": 12, "max": 22, "note": "중형견 기준" },
+                "initialCost": { "min": 60, "max": 200, "note": "분양비+용품" },
+                "tips": [
+                    "강아지 지능 순위 1위예요!",
+                    "하루 2시간 이상 운동이 필요해요",
+                    "어질리티, 프리스비 등 독스포츠 추천",
+                    "할 일이 없으면 문제 행동이 생겨요"
+                ]
+            }
         },
         {
             "name": "요크셔테리어",
@@ -328,7 +526,29 @@ export const dogBreedData: SubjectData = {
             "color": "bg-blue-100",
             "interpretation": "우아한 긴 털과 작은 몸집! 요크셔테리어는 용감하고 자신감 넘치는 성격이에요. 털이 빠지지 않아 알레르기가 있어도 키울 수 있어요.",
             "guide": "긴 털은 매일 빗질이 필요해요. 짧게 미용하면 관리가 쉬워요. 작지만 테리어 기질로 자기 주장이 강해요.",
-            "matchPoints": ["알레르기가 있는 분", "우아한 외모를 좋아하는 분", "소형견을 원하는 분", "미용에 투자할 수 있는 분"]
+            "matchPoints": ["알레르기가 있는 분", "우아한 외모를 좋아하는 분", "소형견을 원하는 분", "미용에 투자할 수 있는 분"],
+            "detailInfo": {
+                "origin": "영국 요크셔",
+                "lifespan": "13-16년",
+                "size": "소형",
+                "weight": "2-3kg",
+                "personality": ["용감함", "자신감있음", "애교많음", "영리함", "활발함"],
+                "goodWith": ["1인 가구", "노인", "아파트 생활", "알레르기 있는 분"],
+                "notGoodWith": ["어린 아이", "거친 놀이"],
+                "exerciseNeeds": "medium",
+                "groomingNeeds": "high",
+                "sheddingLevel": "low",
+                "trainingDifficulty": "medium",
+                "healthIssues": ["슬개골 탈구", "기관 허탈", "치아 문제", "저혈당"],
+                "monthlyCost": { "min": 10, "max": 18, "note": "미용비 포함 시 증가" },
+                "initialCost": { "min": 80, "max": 250, "note": "분양비+용품" },
+                "tips": [
+                    "사람 머리카락처럼 계속 자라서 정기 미용 필수",
+                    "작아도 테리어라 자기 주장이 강해요",
+                    "털이 안 빠져서 알레르기에 좋아요",
+                    "짧게 미용하면 관리가 훨씬 쉬워요"
+                ]
+            }
         }
     ]
 };

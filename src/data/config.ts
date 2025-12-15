@@ -171,6 +171,32 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     checkColor: "text-amber-600",
     analysisButtonText: "🍞 상세 취향 분석 보기"
   },
+  perfume: {
+    testType: "matching",
+    icon: "PerfumeIcon",
+    label: "향수",
+    intro: ["나에게 맞는 향수는?", "어떤 향이 어울릴까?", "나만의 시그니처 향 찾기"],
+    resultFormat: "matching",
+    deepButtonText: "향수 취향",
+    matchPointsTitle: "✨ 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "💡 사용 팁" },
+    tabActiveColor: "bg-purple-100 border-purple-400",
+    checkColor: "text-purple-500",
+    analysisButtonText: "✨ 상세 취향 분석 보기"
+  },
+  aroma: {
+    testType: "matching",
+    icon: "AromaIcon",
+    label: "아로마",
+    intro: ["나에게 맞는 아로마는?", "어떤 향이 힐링될까?", "나만의 테라피 오일 찾기"],
+    resultFormat: "matching",
+    deepButtonText: "아로마 취향",
+    matchPointsTitle: "🌿 이런 분에게 추천해요",
+    tabLabels: { interpretation: "📖 소개", guide: "💧 사용 팁" },
+    tabActiveColor: "bg-green-100 border-green-500",
+    checkColor: "text-green-600",
+    analysisButtonText: "🌿 상세 취향 분석 보기"
+  },
   // === petMatch 세부 테스트 ===
   dogBreed: {
     testType: "matching",

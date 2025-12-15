@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, HelpCircle, Vote, CheckCircle } from 'lucide-react';
+import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls/vs-polls';
 import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
 import { contentParticipationService } from '@/services/ContentParticipationService';
+import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/community';
+import type { Tip, Question, Debate } from '@/data/community';
 
 // ============================================================================
 // 타입 정의
@@ -13,10 +15,11 @@ import { contentParticipationService } from '@/services/ContentParticipationServ
 
 interface ContentExploreProps {
   onClose: () => void;
-  initialTab?: 'quiz' | 'poll';
+  initialTab?: 'quiz' | 'poll' | 'community';
 }
 
-type TabType = 'quiz' | 'poll';
+type TabType = 'quiz' | 'poll' | 'community';
+type CommunitySubTab = 'tips' | 'qna' | 'debate';
 
 const CATEGORY_LABELS: Record<ContentCategory, { label: string; emoji: string }> = {
   cat: { label: '고양이', emoji: '🐱' },
@@ -223,6 +226,263 @@ function PollCard({ poll, isVoted, previousVote, onVote }: PollCardProps) {
 }
 
 // ============================================================================
+// 커뮤니티 - 팁 카드 컴포넌트
+// ============================================================================
+
+function TipCard({ tip }: { tip: Tip }) {
+  return (
+    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+      <div className="flex items-start gap-3">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-lg flex-shrink-0">
+          💡
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            {tip.featured && (
+              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">
+                베스트
+              </span>
+            )}
+            <span className="text-[10px] text-gray-400">{tip.author.name}</span>
+            {tip.author.badge && (
+              <span className="text-[10px] text-indigo-500">{tip.author.badge}</span>
+            )}
+          </div>
+          <h3 className="font-bold text-sm text-slate-800 mb-2">{tip.title}</h3>
+          <p className="text-xs text-gray-600 leading-relaxed line-clamp-3">{tip.content}</p>
+          <div className="flex items-center gap-3 mt-3">
+            <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-amber-500 transition-colors">
+              <ThumbsUp className="w-3.5 h-3.5" />
+              <span>{formatNumber(tip.reactions.helpful)}</span>
+            </button>
+            <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-indigo-500 transition-colors">
+              <Bookmark className="w-3.5 h-3.5" />
+              <span>{formatNumber(tip.reactions.saved)}</span>
+            </button>
+            <div className="flex gap-1 ml-auto">
+              {tip.tags.slice(0, 2).map(tag => (
+                <span key={tag} className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-[10px] rounded">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 커뮤니티 - Q&A 카드 컴포넌트
+// ============================================================================
+
+function QnACard({ question }: { question: Question }) {
+  return (
+    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+      <div className="flex items-start gap-3">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 ${
+          question.status === 'answered'
+            ? 'bg-gradient-to-br from-emerald-100 to-green-100'
+            : 'bg-gradient-to-br from-blue-100 to-indigo-100'
+        }`}>
+          {question.status === 'answered' ? '✅' : '❓'}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
+              question.status === 'answered'
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-blue-100 text-blue-700'
+            }`}>
+              {question.status === 'answered' ? '답변완료' : '답변대기'}
+            </span>
+            <span className="text-[10px] text-gray-400">{question.author.nickname}</span>
+            {question.author.resultBadge && (
+              <span className="text-[10px] text-indigo-500">{question.author.resultBadge}</span>
+            )}
+          </div>
+          <h3 className="font-bold text-sm text-slate-800 mb-2">{question.title}</h3>
+          <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{question.content}</p>
+          <div className="flex items-center gap-3 mt-3 text-[10px] text-gray-400">
+            <span>답변 {question.answerCount}</span>
+            <span>조회 {formatNumber(question.viewCount)}</span>
+            <span>{formatRelativeTime(question.createdAt)}</span>
+            <ChevronRight className="w-4 h-4 ml-auto text-gray-300" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 커뮤니티 - 토론/밸런스 카드 컴포넌트
+// ============================================================================
+
+function DebateCard({ debate }: { debate: Debate }) {
+  const [voted, setVoted] = useState<'a' | 'b' | null>(null);
+  const totalVotes = debate.totalVotes + (voted ? 1 : 0);
+  const aPercent = Math.round(((debate.optionA.votes + (voted === 'a' ? 1 : 0)) / totalVotes) * 100);
+  const bPercent = 100 - aPercent;
+
+  return (
+    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-lg">⚔️</span>
+        <span className="font-bold text-sm text-slate-800">{debate.title}</span>
+        {debate.status === 'active' && (
+          <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-[10px] font-bold rounded ml-auto">
+            진행중
+          </span>
+        )}
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => !voted && setVoted('a')}
+          disabled={!!voted}
+          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
+            voted === 'a' ? 'border-purple-400 bg-purple-50' :
+            voted ? 'border-gray-200 bg-gray-50' :
+            'border-purple-200 bg-white hover:border-purple-300'
+          }`}
+        >
+          <div className="p-3 text-center relative z-10">
+            <span className="text-2xl block mb-1">{debate.optionA.emoji}</span>
+            <span className="text-xs font-bold text-slate-700 block">{debate.optionA.text}</span>
+            {voted && (
+              <div className="mt-2 text-lg font-black text-purple-600">{aPercent}%</div>
+            )}
+          </div>
+          {voted && (
+            <div
+              className="absolute bottom-0 left-0 right-0 bg-purple-200/50 transition-all duration-500"
+              style={{ height: `${aPercent}%` }}
+            />
+          )}
+        </button>
+
+        <div className="flex items-center">
+          <span className="text-xs font-black text-slate-400">VS</span>
+        </div>
+
+        <button
+          onClick={() => !voted && setVoted('b')}
+          disabled={!!voted}
+          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
+            voted === 'b' ? 'border-pink-400 bg-pink-50' :
+            voted ? 'border-gray-200 bg-gray-50' :
+            'border-pink-200 bg-white hover:border-pink-300'
+          }`}
+        >
+          <div className="p-3 text-center relative z-10">
+            <span className="text-2xl block mb-1">{debate.optionB.emoji}</span>
+            <span className="text-xs font-bold text-slate-700 block">{debate.optionB.text}</span>
+            {voted && (
+              <div className="mt-2 text-lg font-black text-pink-600">{bPercent}%</div>
+            )}
+          </div>
+          {voted && (
+            <div
+              className="absolute bottom-0 left-0 right-0 bg-pink-200/50 transition-all duration-500"
+              style={{ height: `${bPercent}%` }}
+            />
+          )}
+        </button>
+      </div>
+
+      <div className="mt-3 text-center text-[10px] text-gray-400">
+        {formatNumber(totalVotes)}명 참여
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 커뮤니티 탭 콘텐츠
+// ============================================================================
+
+function CommunityContent() {
+  const [subTab, setSubTab] = useState<CommunitySubTab>('tips');
+
+  return (
+    <div>
+      {/* 서브 탭 */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setSubTab('tips')}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+            subTab === 'tips'
+              ? 'bg-amber-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <Lightbulb className="w-3.5 h-3.5 inline mr-1" />
+          팁 베스트
+        </button>
+        <button
+          onClick={() => setSubTab('qna')}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+            subTab === 'qna'
+              ? 'bg-emerald-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <MessageCircle className="w-3.5 h-3.5 inline mr-1" />
+          Q&A
+        </button>
+        <button
+          onClick={() => setSubTab('debate')}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+            subTab === 'debate'
+              ? 'bg-rose-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          ⚔️ 토론
+        </button>
+      </div>
+
+      {/* 콘텐츠 */}
+      <div className="space-y-3">
+        {subTab === 'tips' && (
+          <>
+            {SAMPLE_TIPS.filter(t => t.featured).map(tip => (
+              <TipCard key={tip.id} tip={tip} />
+            ))}
+            <div className="text-center py-4">
+              <button className="text-xs text-indigo-500 font-medium hover:underline">
+                더 많은 팁 보기 →
+              </button>
+            </div>
+          </>
+        )}
+        {subTab === 'qna' && (
+          <>
+            {SAMPLE_QUESTIONS.map(question => (
+              <QnACard key={question.id} question={question} />
+            ))}
+            <div className="text-center py-4">
+              <button className="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-xl hover:bg-emerald-600 transition-colors">
+                질문하기
+              </button>
+            </div>
+          </>
+        )}
+        {subTab === 'debate' && (
+          <>
+            {SAMPLE_DEBATES.map(debate => (
+              <DebateCard key={debate.id} debate={debate} />
+            ))}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // 메인 컴포넌트
 // ============================================================================
 
@@ -275,6 +535,31 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
     ? [...new Set(ALL_KNOWLEDGE_QUIZZES.map(q => q.category))]
     : [...new Set(VS_POLLS.map(p => p.category))];
 
+  // 헤더 타이틀 & 서브타이틀
+  const getHeaderInfo = () => {
+    switch (activeTab) {
+      case 'quiz':
+        return {
+          title: '퀴즈 & 투표',
+          subtitle: `${stats.quizAnswered}/${stats.quizTotal} 참여 · 정답률 ${stats.quizAnswered > 0 ? Math.round((stats.quizCorrect / stats.quizAnswered) * 100) : 0}%`,
+        };
+      case 'poll':
+        return {
+          title: '퀴즈 & 투표',
+          subtitle: `${stats.pollVoted}/${stats.pollTotal} 투표 완료`,
+        };
+      case 'community':
+        return {
+          title: '커뮤니티',
+          subtitle: '팁, Q&A, 토론에 참여하세요!',
+        };
+      default:
+        return { title: '콘텐츠', subtitle: '' };
+    }
+  };
+
+  const headerInfo = getHeaderInfo();
+
   return (
     <div className="fixed inset-0 bg-gradient-to-b from-slate-100 to-slate-200 z-50 overflow-hidden">
       {/* 헤더 */}
@@ -288,75 +573,83 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
               <ChevronLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div>
-              <h1 className="font-bold text-slate-800">퀴즈 & 투표</h1>
-              <p className="text-[10px] text-slate-500">
-                {activeTab === 'quiz'
-                  ? `${stats.quizAnswered}/${stats.quizTotal} 참여 · 정답률 ${stats.quizAnswered > 0 ? Math.round((stats.quizCorrect / stats.quizAnswered) * 100) : 0}%`
-                  : `${stats.pollVoted}/${stats.pollTotal} 투표 완료`
-                }
-              </p>
+              <h1 className="font-bold text-slate-800">{headerInfo.title}</h1>
+              <p className="text-[10px] text-slate-500">{headerInfo.subtitle}</p>
             </div>
           </div>
 
-          {/* 탭 */}
+          {/* 메인 탭 */}
           <div className="flex gap-2 mt-3">
             <button
               onClick={() => setActiveTab('quiz')}
-              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'quiz'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              <HelpCircle className="w-4 h-4 inline mr-1" />
-              퀴즈 ({stats.quizTotal})
+              <HelpCircle className="w-3.5 h-3.5 inline mr-1" />
+              퀴즈
             </button>
             <button
               onClick={() => setActiveTab('poll')}
-              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeTab === 'poll'
                   ? 'bg-purple-500 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              <Vote className="w-4 h-4 inline mr-1" />
-              투표 ({stats.pollTotal})
+              <Vote className="w-3.5 h-3.5 inline mr-1" />
+              투표
             </button>
-          </div>
-
-          {/* 카테고리 필터 */}
-          <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
             <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                selectedCategory === 'all'
-                  ? 'bg-slate-800 text-white'
+              onClick={() => setActiveTab('community')}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTab === 'community'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              전체
+              <MessageCircle className="w-3.5 h-3.5 inline mr-1" />
+              커뮤니티
             </button>
-            {availableCategories.map((cat) => (
+          </div>
+
+          {/* 카테고리 필터 (퀴즈/투표에서만 표시) */}
+          {activeTab !== 'community' && (
+            <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => setSelectedCategory('all')}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                  selectedCategory === cat
+                  selectedCategory === 'all'
                     ? 'bg-slate-800 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {CATEGORY_LABELS[cat].emoji} {CATEGORY_LABELS[cat].label}
+                전체
               </button>
-            ))}
-          </div>
+              {availableCategories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                    selectedCategory === cat
+                      ? 'bg-slate-800 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {CATEGORY_LABELS[cat].emoji} {CATEGORY_LABELS[cat].label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* 콘텐츠 */}
       <div className="overflow-y-auto h-[calc(100vh-180px)] pb-20">
         <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
-          {activeTab === 'quiz' ? (
+          {activeTab === 'quiz' && (
             filteredQuizzes.length > 0 ? (
               filteredQuizzes.map((quiz) => {
                 const answered = participation.quizzes.find(q => q.quizId === quiz.id);
@@ -375,7 +668,8 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
                 <p>이 카테고리에 퀴즈가 없습니다</p>
               </div>
             )
-          ) : (
+          )}
+          {activeTab === 'poll' && (
             filteredPolls.length > 0 ? (
               filteredPolls.map((poll) => {
                 const voted = participation.polls.find(p => p.pollId === poll.id);
@@ -394,6 +688,9 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
                 <p>이 카테고리에 투표가 없습니다</p>
               </div>
             )
+          )}
+          {activeTab === 'community' && (
+            <CommunityContent />
           )}
         </div>
       </div>

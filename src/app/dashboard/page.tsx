@@ -53,6 +53,9 @@ import {
   Leaf,
   Sun,
   Moon,
+  ThumbsUp,
+  ThumbsDown,
+  Copy,
 } from 'lucide-react';
 import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
@@ -263,15 +266,6 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="sticky top-0 z-40 h-14 db-header">
           <div className="h-full px-6 flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <h1 className="text-base font-semibold text-[var(--db-text)]">
-                {currentSidebarItem?.label}
-              </h1>
-              <span className="text-xs text-[var(--db-muted)]">
-                {new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
-              </span>
-            </div>
-
             {/* Sub Tabs */}
             <div className="db-tabs flex items-center gap-2 px-3 py-2 rounded-xl">
               {currentSidebarItem?.subTabs.map((tab) => (
@@ -288,18 +282,23 @@ export default function DashboardPage() {
               ))}
             </div>
 
-            {/* Theme Toggle */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="ml-auto p-2 rounded-lg hover:bg-[var(--db-panel)] transition-colors"
-              title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-[var(--db-muted)]" />
-              ) : (
-                <Moon className="w-5 h-5 text-[var(--db-muted)]" />
-              )}
-            </button>
+            {/* Right side: Update date + Theme Toggle */}
+            <div className="ml-auto flex items-center gap-4">
+              <span className="text-xs text-[var(--db-muted)]">
+                업데이트: 2025.12.15
+              </span>
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 rounded-lg hover:bg-[var(--db-panel)] transition-colors"
+                title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-5 h-5 text-[var(--db-muted)]" />
+                ) : (
+                  <Moon className="w-5 h-5 text-[var(--db-muted)]" />
+                )}
+              </button>
+            </div>
           </div>
         </header>
 
@@ -1063,6 +1062,291 @@ function LogicViewer({ selectedTest, onSelectTest }: TestSelectorProps) {
 }
 
 function DesignTokens() {
+  const [activeSection, setActiveSection] = useState<'app' | 'dashboard' | 'archive'>('app');
+
+  return (
+    <div className="space-y-6">
+      {/* Section Tabs */}
+      <div className="db-card p-2">
+        <div className="flex gap-1">
+          {[
+            { key: 'app' as const, label: '앱 디자인 시스템' },
+            { key: 'dashboard' as const, label: '대시보드 토큰' },
+            { key: 'archive' as const, label: '아카이브' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveSection(tab.key)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeSection === tab.key
+                  ? 'bg-[var(--db-brand)] text-[#081023]'
+                  : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[rgba(255,255,255,0.05)]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {activeSection === 'app' && <AppDesignSystem />}
+      {activeSection === 'dashboard' && <DashboardTokens />}
+      {activeSection === 'archive' && <ArchiveSection />}
+    </div>
+  );
+}
+
+function AppDesignSystem() {
+  const [copiedColor, setCopiedColor] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, name: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedColor(name);
+    setTimeout(() => setCopiedColor(null), 1500);
+  };
+
+  // 중립적 컬러 시스템 - 60/30/10 법칙
+  const colorSystem = {
+    neutral: [
+      { name: 'Background', value: '#F8FAFC', tailwind: 'slate-50' },
+      { name: 'Surface', value: '#FFFFFF', tailwind: 'white' },
+      { name: 'Border', value: '#E2E8F0', tailwind: 'slate-200' },
+      { name: 'Muted', value: '#94A3B8', tailwind: 'slate-400' },
+      { name: 'Text', value: '#1E293B', tailwind: 'slate-800' },
+    ],
+    primary: [
+      { name: 'Primary', value: '#6366F1', tailwind: 'indigo-500', usage: 'CTA 버튼, 링크' },
+    ],
+    semantic: [
+      { name: 'Success', value: '#10B981', tailwind: 'emerald-500', usage: '긍정' },
+      { name: 'Error', value: '#EF4444', tailwind: 'red-500', usage: '부정' },
+    ],
+  };
+
+  const components = [
+    { name: 'TestCard', file: 'TestCard.js', desc: '테스트 선택 카드' },
+    { name: 'TraitBar', file: 'TraitBar.tsx', desc: '성향 비율 막대' },
+    { name: 'ShareCard', file: 'ShareCard.tsx', desc: 'SNS 공유 카드' },
+    { name: 'ResultFeedback', file: 'ResultFeedback.tsx', desc: '피드백 버튼' },
+    { name: 'FeedbackComments', file: 'FeedbackComments.tsx', desc: '피드백 댓글' },
+    { name: 'InsightView', file: 'InsightView.js', desc: '상세 분석 뷰' },
+    { name: 'Dashboard', file: 'Dashboard.js', desc: '메인 홈' },
+    { name: 'MyProfile', file: 'MyProfile.tsx', desc: '프로필 페이지' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* 디자인 원칙 */}
+      <div className="db-card p-5">
+        <h3 className="text-sm font-semibold text-[var(--db-text)] mb-3">디자인 원칙</h3>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-4 rounded-lg" style={{ background: 'var(--db-alpha-bg)' }}>
+            <p className="text-2xl font-bold text-[var(--db-text)]">60%</p>
+            <p className="text-xs text-[var(--db-muted)]">중립 (흰색/회색)</p>
+          </div>
+          <div className="text-center p-4 rounded-lg" style={{ background: 'var(--db-alpha-bg)' }}>
+            <p className="text-2xl font-bold text-[var(--db-text)]">30%</p>
+            <p className="text-xs text-[var(--db-muted)]">보조 (텍스트/테두리)</p>
+          </div>
+          <div className="text-center p-4 rounded-lg" style={{ background: 'var(--db-alpha-bg)' }}>
+            <p className="text-2xl font-bold text-[var(--db-brand)]">10%</p>
+            <p className="text-xs text-[var(--db-muted)]">강조 (Primary)</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 컬러 시스템 - 정리된 형태 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-sm font-semibold text-[var(--db-text)]">컬러 시스템</h3>
+        </div>
+        <div className="p-5 space-y-5">
+          {/* Neutral Colors */}
+          <div>
+            <p className="text-xs font-medium text-[var(--db-muted)] mb-2">NEUTRAL (60%)</p>
+            <div className="flex gap-2">
+              {colorSystem.neutral.map((color) => (
+                <button
+                  key={color.name}
+                  onClick={() => copyToClipboard(color.tailwind, color.name)}
+                  className="flex-1 group"
+                >
+                  <div
+                    className="h-12 rounded-lg border border-slate-200 mb-1.5 transition-transform group-hover:scale-105"
+                    style={{ background: color.value }}
+                  />
+                  <p className="text-[10px] text-[var(--db-muted)] text-center">
+                    {copiedColor === color.name ? '복사됨!' : color.name}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Primary + Semantic */}
+          <div className="flex gap-6">
+            <div className="flex-1">
+              <p className="text-xs font-medium text-[var(--db-muted)] mb-2">PRIMARY (10%)</p>
+              <div className="flex gap-2">
+                {colorSystem.primary.map((color) => (
+                  <button
+                    key={color.name}
+                    onClick={() => copyToClipboard(color.tailwind, color.name)}
+                    className="flex-1 group"
+                  >
+                    <div
+                      className="h-12 rounded-lg mb-1.5 transition-transform group-hover:scale-105"
+                      style={{ background: color.value }}
+                    />
+                    <p className="text-[10px] text-[var(--db-muted)] text-center">
+                      {copiedColor === color.name ? '복사됨!' : color.usage}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-[var(--db-muted)] mb-2">SEMANTIC</p>
+              <div className="flex gap-2">
+                {colorSystem.semantic.map((color) => (
+                  <button
+                    key={color.name}
+                    onClick={() => copyToClipboard(color.tailwind, color.name)}
+                    className="flex-1 group"
+                  >
+                    <div
+                      className="h-12 rounded-lg mb-1.5 transition-transform group-hover:scale-105"
+                      style={{ background: color.value }}
+                    />
+                    <p className="text-[10px] text-[var(--db-muted)] text-center">
+                      {copiedColor === color.name ? '복사됨!' : color.usage}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 컴포넌트 미리보기 - 최소화 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-sm font-semibold text-[var(--db-text)]">UI 미리보기</h3>
+        </div>
+        <div className="p-5" style={{ background: '#F8FAFC' }}>
+          <div className="grid grid-cols-2 gap-4">
+            {/* 카드 */}
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-lg">🧠</div>
+                <div>
+                  <p className="text-sm font-bold text-slate-800">성격 유형</p>
+                  <p className="text-xs text-slate-500">12문항</p>
+                </div>
+              </div>
+              <div className="text-xs text-indigo-500 font-medium">시작하기 →</div>
+            </div>
+
+            {/* 버튼들 */}
+            <div className="space-y-2">
+              <button className="w-full py-2.5 rounded-lg bg-indigo-500 text-white text-sm font-medium">
+                Primary 버튼
+              </button>
+              <button className="w-full py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-sm font-medium">
+                Secondary 버튼
+              </button>
+              <div className="flex gap-2">
+                <button className="flex-1 py-2 rounded-lg bg-white border border-slate-200 text-emerald-600 text-xs font-medium flex items-center justify-center gap-1">
+                  <ThumbsUp className="w-3 h-3" /> 맞아요
+                </button>
+                <button className="flex-1 py-2 rounded-lg bg-white border border-slate-200 text-red-500 text-xs font-medium flex items-center justify-center gap-1">
+                  <ThumbsDown className="w-3 h-3" /> 아니에요
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* TraitBar */}
+          <div className="mt-4 bg-white rounded-lg border border-slate-200 p-3">
+            <p className="text-[10px] font-medium text-slate-500 mb-2">TraitBar</p>
+            <div className="flex justify-between text-[10px] text-slate-500 mb-1">
+              <span>내향 72%</span>
+              <span>외향 28%</span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden flex">
+              <div className="bg-indigo-500 h-full" style={{ width: '72%' }} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 컴포넌트 목록 - 심플 테이블 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-sm font-semibold text-[var(--db-text)]">컴포넌트 목록</h3>
+          <p className="text-xs text-[var(--db-muted)] mt-0.5">src/components/</p>
+        </div>
+        <div className="divide-y divide-[var(--db-line)]">
+          {components.map((comp) => (
+            <div key={comp.name} className="px-5 py-3 flex items-center justify-between hover:bg-[var(--db-alpha-hover)] transition-colors">
+              <div className="flex items-center gap-3">
+                <code className="text-sm font-medium text-[var(--db-text)]">{comp.name}</code>
+                <span className="text-xs text-[var(--db-muted)]">{comp.desc}</span>
+              </div>
+              <code className="text-xs text-[var(--db-muted)]">{comp.file}</code>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 유틸리티 - 단순 리스트 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="db-card p-4">
+          <h4 className="text-xs font-semibold text-[var(--db-text)] mb-3">애니메이션</h4>
+          <div className="space-y-1">
+            {['fade-in', 'slide-up', 'pop', 'shake'].map((a) => (
+              <code key={a} className="block text-xs text-[var(--db-muted)]">.animate-{a}</code>
+            ))}
+          </div>
+        </div>
+        <div className="db-card p-4">
+          <h4 className="text-xs font-semibold text-[var(--db-text)] mb-3">유틸리티</h4>
+          <div className="space-y-1">
+            {['.glass-card', '.glass-button', '.no-scrollbar', '.progress-bar-fill'].map((u) => (
+              <code key={u} className="block text-xs text-[var(--db-muted)]">{u}</code>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 아이콘 - 간단하게 */}
+      <div className="db-card p-5">
+        <h4 className="text-xs font-semibold text-[var(--db-text)] mb-3">아이콘</h4>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <code className="text-xs text-[var(--db-muted)]">lucide-react</code>
+            <div className="flex gap-1">
+              {[Share2, RefreshCw, ChevronRight, Star, Heart, Settings].map((Icon, i) => (
+                <Icon key={i} className="w-4 h-4 text-[var(--db-muted)]" />
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <code className="text-xs text-[var(--db-muted)]">Icons.js</code>
+            <div className="flex gap-1 text-sm">
+              {['🧠', '🐱', '🐕', '🌱', '☕'].map((e, i) => (
+                <span key={i}>{e}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardTokens() {
   const colors = [
     { name: 'Brand', value: '#7aa2ff', hex: 'var(--db-brand)' },
     { name: 'Brand2', value: '#55e6c1', hex: 'var(--db-brand2)' },
@@ -1080,15 +1364,50 @@ function DesignTokens() {
       <div className="db-card">
         <div className="db-card-header px-5 py-4">
           <h3 className="text-lg font-semibold text-[var(--db-text)]">컬러 팔레트 (다크 테마)</h3>
+          <p className="text-sm text-[var(--db-muted)] mt-1">대시보드 전용 CSS 변수</p>
         </div>
         <div className="p-5 grid grid-cols-4 gap-4">
           {colors.map((color) => (
             <div key={color.name} className="text-center">
               <div className="w-full h-16 rounded-lg mb-2" style={{ background: color.value }} />
               <p className="text-sm font-medium text-[var(--db-text)]">{color.name}</p>
-              <p className="text-xs text-[var(--db-muted)]">{color.value}</p>
+              <code className="text-xs text-[var(--db-brand)]">{color.hex}</code>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Dashboard Components */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">대시보드 컴포넌트 클래스</h3>
+          <p className="text-sm text-[var(--db-muted)] mt-1">globals.css에 정의된 .db-* 클래스</p>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <code className="text-sm text-[var(--db-brand)]">.db-card</code>
+            <p className="text-xs text-[var(--db-muted)] mt-1">기본 카드 컨테이너</p>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <code className="text-sm text-[var(--db-brand)]">.db-card-header</code>
+            <p className="text-xs text-[var(--db-muted)] mt-1">카드 헤더 (border-bottom)</p>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <code className="text-sm text-[var(--db-brand)]">.db-chip</code>
+            <p className="text-xs text-[var(--db-muted)] mt-1">작은 태그 칩</p>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <code className="text-sm text-[var(--db-brand)]">.db-pill</code>
+            <p className="text-xs text-[var(--db-muted)] mt-1">상태 표시 필 (.ok, .warn, .bad)</p>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <code className="text-sm text-[var(--db-brand)]">.db-callout</code>
+            <p className="text-xs text-[var(--db-muted)] mt-1">강조 박스</p>
+          </div>
+          <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <code className="text-sm text-[var(--db-brand)]">.db-nav-item</code>
+            <p className="text-xs text-[var(--db-muted)] mt-1">사이드바 네비게이션</p>
+          </div>
         </div>
       </div>
 
@@ -1125,10 +1444,7 @@ function DesignTokens() {
         <div className="p-5 flex items-end gap-4">
           {[1, 2, 3, 4, 6, 8, 12, 16].map((n) => (
             <div key={n} className="text-center">
-              <div
-                className="rounded"
-                style={{ width: `${n * 4}px`, height: `${n * 4}px`, background: 'var(--db-brand)' }}
-              />
+              <div className="rounded" style={{ width: `${n * 4}px`, height: `${n * 4}px`, background: 'var(--db-brand)' }} />
               <p className="text-xs text-[var(--db-muted)] mt-2">{n * 4}px</p>
             </div>
           ))}
@@ -1138,8 +1454,45 @@ function DesignTokens() {
   );
 }
 
+function ArchiveSection() {
+  return (
+    <div className="space-y-6">
+      <div className="db-callout" style={{ borderColor: 'rgba(255,209,102,0.35)' }}>
+        <p className="text-sm text-[var(--db-text)]">
+          <strong className="text-[var(--db-warning)]">아카이브:</strong> 현재 사이드바에서 제외된 컴포넌트들입니다. 코드는 그대로 유지되어 필요시 재활용 가능합니다.
+        </p>
+      </div>
+
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">미사용 컴포넌트 목록</h3>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          <ArchiveItem name="VisionMoat" desc="비전/해자 전략 - 로드맵에 통합됨" />
+          <ArchiveItem name="ExpansionPlan" desc="확장 계획 - 로드맵에 통합됨" />
+          <ArchiveItem name="Monetization" desc="수익화 전략" />
+          <ArchiveItem name="AIDefense" desc="AI 시대 대응 - 로드맵에 통합됨" />
+          <ArchiveItem name="UXFlow" desc="UX 흐름 다이어그램" />
+          <ArchiveItem name="Development" desc="개발 가이드 (레거시)" />
+          <ArchiveItem name="LegacyUI" desc="레거시 UI 참고" />
+          <ArchiveItem name="FeedbackAnalysis" desc="피드백 분석 (데이터 축적 중)" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArchiveItem({ name, desc }: { name: string; desc: string }) {
+  return (
+    <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
+      <code className="text-sm text-[var(--db-brand)]">{name}</code>
+      <p className="text-xs text-[var(--db-muted)] mt-1">{desc}</p>
+    </div>
+  );
+}
+
 // ============================================================================
-// Strategy Components
+// Strategy Components (아카이브 - 현재 미사용)
 // ============================================================================
 
 function VisionMoat() {
@@ -1615,7 +1968,7 @@ function Roadmap() {
       <div className="db-card">
         <div className="db-card-header px-5 py-4">
           <h3 className="text-lg font-semibold text-[var(--db-text)]">커뮤니티 로드맵</h3>
-          <p className="text-sm text-[var(--db-muted)]">상세: 제품 → 커뮤니티 탭</p>
+          <p className="text-sm text-[var(--db-muted)]">상세: 기획 → 제품 기능 탭</p>
         </div>
         <div className="p-5 relative">
           <div className="absolute left-9 top-5 bottom-5 w-0.5" style={{ background: 'var(--db-line)' }} />
@@ -2986,6 +3339,53 @@ function FeedbackAnalysis() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Product Features (통합)
+// ============================================================================
+
+function ProductFeatures() {
+  const [activeTab, setActiveTab] = useState<'content' | 'social' | 'community' | 'retention' | 'marketing'>('content');
+
+  const tabs = [
+    { key: 'content' as const, label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
+    { key: 'social' as const, label: '소셜 기능', icon: <Share2 className="w-4 h-4" /> },
+    { key: 'community' as const, label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
+    { key: 'retention' as const, label: '리텐션', icon: <RefreshCw className="w-4 h-4" /> },
+    { key: 'marketing' as const, label: '마케팅', icon: <TrendingUp className="w-4 h-4" /> },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="db-card p-2">
+        <div className="flex gap-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? 'bg-[var(--db-brand)] text-[#081023]'
+                  : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[var(--db-hover)]'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      {activeTab === 'content' && <ContentSystem />}
+      {activeTab === 'social' && <SocialFeatures />}
+      {activeTab === 'community' && <CommunityStrategy />}
+      {activeTab === 'retention' && <RetentionStrategy />}
+      {activeTab === 'marketing' && <MarketingStrategy />}
     </div>
   );
 }
