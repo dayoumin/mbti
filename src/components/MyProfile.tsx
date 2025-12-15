@@ -10,6 +10,7 @@ import {
   Radar,
   ResponsiveContainer,
 } from 'recharts';
+import { Share2, Check } from 'lucide-react';
 import { profileService, MyProfileData } from '@/services/ProfileService';
 
 // ============================================================================
@@ -143,6 +144,7 @@ interface FullProfileProps {
 export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
   const { profile, loading } = useProfile();
   const [activeTab, setActiveTab] = useState<ProfileTab>('me');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
 
   if (loading) {
     return (
@@ -185,15 +187,33 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
               <p className="text-white/80 text-xs">{profile.completionRate}% 완성</p>
             </div>
           </div>
-          {onClose && (
+          <div className="flex items-center gap-2">
+            {/* 공유 버튼 */}
             <button
-              onClick={onClose}
-              aria-label="닫기"
-              className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-all"
+              onClick={() => handleShareProfile(profile, title, setShareStatus)}
+              aria-label="프로필 공유"
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                shareStatus === 'copied'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
             >
-              ✕
+              {shareStatus === 'copied' ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Share2 className="w-4 h-4" />
+              )}
             </button>
-          )}
+            {onClose && (
+              <button
+                onClick={onClose}
+                aria-label="닫기"
+                className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-all"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 탭 네비게이션 */}
@@ -584,21 +604,58 @@ function TabHistory({ onStartTest, onClose }: { onStartTest?: (testKey: string) 
   // 날짜별로 그룹화
   const groupedHistory = groupByDate(history);
 
+  // 카테고리별 테스트 분포 계산
+  const categoryStats = calculateCategoryStats(history);
+  const uniqueTests = new Set(history.map(h => h.testType)).size;
+
   return (
     <div className="space-y-4">
       {/* 통계 요약 */}
       <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
-        <div className="flex items-center justify-between">
+        <div className="grid grid-cols-3 gap-2 text-center">
           <div>
-            <p className="text-xs text-indigo-600 font-medium">총 테스트 횟수</p>
-            <p className="text-2xl font-bold text-indigo-700">{history.length}회</p>
+            <p className="text-xs text-indigo-600 font-medium">총 테스트</p>
+            <p className="text-2xl font-bold text-indigo-700">{history.length}</p>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-indigo-600 font-medium">심화 테스트</p>
-            <p className="text-2xl font-bold text-indigo-700">{history.filter(h => h.isDeepMode).length}회</p>
+          <div>
+            <p className="text-xs text-indigo-600 font-medium">종류</p>
+            <p className="text-2xl font-bold text-indigo-700">{uniqueTests}</p>
+          </div>
+          <div>
+            <p className="text-xs text-indigo-600 font-medium">심화</p>
+            <p className="text-2xl font-bold text-indigo-700">{history.filter(h => h.isDeepMode).length}</p>
           </div>
         </div>
       </div>
+
+      {/* 카테고리별 분포 */}
+      {categoryStats.length > 0 && (
+        <div className="bg-white rounded-xl p-4 border border-gray-100">
+          <p className="text-sm font-medium text-gray-700 mb-3">테스트 분포</p>
+          <div className="space-y-2">
+            {categoryStats.map((cat) => (
+              <div key={cat.category} className="flex items-center gap-2">
+                <span className="text-lg w-6">{cat.emoji}</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className="text-xs text-gray-600">{cat.label}</span>
+                    <span className="text-xs font-medium text-gray-800">{cat.count}회</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${(cat.count / history.length) * 100}%`,
+                        backgroundColor: cat.color,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 날짜별 히스토리 */}
       {Object.entries(groupedHistory).map(([dateLabel, items]) => (
@@ -713,6 +770,61 @@ function groupByDate(items: HistoryItem[]): Record<string, HistoryItem[]> {
   return groups;
 }
 
+// 카테고리별 테스트 분포 계산
+interface CategoryStat {
+  category: string;
+  label: string;
+  emoji: string;
+  color: string;
+  count: number;
+}
+
+const TEST_CATEGORIES: Record<string, { label: string; emoji: string; color: string }> = {
+  personality: { label: '성격/관계', emoji: '🧠', color: '#6366F1' },
+  pet: { label: '반려동물', emoji: '🐾', color: '#F59E0B' },
+  lifestyle: { label: '라이프스타일', emoji: '✨', color: '#10B981' },
+  detailed: { label: '심화 테스트', emoji: '🔍', color: '#8B5CF6' },
+};
+
+const TEST_TO_CATEGORY: Record<string, string> = {
+  human: 'personality',
+  idealType: 'personality',
+  conflictStyle: 'personality',
+  cat: 'pet',
+  dog: 'pet',
+  rabbit: 'pet',
+  hamster: 'pet',
+  petMatch: 'pet',
+  coffee: 'lifestyle',
+  plant: 'lifestyle',
+  dogBreed: 'detailed',
+  catBreed: 'detailed',
+  smallPet: 'detailed',
+  fishType: 'detailed',
+  birdType: 'detailed',
+  reptileType: 'detailed',
+};
+
+function calculateCategoryStats(items: HistoryItem[]): CategoryStat[] {
+  const counts: Record<string, number> = {};
+
+  items.forEach(item => {
+    const category = TEST_TO_CATEGORY[item.testType] || 'other';
+    counts[category] = (counts[category] || 0) + 1;
+  });
+
+  return Object.entries(counts)
+    .filter(([cat]) => TEST_CATEGORIES[cat])
+    .map(([cat, count]) => ({
+      category: cat,
+      label: TEST_CATEGORIES[cat].label,
+      emoji: TEST_CATEGORIES[cat].emoji,
+      color: TEST_CATEGORIES[cat].color,
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+}
+
 // 도전 탭 - 뱃지/조합/마일스톤
 function TabAchieve({ profile }: { profile: MyProfileData }) {
   const unlockedBadges = profile.badges.filter(b => b.unlocked).length;
@@ -817,6 +929,103 @@ function TabAchieve({ profile }: { profile: MyProfileData }) {
       )}
     </div>
   );
+}
+
+// ============================================================================
+// 프로필 공유 기능
+// ============================================================================
+
+async function handleShareProfile(
+  profile: MyProfileData,
+  title: string,
+  setShareStatus: (status: 'idle' | 'copied') => void
+) {
+  // 프로필 텍스트 생성
+  const lines: string[] = [
+    `🎭 나의 프로필 - ${title}`,
+    `📊 완성도: ${profile.completionRate}% (${profile.completedTests}/${profile.totalTests})`,
+    '',
+  ];
+
+  // 성격
+  if (profile.personality) {
+    lines.push(`🧠 성격: ${profile.personality.resultEmoji} ${profile.personality.resultName}`);
+  }
+
+  // 반려동물 케미
+  if (profile.petChemi.recommendedPet) {
+    lines.push(`🐾 추천 반려동물: ${profile.petChemi.recommendedPet}`);
+  }
+  if (profile.petChemi.scores.length > 0) {
+    const petSummary = profile.petChemi.scores
+      .map(s => `${s.petEmoji}${s.compatibility}%`)
+      .join(' ');
+    lines.push(`   케미: ${petSummary}`);
+  }
+
+  // 연애/관계
+  if (profile.relationship.idealType || profile.relationship.conflictStyle) {
+    const parts: string[] = [];
+    if (profile.relationship.idealType) {
+      parts.push(`${profile.relationship.idealType.resultEmoji} ${profile.relationship.idealType.resultName}`);
+    }
+    if (profile.relationship.conflictStyle) {
+      parts.push(`${profile.relationship.conflictStyle.resultEmoji} ${profile.relationship.conflictStyle.resultName}`);
+    }
+    lines.push(`💕 관계: ${parts.join(' / ')}`);
+  }
+
+  // 라이프스타일
+  if (profile.lifestyle.coffee || profile.lifestyle.plant) {
+    const parts: string[] = [];
+    if (profile.lifestyle.coffee) {
+      parts.push(`${profile.lifestyle.coffee.resultEmoji} ${profile.lifestyle.coffee.resultName}`);
+    }
+    if (profile.lifestyle.plant) {
+      parts.push(`${profile.lifestyle.plant.resultEmoji} ${profile.lifestyle.plant.resultName}`);
+    }
+    lines.push(`✨ 라이프: ${parts.join(' / ')}`);
+  }
+
+  // 뱃지
+  const unlockedBadges = profile.badges.filter(b => b.unlocked);
+  if (unlockedBadges.length > 0) {
+    lines.push(`🏆 뱃지: ${unlockedBadges.map(b => b.emoji).join(' ')}`);
+  }
+
+  lines.push('', '👉 나도 테스트하기: [링크]');
+
+  const shareText = lines.join('\n');
+
+  // Web Share API 시도
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: '나의 프로필',
+        text: shareText,
+      });
+      return;
+    } catch {
+      // 사용자가 취소하거나 실패한 경우 클립보드 복사로 폴백
+    }
+  }
+
+  // 클립보드 복사
+  try {
+    await navigator.clipboard.writeText(shareText);
+    setShareStatus('copied');
+    setTimeout(() => setShareStatus('idle'), 2000);
+  } catch {
+    // 클립보드 API 실패 시 구형 방식
+    const textarea = document.createElement('textarea');
+    textarea.value = shareText;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    setShareStatus('copied');
+    setTimeout(() => setShareStatus('idle'), 2000);
+  }
 }
 
 // ============================================================================
