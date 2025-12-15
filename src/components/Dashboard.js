@@ -11,6 +11,7 @@ import { nextActionService } from '../services/NextActionService';
 import { ChevronRight, ChevronDown, HelpCircle, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import { VSPollCard } from '../modules/vote';
+import Footer from './Footer';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -752,6 +753,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                         )}
                     </section>
                 )}
+
+                {/* 푸터 - 개인정보처리방침, 이용약관, 면책조항 */}
+                <Footer className="mt-8 mb-20" />
 
         </div>
         </>
