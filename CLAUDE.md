@@ -111,7 +111,8 @@ npm run build
 - **메인 앱**: 루트 디렉토리 - Next.js 16 + TypeScript + Tailwind
 - **컴포넌트**: `src/components/` - 현재 5개, 15개 넘으면 ui/feature 분리
 - **데이터**: `src/data/` - types.ts, config.ts, subjects/*.ts
-- **서비스**: `src/services/` - ResultService (localStorage → Supabase 준비)
+- **유틸리티**: `src/utils/` - 공통 함수 (format, device)
+- **서비스**: `src/services/` - Result, Ranking, Feedback, Profile 등
 - **페이지**: `/` (테스트), `/dashboard` (관리/통계/시뮬레이터)
 
 ### 코딩 규칙
@@ -119,6 +120,7 @@ npm run build
 - 타입: `SubjectKey` 유니온 타입으로 테스트 종류 관리
 - 비동기: useEffect 내 async 함수, cancelled 플래그로 cleanup
 - 스타일: Tailwind 유틸리티 + globals.css 커스텀 클래스
+- Import: 공통 유틸은 `@/utils`, 서비스는 `@/services`에서 import
 
 ### 대시보드 참조
 - 상세 스펙, 시뮬레이터, 로직 뷰어는 `/dashboard`에서 확인
@@ -170,10 +172,19 @@ MBTI/
 │   ├── components/            # 공통 컴포넌트
 │   ├── data/                  # 테스트 데이터
 │   │   ├── types.ts           # 타입 정의
-│   │   ├── config.ts          # SUBJECT_CONFIG, TEST_TYPES
+│   │   ├── config.ts          # SUBJECT_CONFIG, TEST_TYPES, RANKABLE_TESTS
 │   │   ├── subjects/*.ts      # 테스트별 데이터
 │   │   └── index.ts           # CHEMI_DATA 통합
+│   ├── utils/                 # 공통 유틸리티
+│   │   ├── format.ts          # 시간/숫자/날짜 포맷팅
+│   │   ├── device.ts          # 디바이스 ID 관리
+│   │   └── index.ts           # barrel export
 │   └── services/              # 서비스 레이어
+│       ├── ResultService.ts   # 테스트 결과 저장/조회
+│       ├── RankingService.ts  # 랭킹 투표/통계
+│       ├── FeedbackService.ts # 피드백/퀴즈/투표
+│       ├── ProfileService.ts  # 사용자 프로필
+│       └── index.ts           # 서비스 통합 export
 ├── docs/                      # 레거시 문서 (대시보드로 통합 중)
 ├── scripts/                   # 검증/테스트 스크립트
 ├── legacy/                    # 레거시 코드 (사용 안함)
@@ -383,3 +394,41 @@ npm run build  # 빌드 성공 필수
 - 각 결과에 2~3개 조건 권장
 - 질문에 중간 점수(3) 옵션 포함 → MEDIUM 레벨 도달 가능
 - 모든 결과 유형은 도달 가능해야 함
+
+---
+
+## 공통 유틸리티 참조
+
+### @/utils/format
+| 함수 | 설명 | 예시 |
+|------|------|------|
+| `formatRelativeTime(dateString)` | 상대 시간 | `"방금 전"`, `"5분 전"`, `"3일 전"` |
+| `timeAgo` | formatRelativeTime alias | 위와 동일 |
+| `formatNumber(num)` | 숫자 축약 | `1234` → `"1.2K"`, `1500000` → `"1.5M"` |
+| `formatDate(dateString)` | 한국어 날짜 | `"12월 15일"` |
+
+### @/utils/device
+| 함수 | 설명 |
+|------|------|
+| `getDeviceId()` | 익명 사용자 ID 반환 (없으면 생성, localStorage 저장) |
+| `hasDeviceId()` | 디바이스 ID 존재 여부 |
+| `USER_KEY` | localStorage 키 (`'chemi_user'`) |
+
+### @/data/config 상수
+| 상수 | 설명 |
+|------|------|
+| `SUBJECT_CONFIG` | 테스트별 설정 (아이콘, 라벨, 테마 등) |
+| `TEST_TYPES` | 테스트 유형 (personality, matching) |
+| `MAIN_TEST_KEYS` | 메인 테스트 키 목록 (세부 테스트 제외) |
+| `RANKABLE_TESTS` | 랭킹 지원 테스트 목록 `[{ key, emoji, name }]` |
+| `RANKABLE_TEST_KEYS` | 랭킹 지원 테스트 키만 `SubjectKey[]` |
+
+### @/services 서비스
+| 서비스 | 설명 |
+|--------|------|
+| `resultService` | 테스트 결과 저장/조회 (localStorage + Supabase 준비) |
+| `rankingService` | 랭킹 투표/통계 |
+| `feedbackService` | 피드백, 퀴즈, 투표 응답 |
+| `profileService` | 사용자 프로필 |
+| `gamificationService` | 배지, 레벨, 포인트 |
+| `nextActionService` | 다음 행동 추천 |

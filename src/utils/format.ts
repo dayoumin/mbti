@@ -8,9 +8,10 @@
  * 상대 시간 포맷팅 (예: "방금 전", "5분 전", "3일 전")
  */
 export function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+  const dateMs = new Date(dateString).getTime();
+  if (!Number.isFinite(dateMs)) return '';
+
+  const diffMs = Math.max(0, Date.now() - dateMs);
   const diffSec = Math.floor(diffMs / 1000);
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
@@ -34,10 +35,16 @@ export const timeAgo = formatRelativeTime;
  * 숫자 포맷팅 (1000 → 1K, 1000000 → 1M)
  */
 export function formatNumber(num: number): string {
-  if (num < 1000) return num.toString();
-  if (num < 10000) return `${(num / 1000).toFixed(1)}K`;
-  if (num < 1000000) return `${Math.floor(num / 1000)}K`;
-  return `${(num / 1000000).toFixed(1)}M`;
+  if (!Number.isFinite(num)) return '0';
+
+  const sign = num < 0 ? '-' : '';
+  const abs = Math.abs(num);
+  const trimTrailingZero = (value: string) => value.replace(/\.0$/, '');
+
+  if (abs < 1000) return num.toString();
+  if (abs < 10000) return `${sign}${trimTrailingZero((abs / 1000).toFixed(1))}K`;
+  if (abs < 1000000) return `${sign}${Math.floor(abs / 1000)}K`;
+  return `${sign}${trimTrailingZero((abs / 1000000).toFixed(1))}M`;
 }
 
 /**
@@ -45,5 +52,6 @@ export function formatNumber(num: number): string {
  */
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
+  if (!Number.isFinite(date.getTime())) return '';
   return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
 }

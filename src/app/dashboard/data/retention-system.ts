@@ -527,6 +527,37 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
       },
     ],
   },
+  {
+    id: 'phase-4',
+    name: 'Phase 4: 공유 & 바이럴',
+    status: 'done',
+    items: [
+      {
+        task: '랭킹 공유 기능',
+        endpoint: 'ranking_view',
+        priority: 'medium',
+        description: 'PopularRanking에 네이티브 공유 + 클립보드 복사'
+      },
+      {
+        task: '카카오톡 공유 준비',
+        endpoint: 'test_result',
+        priority: 'medium',
+        description: 'KakaoShareService - SDK 동적 로드, 피드 공유'
+      },
+      {
+        task: 'OG/Twitter 메타태그',
+        endpoint: 'test_result',
+        priority: 'high',
+        description: 'layout.tsx에 소셜 미리보기 메타태그 추가'
+      },
+      {
+        task: 'ShareCard 카카오 버튼',
+        endpoint: 'test_result',
+        priority: 'medium',
+        description: '공유 모달에 카카오톡 버튼 추가 (4버튼 레이아웃)'
+      },
+    ],
+  },
 ];
 
 // ============================================================================
@@ -573,7 +604,7 @@ export const CURRENT_STATE_ANALYSIS: EndpointAnalysis[] = [
   {
     endpoint: 'ranking_view',
     currentStatus: 'good',
-    currentActions: ['테스트 시작', '공유'],
+    currentActions: ['테스트 시작', '공유', '네이티브 공유', '클립보드 복사'],
     missingActions: [],
     priority: 'low',
   },
