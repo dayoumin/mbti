@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   RETENTION_SYSTEM,
   RETENTION_ROADMAP,
   CURRENT_STATE_ANALYSIS,
   RETENTION_METRICS,
 } from '../data/retention-system';
+import { gamificationService } from '@/services/GamificationService';
+import { contentParticipationService } from '@/services/ContentParticipationService';
+import { resultService } from '@/services/ResultService';
 
 // ============================================================================
 // 상태 뱃지 컴포넌트
@@ -323,6 +326,245 @@ const MetricsSection = () => {
 };
 
 // ============================================================================
+// 실시간 통계 모니터링 섹션
+// ============================================================================
+
+interface LiveStats {
+  // 게이미피케이션
+  totalPoints: number;
+  currentStreak: number;
+  longestStreak: number;
+  levelName: string;
+  levelEmoji: string;
+  levelNumber: number;
+  // 콘텐츠 참여
+  quizzesAnswered: number;
+  quizzesCorrect: number;
+  pollsVoted: number;
+  // 테스트
+  testsCompleted: number;
+  completedTestList: string[];
+  incompleteTestList: string[];
+}
+
+const LiveMonitoringSection = () => {
+  const [stats, setStats] = useState<LiveStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        // 게이미피케이션 통계 (null 체크)
+        const gameStats = gamificationService?.getStats() ?? { totalPoints: 0, streak: null };
+        const level = gamificationService?.getLevel() ?? null;
+
+        // 콘텐츠 참여 통계
+        const participation = contentParticipationService.getParticipation();
+
+        // 테스트 완료 통계
+        const completedTests = await resultService.getCompletedTests();
+        const incompleteTests = await resultService.getIncompleteTests();
+
+        setStats({
+          totalPoints: gameStats.totalPoints,
+          currentStreak: gameStats.streak?.currentStreak || 0,
+          longestStreak: gameStats.streak?.longestStreak || 0,
+          levelName: level?.name || '뉴비',
+          levelEmoji: level?.emoji || '🌱',
+          levelNumber: level?.level || 1,
+          quizzesAnswered: participation.quizzes.length,
+          quizzesCorrect: participation.quizzes.filter(q => q.isCorrect).length,
+          pollsVoted: participation.polls.length,
+          testsCompleted: completedTests.length,
+          completedTestList: completedTests,
+          incompleteTestList: incompleteTests,
+        });
+      } catch (error) {
+        console.error('Failed to load stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+          <span className="text-lg">📡</span> 실시간 통계
+        </h3>
+        <div className="animate-pulse space-y-3">
+          <div className="h-24 bg-slate-100 rounded-xl" />
+          <div className="h-24 bg-slate-100 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="space-y-4">
+        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+          <span className="text-lg">📡</span> 실시간 통계
+        </h3>
+        <p className="text-slate-500 text-sm">데이터를 불러올 수 없습니다.</p>
+      </div>
+    );
+  }
+
+  const quizAccuracy = stats.quizzesAnswered > 0
+    ? Math.round((stats.quizzesCorrect / stats.quizzesAnswered) * 100)
+    : 0;
+
+  const testCompletionRate = (stats.testsCompleted + stats.incompleteTestList.length) > 0
+    ? Math.round((stats.testsCompleted / (stats.testsCompleted + stats.incompleteTestList.length)) * 100)
+    : 0;
+
+  return (
+    <div className="space-y-4">
+      <h3 className="font-bold text-slate-800 flex items-center gap-2">
+        <span className="text-lg">📡</span> 실시간 통계 (현재 사용자)
+      </h3>
+
+      {/* 게이미피케이션 카드 */}
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center text-2xl shadow-md">
+            {stats.levelEmoji}
+          </div>
+          <div>
+            <p className="font-bold text-slate-800">{stats.levelName}</p>
+            <p className="text-xs text-slate-500">Lv.{stats.levelNumber}</p>
+          </div>
+          <div className="ml-auto text-right">
+            <p className="font-black text-amber-600 text-lg">{stats.totalPoints}P</p>
+            <p className="text-[10px] text-amber-500">총 포인트</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-xl font-black text-amber-600">🔥 {stats.currentStreak}</p>
+            <p className="text-[10px] text-slate-500">현재 스트릭</p>
+          </div>
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-xl font-black text-amber-600">🏆 {stats.longestStreak}</p>
+            <p className="text-[10px] text-slate-500">최장 스트릭</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 콘텐츠 참여 카드 */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+        <p className="font-bold text-slate-800 mb-3">📊 콘텐츠 참여</p>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-lg font-black text-blue-600">{stats.quizzesAnswered}</p>
+            <p className="text-[10px] text-slate-500">퀴즈 응답</p>
+          </div>
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-lg font-black text-emerald-600">{quizAccuracy}%</p>
+            <p className="text-[10px] text-slate-500">정답률</p>
+          </div>
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-lg font-black text-purple-600">{stats.pollsVoted}</p>
+            <p className="text-[10px] text-slate-500">투표 참여</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 테스트 완료 카드 */}
+      <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200">
+        <div className="flex items-center justify-between mb-3">
+          <p className="font-bold text-slate-800">🧪 테스트 완료</p>
+          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">
+            {testCompletionRate}% 완료
+          </span>
+        </div>
+
+        {/* 진행률 바 */}
+        <div className="w-full bg-slate-200 rounded-full h-2 mb-3">
+          <div
+            className="bg-gradient-to-r from-emerald-400 to-green-500 h-2 rounded-full transition-all duration-500"
+            style={{ width: `${testCompletionRate}%` }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-lg font-black text-emerald-600">{stats.testsCompleted}</p>
+            <p className="text-[10px] text-slate-500">완료</p>
+          </div>
+          <div className="bg-white/60 rounded-lg p-2 text-center">
+            <p className="text-lg font-black text-slate-400">{stats.incompleteTestList.length}</p>
+            <p className="text-[10px] text-slate-500">미완료</p>
+          </div>
+        </div>
+
+        {/* 완료 테스트 목록 */}
+        {stats.completedTestList.length > 0 && (
+          <div className="pt-2 border-t border-emerald-200">
+            <p className="text-[10px] text-slate-500 mb-1">완료한 테스트:</p>
+            <div className="flex flex-wrap gap-1">
+              {stats.completedTestList.map(test => (
+                <span key={test} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium">
+                  {test}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 미완료 테스트 목록 */}
+        {stats.incompleteTestList.length > 0 && (
+          <div className="pt-2 border-t border-emerald-200 mt-2">
+            <p className="text-[10px] text-slate-500 mb-1">남은 테스트:</p>
+            <div className="flex flex-wrap gap-1">
+              {stats.incompleteTestList.slice(0, 6).map(test => (
+                <span key={test} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full text-[10px]">
+                  {test}
+                </span>
+              ))}
+              {stats.incompleteTestList.length > 6 && (
+                <span className="px-2 py-0.5 bg-slate-100 text-slate-400 rounded-full text-[10px]">
+                  +{stats.incompleteTestList.length - 6}개
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 체류 지표 요약 */}
+      <div className="bg-slate-100 rounded-xl p-4">
+        <p className="font-bold text-slate-800 mb-2">📐 체류 유도 지표</p>
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-slate-500">콘텐츠 다양성</span>
+            <span className="font-bold text-slate-800">
+              {(stats.testsCompleted > 0 ? 1 : 0) + (stats.quizzesAnswered > 0 ? 1 : 0) + (stats.pollsVoted > 0 ? 1 : 0)}/3 유형
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-500">스트릭 유지</span>
+            <span className={`font-bold ${stats.currentStreak >= 3 ? 'text-emerald-600' : 'text-slate-400'}`}>
+              {stats.currentStreak >= 3 ? '✅ 활성' : '❌ 비활성'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-500">레벨 진행</span>
+            <span className="font-bold text-slate-800">
+              {stats.levelEmoji} {stats.levelName} (Lv.{stats.levelNumber})
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
 // 흐름 시각화
 // ============================================================================
 
@@ -376,13 +618,14 @@ const FlowVisualization = () => {
 // 메인 컴포넌트
 // ============================================================================
 
-type TabKey = 'overview' | 'connections' | 'roadmap' | 'metrics';
+type TabKey = 'overview' | 'connections' | 'roadmap' | 'metrics' | 'live';
 
 export default function RetentionSystem() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   const tabs: { key: TabKey; label: string; icon: string }[] = [
     { key: 'overview', label: '현황', icon: '📊' },
+    { key: 'live', label: '실시간', icon: '📡' },
     { key: 'connections', label: '연결', icon: '🔗' },
     { key: 'roadmap', label: '로드맵', icon: '🗺️' },
     { key: 'metrics', label: '지표', icon: '📈' },
@@ -438,6 +681,7 @@ export default function RetentionSystem() {
             <CurrentStateSection />
           </div>
         )}
+        {activeTab === 'live' && <LiveMonitoringSection />}
         {activeTab === 'connections' && <ConnectionMatrix />}
         {activeTab === 'roadmap' && <RoadmapSection />}
         {activeTab === 'metrics' && <MetricsSection />}
