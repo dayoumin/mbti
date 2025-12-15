@@ -558,6 +558,37 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
       },
     ],
   },
+  {
+    id: 'phase-5',
+    name: 'Phase 5: 공유 최적화 (예정)',
+    status: 'planned',
+    items: [
+      {
+        task: '카카오 앱 키 발급 및 설정',
+        endpoint: 'test_result',
+        priority: 'high',
+        description: 'developers.kakao.com 앱 등록, NEXT_PUBLIC_KAKAO_APP_KEY 환경변수'
+      },
+      {
+        task: 'OG 이미지 제작',
+        endpoint: 'test_result',
+        priority: 'high',
+        description: 'public/og-image.png (1200x630) 제작'
+      },
+      {
+        task: '동적 OG 이미지 생성',
+        endpoint: 'test_result',
+        priority: 'low',
+        description: '테스트 결과별 동적 OG 이미지 (Vercel OG 또는 Canvas)'
+      },
+      {
+        task: '공유 추적 분석',
+        endpoint: 'test_result',
+        priority: 'medium',
+        description: 'AnalyticsService에 공유 이벤트 추적 추가'
+      },
+    ],
+  },
 ];
 
 // ============================================================================
