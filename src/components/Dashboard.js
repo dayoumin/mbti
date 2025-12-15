@@ -61,11 +61,9 @@ const TEST_SUBJECT_MAP = {
 // 테스트 배지 설정
 // HOT: 인기, NEW: 신규, UPDATE: 업데이트됨
 const TEST_BADGES = {
-    human: 'HOT',
-    fruit: 'NEW',
-    alcohol: 'NEW',
-    bread: 'NEW',
-    // tea: 'UPDATE', // 예시: 업데이트된 테스트
+    human: 'HOT', // 인기
+    fruit: 'NEW', // 신규
+    tea: 'UPDATE', // 업데이트됨
 };
 
 // Compact Test Item (아이콘 + 제목 + 배지) - 더 작게

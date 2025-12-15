@@ -41,6 +41,7 @@ export const breadData: SubjectData = {
             "dimension": "sweet",
             "a": [
                 { "text": "달달한 빵이 최고예요!", "score": 5 },
+                { "text": "적당히 달면 좋아요", "score": 3 },
                 { "text": "담백한 빵이 좋아요", "score": 1 }
             ]
         },
@@ -57,6 +58,7 @@ export const breadData: SubjectData = {
             "dimension": "texture",
             "a": [
                 { "text": "바삭바삭한 게 좋아요", "score": 5 },
+                { "text": "겉바속촉이 좋아요", "score": 3 },
                 { "text": "부드럽고 촉촉한 게 좋아요", "score": 1 }
             ]
         },
@@ -73,6 +75,7 @@ export const breadData: SubjectData = {
             "dimension": "filling",
             "a": [
                 { "text": "네, 속이 꽉 차야죠!", "score": 5 },
+                { "text": "적당히 들어있으면 좋아요", "score": 3 },
                 { "text": "심플한 빵이 좋아요", "score": 1 }
             ]
         },

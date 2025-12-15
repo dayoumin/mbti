@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProfile } from '@/hooks/useProfile';
 import {
   RadarChart,
@@ -16,12 +16,13 @@ import { profileService, MyProfileData } from '@/services/ProfileService';
 // 탭 타입 정의
 // ============================================================================
 
-type ProfileTab = 'me' | 'pet' | 'life' | 'achieve';
+type ProfileTab = 'me' | 'pet' | 'life' | 'history' | 'achieve';
 
 const TAB_CONFIG: { key: ProfileTab; label: string; icon: string; color: string }[] = [
   { key: 'me', label: '나', icon: '🧠', color: '#5B8DEF' },
   { key: 'pet', label: '동물', icon: '🐾', color: '#E07B4C' },
   { key: 'life', label: '라이프', icon: '☕', color: '#7B8794' },
+  { key: 'history', label: '기록', icon: '📋', color: '#6366F1' },
   { key: 'achieve', label: '도전', icon: '🏆', color: '#D4A84B' },
 ];
 
@@ -163,6 +164,7 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
     me: !!(profile.personality || profile.relationship.idealType || profile.relationship.conflictStyle),
     pet: !!(profile.petChemi.scores.length > 0 || profile.petChemi.recommendedPet),
     life: !!(profile.lifestyle.coffee || profile.lifestyle.plant),
+    history: profile.completedTests > 0, // 테스트 기록이 있으면 표시
     achieve: true, // 항상 뱃지/조합 표시
   };
 
@@ -236,6 +238,9 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
           )}
           {activeTab === 'life' && (
             <TabLife profile={profile} onStartTest={onStartTest} onClose={onClose} />
+          )}
+          {activeTab === 'history' && (
+            <TabHistory onStartTest={onStartTest} onClose={onClose} />
           )}
           {activeTab === 'achieve' && (
             <TabAchieve profile={profile} />
@@ -517,6 +522,195 @@ function TabLife({ profile, onStartTest, onClose }: TabProps) {
       )}
     </div>
   );
+}
+
+// 기록 탭 - 테스트 히스토리
+function TabHistory({ onStartTest, onClose }: { onStartTest?: (testKey: string) => void; onClose?: () => void }) {
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const loadHistory = async () => {
+    try {
+      const { resultService } = await import('@/services/ResultService');
+      const results = await resultService.getMyResults();
+
+      // 결과를 HistoryItem 형태로 변환
+      const items: HistoryItem[] = results.map(r => ({
+        id: r.id,
+        testType: r.testType,
+        testLabel: getTestLabel(r.testType),
+        resultName: r.resultKey,
+        resultEmoji: r.resultEmoji,
+        isDeepMode: r.isDeepMode,
+        createdAt: r.createdAt,
+        parentTest: r.parentTest,
+        parentResult: r.parentResult,
+      }));
+
+      setHistory(items);
+    } catch (error) {
+      console.error('Failed to load history:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <div className="animate-spin w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (history.length === 0) {
+    return (
+      <EmptyTab
+        icon="📋"
+        title="아직 테스트 기록이 없어요"
+        description="테스트를 완료하면 여기에 기록됩니다"
+        testKey="human"
+        testLabel="첫 테스트 시작하기"
+        onStartTest={onStartTest}
+        onClose={onClose}
+      />
+    );
+  }
+
+  // 날짜별로 그룹화
+  const groupedHistory = groupByDate(history);
+
+  return (
+    <div className="space-y-4">
+      {/* 통계 요약 */}
+      <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-indigo-600 font-medium">총 테스트 횟수</p>
+            <p className="text-2xl font-bold text-indigo-700">{history.length}회</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-indigo-600 font-medium">심화 테스트</p>
+            <p className="text-2xl font-bold text-indigo-700">{history.filter(h => h.isDeepMode).length}회</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 날짜별 히스토리 */}
+      {Object.entries(groupedHistory).map(([dateLabel, items]) => (
+        <div key={dateLabel}>
+          <p className="text-xs font-medium text-gray-500 mb-2">{dateLabel}</p>
+          <div className="space-y-2">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-xl p-3 border border-gray-100 flex items-center gap-3"
+              >
+                <span className="text-2xl">{item.resultEmoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-gray-800 text-sm truncate">{item.resultName}</p>
+                    {item.isDeepMode && (
+                      <span className="px-1.5 py-0.5 bg-violet-100 text-violet-600 text-[10px] font-bold rounded">
+                        심화
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <span>{item.testLabel}</span>
+                    {item.parentResult && (
+                      <>
+                        <span>·</span>
+                        <span className="text-amber-600">{item.parentResult}에서 연결</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    onStartTest?.(item.testType);
+                    onClose?.();
+                  }}
+                  className="px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                >
+                  다시
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// 히스토리 아이템 타입
+interface HistoryItem {
+  id: string;
+  testType: string;
+  testLabel: string;
+  resultName: string;
+  resultEmoji: string;
+  isDeepMode: boolean;
+  createdAt: string;
+  parentTest?: string;
+  parentResult?: string;
+}
+
+// 테스트 타입 → 라벨 변환
+function getTestLabel(testType: string): string {
+  const labels: Record<string, string> = {
+    human: '사람 성격',
+    cat: '고양이 케미',
+    dog: '강아지 케미',
+    rabbit: '토끼 케미',
+    hamster: '햄스터 케미',
+    idealType: '이상형',
+    plant: '반려식물',
+    petMatch: '반려동물 매칭',
+    coffee: '커피',
+    conflictStyle: '갈등 대처',
+    dogBreed: '강아지 품종',
+    catBreed: '고양이 품종',
+    smallPet: '소동물',
+    fishType: '관상어',
+    birdType: '반려조',
+    reptileType: '파충류',
+  };
+  return labels[testType] || testType;
+}
+
+// 날짜별 그룹화
+function groupByDate(items: HistoryItem[]): Record<string, HistoryItem[]> {
+  const groups: Record<string, HistoryItem[]> = {};
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+  items.forEach(item => {
+    const date = new Date(item.createdAt);
+    const itemDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    let label: string;
+    if (itemDate.getTime() === today.getTime()) {
+      label = '오늘';
+    } else if (itemDate.getTime() === yesterday.getTime()) {
+      label = '어제';
+    } else {
+      label = `${date.getMonth() + 1}월 ${date.getDate()}일`;
+    }
+
+    if (!groups[label]) {
+      groups[label] = [];
+    }
+    groups[label].push(item);
+  });
+
+  return groups;
 }
 
 // 도전 탭 - 뱃지/조합/마일스톤

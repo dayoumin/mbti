@@ -41,6 +41,7 @@ export const alcoholData: SubjectData = {
             "dimension": "strength",
             "a": [
                 { "text": "독한 술도 잘 마셔요", "score": 5 },
+                { "text": "적당한 도수가 좋아요", "score": 3 },
                 { "text": "가벼운 술이 좋아요", "score": 1 }
             ]
         },
@@ -57,6 +58,7 @@ export const alcoholData: SubjectData = {
             "dimension": "sweet",
             "a": [
                 { "text": "네, 달아야 맛있어요", "score": 5 },
+                { "text": "살짝 단 정도가 좋아요", "score": 3 },
                 { "text": "드라이한 게 좋아요", "score": 1 }
             ]
         },
@@ -81,6 +83,7 @@ export const alcoholData: SubjectData = {
             "dimension": "social",
             "a": [
                 { "text": "신나게 2차 3차까지!", "score": 5 },
+                { "text": "분위기 봐서 결정해요", "score": 3 },
                 { "text": "적당히 한두 잔이요", "score": 1 }
             ]
         },

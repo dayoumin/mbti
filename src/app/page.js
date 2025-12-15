@@ -11,6 +11,8 @@ import Dashboard from '../components/Dashboard';
 import ShareCard from '../components/ShareCard';
 import { FullProfile } from '../components/MyProfile';
 import ContentExplore from '../components/ContentExplore';
+import ResultFeedback from '../components/ResultFeedback';
+import FeedbackComments from '../components/FeedbackComments';
 import * as Icons from '../components/Icons';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
@@ -586,6 +588,18 @@ export default function Home() {
                                 <GlassButton onClick={() => setStep("question")} variant="primary">
                                     테스트 시작하기 <ArrowRight className="w-5 h-5" />
                                 </GlassButton>
+
+                                {/* petMatch 전용: 직접 선택 모드 */}
+                                {mode === 'petMatch' && (
+                                    <button
+                                        onClick={() => setStep("directSelect")}
+                                        className="w-full py-3.5 rounded-xl bg-white/60 hover:bg-white border border-white/60 text-slate-600 font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
+                                    >
+                                        <Check className="w-4 h-4 text-amber-500" />
+                                        이미 원하는 동물이 있어요
+                                    </button>
+                                )}
+
                                 <button onClick={() => setShowInsight(true)} className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5">
                                     <Trophy className="w-4 h-4" /> 전체 결과 랭킹 보기
                                 </button>
@@ -639,6 +653,83 @@ export default function Home() {
                                         <div className="w-6 h-6 rounded-full border-2 border-slate-200 group-hover:border-indigo-500 group-hover:bg-indigo-500 transition-all"></div>
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- DIRECT SELECT VIEW (petMatch 전용) --- */}
+                    {step === "directSelect" && mode === 'petMatch' && (
+                        <div className="flex flex-col h-full animate-fade-in px-6 py-8">
+                            {/* Header */}
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setStep("intro")} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
+                                    <ChevronLeft className="w-6 h-6" />
+                                </button>
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                    직접 선택
+                                </span>
+                                <div className="w-10" /> {/* spacer */}
+                            </div>
+
+                            {/* Title */}
+                            <div className="text-center mb-8">
+                                <h2 className="text-2xl font-black text-slate-800 mb-2">
+                                    어떤 반려동물을 원하세요?
+                                </h2>
+                                <p className="text-sm text-slate-500">
+                                    해당 동물의 품종/종류 테스트로 바로 이동해요
+                                </p>
+                            </div>
+
+                            {/* Pet Options */}
+                            <div className="flex-1 space-y-3 overflow-y-auto">
+                                {currentModeData.resultLabels.map((result) => {
+                                    const nextTest = result.nextTest;
+                                    const nextData = nextTest ? CHEMI_DATA[nextTest] : null;
+                                    const nextConfig = nextTest ? SUBJECT_CONFIG[nextTest] : null;
+                                    const PetIcon = nextConfig ? Icons[nextConfig.icon] : null;
+
+                                    if (!nextTest || !nextData) return null;
+
+                                    return (
+                                        <button
+                                            key={result.name}
+                                            onClick={() => handleStartTest(nextTest, { testType: 'petMatch', resultName: result.name, directSelect: true })}
+                                            className="w-full p-4 rounded-2xl bg-white/70 hover:bg-white border border-white/60 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-200 text-left group flex items-center gap-4"
+                                        >
+                                            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center border border-amber-100 group-hover:scale-110 transition-transform">
+                                                {PetIcon ? (
+                                                    <PetIcon mood="happy" className="w-10 h-10" />
+                                                ) : (
+                                                    <span className="text-3xl">{result.emoji}</span>
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <span className="text-lg">{result.emoji}</span>
+                                                    <span className="font-black text-slate-800 text-lg group-hover:text-amber-600 transition-colors">
+                                                        {result.name}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-slate-500">
+                                                    {nextData.resultLabels?.length || 0}개 {result.name === '강아지' || result.name === '고양이' ? '품종' : '종류'} 중 베스트 매치 찾기
+                                                </p>
+                                            </div>
+                                            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-amber-500 transition-colors" />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Footer */}
+                            <div className="mt-6 pt-4 border-t border-slate-100">
+                                <button
+                                    onClick={() => setStep("question")}
+                                    className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5"
+                                >
+                                    <Sparkles className="w-4 h-4" />
+                                    잘 모르겠어요, 추천받을래요
+                                </button>
                             </div>
                         </div>
                     )}
@@ -874,6 +965,12 @@ export default function Home() {
                                             <Share2 className="w-5 h-5" />
                                             결과 카드 공유하기
                                         </button>
+                                    </div>
+
+                                    {/* 결과 피드백 */}
+                                    <div className="w-full mt-6 space-y-4">
+                                        <ResultFeedback testType={mode} resultName={finalResult.name} />
+                                        <FeedbackComments testType={mode} resultName={finalResult.name} />
                                     </div>
 
                                     {/* Recommendations - Compact */}

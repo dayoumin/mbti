@@ -102,7 +102,7 @@ export const USER_NEEDS: UserNeed[] = [
     userScenario: '"골든 리트리버가 추천됐는데, 실제로 어떤 아이인지 더 알고 싶어요"',
     priority: 'high',
     phase: 'immediate',
-    status: 'planned',
+    status: 'done',  // ✅ 2024-12 구현 완료
     difficulty: 2,
     impact: 5,
     details: [
@@ -116,6 +116,13 @@ export const USER_NEEDS: UserNeed[] = [
       '각 품종별 최소 10개 항목',
     ],
     relatedFeatures: ['result-card', 'share'],
+    // 구현 내역:
+    // - types.ts: BreedDetailInfo 인터페이스 추가
+    // - dogBreed.ts: 12개 품종에 detailInfo 추가
+    // - page.js: BreedDetailCard 컴포넌트 (접힘/펼침 아코디언)
+    // - 포함 정보: origin, lifespan, size, weight, personality, goodWith, notGoodWith,
+    //   exerciseNeeds, groomingNeeds, sheddingLevel, trainingDifficulty, healthIssues,
+    //   monthlyCost, initialCost, tips
   },
   {
     id: 'care-guide',
@@ -124,7 +131,7 @@ export const USER_NEEDS: UserNeed[] = [
     userScenario: '"골든 리트리버를 키우려면 뭘 준비해야 하지?"',
     priority: 'high',
     phase: 'immediate',
-    status: 'planned',
+    status: 'done',  // ✅ 2024-12 구현 완료 (detailInfo에 통합)
     difficulty: 2,
     impact: 5,
     details: [
@@ -137,6 +144,10 @@ export const USER_NEEDS: UserNeed[] = [
     dataRequirements: [
       'careGuide: { essentials, routine, feeding, grooming, training }',
     ],
+    // 구현 내역:
+    // - detailInfo.exerciseNeeds/groomingNeeds/sheddingLevel/trainingDifficulty로 관리 정보 제공
+    // - detailInfo.tips: 양육 꿀팁 3-5개
+    // - BreedDetailCard에서 관리 정보 섹션으로 표시
   },
   {
     id: 'cost-estimate',
@@ -145,7 +156,7 @@ export const USER_NEEDS: UserNeed[] = [
     userScenario: '"골든 리트리버 키우는 데 한 달에 얼마나 들까?"',
     priority: 'high',
     phase: 'immediate',
-    status: 'planned',
+    status: 'done',  // ✅ 2024-12 구현 완료 (detailInfo에 통합)
     difficulty: 1,
     impact: 4,
     details: [
@@ -158,6 +169,10 @@ export const USER_NEEDS: UserNeed[] = [
       'costEstimate: { initial, monthly, yearly, emergency }',
       '가격대는 범위로 표시 (10~20만원)',
     ],
+    // 구현 내역:
+    // - detailInfo.monthlyCost: { min, max, note } - 월 비용 범위
+    // - detailInfo.initialCost: { min, max, note } - 초기 비용 범위
+    // - BreedDetailCard에서 "예상 비용" 섹션으로 표시 (만원 단위)
   },
 
   // === 단기 (Short-term) ===

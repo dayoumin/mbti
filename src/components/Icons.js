@@ -543,3 +543,102 @@ export const BreadIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4"
         </g>)}
     </svg>
 );
+
+export const PerfumeIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 향수병 뚜껑 */}
+        <rect x="40" y="12" width="20" height="12" rx="2" fill="#FFD700" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 향수병 목 */}
+        <rect x="43" y="24" width="14" height="8" fill="#E6E6FA" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 향수병 몸통 */}
+        <path d="M25 35 L75 35 L78 80 Q 78 88 70 88 L30 88 Q 22 88 22 80 Z" fill="#E6E6FA" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 향수 액체 */}
+        <path d="M28 45 L72 45 L75 78 Q 75 84 68 84 L32 84 Q 25 84 25 78 Z" fill="#DDA0DD" opacity="0.7" />
+        {/* 병 하이라이트 */}
+        <path d="M32 40 L35 75" stroke="white" strokeWidth="3" opacity="0.5" strokeLinecap="round" />
+        {mood === "happy" && (<g>
+            <circle cx="42" cy="60" r="3" fill="#4A4A4A" />
+            <circle cx="58" cy="60" r="3" fill="#4A4A4A" />
+            <path d="M46 70 Q 50 75 54 70" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 향기 */}
+            <path d="M80 30 Q 85 25 82 18" fill="none" stroke="#DDA0DD" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+            <path d="M85 38 Q 90 33 87 26" fill="none" stroke="#DDA0DD" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+        </g>)}
+        {mood === "excited" && (<g>
+            <circle cx="42" cy="60" r="4" fill="#4A4A4A" />
+            <circle cx="58" cy="60" r="4" fill="#4A4A4A" />
+            <path d="M44 70 Q 50 78 56 70" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+            {/* 향기 많이 + 하트 */}
+            <path d="M78 28 Q 83 22 80 15" fill="none" stroke="#DDA0DD" strokeWidth="2" strokeLinecap="round" />
+            <path d="M85 35 Q 90 29 87 22" fill="none" stroke="#DDA0DD" strokeWidth="2" strokeLinecap="round" />
+            <path d="M92 42 Q 97 36 94 29" fill="none" stroke="#DDA0DD" strokeWidth="2" strokeLinecap="round" />
+            {/* 하트 */}
+            <path d="M88 18 Q 85 14 82 18 Q 79 14 76 18 Q 76 22 82 28 Q 88 22 88 18 Z" fill="#FF6B9D" />
+        </g>)}
+        {mood === "cool" && (<g>
+            <rect x="35" y="57" width="12" height="6" rx="2" fill="black" />
+            <rect x="53" y="57" width="12" height="6" rx="2" fill="black" />
+            <path d="M47 60 L53 60" stroke="black" strokeWidth="2" />
+            <path d="M46 72 Q 50 72 54 72" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+        {mood === "sad" && (<g>
+            <circle cx="42" cy="60" r="3" fill="#4A4A4A" />
+            <circle cx="58" cy="60" r="3" fill="#4A4A4A" />
+            <path d="M46 74 Q 50 70 54 74" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        </g>)}
+    </svg>
+);
+
+export const AromaIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }) => (
+    <svg viewBox="0 0 100 100" className={className}>
+        {/* 아로마 병 (드롭퍼 타입) */}
+        {/* 드롭퍼 고무 부분 */}
+        <ellipse cx="50" cy="15" rx="10" ry="8" fill="#2D5016" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 드롭퍼 유리 부분 */}
+        <rect x="47" y="22" width="6" height="15" fill="#C4A484" stroke="#4A4A4A" strokeWidth="1" />
+        {/* 병 목 */}
+        <rect x="45" y="35" width="10" height="8" fill="#8B4513" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 병 몸통 (앰버색 유리병) */}
+        <path d="M35 45 L65 45 L68 80 Q 68 88 60 88 L40 88 Q 32 88 32 80 Z" fill="#8B4513" stroke="#4A4A4A" strokeWidth="3" />
+        {/* 오일 */}
+        <path d="M38 55 L62 55 L64 78 Q 64 84 58 84 L42 84 Q 36 84 36 78 Z" fill="#DAA520" opacity="0.8" />
+        {/* 병 하이라이트 */}
+        <path d="M40 50 L42 75" stroke="#CD853F" strokeWidth="2" opacity="0.6" strokeLinecap="round" />
+        {/* 라벨 */}
+        <rect x="40" y="60" width="20" height="15" rx="2" fill="#F5F5DC" stroke="#4A4A4A" strokeWidth="1" />
+        {/* 라벨 위 잎 그림 */}
+        <ellipse cx="50" cy="67" rx="5" ry="3" fill="#228B22" />
+        {mood === "happy" && (<g>
+            {/* 향기 퍼지는 모습 */}
+            <path d="M75 35 Q 80 28 77 20" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+            <path d="M82 42 Q 87 35 84 27" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+            <path d="M20 38 Q 15 31 18 23" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+            {/* 작은 잎 장식 */}
+            <ellipse cx="85" cy="50" rx="4" ry="2" fill="#228B22" transform="rotate(-30 85 50)" />
+            <ellipse cx="12" cy="45" rx="4" ry="2" fill="#228B22" transform="rotate(30 12 45)" />
+        </g>)}
+        {mood === "excited" && (<g>
+            {/* 향기 많이 */}
+            <path d="M73 32 Q 78 25 75 17" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" />
+            <path d="M80 40 Q 85 33 82 25" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" />
+            <path d="M87 48 Q 92 41 89 33" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" />
+            <path d="M22 35 Q 17 28 20 20" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" />
+            <path d="M15 43 Q 10 36 13 28" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" />
+            {/* 반짝임 */}
+            <path d="M90 55 L93 50 L96 55 L93 60 Z" fill="#FFD700" />
+            <path d="M8 50 L11 45 L14 50 L11 55 Z" fill="#FFD700" />
+        </g>)}
+        {mood === "cool" && (<g>
+            {/* 향기 */}
+            <path d="M78 38 Q 83 32 80 25" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+            {/* 선글라스를 병에 */}
+            <rect x="38" y="52" width="10" height="5" rx="1" fill="black" />
+            <rect x="52" y="52" width="10" height="5" rx="1" fill="black" />
+            <path d="M48 54 L52 54" stroke="black" strokeWidth="1" />
+        </g>)}
+        {mood === "sad" && (<g>
+            {/* 향기 적게 */}
+            <path d="M78 40 Q 81 36 79 30" fill="none" stroke="#90EE90" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+        </g>)}
+    </svg>
+);

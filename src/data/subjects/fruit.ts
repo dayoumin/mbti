@@ -41,6 +41,7 @@ export const fruitData: SubjectData = {
             "dimension": "sweet",
             "a": [
                 { "text": "달아야 맛있어요!", "score": 5 },
+                { "text": "적당히 달면 좋아요", "score": 3 },
                 { "text": "너무 달면 물려요", "score": 1 }
             ]
         },
@@ -73,6 +74,7 @@ export const fruitData: SubjectData = {
             "dimension": "texture",
             "a": [
                 { "text": "아삭아삭한 게 좋아요", "score": 5 },
+                { "text": "둘 다 좋아요", "score": 3 },
                 { "text": "부드러운 게 좋아요", "score": 1 }
             ]
         },
@@ -105,6 +107,7 @@ export const fruitData: SubjectData = {
             "dimension": "season",
             "a": [
                 { "text": "여름 과일이 좋아요 (수박, 참외)", "score": 1 },
+                { "text": "봄/가을 과일도 좋아요", "score": 3 },
                 { "text": "겨울 과일이 좋아요 (귤, 딸기)", "score": 5 }
             ]
         },

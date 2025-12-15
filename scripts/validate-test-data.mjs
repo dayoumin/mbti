@@ -30,7 +30,7 @@ const projectRoot = join(__dirname, '..');
 const SUBJECTS = [
   'human', 'cat', 'dog', 'rabbit', 'hamster',
   'idealType', 'plant', 'petMatch', 'coffee', 'tea', 'conflictStyle',
-  'fruit', 'alcohol', 'bread',
+  'fruit', 'alcohol', 'bread', 'perfume', 'aroma',
   // petMatch 세부 테스트
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
@@ -50,6 +50,19 @@ const REQUIRED_FIELDS = {
   answer: ['text', 'score'],
   resultLabel: ['name', 'emoji', 'desc', 'condition', 'matchPoints', 'interpretation', 'guide']
 };
+
+// 세부 테스트 (petMatch 하위)에서 detailInfo 필수인 테스트
+const DETAIL_INFO_REQUIRED_TESTS = [
+  'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
+];
+
+// detailInfo 권장 필드
+const DETAIL_INFO_RECOMMENDED_FIELDS = [
+  'origin', 'lifespan', 'size', 'weight',
+  'personality', 'goodWith', 'notGoodWith',
+  'exerciseNeeds', 'groomingNeeds', 'sheddingLevel', 'trainingDifficulty',
+  'healthIssues', 'monthlyCost', 'initialCost', 'tips'
+];
 
 // ============================================================
 // 유틸리티
@@ -464,6 +477,50 @@ function validateQuestionQuality(data, result) {
   result.addInfo('품질', `점수 분포: 5/1=${scoreDistribution['5/1']}, 5/2=${scoreDistribution['5/2']}, 기타=${scoreDistribution['other']}`);
 }
 
+// 6. detailInfo 검증 (세부 테스트 전용)
+function validateDetailInfo(data, result, subject) {
+  if (!DETAIL_INFO_REQUIRED_TESTS.includes(subject)) return;
+  if (!data.resultLabels) return;
+
+  let withDetailInfo = 0;
+  let withoutDetailInfo = 0;
+  const missingFields = {};
+
+  for (const r of data.resultLabels) {
+    if (r.detailInfo) {
+      withDetailInfo++;
+
+      // 권장 필드 체크
+      for (const field of DETAIL_INFO_RECOMMENDED_FIELDS) {
+        if (!(field in r.detailInfo)) {
+          missingFields[field] = (missingFields[field] || 0) + 1;
+        }
+      }
+    } else {
+      withoutDetailInfo++;
+      result.warn('detailInfo', `detailInfo 누락: "${r.name}"`,
+        '세부 테스트 결과에는 상세 정보 추가 권장');
+    }
+  }
+
+  // 누락 필드 요약 (50% 이상 누락 시 경고)
+  const threshold = Math.floor(data.resultLabels.length * 0.5);
+  for (const [field, count] of Object.entries(missingFields)) {
+    if (count > threshold) {
+      result.warn('detailInfo', `${count}개 결과에서 '${field}' 필드 누락`);
+    }
+  }
+
+  if (withDetailInfo > 0) {
+    result.addInfo('detailInfo', `${withDetailInfo}/${data.resultLabels.length}개 결과에 detailInfo 있음`);
+  }
+
+  if (withoutDetailInfo === data.resultLabels.length) {
+    result.warn('detailInfo', '모든 결과에 detailInfo 없음',
+      '세부 테스트에는 품종/종류 상세 정보 추가 필요');
+  }
+}
+
 // ============================================================
 // 메인 실행
 // ============================================================
@@ -488,6 +545,9 @@ function validateSubject(subject) {
 
   // 5. 질문 품질 검증
   validateQuestionQuality(data, result);
+
+  // 6. detailInfo 검증 (세부 테스트 전용)
+  validateDetailInfo(data, result, subject);
 
   return result;
 }
