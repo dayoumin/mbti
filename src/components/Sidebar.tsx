@@ -66,12 +66,6 @@ export default function Sidebar({ activeTab, onTabChange, className = '' }: Side
         </ul>
       </nav>
 
-      {/* 하단 정보 */}
-      <div className="p-4 border-t border-slate-100">
-        <div className="text-center text-[10px] text-slate-300">
-          <p>© 2025 Chemi Test Lab</p>
-        </div>
-      </div>
     </aside>
   );
 }

@@ -7,7 +7,7 @@ import { ALL_KNOWLEDGE_QUIZZES } from '../data/content/quizzes';
 import { VS_POLLS } from '../data/content/polls/vs-polls';
 import { gamificationService } from '../services/GamificationService';
 import { contentParticipationService } from '../services/ContentParticipationService';
-import { ChevronRight, ChevronDown, User, HelpCircle, Flame, Star } from 'lucide-react';
+import { ChevronRight, ChevronDown, HelpCircle, Flame, Star } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import { VSPollCard } from '../modules/vote';
 
@@ -132,22 +132,15 @@ const SubjectChip = ({ subject, isActive, onClick }) => (
     </button>
 );
 
-// Header with Profile
-const Header = ({ onProfileClick }) => (
-    <div className="flex items-center justify-between mb-6 animate-fade-in-up">
-        <div className="w-10 lg:hidden" /> {/* Spacer for centering - 모바일만 */}
+// Header (프로필 버튼은 하단 네비게이션으로 통합됨)
+const Header = () => (
+    <div className="flex items-center justify-center mb-6 animate-fade-in-up">
         <div className="text-center lg:text-left lg:flex-1">
             <h1 className="text-2xl md:text-3xl font-black text-slate-800 lg:hidden">
                 Chemi <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-pink-500">Test</span>
             </h1>
             <p className="text-sm text-slate-500 mt-1 lg:mt-0 lg:text-base lg:font-medium">오늘은 뭘 알아볼까?</p>
         </div>
-        <button
-            onClick={onProfileClick}
-            className="w-10 h-10 rounded-full bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 transition-all shadow-sm hover:shadow-md lg:hidden"
-        >
-            <User className="w-5 h-5" />
-        </button>
     </div>
 );
 
@@ -339,7 +332,7 @@ const DailyQuizCard = ({ quiz, onAnswer, isExpanded, onToggle, isAnswered = fals
 
 // VSPollCard는 모듈에서 import: import { VSPollCard } from '../modules/vote';
 
-const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
+const Dashboard = ({ onStartTest, onContentExplore }) => {
     // 2단계 필터 상태
     const [activeType, setActiveType] = useState('all');        // 1차: 심리/매칭
     const [activeSubject, setActiveSubject] = useState(null);   // 2차: 주제별 (null = 전체)
@@ -510,7 +503,7 @@ const Dashboard = ({ onStartTest, onProfileClick, onContentExplore }) => {
 
             <div className="relative max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8 h-[calc(100vh-2rem)] overflow-y-auto">
                 {/* Header */}
-                <Header onProfileClick={onProfileClick} />
+                <Header />
 
                 {/* 스트릭 배너 */}
                 {showStreakBanner && gameStats && (

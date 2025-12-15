@@ -597,10 +597,6 @@ export default function Home() {
                         setActiveNavTab('home');
                         handleStartTest(testKey);
                     }}
-                    onProfileClick={() => {
-                        setShowProfile(true);
-                        setActiveNavTab('profile');
-                    }}
                     onContentExplore={() => {
                         setShowContentExplore(true);
                         setActiveNavTab('explore');
