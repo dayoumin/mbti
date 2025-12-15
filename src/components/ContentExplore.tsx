@@ -8,6 +8,8 @@ import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/type
 import { contentParticipationService } from '@/services/ContentParticipationService';
 import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/community';
 import type { Tip, Question, Debate } from '@/data/community';
+import { nextActionService, type NextAction } from '@/services/NextActionService';
+import { NextActionInline } from '@/components/NextActionCard';
 
 // ============================================================================
 // 타입 정의
@@ -42,11 +44,20 @@ interface QuizCardProps {
   isAnswered: boolean;
   previousAnswer?: string;
   onAnswer: (quizId: string, optionId: string, isCorrect: boolean) => void;
+  onNextAction?: (action: NextAction) => void;
 }
 
-function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer }: QuizCardProps) {
+function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: QuizCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(previousAnswer || null);
   const [showResult, setShowResult] = useState(isAnswered);
+
+  // 다음 액션 추천
+  const nextActions = showResult
+    ? nextActionService.getRecommendations({
+        endpoint: 'quiz_result',
+        category: quiz.category,
+      }).slice(0, 2)
+    : [];
 
   const handleSelect = (optionId: string) => {
     if (showResult) return;
@@ -110,6 +121,13 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer }: QuizCardProps)
           {selectedIsCorrect ? '🎉 정답!' : '💡 오답!'} {quiz.explanation}
         </div>
       )}
+
+      {/* 다음 액션 추천 */}
+      {showResult && nextActions.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <NextActionInline actions={nextActions} onActionClick={onNextAction} />
+        </div>
+      )}
     </div>
   );
 }
@@ -123,6 +141,7 @@ interface PollCardProps {
   isVoted: boolean;
   previousVote?: 'a' | 'b';
   onVote: (pollId: string, choice: 'a' | 'b') => void;
+  onNextAction?: (action: NextAction) => void;
 }
 
 function getStablePollResults(pollId: string) {
@@ -136,10 +155,18 @@ function getStablePollResults(pollId: string) {
   return { a, b: 100 - a };
 }
 
-function PollCard({ poll, isVoted, previousVote, onVote }: PollCardProps) {
+function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCardProps) {
   const [localVoted, setLocalVoted] = useState<'a' | 'b' | null>(null);
   const voted = previousVote ?? localVoted;
   const results = getStablePollResults(poll.id);
+
+  // 다음 액션 추천
+  const nextActions = voted
+    ? nextActionService.getRecommendations({
+        endpoint: 'poll_result',
+        category: poll.category,
+      }).slice(0, 2)
+    : [];
 
   const handleVote = (choice: 'a' | 'b') => {
     if (voted) return;
@@ -221,6 +248,13 @@ function PollCard({ poll, isVoted, previousVote, onVote }: PollCardProps) {
           )}
         </button>
       </div>
+
+      {/* 다음 액션 추천 */}
+      {voted && nextActions.length > 0 && (
+        <div className="mt-4 pt-3 border-t border-gray-100">
+          <NextActionInline actions={nextActions} onActionClick={onNextAction} />
+        </div>
+      )}
     </div>
   );
 }
@@ -521,6 +555,38 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
     setParticipation(contentParticipationService.getParticipation());
   };
 
+  // 다음 액션 처리
+  const handleNextAction = (action: NextAction) => {
+    // 액션 타입에 따라 탭 전환 또는 화면 이동
+    switch (action.type) {
+      case 'quiz':
+        setActiveTab('quiz');
+        if (action.targetCategory) {
+          setSelectedCategory(action.targetCategory as ContentCategory);
+        }
+        break;
+      case 'poll':
+        setActiveTab('poll');
+        if (action.targetCategory) {
+          setSelectedCategory(action.targetCategory as ContentCategory);
+        }
+        break;
+      case 'community':
+        setActiveTab('community');
+        break;
+      case 'test':
+        // 테스트로 이동 - ContentExplore 닫고 메인으로
+        onClose();
+        // TODO: 특정 테스트로 이동하는 로직 추가 가능
+        break;
+      case 'share':
+        // 공유 기능 (추후 구현)
+        break;
+      default:
+        break;
+    }
+  };
+
   // 통계
   const stats = {
     quizTotal: ALL_KNOWLEDGE_QUIZZES.length,
@@ -660,6 +726,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
                     isAnswered={!!answered}
                     previousAnswer={answered?.selectedOption}
                     onAnswer={handleQuizAnswer}
+                    onNextAction={handleNextAction}
                   />
                 );
               })
@@ -680,6 +747,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
                     isVoted={!!voted}
                     previousVote={voted?.choice}
                     onVote={handlePollVote}
+                    onNextAction={handleNextAction}
                   />
                 );
               })

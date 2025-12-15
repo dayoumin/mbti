@@ -44,8 +44,6 @@ export const TEST_CONTENT_CONNECTIONS: ContentConnection[] = [
   // petMatch 연결
   { from: 'petMatch', to: 'pet-quiz', type: 'quiz', relevance: 5, reason: '반려동물 상식 테스트' },
   { from: 'petMatch', to: 'pet-poll', type: 'poll', relevance: 4, reason: '다른 사람들은 어떤 동물을 선택했을까?' },
-  { from: 'petMatch', to: 'dogBreed', type: 'test', relevance: 5, reason: '강아지 품종 찾기' },
-  { from: 'petMatch', to: 'catBreed', type: 'test', relevance: 5, reason: '고양이 품종 찾기' },
 
   // plant 연결
   { from: 'plant', to: 'plant-quiz', type: 'quiz', relevance: 5, reason: '식물 관리 퀴즈' },
@@ -55,21 +53,18 @@ export const TEST_CONTENT_CONNECTIONS: ContentConnection[] = [
   // coffee 연결
   { from: 'coffee', to: 'lifestyle-quiz', type: 'quiz', relevance: 4, reason: '라이프스타일 퀴즈' },
   { from: 'coffee', to: 'coffee-poll', type: 'poll', relevance: 5, reason: '커피 취향 투표' },
-  { from: 'coffee', to: 'plant', type: 'test', relevance: 3, reason: '식물 케미도 알아보기' },
 
   // idealType 연결
   { from: 'idealType', to: 'love-quiz', type: 'quiz', relevance: 5, reason: '연애 심리 퀴즈' },
   { from: 'idealType', to: 'love-poll', type: 'poll', relevance: 5, reason: '연애 스타일 투표' },
-  { from: 'idealType', to: 'conflictStyle', type: 'test', relevance: 5, reason: '갈등 대처 스타일 알아보기' },
 
   // conflictStyle 연결
   { from: 'conflictStyle', to: 'love-quiz', type: 'quiz', relevance: 4, reason: '관계 심리 퀴즈' },
-  { from: 'conflictStyle', to: 'idealType', type: 'test', relevance: 5, reason: '이상형 테스트' },
+  { from: 'conflictStyle', to: 'love-poll', type: 'poll', relevance: 4, reason: '갈등 상황에서 다른 사람들의 선택은?' },
 
   // human 연결
   { from: 'human', to: 'personality-quiz', type: 'quiz', relevance: 5, reason: '성격 유형 퀴즈' },
   { from: 'human', to: 'personality-poll', type: 'poll', relevance: 4, reason: '성격별 투표' },
-  { from: 'human', to: 'petMatch', type: 'test', relevance: 4, reason: '나와 맞는 반려동물 찾기' },
 ];
 
 // 퀴즈/투표 → 테스트 연결

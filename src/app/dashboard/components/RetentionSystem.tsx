@@ -6,8 +6,6 @@ import {
   RETENTION_ROADMAP,
   CURRENT_STATE_ANALYSIS,
   RETENTION_METRICS,
-  type EndpointAnalysis,
-  type RetentionRoadmapPhase,
 } from '../data/retention-system';
 
 // ============================================================================
@@ -147,6 +145,7 @@ const CurrentStateSection = () => {
 
 const ConnectionMatrix = () => {
   const { testContentConnections, contentTestConnections } = RETENTION_SYSTEM;
+  const totalConnections = testContentConnections.length + contentTestConnections.length;
 
   return (
     <div className="space-y-4">
@@ -154,51 +153,96 @@ const ConnectionMatrix = () => {
         <span className="text-lg">🔗</span> 콘텐츠 연결 매트릭스
       </h3>
 
-      <div className="bg-slate-50 rounded-xl p-4 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-200">
-              <th className="text-left py-2 px-3 text-slate-600">From</th>
-              <th className="text-left py-2 px-3 text-slate-600">To</th>
-              <th className="text-left py-2 px-3 text-slate-600">Type</th>
-              <th className="text-center py-2 px-3 text-slate-600">연관성</th>
-              <th className="text-left py-2 px-3 text-slate-600">추천 문구</th>
-            </tr>
-          </thead>
-          <tbody>
-            {testContentConnections.slice(0, 8).map((conn, idx) => (
-              <tr key={idx} className="border-b border-slate-100">
-                <td className="py-2 px-3 font-medium text-slate-800">{conn.from}</td>
-                <td className="py-2 px-3 text-slate-600">{conn.to}</td>
-                <td className="py-2 px-3">
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                    conn.type === 'test' ? 'bg-indigo-100 text-indigo-700' :
-                    conn.type === 'quiz' ? 'bg-amber-100 text-amber-700' :
-                    'bg-green-100 text-green-700'
-                  }`}>
-                    {conn.type}
-                  </span>
-                </td>
-                <td className="py-2 px-3 text-center">
-                  <div className="flex justify-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <div
-                        key={n}
-                        className={`w-2 h-2 rounded-full ${
-                          n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </td>
-                <td className="py-2 px-3 text-slate-500 text-xs">{conn.reason}</td>
+      <div className="space-y-4">
+        <div className="bg-slate-50 rounded-xl p-4 overflow-x-auto">
+          <p className="text-xs font-bold text-slate-600 mb-2">테스트 → 퀴즈/투표</p>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="text-left py-2 px-3 text-slate-600">From</th>
+                <th className="text-left py-2 px-3 text-slate-600">To</th>
+                <th className="text-left py-2 px-3 text-slate-600">Type</th>
+                <th className="text-center py-2 px-3 text-slate-600">연관성</th>
+                <th className="text-left py-2 px-3 text-slate-600">추천 문구</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <p className="text-xs text-slate-400 mt-2 text-center">
-          총 {testContentConnections.length + contentTestConnections.length}개 연결 정의
-        </p>
+            </thead>
+            <tbody>
+              {testContentConnections.map((conn, idx) => (
+                <tr key={idx} className="border-b border-slate-100">
+                  <td className="py-2 px-3 font-medium text-slate-800">{conn.from}</td>
+                  <td className="py-2 px-3 text-slate-600">{conn.to}</td>
+                  <td className="py-2 px-3">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                        conn.type === 'quiz'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-green-100 text-green-700'
+                      }`}
+                    >
+                      {conn.type}
+                    </span>
+                  </td>
+                  <td className="py-2 px-3 text-center">
+                    <div className="flex justify-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <div
+                          key={n}
+                          className={`w-2 h-2 rounded-full ${
+                            n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </td>
+                  <td className="py-2 px-3 text-slate-500 text-xs">{conn.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="bg-slate-50 rounded-xl p-4 overflow-x-auto">
+          <p className="text-xs font-bold text-slate-600 mb-2">퀴즈/투표 → 테스트</p>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="text-left py-2 px-3 text-slate-600">From</th>
+                <th className="text-left py-2 px-3 text-slate-600">To</th>
+                <th className="text-left py-2 px-3 text-slate-600">Type</th>
+                <th className="text-center py-2 px-3 text-slate-600">연관성</th>
+                <th className="text-left py-2 px-3 text-slate-600">추천 문구</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contentTestConnections.map((conn, idx) => (
+                <tr key={idx} className="border-b border-slate-100">
+                  <td className="py-2 px-3 font-medium text-slate-800">{conn.from}</td>
+                  <td className="py-2 px-3 text-slate-600">{conn.to}</td>
+                  <td className="py-2 px-3">
+                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+                      {conn.type}
+                    </span>
+                  </td>
+                  <td className="py-2 px-3 text-center">
+                    <div className="flex justify-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <div
+                          key={n}
+                          className={`w-2 h-2 rounded-full ${
+                            n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </td>
+                  <td className="py-2 px-3 text-slate-500 text-xs">{conn.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-xs text-slate-400 text-center">총 {totalConnections}개 연결 정의</p>
       </div>
     </div>
   );

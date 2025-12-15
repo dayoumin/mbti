@@ -7,6 +7,7 @@ import { CHEMI_CONSTANTS } from '../data/constants';
 import { matchResultLabel } from '../data/utils';
 import { resultService } from '../services/ResultService';
 import ResultRankingView from '../components/ResultRankingView';
+import RankingTab from '../components/RankingTab';
 import Dashboard from '../components/Dashboard';
 import ShareCard from '../components/ShareCard';
 import { FullProfile } from '../components/MyProfile';
@@ -16,6 +17,8 @@ import FeedbackComments from '../components/FeedbackComments';
 import FunFactsCard from '../components/FunFactsCard';
 import BottomNav from '../components/BottomNav';
 import Sidebar from '../components/Sidebar';
+import { nextActionService } from '../services/NextActionService';
+import { NextActionInline } from '../components/NextActionCard';
 import * as Icons from '../components/Icons';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
@@ -567,9 +570,7 @@ export default function Home() {
             )}
 
             {view === 'dashboard' && showRanking && (
-                <ResultRankingView
-                    testType={null}
-                    viewMode="preview"
+                <RankingTab
                     onClose={() => {
                         setShowRanking(false);
                         setActiveNavTab('home');
