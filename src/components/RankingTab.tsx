@@ -8,10 +8,7 @@ import {
   ChevronLeft,
   Trophy,
   Medal,
-  Crown,
   Star,
-  TrendingUp,
-  Users,
   Sparkles,
   ChevronRight,
   BarChart3,
@@ -217,6 +214,9 @@ function RankCard({
   const data = CHEMI_DATA[test.key] as SubjectData | undefined;
   if (!data) return null;
 
+  // 내 결과가 있으면 카테고리별 순위 계산
+  const myRanking = myResult ? calculateMyRanking(test.key, myResult.resultName) : null;
+
   return (
     <button
       onClick={onClick}
@@ -231,10 +231,31 @@ function RankCard({
             {data.title.replace(' 테스트', '').replace(' 매칭', '')} 랭킹
           </h3>
           {myResult ? (
-            <p className="text-xs text-emerald-600 flex items-center gap-1">
-              <Star className="w-3 h-3 fill-emerald-500" />
-              내 결과: {myResult.resultEmoji} {myResult.resultName}
-            </p>
+            <div>
+              <p className="text-xs text-emerald-600 flex items-center gap-1">
+                <Star className="w-3 h-3 fill-emerald-500" />
+                내 결과: {myResult.resultEmoji} {myResult.resultName}
+              </p>
+              {/* 카테고리별 순위 미리보기 */}
+              {myRanking && myRanking.categoryRanks.length > 0 && (
+                <div className="flex gap-2 mt-1">
+                  {myRanking.categoryRanks.slice(0, 3).map((rank) => (
+                    <span
+                      key={rank.category}
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                        rank.rank === 1
+                          ? 'bg-amber-100 text-amber-700'
+                          : rank.rank <= 3
+                          ? 'bg-indigo-50 text-indigo-600'
+                          : 'bg-gray-100 text-gray-500'
+                      }`}
+                    >
+                      {rank.emoji} {rank.rank}위
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           ) : (
             <p className="text-xs text-gray-400">테스트 후 내 순위 확인</p>
           )}
