@@ -327,24 +327,38 @@ const ContentActions = ({ testType, onQuizClick, onPollClick }) => {
     );
 };
 
-// Next Test Recommendation Card - Compact
+// Next Test Recommendation Card - Compact (개인화 추천 사용)
 const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
     const [recommendation, setRecommendation] = useState(null);
     const [completedCount, setCompletedCount] = useState(0);
+    const [incompleteCount, setIncompleteCount] = useState(0);
 
     useEffect(() => {
         const loadRecommendation = async () => {
-            const rec = await resultService.getRecommendedTest();
             const completed = await resultService.getCompletedTests();
+            const incomplete = await resultService.getIncompleteTests();
             setCompletedCount(completed.length);
+            setIncompleteCount(incomplete.length);
 
-            if (rec && rec.testType !== currentTest) {
-                setRecommendation(rec);
+            // NextActionService의 개인화 추천 사용
+            const personalizedAction = nextActionService.getPersonalizedTestRecommendation(
+                currentTest,
+                completed,
+                incomplete.filter(t => t !== currentTest)
+            );
+
+            if (personalizedAction && personalizedAction.targetId) {
+                setRecommendation({
+                    testType: personalizedAction.targetId,
+                    reason: incomplete.includes(personalizedAction.targetId) ? 'new' : 'retest',
+                    label: personalizedAction.label,
+                    description: personalizedAction.description,
+                });
             } else {
-                const incomplete = await resultService.getIncompleteTests();
-                const other = incomplete.find(t => t !== currentTest);
-                if (other) {
-                    setRecommendation({ testType: other, reason: 'new' });
+                // 폴백: 기존 로직
+                const rec = await resultService.getRecommendedTest();
+                if (rec && rec.testType !== currentTest) {
+                    setRecommendation(rec);
                 }
             }
         };
@@ -360,6 +374,14 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
 
     const IconComponent = Icons[config.icon];
 
+    // 개인화 추천 메시지 결정
+    const getRecommendationMessage = () => {
+        if (recommendation.reason === 'retest') return '다시 해볼까요?';
+        if (recommendation.description) return recommendation.description;
+        if (incompleteCount > 0) return `${incompleteCount}개 테스트가 남았어요`;
+        return '다음 추천';
+    };
+
     return (
         <div className="mt-5 w-full">
             <div className="p-0.5 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-xl border border-white/60">
@@ -367,10 +389,10 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                            {recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 추천'}
+                            {recommendation.label || (recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 추천')}
                         </span>
                         <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
-                            {completedCount}개 완료
+                            {completedCount}/{completedCount + incompleteCount} 완료
                         </span>
                     </div>
 
@@ -385,7 +407,9 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
                         )}
                         <div className="flex-1 min-w-0">
                             <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
-                            <p className="text-[10px] text-slate-400 truncate">{data.subtitle}</p>
+                            <p className="text-[10px] text-slate-400 truncate">
+                                {recommendation.reason === 'new' ? '아직 안 해본 테스트예요!' : data.subtitle}
+                            </p>
                         </div>
                         <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all flex-shrink-0">
                             <ArrowRight className="w-3 h-3" />

@@ -47,6 +47,9 @@ export interface RecommendationContext {
   // 개인화 정보 (선택적)
   completedTests?: string[];   // 완료한 테스트 목록
   incompleteTests?: string[];  // 미완료 테스트 목록
+  // 스트릭/시간대 정보 (선택적)
+  streakCount?: number;        // 연속 참여 일수
+  currentHour?: number;        // 현재 시간 (0-23)
 }
 
 // ============================================================================
@@ -671,6 +674,134 @@ class NextActionService {
         icon: '👥',
         ctaText: '비교하기',
       });
+    }
+
+    return actions;
+  }
+
+  // ============================================================================
+  // 스트릭/시간대 기반 추천 메서드
+  // ============================================================================
+
+  /**
+   * 스트릭 기반 특별 추천
+   * - 3일 연속: 퀴즈 추천 (가벼운 참여)
+   * - 7일 연속: 새 테스트 추천 (도전 유도)
+   * - 14일 연속: 프로필 공유 추천 (성취감)
+   */
+  getStreakBonusAction(streakCount: number): NextAction | null {
+    if (streakCount >= 14) {
+      return {
+        type: 'share',
+        priority: 'primary',
+        label: '2주 연속 달성!',
+        description: '대단해요! 친구들에게 자랑해보세요',
+        icon: '🏆',
+        ctaText: '공유하기',
+      };
+    }
+
+    if (streakCount >= 7) {
+      return {
+        type: 'test',
+        priority: 'primary',
+        label: '1주 연속 보너스',
+        description: '새로운 테스트에 도전해보세요!',
+        icon: '🔥',
+        ctaText: '테스트하기',
+      };
+    }
+
+    if (streakCount >= 3) {
+      return {
+        type: 'quiz',
+        priority: 'primary',
+        label: '3일 연속 보너스',
+        description: '오늘의 퀴즈로 연속 기록 유지!',
+        icon: '⚡',
+        ctaText: '퀴즈 풀기',
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * 시간대별 추천
+   * - 아침(6-9): 가벼운 퀴즈
+   * - 낮(9-18): 테스트
+   * - 저녁(18-22): 투표/커뮤니티
+   * - 밤(22-6): 짧은 퀴즈
+   */
+  getTimeBasedAction(hour: number): NextAction {
+    // 아침 (6-9)
+    if (hour >= 6 && hour < 9) {
+      return {
+        type: 'quiz',
+        priority: 'secondary',
+        label: '아침 퀴즈',
+        description: '상쾌한 아침, 간단한 퀴즈로 시작!',
+        icon: '🌅',
+        ctaText: '퀴즈 풀기',
+      };
+    }
+
+    // 낮 (9-18)
+    if (hour >= 9 && hour < 18) {
+      return {
+        type: 'test',
+        priority: 'secondary',
+        label: '오늘의 테스트',
+        description: '새로운 나를 발견해보세요',
+        icon: '☀️',
+        ctaText: '테스트하기',
+      };
+    }
+
+    // 저녁 (18-22)
+    if (hour >= 18 && hour < 22) {
+      return {
+        type: 'poll',
+        priority: 'secondary',
+        label: '저녁 투표',
+        description: '다른 사람들의 생각이 궁금해요',
+        icon: '🌙',
+        ctaText: '투표하기',
+      };
+    }
+
+    // 밤 (22-6)
+    return {
+      type: 'quiz',
+      priority: 'secondary',
+      label: '밤 퀴즈',
+      description: '자기 전 가볍게 한 문제!',
+      icon: '🌜',
+      ctaText: '퀴즈 풀기',
+    };
+  }
+
+  /**
+   * 스트릭/시간대 정보가 있을 때 추가 액션 반환
+   */
+  getContextualBonusActions(context: RecommendationContext): NextAction[] {
+    const actions: NextAction[] = [];
+
+    // 스트릭 보너스
+    if (context.streakCount && context.streakCount >= 3) {
+      const streakAction = this.getStreakBonusAction(context.streakCount);
+      if (streakAction) {
+        actions.push(streakAction);
+      }
+    }
+
+    // 시간대별 추천 (선택적으로 추가)
+    if (context.currentHour !== undefined) {
+      const timeAction = this.getTimeBasedAction(context.currentHour);
+      // 중복 방지: 같은 타입이 없을 때만 추가
+      if (!actions.some(a => a.type === timeAction.type)) {
+        actions.push(timeAction);
+      }
     }
 
     return actions;

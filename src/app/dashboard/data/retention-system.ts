@@ -511,7 +511,7 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
         task: '사용자 선호도 기반 추천',
         endpoint: 'test_result',
         priority: 'medium',
-        description: '완료한 테스트 기반 맞춤 추천'
+        description: '완료한 테스트 기반 맞춤 추천 (NextTestRecommendation에 적용 완료)'
       },
       {
         task: '스트릭 연동 추천',
