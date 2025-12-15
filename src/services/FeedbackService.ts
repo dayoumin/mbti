@@ -9,6 +9,8 @@
  * 패턴: ResultService와 동일 (익명 → 회원 전환 지원)
  */
 
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
 // ========== 타입 정의 ==========
 
 export interface FeedbackData {
@@ -60,27 +62,28 @@ interface SaveResult {
 
 // ========== Supabase 클라이언트 ==========
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let supabaseClient: any = null;
+let supabaseClient: SupabaseClient | null = null;
 
-async function getSupabaseClient() {
+function getSupabaseClient(): SupabaseClient | null {
   if (supabaseClient) return supabaseClient;
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  console.log('[FeedbackService] 환경변수 체크:', {
+    hasUrl: !!url,
+    hasKey: !!key,
+    urlPrefix: url ? url.substring(0, 30) : 'empty'
+  });
+
+  if (!url || !key) {
+    console.log('[FeedbackService] Supabase 환경변수 없음 - localStorage 모드');
     return null;
   }
 
-  try {
-    const moduleName = '@supabase/supabase-js';
-    const { createClient } = await import(/* webpackIgnore: true */ moduleName);
-    supabaseClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
-    return supabaseClient;
-  } catch {
-    return null;
-  }
+  console.log('[FeedbackService] Supabase 클라이언트 생성');
+  supabaseClient = createClient(url, key);
+  return supabaseClient;
 }
 
 async function getAuthedUserId(supabase: unknown): Promise<string | null> {
@@ -113,7 +116,7 @@ class FeedbackServiceClass {
   // ========== 피드백 ==========
 
   async saveFeedback(data: FeedbackData): Promise<SaveResult> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       return this.saveToLocalStorage('mbti_feedback', data);
@@ -143,7 +146,7 @@ class FeedbackServiceClass {
   }
 
   async getFeedbackStats(testType: string): Promise<{ accurate: number; inaccurate: number; total: number }> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       return { accurate: 0, inaccurate: 0, total: 0 };
@@ -168,7 +171,7 @@ class FeedbackServiceClass {
   }
 
   async getComments(testType: string, resultName?: string, limit: number = 10): Promise<FeedbackComment[]> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       // localStorage 폴백
@@ -232,7 +235,7 @@ class FeedbackServiceClass {
   // ========== 투표 ==========
 
   async savePollResponse(data: PollResponseData): Promise<SaveResult> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       return this.savePollToLocalStorage(data);
@@ -263,7 +266,7 @@ class FeedbackServiceClass {
   }
 
   async getPollStats(pollId: string): Promise<PollStats> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       return { pollId, totalVotes: 0, options: [] };
@@ -298,7 +301,7 @@ class FeedbackServiceClass {
   }
 
   async hasVoted(pollId: string): Promise<boolean> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       const stored = this.getFromLocalStorage('mbti_poll_responses') as { pollId?: string }[];
@@ -323,7 +326,7 @@ class FeedbackServiceClass {
   // ========== 퀴즈 ==========
 
   async saveQuizResponse(data: QuizResponseData): Promise<SaveResult> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       return this.saveToLocalStorage('mbti_quiz_responses', data);
@@ -354,7 +357,7 @@ class FeedbackServiceClass {
   }
 
   async getQuizStats(quizId: string): Promise<QuizStats> {
-    const supabase = await getSupabaseClient();
+    const supabase = getSupabaseClient();
 
     if (!supabase) {
       return { quizId, totalAttempts: 0, correctRate: 0, byQuestion: [] };
