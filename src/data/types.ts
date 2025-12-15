@@ -21,6 +21,38 @@ export interface Dimension {
   desc: string;
 }
 
+// 자동 랭킹 생성용 메타데이터
+export interface ResultMeta {
+  // === 환경 적응 (1-5, 높을수록 잘 견딤) ===
+  heatTolerance?: number;      // 더위 내성
+  coldTolerance?: number;      // 추위 내성
+  humidityTolerance?: number;  // 습도 내성 (식물용)
+
+  // === 양육/관리 (1-5) ===
+  beginnerFriendly?: number;   // 초보 친화도 (높을수록 쉬움)
+  careLevel?: number;          // 관리 난이도 (높을수록 손이 많이 감)
+  monthlyCoast?: 'low' | 'medium' | 'high';  // 월 유지비
+
+  // === 공간/환경 ===
+  spaceNeeded?: 'small' | 'medium' | 'large';  // 필요 공간
+  noiseLevel?: 'silent' | 'low' | 'medium' | 'high';  // 소음 정도
+
+  // === 라이프스타일 태그 ===
+  suitableFor?: string[];      // ["1인가구", "가족", "노인", "아이", "직장인"]
+  notSuitableFor?: string[];   // ["알레르기", "좁은공간"]
+
+  // === 계절별 주의사항 ===
+  seasonalTips?: {
+    spring?: string;
+    summer?: string;
+    fall?: string;
+    winter?: string;
+  };
+
+  // === 특수 태그 (자유롭게 확장 가능) ===
+  tags?: string[];  // ["공기정화", "야행성", "저소음", "저관리"]
+}
+
 // 품종/결과 상세 정보 (세부 테스트용)
 export interface BreedDetailInfo {
   // 기본 정보
@@ -71,6 +103,7 @@ export interface ResultLabel {
   matchPoints?: string[];
   nextTest?: string;  // 세부 테스트 연결 (예: petMatch → dogBreed)
   detailInfo?: BreedDetailInfo;  // 품종 상세 정보 (세부 테스트용)
+  meta?: ResultMeta;  // 자동 랭킹 생성용 메타데이터
 }
 
 export interface SubjectData {

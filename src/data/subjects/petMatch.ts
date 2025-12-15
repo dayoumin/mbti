@@ -230,7 +230,25 @@ export const petMatchData: SubjectData = {
             "interpretation": "활동적이고 교감을 중요시하는 당신에게 강아지는 최고의 파트너예요! 매일 산책하고 함께 놀아주면 세상에서 가장 행복해하는 친구가 될 거예요. 당신의 사랑에 무한한 충성심으로 보답할 거예요.",
             "guide": "매일 30분~1시간 산책이 필요해요. 훈련과 사회화가 중요해요. 품종에 따라 성격과 관리 난이도가 많이 달라요. 분리불안에 주의하세요.",
             "matchPoints": ["매일 산책 가능한 분", "적극적인 교감을 원하는 분", "규칙적인 생활을 하는 분", "넓은 공간이 있으면 더 좋아요"],
-            "nextTest": "dogBreed"
+            "nextTest": "dogBreed",
+            "meta": {
+                "heatTolerance": 2,       // 대체로 더위에 약함 (품종별 차이 큼)
+                "coldTolerance": 4,       // 대체로 추위에 강함
+                "beginnerFriendly": 3,    // 품종에 따라 다름
+                "careLevel": 4,           // 관리 많이 필요
+                "monthlyCoast": "high",
+                "spaceNeeded": "large",
+                "noiseLevel": "high",
+                "suitableFor": ["가족", "마당있는집", "활동적인사람", "재택근무"],
+                "notSuitableFor": ["장시간외출", "원룸", "층간소음민감"],
+                "seasonalTips": {
+                    "spring": "털갈이 시즌! 빗질 자주 해주세요",
+                    "summer": "열사병 주의, 산책은 아침/저녁에",
+                    "fall": "털갈이 시즌, 야외활동 최적기",
+                    "winter": "소형견은 옷 입히기, 발바닥 동상 주의"
+                },
+                "tags": ["활동적", "교감높음", "훈련필요", "분리불안주의"]
+            }
         },
         {
             "name": "고양이",
@@ -242,7 +260,25 @@ export const petMatchData: SubjectData = {
             "interpretation": "바쁜 생활 속에서도 함께할 수 있는 고양이가 딱이에요! 산책이 필요 없고 혼자서도 잘 지내요. 당신이 집에 오면 은근슬쩍 다가와 곁에 앉는 고양이의 매력에 빠질 거예요.",
             "guide": "실내 생활만으로 충분해요. 화장실 청소는 매일 해주세요! 스크래처와 캣타워를 준비해주면 좋아요. 물은 항상 신선하게.",
             "matchPoints": ["바쁜 직장인에게 추천", "산책이 어려운 분", "적당한 독립성을 원하는 분", "조용한 환경을 원하는 분"],
-            "nextTest": "catBreed"
+            "nextTest": "catBreed",
+            "meta": {
+                "heatTolerance": 3,       // 보통
+                "coldTolerance": 3,       // 보통 (장모종은 추위에 강함)
+                "beginnerFriendly": 4,    // 비교적 쉬움
+                "careLevel": 3,           // 중간
+                "monthlyCoast": "medium",
+                "spaceNeeded": "medium",
+                "noiseLevel": "low",
+                "suitableFor": ["1인가구", "직장인", "아파트", "조용한환경"],
+                "notSuitableFor": ["알레르기", "잦은여행"],
+                "seasonalTips": {
+                    "spring": "털갈이 시작, 빗질과 청소 빈도 높이기",
+                    "summer": "시원한 곳 확보, 물 자주 갈아주기",
+                    "fall": "털갈이 시즌, 모구토 주의",
+                    "winter": "따뜻한 쉼터 마련, 난방 건조함 주의"
+                },
+                "tags": ["독립적", "저소음", "실내생활", "직장인추천"]
+            }
         },
         {
             "name": "소동물",
@@ -254,7 +290,25 @@ export const petMatchData: SubjectData = {
             "interpretation": "작은 공간에서도 키울 수 있는 소동물이 잘 맞아요! 햄스터, 토끼, 기니피그 등 귀여운 친구들이 있어요. 케이지에서 지내며 관리도 비교적 간단해서 첫 반려동물로 추천해요.",
             "guide": "종류마다 수명과 관리법이 달라요. 햄스터는 야행성이라 밤에 활동해요. 온도 관리가 중요하고, 케이지 청소는 주기적으로 해주세요.",
             "matchPoints": ["첫 반려동물로 추천", "작은 공간에서 키우고 싶은 분", "귀여운 동물을 바라보고 싶은 분", "관리가 간단한 동물을 원하는 분"],
-            "nextTest": "smallPet"
+            "nextTest": "smallPet",
+            "meta": {
+                "heatTolerance": 2,       // 더위에 약함 (특히 햄스터)
+                "coldTolerance": 2,       // 추위에도 약함
+                "beginnerFriendly": 5,    // 초보자에게 추천
+                "careLevel": 2,           // 관리 적음
+                "monthlyCoast": "low",
+                "spaceNeeded": "small",
+                "noiseLevel": "low",
+                "suitableFor": ["1인가구", "원룸", "초보자", "아이"],
+                "notSuitableFor": ["장기여행", "극한온도환경"],
+                "seasonalTips": {
+                    "spring": "번식기, 암수 분리 확인",
+                    "summer": "에어컨 필수! 25도 이상이면 위험",
+                    "fall": "먹이 저장 본능, 신선도 확인",
+                    "winter": "동면 주의, 실온 유지 필수"
+                },
+                "tags": ["저비용", "소공간", "초보추천", "온도관리중요"]
+            }
         },
         {
             "name": "관상어",
@@ -266,7 +320,25 @@ export const petMatchData: SubjectData = {
             "interpretation": "직접 교감보다 바라보는 힐링을 원한다면 관상어가 딱이에요! 털 알레르기 걱정 없고, 인테리어 효과도 있어요. 수족관 꾸미는 재미도 쏠쏠해요.",
             "guide": "어종마다 수질, 온도, 합사 조건이 달라요. 초보자는 베타, 구피 같은 쉬운 어종부터 시작하세요. 물갈이와 여과기 관리가 중요해요.",
             "matchPoints": ["바라보는 힐링을 원하는 분", "털 알레르기가 있는 분", "인테리어 효과도 원하는 분", "스킨십이 필요 없는 분"],
-            "nextTest": "fishType"
+            "nextTest": "fishType",
+            "meta": {
+                "heatTolerance": 3,       // 수온 조절로 관리 (어종별 차이)
+                "coldTolerance": 3,       // 수온 조절로 관리
+                "beginnerFriendly": 3,    // 수질 관리 필요
+                "careLevel": 3,           // 중간 (물갈이, 여과기)
+                "monthlyCoast": "medium",
+                "spaceNeeded": "small",
+                "noiseLevel": "silent",
+                "suitableFor": ["알레르기", "조용한환경", "인테리어", "1인가구"],
+                "notSuitableFor": ["스킨십원함", "잦은이사"],
+                "seasonalTips": {
+                    "spring": "수온 변화 주의, 서서히 조절",
+                    "summer": "수온 상승 주의, 냉각팬 고려",
+                    "fall": "수온 서서히 낮추기, 먹이량 조절",
+                    "winter": "히터 필수, 수온 급변 방지"
+                },
+                "tags": ["무소음", "알레르기OK", "인테리어", "관찰형"]
+            }
         },
         {
             "name": "새",
@@ -278,7 +350,25 @@ export const petMatchData: SubjectData = {
             "interpretation": "새는 정말 특별한 반려동물이에요! 앵무새는 말을 배우고, 카나리아는 아름다운 노래를 들려줘요. 지능이 높아 교감의 즐거움이 크지만 그만큼 관심이 필요해요.",
             "guide": "매일 케이지 밖에서 교감 시간을 가져야 해요. 소음이 있을 수 있어 이웃에 양해를 구하세요. 수명이 긴 종(앵무새)은 20~50년도 살아요!",
             "matchPoints": ["대화하는 반려동물을 원하는 분", "독특한 반려동물을 원하는 분", "아름다운 노래를 듣고 싶은 분", "소음에 괜찮은 환경"],
-            "nextTest": "birdType"
+            "nextTest": "birdType",
+            "meta": {
+                "heatTolerance": 3,       // 보통
+                "coldTolerance": 2,       // 추위에 약함
+                "beginnerFriendly": 2,    // 관리 어려움
+                "careLevel": 4,           // 관리 많이 필요
+                "monthlyCoast": "medium",
+                "spaceNeeded": "medium",
+                "noiseLevel": "high",
+                "suitableFor": ["단독주택", "재택근무", "교감원함"],
+                "notSuitableFor": ["층간소음민감", "바쁜직장인", "아파트"],
+                "seasonalTips": {
+                    "spring": "번식기, 발정 행동 주의",
+                    "summer": "환기 중요, 직사광선 피하기",
+                    "fall": "털갈이 시즌, 영양 보충",
+                    "winter": "보온 필수, 외풍 차단"
+                },
+                "tags": ["교감높음", "소음있음", "장수", "지능적"]
+            }
         },
         {
             "name": "파충류",
@@ -290,7 +380,25 @@ export const petMatchData: SubjectData = {
             "interpretation": "파충류는 조용하고 독특한 매력이 있어요! 레오파드 게코, 옥수수뱀, 거북이 등 다양한 종류가 있어요. 매일 먹이를 주지 않아도 되고, 소음이 없어 아파트에서도 키우기 좋아요.",
             "guide": "온도와 습도 관리가 중요해요. 종류에 따라 살아있는 먹이(귀뚜라미 등)가 필요할 수 있어요. 탈출 방지에 신경 쓰세요!",
             "matchPoints": ["독특한 반려동물을 원하는 분", "조용한 동물을 원하는 분", "털 알레르기가 있는 분", "관리에 투자할 의향이 있는 분"],
-            "nextTest": "reptileType"
+            "nextTest": "reptileType",
+            "meta": {
+                "heatTolerance": 5,       // 더위에 강함 (열대성)
+                "coldTolerance": 1,       // 추위에 매우 약함 (냉혈동물)
+                "beginnerFriendly": 2,    // 초보자 어려움
+                "careLevel": 4,           // 환경 셋팅 중요
+                "monthlyCoast": "medium",
+                "spaceNeeded": "small",
+                "noiseLevel": "silent",
+                "suitableFor": ["알레르기", "독특함추구", "조용한환경"],
+                "notSuitableFor": ["스킨십원함", "생먹이거부", "온도관리어려움"],
+                "seasonalTips": {
+                    "spring": "활동량 증가, 먹이량 조절",
+                    "summer": "환기 필요, 과열 주의",
+                    "fall": "먹이량 감소, 동면 준비 종 확인",
+                    "winter": "보온등/히팅패드 필수, 온도 꼭 체크"
+                },
+                "tags": ["무소음", "알레르기OK", "독특함", "온도관리필수"]
+            }
         }
     ]
 };

@@ -257,7 +257,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-100",
             "interpretation": "당신은 식물을 적극적으로 돌볼 의지가 있고 넓은 공간을 가지고 있네요. 몬스테라는 큰 잎사귀로 공간을 화사하게 채워주고, 관리도 비교적 쉬운 편이에요. 간접광에서도 잘 자라서 밝은 실내 어디든 잘 어울려요.",
             "guide": "물은 겉흙이 마르면 흠뻑 주세요. 잎이 커지면 지지대를 세워주면 더 예쁘게 자라요. 잎에 먼지가 쌓이면 젖은 천으로 닦아주세요.",
-            "matchPoints": ["넓은 공간이 있는 분", "이국적인 인테리어를 원하는 분", "주 1회 물주기 가능한 분", "공기정화 효과를 원하는 분"]
+            "matchPoints": ["넓은 공간이 있는 분", "이국적인 인테리어를 원하는 분", "주 1회 물주기 가능한 분", "공기정화 효과를 원하는 분"],
+            "meta": {
+                "heatTolerance": 4,        // 더위에 강함
+                "coldTolerance": 2,        // 추위에 약함 (10도 이하 주의)
+                "humidityTolerance": 4,    // 습도 좋아함
+                "beginnerFriendly": 4,     // 비교적 쉬움
+                "careLevel": 3,            // 중간
+                "spaceNeeded": "large",
+                "suitableFor": ["넓은공간", "밝은간접광", "초보자"],
+                "notSuitableFor": ["좁은공간", "어두운곳"],
+                "seasonalTips": {
+                    "spring": "성장기 시작, 분갈이 적기",
+                    "summer": "성장 활발, 물주기 늘리기, 직사광선 피하기",
+                    "fall": "성장 둔화, 물주기 줄이기",
+                    "winter": "휴면기, 물 최소화, 10도 이상 유지"
+                },
+                "tags": ["공기정화", "대형식물", "인테리어", "간접광OK"]
+            }
         },
         {
             "name": "스투키",
@@ -268,7 +285,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-50",
             "interpretation": "바쁜 일상에 식물까지 신경 쓰기 어렵다면 스투키가 딱이에요! 한 달에 한 번 물만 줘도 건강하게 자라고, 공기정화 능력도 뛰어나요. 방치해도 잘 살아남는 강인한 식물이에요.",
             "guide": "정말 가끔 물주세요 (월 1-2회). 과습이 가장 큰 적이에요. 통풍이 잘 되는 곳에 두면 더 좋아요.",
-            "matchPoints": ["초보 식집사", "자주 집을 비우는 분", "물주기 자주 잊는 분", "사무실에 두고 싶은 분"]
+            "matchPoints": ["초보 식집사", "자주 집을 비우는 분", "물주기 자주 잊는 분", "사무실에 두고 싶은 분"],
+            "meta": {
+                "heatTolerance": 5,        // 더위에 강함
+                "coldTolerance": 2,        // 추위에 약함 (10도 이하 주의)
+                "humidityTolerance": 2,    // 건조 선호
+                "beginnerFriendly": 5,     // 최고로 쉬움
+                "careLevel": 1,            // 관리 거의 필요 없음
+                "spaceNeeded": "small",
+                "suitableFor": ["초보자", "사무실", "건조한환경", "방치OK"],
+                "notSuitableFor": ["과습환경"],
+                "seasonalTips": {
+                    "spring": "물주기 시작, 월 1회",
+                    "summer": "통풍 중요, 직사광선 피하기",
+                    "fall": "물주기 줄이기",
+                    "winter": "물 거의 안 줘도 됨, 10도 이상 유지"
+                },
+                "tags": ["공기정화", "초보추천", "저관리", "사무실추천", "죽이기어려움"]
+            }
         },
         {
             "name": "포토스",
@@ -279,7 +313,24 @@ export const plantData: SubjectData = {
             "color": "bg-emerald-100",
             "interpretation": "어두운 공간에서도 포토스는 건강하게 자라요. 덩굴처럼 뻗어나가는 모습이 예쁘고, NASA 공기정화 식물 목록에도 있어요. 물꽂이로도 쉽게 번식하니 친구에게 나눠주기도 좋아요.",
             "guide": "물은 흙이 마르면 주세요. 줄기가 길어지면 잘라서 물에 꽂으면 뿌리가 나요. 행잉이나 선반 위에 두면 예뻐요.",
-            "matchPoints": ["어두운 방에 식물을 원하는 분", "덩굴 식물을 좋아하는 분", "쉽게 번식시키고 싶은 분", "공기정화가 필요한 분"]
+            "matchPoints": ["어두운 방에 식물을 원하는 분", "덩굴 식물을 좋아하는 분", "쉽게 번식시키고 싶은 분", "공기정화가 필요한 분"],
+            "meta": {
+                "heatTolerance": 4,        // 더위에 강함
+                "coldTolerance": 2,        // 추위에 약함
+                "humidityTolerance": 4,    // 습도 좋아함
+                "beginnerFriendly": 5,     // 매우 쉬움
+                "careLevel": 2,            // 관리 쉬움
+                "spaceNeeded": "small",
+                "suitableFor": ["어두운방", "초보자", "행잉", "수경재배"],
+                "notSuitableFor": ["직사광선"],
+                "seasonalTips": {
+                    "spring": "성장 시작, 가지치기 적기",
+                    "summer": "성장 활발, 물 자주",
+                    "fall": "성장 둔화",
+                    "winter": "물주기 줄이기, 10도 이상 유지"
+                },
+                "tags": ["공기정화", "초보추천", "저광OK", "행잉", "번식쉬움"]
+            }
         },
         {
             "name": "스킨답서스",
@@ -290,7 +341,24 @@ export const plantData: SubjectData = {
             "color": "bg-lime-100",
             "interpretation": "공간이 좁아도 걱정 없어요! 스킨답서스는 매달아 키우면 공간을 차지하지 않으면서도 분위기를 살려줘요. 관리도 쉽고 어두운 곳에서도 잘 자라요.",
             "guide": "창가에서 조금 떨어진 곳에서도 OK. 물은 2주에 한 번 정도. 너무 길어지면 잘라서 물꽂이로 번식 가능해요.",
-            "matchPoints": ["원룸이나 작은 공간", "행잉 인테리어를 원하는 분", "저조도 환경", "가끔 물주는 분"]
+            "matchPoints": ["원룸이나 작은 공간", "행잉 인테리어를 원하는 분", "저조도 환경", "가끔 물주는 분"],
+            "meta": {
+                "heatTolerance": 4,
+                "coldTolerance": 2,
+                "humidityTolerance": 3,
+                "beginnerFriendly": 5,
+                "careLevel": 1,
+                "spaceNeeded": "small",
+                "suitableFor": ["원룸", "저조도", "행잉", "초보자"],
+                "notSuitableFor": ["직사광선"],
+                "seasonalTips": {
+                    "spring": "성장 시작",
+                    "summer": "물 자주, 성장 활발",
+                    "fall": "물주기 줄이기",
+                    "winter": "10도 이상 유지, 물 줄이기"
+                },
+                "tags": ["저광OK", "행잉", "초보추천", "소공간", "번식쉬움"]
+            }
         },
         {
             "name": "다육이",
@@ -301,7 +369,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-100",
             "interpretation": "책상 위 작은 공간에 딱 맞는 아기자기한 다육이예요. 물을 자주 안 줘도 되고, 다양한 모양과 색깔로 수집하는 재미도 있어요. 미니멀한 인테리어에 잘 어울려요.",
             "guide": "물은 2-3주에 한 번, 완전히 마른 후에 주세요. 햇빛을 좋아하니 창가에 두면 좋아요. 과습 주의!",
-            "matchPoints": ["미니멀한 인테리어", "책상 위에 둘 식물", "수집하는 재미를 원하는 분", "물주기 드문 분"]
+            "matchPoints": ["미니멀한 인테리어", "책상 위에 둘 식물", "수집하는 재미를 원하는 분", "물주기 드문 분"],
+            "meta": {
+                "heatTolerance": 4,        // 더위에 강함
+                "coldTolerance": 2,        // 추위에 약함 (종류에 따라 다름)
+                "humidityTolerance": 1,    // 건조 필수!
+                "beginnerFriendly": 4,     // 쉬움 (과습만 주의)
+                "careLevel": 2,
+                "spaceNeeded": "small",
+                "suitableFor": ["책상", "창가", "수집", "건조한환경"],
+                "notSuitableFor": ["과습환경", "어두운곳"],
+                "seasonalTips": {
+                    "spring": "성장기, 분갈이 적기",
+                    "summer": "통풍 중요, 고온 주의 (휴면종 있음)",
+                    "fall": "성장기, 물주기 조절",
+                    "winter": "단수 또는 월 1회, 동해 주의"
+                },
+                "tags": ["미니", "수집", "저관리", "인테리어", "건조선호"]
+            }
         },
         {
             "name": "아레카야자",
@@ -312,7 +397,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-200",
             "interpretation": "햇빛 좋은 넓은 공간이 있다면 아레카야자로 휴양지 분위기를 만들어보세요! 공기정화와 가습 효과가 뛰어나고, 시원하게 뻗은 잎이 멋져요. 관리에 조금 신경 써야 해요.",
             "guide": "밝은 간접광에서 잘 자라요. 물은 겉흙이 마르면 주고, 잎에 분무도 해주세요. 통풍이 중요해요.",
-            "matchPoints": ["넓고 밝은 공간", "열대 인테리어를 원하는 분", "적극적인 관리 가능한 분", "가습 효과를 원하는 분"]
+            "matchPoints": ["넓고 밝은 공간", "열대 인테리어를 원하는 분", "적극적인 관리 가능한 분", "가습 효과를 원하는 분"],
+            "meta": {
+                "heatTolerance": 4,
+                "coldTolerance": 1,        // 추위에 매우 약함 (13도 이하 위험)
+                "humidityTolerance": 5,    // 높은 습도 좋아함
+                "beginnerFriendly": 2,     // 관리 어려움
+                "careLevel": 4,
+                "spaceNeeded": "large",
+                "suitableFor": ["넓은공간", "밝은간접광", "가습필요"],
+                "notSuitableFor": ["추운환경", "건조한환경", "초보자"],
+                "seasonalTips": {
+                    "spring": "성장 시작, 분갈이 적기",
+                    "summer": "성장 최성기, 물 충분히, 직사광선 주의",
+                    "fall": "물주기 줄이기 시작",
+                    "winter": "13도 이상 필수! 잎끝 갈변 주의, 가습"
+                },
+                "tags": ["공기정화", "가습효과", "대형식물", "열대", "인테리어"]
+            }
         },
         {
             "name": "산세베리아",
@@ -323,7 +425,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-100",
             "interpretation": "산세베리아는 밤에 산소를 방출해서 침실에 두기 좋아요. 강인해서 방치해도 잘 자라고, 모던한 느낌의 인테리어에 잘 어울려요. 초보자도 쉽게 키울 수 있어요.",
             "guide": "한 달에 1-2번 물주기. 과습만 피하면 거의 죽지 않아요. 직사광선보다 밝은 간접광이 좋아요.",
-            "matchPoints": ["침실에 둘 식물", "공기정화가 필요한 분", "모던한 인테리어", "초보 식집사"]
+            "matchPoints": ["침실에 둘 식물", "공기정화가 필요한 분", "모던한 인테리어", "초보 식집사"],
+            "meta": {
+                "heatTolerance": 5,
+                "coldTolerance": 2,        // 추위에 약함 (10도 이하 주의)
+                "humidityTolerance": 2,    // 건조 선호
+                "beginnerFriendly": 5,     // 최고로 쉬움
+                "careLevel": 1,
+                "spaceNeeded": "medium",
+                "suitableFor": ["침실", "사무실", "초보자", "건조한환경"],
+                "notSuitableFor": ["과습환경"],
+                "seasonalTips": {
+                    "spring": "성장 시작, 분갈이 가능",
+                    "summer": "성장기, 월 2회 물주기",
+                    "fall": "물주기 줄이기",
+                    "winter": "물 거의 안 줘도 됨, 10도 이상 유지"
+                },
+                "tags": ["공기정화", "야간산소", "침실추천", "초보추천", "죽이기어려움"]
+            }
         },
         {
             "name": "허브 (로즈마리/바질)",
@@ -334,7 +453,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-200",
             "interpretation": "요리에 직접 기른 허브를 넣는 로망이 있다면! 햇빛이 잘 드는 창가에서 허브를 키워보세요. 향기도 좋고 수확의 기쁨도 있어요. 꾸준한 관리가 필요해요.",
             "guide": "하루 6시간 이상 직사광선 필요. 물은 겉흙이 마르면 주세요. 자주 수확해야 더 풍성하게 자라요.",
-            "matchPoints": ["요리를 좋아하는 분", "실용적인 식물을 원하는 분", "햇빛 좋은 창가가 있는 분", "향기를 좋아하는 분"]
+            "matchPoints": ["요리를 좋아하는 분", "실용적인 식물을 원하는 분", "햇빛 좋은 창가가 있는 분", "향기를 좋아하는 분"],
+            "meta": {
+                "heatTolerance": 3,        // 종류에 따라 다름
+                "coldTolerance": 2,        // 대부분 추위에 약함 (로즈마리 제외)
+                "humidityTolerance": 3,
+                "beginnerFriendly": 2,     // 관리 어려움
+                "careLevel": 4,
+                "spaceNeeded": "small",
+                "suitableFor": ["요리", "남향창가", "향기좋아함"],
+                "notSuitableFor": ["어두운환경", "방치스타일"],
+                "seasonalTips": {
+                    "spring": "성장 시작, 파종 적기 (바질)",
+                    "summer": "성장 활발, 수확 자주, 물 충분히",
+                    "fall": "수확 마무리, 바질은 1년생 주의",
+                    "winter": "로즈마리는 실내로, 바질은 종료 또는 실내"
+                },
+                "tags": ["향기", "요리", "실용적", "직사광선필요", "수확가능"]
+            }
         },
         {
             "name": "홍콩야자",
@@ -345,7 +481,24 @@ export const plantData: SubjectData = {
             "color": "bg-green-100",
             "interpretation": "세련된 잎 모양으로 인테리어 포인트가 되는 홍콩야자예요. 공기정화 능력이 뛰어나고, 적당한 관리로 오래 키울 수 있어요. 거실의 코너를 멋지게 채워줄 거예요.",
             "guide": "밝은 간접광에서 잘 자라요. 물은 겉흙이 마르면 충분히 주세요. 분무로 습도 관리해주면 좋아요.",
-            "matchPoints": ["거실에 둘 큰 식물", "세련된 인테리어", "공기정화가 필요한 분", "중급 식집사"]
+            "matchPoints": ["거실에 둘 큰 식물", "세련된 인테리어", "공기정화가 필요한 분", "중급 식집사"],
+            "meta": {
+                "heatTolerance": 4,
+                "coldTolerance": 2,        // 추위에 약함 (10도 이하 주의)
+                "humidityTolerance": 4,    // 습도 좋아함
+                "beginnerFriendly": 3,     // 중간
+                "careLevel": 3,
+                "spaceNeeded": "large",
+                "suitableFor": ["거실", "밝은간접광", "중급자"],
+                "notSuitableFor": ["추운환경", "어두운곳"],
+                "seasonalTips": {
+                    "spring": "성장 시작, 분갈이 적기",
+                    "summer": "성장 활발, 물 충분히, 습도 유지",
+                    "fall": "물주기 줄이기",
+                    "winter": "10도 이상 유지, 물 줄이기, 갈잎 정리"
+                },
+                "tags": ["공기정화", "대형식물", "인테리어", "세련된", "거실추천"]
+            }
         },
         {
             "name": "칼라테아",
@@ -356,7 +509,24 @@ export const plantData: SubjectData = {
             "color": "bg-purple-100",
             "interpretation": "칼라테아의 화려한 무늬는 정말 예술작품 같아요! 습도 관리에 신경 써야 하지만, 그만큼 아름다운 잎을 선사해요. 밤에는 잎을 접는 특이한 습성도 있어요.",
             "guide": "높은 습도 필수! 자주 분무해주세요. 직사광선은 피하고 밝은 그늘에서. 정수된 물 사용 권장.",
-            "matchPoints": ["화려한 식물을 원하는 분", "습도 관리 가능한 분", "독특한 식물을 좋아하는 분", "중상급 식집사"]
+            "matchPoints": ["화려한 식물을 원하는 분", "습도 관리 가능한 분", "독특한 식물을 좋아하는 분", "중상급 식집사"],
+            "meta": {
+                "heatTolerance": 3,
+                "coldTolerance": 1,        // 추위에 매우 약함 (15도 이하 위험)
+                "humidityTolerance": 5,    // 높은 습도 필수!
+                "beginnerFriendly": 1,     // 어려움
+                "careLevel": 5,            // 관리 많이 필요
+                "spaceNeeded": "medium",
+                "suitableFor": ["습도관리가능", "화려한무늬선호", "상급자"],
+                "notSuitableFor": ["건조한환경", "초보자", "방치스타일"],
+                "seasonalTips": {
+                    "spring": "성장 시작, 습도 유지",
+                    "summer": "습도 높게 유지, 직사광선 절대 금지",
+                    "fall": "물주기 조절, 습도 계속 유지",
+                    "winter": "15도 이상 필수! 가습기 권장, 갈잎 주의"
+                },
+                "tags": ["화려한무늬", "고습도필요", "상급자용", "야간잎접힘", "관리어려움"]
+            }
         }
     ]
 };

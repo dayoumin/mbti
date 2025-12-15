@@ -10,8 +10,25 @@ import {
   Clock,
   BarChart3,
   ListOrdered,
+  Zap,
+  Thermometer,
+  Snowflake,
+  Home,
+  Volume2,
+  Wallet,
+  Baby,
+  Leaf,
+  Sun,
+  AlertTriangle,
 } from 'lucide-react';
 import RankingStats from './RankingStats';
+import {
+  ALL_RANKING_TEMPLATES,
+  generateRanking,
+  getTodayRanking,
+  getSeasonalTips,
+  RankingTemplate,
+} from '@/data/rankingTemplates';
 
 // ============================================================================
 // 타입 정의
@@ -450,14 +467,15 @@ const ALL_RANKINGS = [...PERSONALITY_RANKINGS, ...PRACTICAL_RANKINGS, ...LIFESTY
 // 컴포넌트
 // ============================================================================
 
-type ViewMode = 'ranking' | 'stats';
+type ViewMode = 'ranking' | 'stats' | 'auto';
 
 export default function PopularRanking() {
-  const [viewMode, setViewMode] = useState<ViewMode>('ranking');
+  const [viewMode, setViewMode] = useState<ViewMode>('auto');
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>('quarterly');
   const [selectedGroup, setSelectedGroup] = useState<'all' | 'personality' | 'practical' | 'lifestyle'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('most_active');
   const [selectedTest, setSelectedTest] = useState<SubjectKey | 'all'>('all');
+  const [selectedAutoTemplate, setSelectedAutoTemplate] = useState<string>(ALL_RANKING_TEMPLATES[0]?.id || '');
 
   // 그룹별 필터링된 카테고리
   const filteredCategories = useMemo(() => {
@@ -512,6 +530,39 @@ export default function PopularRanking() {
   // 현재 시즌
   const currentSeason = SEASONS.find(s => s.type === selectedSeason)!;
 
+  // === 자동 랭킹 (메타데이터 기반) ===
+  const selectedTemplate = useMemo(() => {
+    return ALL_RANKING_TEMPLATES.find(t => t.id === selectedAutoTemplate) || ALL_RANKING_TEMPLATES[0];
+  }, [selectedAutoTemplate]);
+
+  const autoRankingResults = useMemo(() => {
+    if (!selectedTemplate) return [];
+
+    // 템플릿의 subject에 해당하는 데이터 가져오기
+    const subjects = selectedTemplate.subject === 'all'
+      ? ['petMatch', 'plant']
+      : [selectedTemplate.subject];
+
+    const allResults: ResultLabel[] = [];
+    subjects.forEach(subjectKey => {
+      const data = CHEMI_DATA[subjectKey as SubjectKey] as SubjectData | undefined;
+      if (data) {
+        allResults.push(...data.resultLabels);
+      }
+    });
+
+    return generateRanking(selectedTemplate, allResults);
+  }, [selectedTemplate]);
+
+  const todayRanking = useMemo(() => getTodayRanking(), []);
+
+  // 템플릿을 subject별로 그룹화
+  const templatesBySubject = useMemo(() => {
+    const petTemplates = ALL_RANKING_TEMPLATES.filter(t => t.subject === 'petMatch');
+    const plantTemplates = ALL_RANKING_TEMPLATES.filter(t => t.subject === 'plant');
+    return { pet: petTemplates, plant: plantTemplates };
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* 헤더 */}
@@ -530,6 +581,17 @@ export default function PopularRanking() {
       {/* 뷰 모드 전환 */}
       <div className="flex gap-2 p-1 bg-gray-800 rounded-xl">
         <button
+          onClick={() => setViewMode('auto')}
+          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+            viewMode === 'auto'
+              ? 'bg-green-500 text-white'
+              : 'text-gray-400 hover:text-gray-200'
+          }`}
+        >
+          <Zap className="w-4 h-4" />
+          자동 랭킹
+        </button>
+        <button
           onClick={() => setViewMode('ranking')}
           className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
             viewMode === 'ranking'
@@ -538,7 +600,7 @@ export default function PopularRanking() {
           }`}
         >
           <ListOrdered className="w-4 h-4" />
-          랭킹 보기
+          성격 기반
         </button>
         <button
           onClick={() => setViewMode('stats')}
@@ -555,6 +617,190 @@ export default function PopularRanking() {
 
       {/* 통계 뷰 */}
       {viewMode === 'stats' && <RankingStats />}
+
+      {/* 자동 랭킹 뷰 (메타데이터 기반) */}
+      {viewMode === 'auto' && (
+        <>
+          {/* 오늘의 랭킹 */}
+          <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl p-4 border border-green-500/30">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">📅</span>
+              <div className="flex-1">
+                <h3 className="font-bold text-green-400">오늘의 랭킹</h3>
+                <p className="text-sm text-gray-400">{todayRanking.title}</p>
+              </div>
+              <button
+                onClick={() => setSelectedAutoTemplate(todayRanking.id)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  selectedAutoTemplate === todayRanking.id
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                보기
+              </button>
+            </div>
+          </div>
+
+          {/* 반려동물 랭킹 */}
+          <div>
+            <h3 className="font-bold text-gray-300 mb-3 flex items-center gap-2">
+              🐾 반려동물 랭킹
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {templatesBySubject.pet.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setSelectedAutoTemplate(template.id)}
+                  className={`p-3 rounded-xl border-2 transition-all text-left ${
+                    selectedAutoTemplate === template.id
+                      ? 'border-green-500 bg-green-500/10'
+                      : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                  }`}
+                >
+                  <p className={`font-bold text-xs ${
+                    selectedAutoTemplate === template.id ? 'text-green-400' : 'text-gray-300'
+                  }`}>
+                    {template.title.split(' ').slice(0, 3).join(' ')}
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{template.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 식물 랭킹 */}
+          <div>
+            <h3 className="font-bold text-gray-300 mb-3 flex items-center gap-2">
+              🌱 식물 랭킹
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {templatesBySubject.plant.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setSelectedAutoTemplate(template.id)}
+                  className={`p-3 rounded-xl border-2 transition-all text-left ${
+                    selectedAutoTemplate === template.id
+                      ? 'border-green-500 bg-green-500/10'
+                      : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                  }`}
+                >
+                  <p className={`font-bold text-xs ${
+                    selectedAutoTemplate === template.id ? 'text-green-400' : 'text-gray-300'
+                  }`}>
+                    {template.title.split(' ').slice(0, 3).join(' ')}
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{template.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 선택된 랭킹 결과 */}
+          {selectedTemplate && (
+            <div className="space-y-4">
+              <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-xl p-4 border border-emerald-500/30">
+                <h3 className="font-bold text-emerald-400 text-lg">{selectedTemplate.title}</h3>
+                <p className="text-sm text-gray-400">{selectedTemplate.description}</p>
+                {selectedTemplate.season && (
+                  <span className="inline-block mt-2 px-2 py-0.5 bg-emerald-500/20 rounded-full text-xs text-emerald-400">
+                    {selectedTemplate.season === 'summer' ? '☀️ 여름' :
+                     selectedTemplate.season === 'winter' ? '❄️ 겨울' :
+                     selectedTemplate.season === 'spring' ? '🌸 봄' : '🍂 가을'} 시즌
+                  </span>
+                )}
+              </div>
+
+              {/* 랭킹 리스트 */}
+              <div className="space-y-2">
+                {autoRankingResults.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    해당 조건에 맞는 결과가 없습니다
+                  </div>
+                ) : (
+                  autoRankingResults.map((result, index) => (
+                    <div
+                      key={result.name}
+                      className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                        index === 0
+                          ? 'bg-amber-500/10 border-amber-500/50'
+                          : index === 1
+                          ? 'bg-gray-500/10 border-gray-500/50'
+                          : index === 2
+                          ? 'bg-orange-500/10 border-orange-500/50'
+                          : 'bg-gray-800/50 border-gray-700'
+                      }`}
+                    >
+                      {/* 순위 */}
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
+                        index === 0
+                          ? 'bg-amber-500 text-white'
+                          : index === 1
+                          ? 'bg-gray-500 text-white'
+                          : index === 2
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        {index <= 2 ? ['🥇', '🥈', '🥉'][index] : index + 1}
+                      </div>
+
+                      {/* 이모지 */}
+                      <span className="text-3xl shrink-0">{result.emoji}</span>
+
+                      {/* 정보 */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-gray-100">{result.name}</p>
+                        <p className="text-sm text-gray-500 line-clamp-1">{result.desc}</p>
+                      </div>
+
+                      {/* 메타데이터 뱃지 */}
+                      <div className="flex gap-1 flex-wrap justify-end">
+                        {result.meta?.beginnerFriendly && result.meta.beginnerFriendly >= 4 && (
+                          <span className="px-2 py-0.5 bg-green-500/20 rounded-full text-xs text-green-400">
+                            초보OK
+                          </span>
+                        )}
+                        {result.meta?.careLevel && result.meta.careLevel >= 4 && (
+                          <span className="px-2 py-0.5 bg-red-500/20 rounded-full text-xs text-red-400">
+                            관리多
+                          </span>
+                        )}
+                        {result.meta?.noiseLevel === 'silent' && (
+                          <span className="px-2 py-0.5 bg-blue-500/20 rounded-full text-xs text-blue-400">
+                            무소음
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* 계절별 팁 */}
+              {autoRankingResults.length > 0 && autoRankingResults[0].meta?.seasonalTips && (
+                <div className="bg-gray-800/30 rounded-xl p-4 border border-gray-700">
+                  <h4 className="font-bold text-gray-300 mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-yellow-400" />
+                    1위 {autoRankingResults[0].name}의 계절별 관리 팁
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {Object.entries(autoRankingResults[0].meta.seasonalTips).map(([season, tip]) => (
+                      <div key={season} className="bg-gray-700/50 rounded-lg p-2">
+                        <span className="text-xs text-gray-500">
+                          {season === 'spring' ? '🌸 봄' :
+                           season === 'summer' ? '☀️ 여름' :
+                           season === 'fall' ? '🍂 가을' : '❄️ 겨울'}
+                        </span>
+                        <p className="text-gray-300 text-xs mt-1">{tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
 
       {/* 랭킹 뷰 */}
       {viewMode === 'ranking' && (
