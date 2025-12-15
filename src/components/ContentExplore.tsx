@@ -18,6 +18,7 @@ import { NextActionInline } from '@/components/NextActionCard';
 interface ContentExploreProps {
   onClose: () => void;
   initialTab?: 'quiz' | 'poll' | 'community';
+  onStartTest?: (testKey: string) => void;
 }
 
 type TabType = 'quiz' | 'poll' | 'community';
@@ -520,7 +521,7 @@ function CommunityContent() {
 // 메인 컴포넌트
 // ============================================================================
 
-export default function ContentExplore({ onClose, initialTab = 'quiz' }: ContentExploreProps) {
+export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTest }: ContentExploreProps) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [selectedCategory, setSelectedCategory] = useState<ContentCategory | 'all'>('all');
   const [participation, setParticipation] = useState(contentParticipationService.getParticipation());
@@ -575,9 +576,11 @@ export default function ContentExplore({ onClose, initialTab = 'quiz' }: Content
         setActiveTab('community');
         break;
       case 'test':
-        // 테스트로 이동 - ContentExplore 닫고 메인으로
+        // 테스트로 이동 - ContentExplore 닫고 특정 테스트 시작
         onClose();
-        // TODO: 특정 테스트로 이동하는 로직 추가 가능
+        if (action.targetId && onStartTest) {
+          onStartTest(action.targetId);
+        }
         break;
       case 'share':
         // 공유 기능 (추후 구현)

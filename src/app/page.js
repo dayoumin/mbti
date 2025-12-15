@@ -297,6 +297,36 @@ const GlassButton = ({ children, onClick, className = "", variant = "primary" })
     );
 };
 
+// Content Actions - 퀴즈/투표 다음 액션 추천
+const ContentActions = ({ testType, onQuizClick, onPollClick }) => {
+    const actions = nextActionService.getRecommendations({
+        endpoint: 'test_result',
+        contentId: testType,
+    });
+
+    // test 타입 제외하고 quiz, poll만 필터링
+    const contentActions = actions.filter(a => a.type === 'quiz' || a.type === 'poll').slice(0, 2);
+
+    if (contentActions.length === 0) return null;
+
+    const handleActionClick = (action) => {
+        if (action.type === 'quiz') {
+            onQuizClick?.(action.targetCategory);
+        } else if (action.type === 'poll') {
+            onPollClick?.(action.targetCategory);
+        }
+    };
+
+    return (
+        <div className="mt-4 w-full">
+            <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-bold text-slate-500">🎯 관련 콘텐츠</span>
+            </div>
+            <NextActionInline actions={contentActions} onActionClick={handleActionClick} />
+        </div>
+    );
+};
+
 // Next Test Recommendation Card - Compact
 const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
     const [recommendation, setRecommendation] = useState(null);
@@ -563,10 +593,17 @@ export default function Home() {
             )}
 
             {showContentExplore && (
-                <ContentExplore onClose={() => {
-                    setShowContentExplore(false);
-                    setActiveNavTab('home');
-                }} />
+                <ContentExplore
+                    onClose={() => {
+                        setShowContentExplore(false);
+                        setActiveNavTab('home');
+                    }}
+                    onStartTest={(testKey) => {
+                        setShowContentExplore(false);
+                        setActiveNavTab('home');
+                        handleStartTest(testKey);
+                    }}
+                />
             )}
 
             {view === 'dashboard' && showRanking && (
@@ -1056,6 +1093,19 @@ export default function Home() {
                                             결과 카드 공유하기
                                         </button>
                                     </div>
+
+                                    {/* 퀴즈/투표 다음 액션 */}
+                                    <ContentActions
+                                        testType={mode}
+                                        onQuizClick={() => {
+                                            setShowContentExplore(true);
+                                            setActiveNavTab('explore');
+                                        }}
+                                        onPollClick={() => {
+                                            setShowContentExplore(true);
+                                            setActiveNavTab('explore');
+                                        }}
+                                    />
 
                                     {/* 결과 피드백 */}
                                     <div className="w-full mt-6 space-y-4">
