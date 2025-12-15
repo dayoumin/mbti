@@ -68,6 +68,7 @@ import PostDetailTestStrategy from './components/PostDetailTestStrategy';
 import SocialFeatures from './components/SocialFeatures';
 import RetentionStrategy from './components/RetentionStrategy';
 import MarketingStrategy from './components/MarketingStrategy';
+import PopularRanking from './components/PopularRanking';
 
 // ============================================================================
 // Types
@@ -119,6 +120,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
       { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
       { key: 'profile', label: '프로필 시스템', icon: <User className="w-4 h-4" /> },
+      { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
     ],
   },
   {
@@ -327,6 +329,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
           {activeCategory === 'planning' && activeSubTab === 'features' && <ProductFeatures />}
           {activeCategory === 'planning' && activeSubTab === 'profile' && <ProfileSystem />}
+          {activeCategory === 'planning' && activeSubTab === 'ranking' && <PopularRanking />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
@@ -1129,7 +1132,7 @@ function AppDesignSystem() {
     { name: 'ShareCard', file: 'ShareCard.tsx', desc: 'SNS 공유 카드' },
     { name: 'ResultFeedback', file: 'ResultFeedback.tsx', desc: '피드백 버튼' },
     { name: 'FeedbackComments', file: 'FeedbackComments.tsx', desc: '피드백 댓글' },
-    { name: 'InsightView', file: 'InsightView.js', desc: '상세 분석 뷰' },
+    { name: 'ResultRankingView', file: 'ResultRankingView.tsx', desc: '결과 미리보기/랭킹' },
     { name: 'Dashboard', file: 'Dashboard.js', desc: '메인 홈' },
     { name: 'MyProfile', file: 'MyProfile.tsx', desc: '프로필 페이지' },
   ];

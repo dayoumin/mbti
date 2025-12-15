@@ -6,7 +6,7 @@ import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_CONSTANTS } from '../data/constants';
 import { matchResultLabel } from '../data/utils';
 import { resultService } from '../services/ResultService';
-import InsightView from '../components/InsightView';
+import ResultRankingView from '../components/ResultRankingView';
 import Dashboard from '../components/Dashboard';
 import ShareCard from '../components/ShareCard';
 import { FullProfile } from '../components/MyProfile';
@@ -380,7 +380,7 @@ export default function Home() {
     const [isDeepMode, setIsDeepMode] = useState(false);
     const [showGraphPopup, setShowGraphPopup] = useState(false);
     const [answers, setAnswers] = useState([]);
-    const [showInsight, setShowInsight] = useState(false);
+    const [showRanking, setShowRanking] = useState(false);
     const [showShareCard, setShowShareCard] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showContentExplore, setShowContentExplore] = useState(false);
@@ -600,8 +600,8 @@ export default function Home() {
                                     </button>
                                 )}
 
-                                <button onClick={() => setShowInsight(true)} className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5">
-                                    <Trophy className="w-4 h-4" /> 전체 결과 랭킹 보기
+                                <button onClick={() => setShowRanking(true)} className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5">
+                                    <Trophy className="w-4 h-4" /> 어떤 결과가 나올까? 미리보기
                                 </button>
                             </div>
                         </div>
@@ -1046,14 +1046,12 @@ export default function Home() {
                         </div>
                     )}
 
-                    {/* --- INSIGHT VIEW --- */}
-                    {showInsight && (
-                        <InsightView
-                            onClose={() => setShowInsight(false)}
-                            onSelectTest={(testType) => {
-                                setShowInsight(false);
-                                handleStartTest(testType);
-                            }}
+                    {/* --- RESULT RANKING VIEW --- */}
+                    {showRanking && (
+                        <ResultRankingView
+                            testType={mode}
+                            onClose={() => setShowRanking(false)}
+                            onStartTest={() => handleStartTest(mode)}
                         />
                     )}
                 </div>
