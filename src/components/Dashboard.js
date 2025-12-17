@@ -8,7 +8,7 @@ import { VS_POLLS } from '../data/content/polls/vs-polls';
 import { gamificationService } from '../services/GamificationService';
 import { contentParticipationService } from '../services/ContentParticipationService';
 import { nextActionService } from '../services/NextActionService';
-import { ChevronRight, ChevronDown, HelpCircle, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronDown, HelpCircle, Flame, Star, Sunrise, Sun, Moon, Sparkles, Check } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import { VSPollCard } from '../modules/vote';
 import Footer from './Footer';

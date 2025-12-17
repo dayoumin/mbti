@@ -560,32 +560,65 @@ export const RETENTION_ROADMAP: RetentionRoadmapPhase[] = [
   },
   {
     id: 'phase-5',
-    name: 'Phase 5: 공유 최적화 (예정)',
+    name: 'Phase 5: 공유 최적화',
     status: 'planned',
     items: [
+      // Phase 5.1: 카카오톡 공유 (한국 시장 핵심)
       {
-        task: '카카오 앱 키 발급 및 설정',
+        task: '카카오 앱 등록',
         endpoint: 'test_result',
         priority: 'high',
-        description: 'developers.kakao.com 앱 등록, NEXT_PUBLIC_KAKAO_APP_KEY 환경변수'
+        description: 'developers.kakao.com 앱 생성, 도메인 등록 (사용자 작업)',
       },
       {
-        task: 'OG 이미지 제작',
+        task: '카카오 환경변수 설정',
         endpoint: 'test_result',
         priority: 'high',
-        description: 'public/og-image.png (1200x630) 제작'
+        description: 'NEXT_PUBLIC_KAKAO_APP_KEY를 .env.local에 추가 (사용자 작업)',
       },
       {
-        task: '동적 OG 이미지 생성',
+        task: '기본 OG 이미지 제작',
         endpoint: 'test_result',
-        priority: 'low',
-        description: '테스트 결과별 동적 OG 이미지 (Vercel OG 또는 Canvas)'
+        priority: 'high',
+        description: 'public/og-image.png (1200x630) - 브랜드 로고 + 설명 (사용자 작업)',
+      },
+      // Phase 5.2: 동적 OG 이미지
+      {
+        task: 'Vercel OG API 구현',
+        endpoint: 'test_result',
+        priority: 'high',
+        description: '/api/og/result - 테스트 결과별 동적 이미지 생성',
       },
       {
-        task: '공유 추적 분석',
+        task: '멀티 비율 지원',
         endpoint: 'test_result',
         priority: 'medium',
-        description: 'AnalyticsService에 공유 이벤트 추적 추가'
+        description: 'OG(1200x630), 스토리(1080x1920), 정사각(1080x1080), 카카오(800x400)',
+      },
+      {
+        task: 'VS 투표 공유 카드',
+        endpoint: 'poll_result',
+        priority: 'medium',
+        description: '/api/og/vs-poll - 투표 결과 이미지',
+      },
+      // Phase 5.3: 추적 & 분석
+      {
+        task: 'UTM 유틸리티',
+        endpoint: 'test_result',
+        priority: 'medium',
+        description: '공유 시 UTM 자동 추가, 유입 시 파싱/저장',
+      },
+      {
+        task: '공유 추적 서비스',
+        endpoint: 'test_result',
+        priority: 'medium',
+        description: 'AnalyticsService에 공유 이벤트 추적 (플랫폼별)',
+      },
+      {
+        task: '전환 추적',
+        endpoint: 'test_result',
+        priority: 'low',
+        description: '공유 → 유입 → 테스트 완료 퍼널 추적',
       },
     ],
   },

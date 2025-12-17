@@ -50,7 +50,9 @@
       "Bash(git rm:*)",
       "Bash(git reset:*)",
       "Bash(git restore:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm show:*)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
