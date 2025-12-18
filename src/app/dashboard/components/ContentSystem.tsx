@@ -18,6 +18,10 @@ import {
   Layers,
   Calculator,
   Lightbulb,
+  Sparkles,
+  ExternalLink,
+  AlertCircle,
+  Search,
 } from 'lucide-react';
 import {
   CONTENT_SYSTEM,
@@ -29,6 +33,15 @@ import {
   CONTENT_ESTIMATES,
   calculateContentTotals,
   ContentEstimate,
+  SEASONAL_CONTENT,
+  SeasonalContent,
+  getActiveSeasonalContent,
+  getUpcomingSeasonalContent,
+  TREND_SOURCES,
+  TREND_CONTENT_EXAMPLES,
+  TREND_OPERATION_GUIDE,
+  TrendSourceInfo,
+  TrendContent,
 } from '../data/content-system';
 
 // ============================================================================
@@ -46,7 +59,7 @@ const TYPE_ICONS: Record<ContentType, React.ReactNode> = {
 // ============================================================================
 
 export default function ContentSystem() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap' | 'seasonal'>('overview');
   const [selectedType, setSelectedType] = useState<ContentType>('quiz');
 
   return (
@@ -57,6 +70,7 @@ export default function ContentSystem() {
           { key: 'overview', label: '개요', icon: <Eye className="w-4 h-4" /> },
           { key: 'types', label: '콘텐츠 타입', icon: <Layers className="w-4 h-4" /> },
           { key: 'categories', label: '카테고리', icon: <Target className="w-4 h-4" /> },
+          { key: 'seasonal', label: '시즌/트렌드', icon: <Sparkles className="w-4 h-4" /> },
           { key: 'estimates', label: '수량 예측', icon: <Calculator className="w-4 h-4" /> },
           { key: 'roadmap', label: '구현 로드맵', icon: <Calendar className="w-4 h-4" /> },
         ].map((tab) => (
@@ -81,6 +95,7 @@ export default function ContentSystem() {
         <TypesTab selectedType={selectedType} setSelectedType={setSelectedType} />
       )}
       {activeTab === 'categories' && <CategoriesTab />}
+      {activeTab === 'seasonal' && <SeasonalTab />}
       {activeTab === 'estimates' && <EstimatesTab />}
       {activeTab === 'roadmap' && <RoadmapTab />}
     </div>
@@ -1076,6 +1091,430 @@ function RoadmapTab() {
               </div>
             );
           })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Seasonal/Trend Tab
+// ============================================================================
+
+function SeasonalTab() {
+  const [subTab, setSubTab] = useState<'seasonal' | 'trend'>('seasonal');
+  const activeSeasons = getActiveSeasonalContent();
+  const upcomingSeasons = getUpcomingSeasonalContent(30);
+
+  return (
+    <div className="space-y-6">
+      {/* Sub Tab Navigation */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setSubTab('seasonal')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            subTab === 'seasonal'
+              ? 'bg-[var(--db-brand)] text-[#081023]'
+              : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
+          }`}
+        >
+          📅 시즌 콘텐츠
+        </button>
+        <button
+          onClick={() => setSubTab('trend')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            subTab === 'trend'
+              ? 'bg-[var(--db-brand)] text-[#081023]'
+              : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
+          }`}
+        >
+          🔥 트렌드 콘텐츠
+        </button>
+      </div>
+
+      {subTab === 'seasonal' ? (
+        <SeasonalContentView activeSeasons={activeSeasons} upcomingSeasons={upcomingSeasons} />
+      ) : (
+        <TrendContentSection />
+      )}
+    </div>
+  );
+}
+
+function SeasonalContentView({
+  activeSeasons,
+  upcomingSeasons
+}: {
+  activeSeasons: SeasonalContent[];
+  upcomingSeasons: SeasonalContent[];
+}) {
+  const [expandedSeason, setExpandedSeason] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-6">
+      {/* Active Seasons Alert */}
+      {activeSeasons.length > 0 && (
+        <div className="db-card p-5 border-l-4 border-[var(--db-brand)]">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertCircle className="w-5 h-5 text-[var(--db-brand)]" />
+            <h3 className="font-semibold text-[var(--db-text)]">
+              현재 활성화된 시즌 ({activeSeasons.length}개)
+            </h3>
+          </div>
+          <div className="flex gap-3 flex-wrap">
+            {activeSeasons.map(season => (
+              <span
+                key={season.id}
+                className="px-3 py-1 rounded-full text-sm font-medium bg-[var(--db-brand)]/20 text-[var(--db-brand)]"
+              >
+                {season.icon} {season.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming Seasons */}
+      {upcomingSeasons.length > 0 && (
+        <div className="db-card p-5">
+          <h3 className="font-semibold text-[var(--db-text)] mb-3">
+            📆 다가오는 시즌 (30일 이내)
+          </h3>
+          <div className="flex gap-2 flex-wrap">
+            {upcomingSeasons.map(season => (
+              <span
+                key={season.id}
+                className="px-3 py-1 rounded-full text-sm bg-[var(--db-panel)] text-[var(--db-muted)]"
+              >
+                {season.icon} {season.name} ({season.period.start}~)
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* All Seasons Grid */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            연간 시즌 콘텐츠 ({SEASONAL_CONTENT.length}개)
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            클릭하면 퀴즈/투표 아이디어를 볼 수 있습니다
+          </p>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          {SEASONAL_CONTENT.map(season => {
+            const isExpanded = expandedSeason === season.id;
+            const isActive = activeSeasons.some(s => s.id === season.id);
+
+            return (
+              <div
+                key={season.id}
+                className={`rounded-xl overflow-hidden transition-all ${
+                  isActive ? 'ring-2 ring-[var(--db-brand)]' : ''
+                }`}
+              >
+                <button
+                  onClick={() => setExpandedSeason(isExpanded ? null : season.id)}
+                  className="w-full p-4 text-left hover:bg-white/5 transition-colors"
+                  style={{ background: 'rgba(0,0,0,0.3)' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{season.icon}</span>
+                      <div>
+                        <h4 className="font-semibold text-[var(--db-text)]">
+                          {season.name}
+                          {isActive && (
+                            <span className="ml-2 px-2 py-0.5 rounded text-xs bg-[var(--db-brand)] text-[#081023]">
+                              NOW
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-xs text-[var(--db-muted)]">
+                          {season.period.start} ~ {season.period.end}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-[var(--db-muted)]">
+                      <span>퀴즈 {season.quizIdeas.length}</span>
+                      <span>·</span>
+                      <span>투표 {season.pollIdeas.length}</span>
+                      <ChevronRight
+                        className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                      />
+                    </div>
+                  </div>
+                </button>
+
+                {isExpanded && (
+                  <div className="p-4 border-t border-white/10 space-y-4" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                    {/* Quiz Ideas */}
+                    <div>
+                      <h5 className="text-xs font-semibold text-[var(--db-muted)] mb-2 flex items-center gap-1">
+                        <Brain className="w-3 h-3" /> 퀴즈 아이디어
+                      </h5>
+                      <ul className="space-y-1">
+                        {season.quizIdeas.map((idea, idx) => (
+                          <li key={idx} className="text-sm text-[var(--db-text)] flex items-start gap-2">
+                            <span className="text-[var(--db-muted)]">•</span>
+                            {idea}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Poll Ideas */}
+                    <div>
+                      <h5 className="text-xs font-semibold text-[var(--db-muted)] mb-2 flex items-center gap-1">
+                        <BarChart3 className="w-3 h-3" /> 투표 아이디어
+                      </h5>
+                      <ul className="space-y-1">
+                        {season.pollIdeas.map((idea, idx) => (
+                          <li key={idx} className="text-sm text-[var(--db-text)] flex items-start gap-2">
+                            <span className="text-[var(--db-muted)]">•</span>
+                            {idea}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Tips */}
+                    {season.tips && season.tips.length > 0 && (
+                      <div className="pt-3 border-t border-white/10">
+                        <h5 className="text-xs font-semibold text-amber-400 mb-2">💡 운영 팁</h5>
+                        <ul className="space-y-1">
+                          {season.tips.map((tip, idx) => (
+                            <li key={idx} className="text-sm text-[var(--db-muted)]">
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TrendContentSection() {
+  return (
+    <div className="space-y-6">
+      {/* Introduction */}
+      <div className="db-card p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+            <TrendingUp className="w-6 h-6 text-amber-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-[var(--db-text)] mb-2">
+              트렌드 기반 콘텐츠란?
+            </h3>
+            <p className="text-[var(--db-muted)]">
+              시즌 콘텐츠는 예측 가능하지만, <strong className="text-[var(--db-text)]">실시간 이슈와 트렌드</strong>를
+              반영한 콘텐츠는 더 높은 참여율을 이끌어냅니다. 뉴스, SNS, 커뮤니티에서 핫한 주제를 발굴하여
+              퀴즈/투표로 만들어 보세요.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Operation Guide */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            트렌드 운영 플로우
+          </h3>
+        </div>
+        <div className="p-5">
+          <div className="flex items-start gap-4">
+            {TREND_OPERATION_GUIDE.map((step, idx) => (
+              <div key={step.step} className="flex-1 relative">
+                {idx < TREND_OPERATION_GUIDE.length - 1 && (
+                  <div
+                    className="absolute top-6 left-1/2 w-full h-0.5 bg-white/10"
+                  />
+                )}
+                <div className="relative z-10 text-center">
+                  <div className="w-12 h-12 mx-auto rounded-xl bg-amber-500/20 flex items-center justify-center mb-3">
+                    <span className="text-lg font-bold text-amber-400">{step.step}</span>
+                  </div>
+                  <h4 className="font-semibold text-[var(--db-text)] text-sm mb-1">
+                    {step.title}
+                  </h4>
+                  <p className="text-xs text-[var(--db-muted)] mb-2">
+                    {step.description}
+                  </p>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-[var(--db-panel)] text-[var(--db-muted)]">
+                    <Clock className="w-3 h-3" />
+                    {step.frequency}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Trend Sources */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            <Search className="w-5 h-5 inline mr-2" />
+            트렌드 모니터링 소스
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            주기적으로 체크할 트렌드 소스와 모니터링 키워드
+          </p>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          {TREND_SOURCES.map(source => (
+            <div
+              key={source.id}
+              className="p-4 rounded-xl"
+              style={{ background: 'rgba(0,0,0,0.3)' }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{source.icon}</span>
+                  <div>
+                    <h4 className="font-semibold text-[var(--db-text)]">{source.name}</h4>
+                    <p className="text-xs text-[var(--db-muted)]">{source.checkFrequency}</p>
+                  </div>
+                </div>
+                {source.checkUrl && (
+                  <a
+                    href={source.checkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-[var(--db-panel)] hover:bg-[var(--db-brand)]/20 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4 text-[var(--db-muted)]" />
+                  </a>
+                )}
+              </div>
+              <p className="text-sm text-[var(--db-muted)] mb-3">{source.description}</p>
+              {source.keywords.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {source.keywords.map((keyword, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-400"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Example Trends */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            트렌드 콘텐츠 예시
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            이런 식으로 트렌드를 콘텐츠화할 수 있습니다
+          </p>
+        </div>
+        <div className="p-5 space-y-3">
+          {TREND_CONTENT_EXAMPLES.map(trend => {
+            const sourceInfo = TREND_SOURCES.find(s => s.id === trend.source);
+            const priorityColors = {
+              high: '#ff6b6b',
+              medium: '#ffd166',
+              low: '#55e6c1',
+            };
+
+            return (
+              <div
+                key={trend.id}
+                className="p-4 rounded-xl flex items-start gap-4"
+                style={{ background: 'rgba(0,0,0,0.3)' }}
+              >
+                <span className="text-2xl">{sourceInfo?.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-semibold text-[var(--db-text)]">{trend.keyword}</h4>
+                    <span
+                      className="px-2 py-0.5 rounded text-xs"
+                      style={{
+                        background: `${priorityColors[trend.priority || 'medium']}22`,
+                        color: priorityColors[trend.priority || 'medium'],
+                      }}
+                    >
+                      {trend.priority === 'high' ? '높음' : trend.priority === 'low' ? '낮음' : '중간'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-[var(--db-muted)] mb-3">
+                    <span>{sourceInfo?.name}</span>
+                    <span>·</span>
+                    <span>{trend.detectedAt}</span>
+                    {trend.expiresAt && (
+                      <>
+                        <span>·</span>
+                        <span className="text-amber-400">~{trend.expiresAt} 까지</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    {trend.quizIdea && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Brain className="w-4 h-4 text-[#7aa2ff]" />
+                        <span className="text-[var(--db-text)]">{trend.quizIdea}</span>
+                      </div>
+                    )}
+                    {trend.pollIdea && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <BarChart3 className="w-4 h-4 text-[#55e6c1]" />
+                        <span className="text-[var(--db-text)]">{trend.pollIdea}</span>
+                      </div>
+                    )}
+                  </div>
+                  {trend.notes && (
+                    <p className="mt-2 text-xs text-amber-400">💡 {trend.notes}</p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Data Structure Reference */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            데이터 구조 (향후 구현용)
+          </h3>
+        </div>
+        <div className="p-5">
+          <pre className="text-xs text-[var(--db-muted)] bg-black/30 p-4 rounded-lg overflow-x-auto">
+{`interface TrendContent {
+  id: string;
+  source: 'news' | 'sns' | 'community' | 'search' | 'manual';
+  keyword: string;           // 트렌드 키워드
+  detectedAt: string;        // 발견 일자 (YYYY-MM-DD)
+  relevance: ContentCategory[];  // 관련 카테고리
+  status: 'idea' | 'ready' | 'published' | 'expired';
+  quizIdea?: string;
+  pollIdea?: string;
+  expiresAt?: string;        // 유효기간
+  notes?: string;
+  priority?: 'high' | 'medium' | 'low';
+}`}
+          </pre>
         </div>
       </div>
     </div>
