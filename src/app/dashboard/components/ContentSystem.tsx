@@ -1358,12 +1358,12 @@ function FollowUpTab() {
       <div className="grid grid-cols-4 gap-4">
         {FOLLOWUP_CATEGORIES.map((category) => {
           const categoryColors: Record<string, string> = {
-            immediate: '#7aa2ff',
+            'immediate-reaction': '#7aa2ff',
             'result-based': '#55e6c1',
-            social: '#ff6b9d',
-            delayed: '#ffd166',
+            'social-connection': '#ff6b9d',
+            'delayed-engagement': '#ffd166',
           };
-          const color = categoryColors[category.id];
+          const color = categoryColors[category.id] || '#7aa2ff';
           const isSelected = selectedCategory === category.id;
 
           return (
@@ -1412,12 +1412,12 @@ function FollowUpTab() {
               .flatMap(cat => cat.elements.map(el => ({ ...el, categoryId: cat.id, categoryIcon: cat.icon })))
               .map((element) => {
                 const categoryColors: Record<string, string> = {
-                  immediate: '#7aa2ff',
+                  'immediate-reaction': '#7aa2ff',
                   'result-based': '#55e6c1',
-                  social: '#ff6b9d',
-                  delayed: '#ffd166',
+                  'social-connection': '#ff6b9d',
+                  'delayed-engagement': '#ffd166',
                 };
-                const catColor = categoryColors[element.categoryId];
+                const catColor = categoryColors[element.categoryId] || '#7aa2ff';
 
                 return (
                   <div

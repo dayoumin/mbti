@@ -142,9 +142,9 @@ export const SHARE_ROADMAP: SharePhase[] = [
       {
         id: 'og-vs-poll',
         task: 'VS 투표 공유 카드',
-        status: 'planned',
+        status: 'done',
         priority: 'medium',
-        description: '/api/og?type=poll - 투표 결과 이미지',
+        description: '/api/og?type=poll&question=...&optionA=...&optionB=...',
         owner: 'ai',
       },
     ],

@@ -43,9 +43,22 @@ export async function GET(request: NextRequest) {
     // 테마 색상
     const theme = TEST_THEMES[test] || TEST_THEMES.human;
 
+    // VS 투표용 파라미터
+    const question = searchParams.get('question') || '';
+    const optionA = searchParams.get('optionA') || '';
+    const optionB = searchParams.get('optionB') || '';
+    const emojiA = searchParams.get('emojiA') || '';
+    const emojiB = searchParams.get('emojiB') || '';
+    const percentA = searchParams.get('percentA') || '';
+    const percentB = searchParams.get('percentB') || '';
+
     // 타입별 렌더링
     if (type === 'result') {
       return renderResultCard(size, theme, result, emoji, desc);
+    }
+
+    if (type === 'poll') {
+      return renderPollCard(size, question, optionA, optionB, emojiA, emojiB, percentA, percentB);
     }
 
     // 기본: 홈 OG 이미지
@@ -207,6 +220,170 @@ function renderResultCard(
           }}
         >
           나도 테스트하기
+        </div>
+
+        {/* 브랜드 */}
+        <p
+          style={{
+            position: 'absolute',
+            bottom: '24px',
+            fontSize: '18px',
+            color: '#9CA3AF',
+          }}
+        >
+          chemi-test.vercel.app
+        </p>
+      </div>
+    ),
+    { ...size }
+  );
+}
+
+// VS 투표 카드 이미지
+function renderPollCard(
+  size: { width: number; height: number },
+  question: string,
+  optionA: string,
+  optionB: string,
+  emojiA: string,
+  emojiB: string,
+  percentA: string,
+  percentB: string
+) {
+  const hasResults = percentA && percentB;
+  const pA = parseInt(percentA) || 50;
+  const pB = parseInt(percentB) || 50;
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+          fontFamily: 'sans-serif',
+          padding: '40px',
+        }}
+      >
+        {/* VS 배지 */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '24px',
+          }}
+        >
+          <span
+            style={{
+              background: '#EF4444',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '999px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+            }}
+          >
+            VS 투표
+          </span>
+        </div>
+
+        {/* 질문 */}
+        <h1
+          style={{
+            fontSize: '48px',
+            fontWeight: 'bold',
+            color: '#1F2937',
+            marginBottom: '40px',
+            textAlign: 'center',
+          }}
+        >
+          {question || '당신의 선택은?'}
+        </h1>
+
+        {/* 선택지 */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '40px',
+            alignItems: 'center',
+          }}
+        >
+          {/* Option A */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '24px 40px',
+              background: 'white',
+              borderRadius: '20px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              minWidth: '200px',
+            }}
+          >
+            <span style={{ fontSize: '56px', marginBottom: '12px' }}>
+              {emojiA || '🅰️'}
+            </span>
+            <span style={{ fontSize: '28px', fontWeight: 'bold', color: '#1F2937' }}>
+              {optionA || 'A'}
+            </span>
+            {hasResults && (
+              <span style={{ fontSize: '24px', color: '#3B82F6', marginTop: '8px', fontWeight: 'bold' }}>
+                {pA}%
+              </span>
+            )}
+          </div>
+
+          {/* VS */}
+          <span style={{ fontSize: '48px', fontWeight: 'bold', color: '#EF4444' }}>
+            VS
+          </span>
+
+          {/* Option B */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '24px 40px',
+              background: 'white',
+              borderRadius: '20px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              minWidth: '200px',
+            }}
+          >
+            <span style={{ fontSize: '56px', marginBottom: '12px' }}>
+              {emojiB || '🅱️'}
+            </span>
+            <span style={{ fontSize: '28px', fontWeight: 'bold', color: '#1F2937' }}>
+              {optionB || 'B'}
+            </span>
+            {hasResults && (
+              <span style={{ fontSize: '24px', color: '#EF4444', marginTop: '8px', fontWeight: 'bold' }}>
+                {pB}%
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div
+          style={{
+            marginTop: '40px',
+            padding: '16px 40px',
+            background: '#F59E0B',
+            borderRadius: '999px',
+            color: 'white',
+            fontSize: '24px',
+            fontWeight: 'bold',
+          }}
+        >
+          나도 투표하기
         </div>
 
         {/* 브랜드 */}
