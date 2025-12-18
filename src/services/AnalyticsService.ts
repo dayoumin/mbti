@@ -7,6 +7,7 @@
 
 import { resultService } from './ResultService';
 import type { NextActionType, ActionPriority } from './NextActionService';
+import { getUTMForAnalytics } from '@/utils';
 
 // ========== 타입 정의 ==========
 
@@ -159,6 +160,9 @@ class AnalyticsServiceClass {
     // Rate limiting 체크
     if (!this.checkRateLimit()) return;
 
+    // UTM 데이터 가져오기 (유입 경로 추적)
+    const utmData = getUTMForAnalytics();
+
     const eventData: EventData = {
       device_id: resultService.getUserId(),
       event_type: event.eventType,
@@ -173,6 +177,7 @@ class AnalyticsServiceClass {
       recommendation_position: event.recommendationPosition ?? null,
       meta: {
         ...event.meta,
+        ...utmData, // UTM 파라미터 포함
         screen_width: window.innerWidth,
         user_agent: navigator.userAgent,
         timestamp: Date.now(),

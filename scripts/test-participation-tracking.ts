@@ -7,7 +7,7 @@
  * 3. FeedbackService 분석 메서드 (타입 체크만)
  */
 
-import { BADGES, getBadgeById, getBadgesByCategory } from '../src/data/gamification/badges.ts';
+import { BADGES, getBadgeById, getBadgesByCategory } from '../src/data/gamification/badges';
 
 console.log('='.repeat(60));
 console.log('세션 1 기능 테스트: 참여 추적 및 배지 시스템');
@@ -34,7 +34,7 @@ const newBadgeIds = [
   'love-poll-lover',
 ];
 
-let missingBadges = [];
+const missingBadges: string[] = [];
 newBadgeIds.forEach(id => {
   const badge = getBadgeById(id);
   if (badge) {
@@ -98,7 +98,7 @@ const totalPollPoints = pollBadges.reduce((sum, b) => sum + b.points, 0);
 console.log(`  총 ${pollBadges.length}개 배지, ${totalPollPoints} 포인트`);
 
 // 등급별 분포
-const rarityCount = {};
+const rarityCount: Record<string, number> = {};
 pollBadges.forEach(b => {
   rarityCount[b.rarity] = (rarityCount[b.rarity] || 0) + 1;
 });
@@ -161,7 +161,7 @@ console.log('\n' + '='.repeat(60));
 console.log('테스트 결과 요약');
 console.log('='.repeat(60));
 
-const errors = [];
+const errors: string[] = [];
 
 // 배지 검증
 if (missingBadges.length > 0) {
