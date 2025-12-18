@@ -20,6 +20,8 @@ function createDefaultStats(): UserGameStats {
     quizCorrectStreak: 0,
     quizzesByCategory: {},
     pollsVoted: 0,
+    pollsByCategory: {},
+    minorityVotes: 0,
     streak: {
       currentStreak: 0,
       longestStreak: 0,
@@ -205,8 +207,19 @@ class GamificationService {
   }
 
   // 투표 참여
-  recordPollVote(): { points: number; newBadges: string[] } {
+  recordPollVote(options?: { category?: string; isMinority?: boolean }): { points: number; newBadges: string[] } {
     this.stats.pollsVoted++;
+
+    // 카테고리별 추적
+    if (options?.category) {
+      this.stats.pollsByCategory[options.category] =
+        (this.stats.pollsByCategory[options.category] || 0) + 1;
+    }
+
+    // 소수 의견 추적
+    if (options?.isMinority) {
+      this.stats.minorityVotes = (this.stats.minorityVotes || 0) + 1;
+    }
 
     // 오늘 활동 업데이트
     const todayActivity = this.getOrCreateTodayActivity();
@@ -220,6 +233,17 @@ class GamificationService {
     this.save();
 
     return { points, newBadges };
+  }
+
+  // 소수 의견 비율 조회
+  getMinorityVoteRatio(): number {
+    if (this.stats.pollsVoted === 0) return 0;
+    return Math.round(((this.stats.minorityVotes || 0) / this.stats.pollsVoted) * 100);
+  }
+
+  // 카테고리별 투표 현황 조회
+  getPollsByCategory(): Record<string, number> {
+    return { ...this.stats.pollsByCategory };
   }
 
   // 방문 기록
@@ -351,7 +375,20 @@ class GamificationService {
           return this.stats.pollsVoted >= 1;
         }
         if (condition.type === 'count' && condition.value) {
+          if (condition.target === 'minority') {
+            // 소수 의견 횟수 체크
+            return (this.stats.minorityVotes || 0) >= condition.value;
+          }
+          if (condition.target) {
+            // 카테고리별 투표 수 체크
+            return (this.stats.pollsByCategory[condition.target] || 0) >= condition.value;
+          }
           return this.stats.pollsVoted >= condition.value;
+        }
+        if (condition.type === 'special' && badge.id === 'minority-voice') {
+          // 소수 의견 비율 50% 이상 (10회 이상 투표 후)
+          if (this.stats.pollsVoted < 10) return false;
+          return this.getMinorityVoteRatio() >= 50;
         }
         break;
 

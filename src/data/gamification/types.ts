@@ -66,6 +66,8 @@ export interface UserGameStats {
 
   // 투표 관련
   pollsVoted: number;
+  pollsByCategory: Record<string, number>;  // 카테고리별 투표 수
+  minorityVotes: number;  // 소수 의견 선택 횟수
 
   // 스트릭
   streak: StreakInfo;

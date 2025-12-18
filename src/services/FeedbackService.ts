@@ -55,6 +55,24 @@ export interface QuizStats {
   byQuestion: { questionIndex: number; correctRate: number }[];
 }
 
+// ========== 참여 분석 타입 ==========
+
+export interface PollParticipationAnalysis {
+  totalPolls: number;
+  minorityVotes: number;        // 소수 의견 선택 횟수
+  minorityRatio: number;        // 소수 의견 비율 (0-100)
+  categoryBreakdown: Record<string, number>;  // 카테고리별 참여 수
+  recentPollIds: string[];      // 최근 참여 투표 ID
+}
+
+export interface QuizPerformanceAnalysis {
+  totalAnswered: number;
+  correctCount: number;
+  correctRate: number;          // 정답률 (0-100)
+  categoryBreakdown: Record<string, { answered: number; correct: number }>;
+  bestCategory: string | null;  // 가장 잘하는 카테고리
+}
+
 interface SaveResult {
   success: boolean;
   id?: string;
@@ -422,6 +440,205 @@ class FeedbackServiceClass {
     } catch {
       return [];
     }
+  }
+
+  // ========== 참여 분석 메서드 ==========
+
+  /**
+   * 사용자의 투표 참여 분석
+   * - 소수 의견 선택 비율 계산 (소수 의견 뱃지용)
+   * - 카테고리별 참여 현황
+   */
+  async getUserPollAnalysis(): Promise<PollParticipationAnalysis> {
+    const deviceId = getDeviceId();
+    const defaultResult: PollParticipationAnalysis = {
+      totalPolls: 0,
+      minorityVotes: 0,
+      minorityRatio: 0,
+      categoryBreakdown: {},
+      recentPollIds: [],
+    };
+
+    // localStorage 기반 분석
+    const stored = this.getFromLocalStorage('mbti_poll_responses') as Array<{
+      pollId: string;
+      optionId: string;
+      category?: string;
+      isMinority?: boolean;
+      created_at?: string;
+    }>;
+
+    if (stored.length === 0) return defaultResult;
+
+    const userResponses = stored.filter(r => r.pollId);
+    const totalPolls = userResponses.length;
+    const minorityVotes = userResponses.filter(r => r.isMinority).length;
+
+    // 카테고리별 집계
+    const categoryBreakdown: Record<string, number> = {};
+    userResponses.forEach(r => {
+      if (r.category) {
+        categoryBreakdown[r.category] = (categoryBreakdown[r.category] || 0) + 1;
+      }
+    });
+
+    // 최근 투표 ID (최근 10개)
+    const recentPollIds = userResponses
+      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+      .slice(0, 10)
+      .map(r => r.pollId);
+
+    return {
+      totalPolls,
+      minorityVotes,
+      minorityRatio: totalPolls > 0 ? Math.round((minorityVotes / totalPolls) * 100) : 0,
+      categoryBreakdown,
+      recentPollIds,
+    };
+  }
+
+  /**
+   * 사용자의 퀴즈 성과 분석
+   * - 전체 정답률
+   * - 카테고리별 성과
+   * - 가장 잘하는 카테고리
+   */
+  async getUserQuizAnalysis(): Promise<QuizPerformanceAnalysis> {
+    const defaultResult: QuizPerformanceAnalysis = {
+      totalAnswered: 0,
+      correctCount: 0,
+      correctRate: 0,
+      categoryBreakdown: {},
+      bestCategory: null,
+    };
+
+    // localStorage 기반 분석
+    const stored = this.getFromLocalStorage('mbti_quiz_responses') as Array<{
+      quizId: string;
+      isCorrect: boolean;
+      category?: string;
+    }>;
+
+    if (stored.length === 0) return defaultResult;
+
+    const totalAnswered = stored.length;
+    const correctCount = stored.filter(r => r.isCorrect).length;
+
+    // 카테고리별 집계
+    const categoryBreakdown: Record<string, { answered: number; correct: number }> = {};
+    stored.forEach(r => {
+      const cat = r.category || 'general';
+      if (!categoryBreakdown[cat]) {
+        categoryBreakdown[cat] = { answered: 0, correct: 0 };
+      }
+      categoryBreakdown[cat].answered++;
+      if (r.isCorrect) categoryBreakdown[cat].correct++;
+    });
+
+    // 가장 잘하는 카테고리 찾기 (최소 3문제 이상 풀어본 카테고리 중)
+    let bestCategory: string | null = null;
+    let bestRate = 0;
+    Object.entries(categoryBreakdown).forEach(([cat, stats]) => {
+      if (stats.answered >= 3) {
+        const rate = stats.correct / stats.answered;
+        if (rate > bestRate) {
+          bestRate = rate;
+          bestCategory = cat;
+        }
+      }
+    });
+
+    return {
+      totalAnswered,
+      correctCount,
+      correctRate: totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0,
+      categoryBreakdown,
+      bestCategory,
+    };
+  }
+
+  /**
+   * 투표 저장 시 소수 의견 여부 함께 저장 (확장된 버전)
+   */
+  async savePollResponseWithAnalysis(
+    data: PollResponseData & { category?: string },
+    pollStats?: PollStats
+  ): Promise<SaveResult & { isMinority: boolean }> {
+    // 소수 의견 여부 판단 (전체 투표의 30% 미만이면 소수)
+    let isMinority = false;
+    if (pollStats && pollStats.totalVotes > 0) {
+      const selectedOption = pollStats.options.find(o => o.optionId === data.optionId);
+      if (selectedOption) {
+        isMinority = selectedOption.percentage < 30;
+      }
+    }
+
+    // localStorage에 확장 데이터 저장
+    try {
+      const key = 'mbti_poll_responses';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]') as Array<
+        PollResponseData & { category?: string; isMinority?: boolean; created_at?: string }
+      >;
+      const next = existing.filter((r) => r.pollId !== data.pollId);
+      next.push({
+        ...data,
+        isMinority,
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem(key, JSON.stringify(next));
+
+      // 기존 저장 로직도 호출 (Supabase용)
+      const baseResult = await this.savePollResponse(data);
+
+      return { ...baseResult, isMinority };
+    } catch (error) {
+      return { success: false, error: (error as Error).message, isMinority: false };
+    }
+  }
+
+  /**
+   * 퀴즈 저장 시 카테고리 정보 함께 저장 (확장된 버전)
+   */
+  async saveQuizResponseWithCategory(
+    data: QuizResponseData & { category?: string }
+  ): Promise<SaveResult> {
+    // localStorage에 카테고리 포함 저장
+    try {
+      const key = 'mbti_quiz_responses';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]');
+      existing.push({
+        ...data,
+        device_id: getDeviceId(),
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem(key, JSON.stringify(existing));
+
+      // 기존 저장 로직도 호출 (Supabase용)
+      return await this.saveQuizResponse(data);
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  }
+
+  /**
+   * 사용자가 특정 카테고리에 관심 있는지 판단
+   * (참여 횟수 기준 상위 카테고리 반환)
+   */
+  async getTopInterestCategories(limit: number = 3): Promise<string[]> {
+    const pollAnalysis = await this.getUserPollAnalysis();
+    const quizAnalysis = await this.getUserQuizAnalysis();
+
+    // 투표 + 퀴즈 카테고리 합산
+    const combined: Record<string, number> = { ...pollAnalysis.categoryBreakdown };
+    Object.entries(quizAnalysis.categoryBreakdown).forEach(([cat, stats]) => {
+      combined[cat] = (combined[cat] || 0) + stats.answered;
+    });
+
+    // 참여 횟수 순으로 정렬
+    return Object.entries(combined)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([cat]) => cat);
   }
 }
 
