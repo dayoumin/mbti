@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import UTMInitializer from "@/components/UTMInitializer";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://chemi.app';
 
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     description: '재미로 보는 성격 테스트! 나는 어떤 유형? 나와 맞는 반려동물은? 나의 이상형은?',
     images: [
       {
-        url: `${siteUrl}/og-image.png`,
+        url: `${siteUrl}/api/og`,
         width: 1200,
         height: 630,
         alt: '케미 테스트',
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '케미 테스트',
     description: '재미로 보는 성격 테스트 - 나, 반려동물, 이상형 케미 분석',
-    images: [`${siteUrl}/og-image.png`],
+    images: [`${siteUrl}/api/og`],
   },
 
   // 기타 메타 정보
@@ -56,6 +57,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased bg-gray-50 min-h-screen">
+        <UTMInitializer />
         {children}
       </body>
     </html>

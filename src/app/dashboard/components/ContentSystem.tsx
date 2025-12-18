@@ -42,7 +42,13 @@ import {
   TREND_OPERATION_GUIDE,
   TrendSourceInfo,
   TrendContent,
+  FOLLOWUP_CATEGORIES,
+  FOLLOWUP_ROADMAP,
+  FOLLOWUP_STRATEGY,
+  FollowUpCategory,
+  FollowUpElement,
 } from '../data/content-system';
+import { Share2, Link, Bell, ThumbsUp } from 'lucide-react';
 
 // ============================================================================
 // Icons
@@ -59,7 +65,7 @@ const TYPE_ICONS: Record<ContentType, React.ReactNode> = {
 // ============================================================================
 
 export default function ContentSystem() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap' | 'seasonal'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap' | 'seasonal' | 'followup'>('overview');
   const [selectedType, setSelectedType] = useState<ContentType>('quiz');
 
   return (
@@ -73,6 +79,7 @@ export default function ContentSystem() {
           { key: 'seasonal', label: '시즌/트렌드', icon: <Sparkles className="w-4 h-4" /> },
           { key: 'estimates', label: '수량 예측', icon: <Calculator className="w-4 h-4" /> },
           { key: 'roadmap', label: '구현 로드맵', icon: <Calendar className="w-4 h-4" /> },
+          { key: 'followup', label: '후속 참여', icon: <Share2 className="w-4 h-4" /> },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -98,6 +105,7 @@ export default function ContentSystem() {
       {activeTab === 'seasonal' && <SeasonalTab />}
       {activeTab === 'estimates' && <EstimatesTab />}
       {activeTab === 'roadmap' && <RoadmapTab />}
+      {activeTab === 'followup' && <FollowUpTab />}
     </div>
   );
 }
@@ -1298,6 +1306,291 @@ function SeasonalContentView({
               </div>
             );
           })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// FollowUp Tab
+// ============================================================================
+
+function FollowUpTab() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const GOAL_COLORS: Record<string, string> = {
+    engagement: '#7aa2ff',
+    viral: '#ff6b9d',
+    retention: '#55e6c1',
+    ugc: '#ffd166',
+  };
+
+  const GOAL_LABELS: Record<string, string> = {
+    engagement: '참여',
+    viral: '바이럴',
+    retention: '리텐션',
+    ugc: 'UGC',
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Introduction */}
+      <div className="db-card p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[#ff6b9d]/20 flex items-center justify-center">
+            <Share2 className="w-6 h-6 text-[#ff6b9d]" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-[var(--db-text)] mb-2">
+              후속 참여 전략이란?
+            </h3>
+            <p className="text-[var(--db-muted)]">
+              퀴즈/투표 결과 후 <strong className="text-[var(--db-text)]">바이럴과 재참여</strong>를 유도하는 요소들입니다.
+              단순 공유 외에도 즉각 반응, 결과 기반 후속, 소셜 연결, 지연 참여 등 다양한 방식으로
+              사용자를 계속 붙잡아 둡니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Cards */}
+      <div className="grid grid-cols-4 gap-4">
+        {FOLLOWUP_CATEGORIES.map((category) => {
+          const categoryColors: Record<string, string> = {
+            immediate: '#7aa2ff',
+            'result-based': '#55e6c1',
+            social: '#ff6b9d',
+            delayed: '#ffd166',
+          };
+          const color = categoryColors[category.id];
+          const isSelected = selectedCategory === category.id;
+
+          return (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(isSelected ? null : category.id)}
+              className={`p-4 rounded-xl text-left transition-all ${
+                isSelected ? 'ring-2' : ''
+              }`}
+              style={{
+                background: `${color}15`,
+                // @ts-expect-error CSS variable for ring color
+                '--tw-ring-color': color
+              }}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">{category.icon}</span>
+                <div>
+                  <h4 className="font-semibold text-[var(--db-text)]">{category.name}</h4>
+                  <p className="text-xs text-[var(--db-muted)]">{category.elements.length}개 요소</p>
+                </div>
+              </div>
+              <p className="text-sm text-[var(--db-muted)]">{category.description}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* All Elements or Filtered */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            {selectedCategory
+              ? `${FOLLOWUP_CATEGORIES.find(c => c.id === selectedCategory)?.name} 요소`
+              : '전체 후속 참여 요소'
+            }
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            바이럴 효과와 구현 난이도로 우선순위 판단
+          </p>
+        </div>
+        <div className="p-5">
+          <div className="grid grid-cols-2 gap-4">
+            {FOLLOWUP_CATEGORIES
+              .filter(cat => !selectedCategory || cat.id === selectedCategory)
+              .flatMap(cat => cat.elements.map(el => ({ ...el, categoryId: cat.id, categoryIcon: cat.icon })))
+              .map((element) => {
+                const categoryColors: Record<string, string> = {
+                  immediate: '#7aa2ff',
+                  'result-based': '#55e6c1',
+                  social: '#ff6b9d',
+                  delayed: '#ffd166',
+                };
+                const catColor = categoryColors[element.categoryId];
+
+                return (
+                  <div
+                    key={element.id}
+                    className="p-4 rounded-xl"
+                    style={{ background: 'rgba(0,0,0,0.3)' }}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span>{element.categoryIcon}</span>
+                        <h4 className="font-semibold text-[var(--db-text)]">{element.name}</h4>
+                      </div>
+                      <div className="flex gap-1">
+                        {element.goal.map(g => (
+                          <span
+                            key={g}
+                            className="px-2 py-0.5 rounded text-xs"
+                            style={{ background: `${GOAL_COLORS[g]}22`, color: GOAL_COLORS[g] }}
+                          >
+                            {GOAL_LABELS[g]}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-[var(--db-muted)] mb-3">{element.description}</p>
+
+                    {/* Ratings */}
+                    <div className="flex gap-6 mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-[var(--db-muted)]">바이럴</span>
+                        <div className="flex gap-0.5">
+                          {[1, 2, 3, 4, 5].map((n) => (
+                            <Star
+                              key={n}
+                              className="w-3 h-3"
+                              style={{
+                                color: n <= element.viralEffect ? '#ff6b9d' : 'rgba(255,255,255,0.1)',
+                                fill: n <= element.viralEffect ? '#ff6b9d' : 'transparent',
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-[var(--db-muted)]">난이도</span>
+                        <div className="flex gap-0.5">
+                          {[1, 2, 3].map((n) => (
+                            <div
+                              key={n}
+                              className="w-2 h-2 rounded-full"
+                              style={{
+                                background: n <= element.effort ? catColor : 'rgba(255,255,255,0.1)',
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Examples */}
+                    <div className="flex flex-wrap gap-1">
+                      {element.examples.map((ex, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded text-xs bg-[var(--db-panel)] text-[var(--db-text)]"
+                        >
+                          {ex}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      </div>
+
+      {/* Implementation Roadmap */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            구현 로드맵
+          </h3>
+        </div>
+        <div className="p-5">
+          <div className="space-y-4">
+            {FOLLOWUP_ROADMAP.map((phase, idx) => {
+              const phaseColors = ['#7aa2ff', '#55e6c1', '#ffd166', '#ff6b9d'];
+              const color = phaseColors[idx % phaseColors.length];
+
+              return (
+                <div
+                  key={phase.phase}
+                  className="p-4 rounded-xl"
+                  style={{ background: `${color}10`, borderLeft: `3px solid ${color}` }}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <span
+                      className="px-3 py-1 rounded-lg text-sm font-bold"
+                      style={{ background: color, color: '#081023' }}
+                    >
+                      {phase.phase}
+                    </span>
+                    <span className="text-xs text-[var(--db-muted)]">{phase.duration}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {phase.items.map((item, itemIdx) => {
+                      const priorityColors: Record<string, string> = {
+                        high: '#ff6b6b',
+                        medium: '#ffd166',
+                        low: '#55e6c1',
+                      };
+                      return (
+                        <div
+                          key={itemIdx}
+                          className="p-3 rounded-lg flex items-start gap-2"
+                          style={{ background: 'rgba(0,0,0,0.2)' }}
+                        >
+                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color }} />
+                          <div>
+                            <span className="text-sm text-[var(--db-text)]">{item.name}</span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span
+                                className="px-1.5 py-0.5 rounded text-xs"
+                                style={{
+                                  background: `${priorityColors[item.priority]}22`,
+                                  color: priorityColors[item.priority]
+                                }}
+                              >
+                                {item.priority === 'high' ? '높음' : item.priority === 'medium' ? '중간' : '낮음'}
+                              </span>
+                              <span className="text-xs text-[var(--db-muted)]">{item.reason}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Wins - High Viral, Low Effort */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">
+            <Zap className="w-5 h-5 inline mr-2 text-[var(--db-brand)]" />
+            Quick Wins (고효과 + 저난이도)
+          </h3>
+          <p className="text-sm text-[var(--db-muted)]">
+            바이럴 효과 4+ & 구현 난이도 1인 요소들
+          </p>
+        </div>
+        <div className="p-5">
+          <div className="flex flex-wrap gap-3">
+            {FOLLOWUP_CATEGORIES
+              .flatMap(cat => cat.elements)
+              .filter(el => el.viralEffect >= 4 && el.effort === 1)
+              .map(el => (
+                <div
+                  key={el.id}
+                  className="px-4 py-2 rounded-lg bg-[var(--db-brand)]/20 border border-[var(--db-brand)]/30"
+                >
+                  <span className="font-medium text-[var(--db-brand)]">{el.name}</span>
+                  <span className="ml-2 text-xs text-[var(--db-muted)]">
+                    바이럴 {el.viralEffect}★
+                  </span>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>
