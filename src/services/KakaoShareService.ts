@@ -165,6 +165,7 @@ class KakaoShareService {
     resultName: string;
     resultDesc: string;
     imageUrl?: string;
+    linkUrl?: string; // UTM이 포함된 공유 URL
   }): Promise<boolean> {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -176,7 +177,7 @@ class KakaoShareService {
       description: `${params.testTitle} 결과\n"${params.resultDesc}"`,
       imageUrl,
       buttonTitle: '나도 테스트하기',
-      linkUrl: baseUrl,
+      linkUrl: params.linkUrl || baseUrl,
     });
   }
 

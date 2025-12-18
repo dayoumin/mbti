@@ -1156,6 +1156,7 @@ export default function Home() {
                             {showShareCard && finalResult && (
                                 <ShareCard
                                     testTitle={currentModeData.title}
+                                    testKey={safeMode}
                                     resultName={finalResult.name}
                                     resultEmoji={finalResult.emoji}
                                     resultDesc={finalResult.desc}

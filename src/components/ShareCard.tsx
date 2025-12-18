@@ -3,9 +3,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Download, Share2, Copy, Check, X, Users, MessageCircle } from 'lucide-react';
 import { kakaoShareService } from '@/services/KakaoShareService';
+import { generateShareUrl, type SharePlatform } from '@/utils';
 
 interface ShareCardProps {
   testTitle: string;
+  testKey?: string; // UTM 추적용 테스트 키 (예: 'dog', 'cat')
   resultName: string;
   resultEmoji: string;
   resultDesc: string;
@@ -18,6 +20,7 @@ interface ShareCardProps {
 
 export default function ShareCard({
   testTitle,
+  testKey,
   resultName,
   resultEmoji,
   resultDesc,
@@ -205,9 +208,15 @@ export default function ShareCard({
     link.click();
   };
 
+  // UTM이 적용된 공유 URL 생성
+  const getShareUrl = (platform: SharePlatform): string => {
+    const baseUrl = `${window.location.origin}?test=${encodeURIComponent(testTitle)}`;
+    return generateShareUrl(baseUrl, platform, 'test-result', testKey || testTitle);
+  };
+
   // 링크 복사
   const handleCopyLink = async () => {
-    const shareUrl = `${window.location.origin}?test=${encodeURIComponent(testTitle)}`;
+    const shareUrl = getShareUrl('link_copy');
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
@@ -221,10 +230,11 @@ export default function ShareCard({
   const handleShare = async () => {
     if (!imageUrl) return;
 
+    const shareUrl = getShareUrl('native_share');
     const shareData = {
       title: `${testTitle} 결과: ${resultName}`,
       text: `${resultEmoji} ${resultName}\n"${resultDesc}"\n\n나도 테스트하러 가기 👇`,
-      url: window.location.href,
+      url: shareUrl,
     };
 
     if (navigator.share) {
@@ -246,11 +256,13 @@ export default function ShareCard({
       return;
     }
 
+    const shareUrl = getShareUrl('kakao');
     await kakaoShareService.shareTestResult({
       testTitle,
       resultEmoji,
       resultName,
       resultDesc,
+      linkUrl: shareUrl,
     });
   };
 
