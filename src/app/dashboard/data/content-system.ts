@@ -899,6 +899,11 @@ export const SEASONAL_CONTENT: SeasonalContent[] = [
       '📅 올해 반려동물에게 해주고 싶은 것 1위는?',
       '🐾 새해 목표: 산책 늘리기 vs 간식 줄이기',
     ],
+    tips: [
+      '새해 다짐 콘텐츠 (건강검진, 다이어트 등)',
+      '불꽃놀이 스트레스 대처법 콘텐츠',
+      '연말연시 반려동물 케어 체크리스트',
+    ],
   },
   {
     id: 'lunar-new-year',
@@ -919,6 +924,33 @@ export const SEASONAL_CONTENT: SeasonalContent[] = [
       '🧳 연휴 펫시터/펫호텔 이용해보셨나요?',
     ],
     tips: ['추석과 비슷한 주의사항', '명절 음식 주의 강조'],
+  },
+
+  // ========== 4월 ==========
+  {
+    id: 'cherry-blossom',
+    name: '벚꽃/식목일',
+    period: { start: '04-01', end: '04-15' },
+    icon: '🌳',
+    theme: 'pink-green',
+    quizIdeas: [
+      '반려동물과 벚꽃놀이 시 주의사항은?',
+      '벚꽃이 반려동물에게 안전한가요?',
+      '식목일에 심기 좋은 반려식물은?',
+      '봄꽃 중 반려동물에게 독성이 있는 것은?',
+      '봄철 야외활동 후 진드기 체크 방법은?',
+    ],
+    pollIdeas: [
+      '🌸 반려동물과 벚꽃 사진 찍어보셨나요?',
+      '🌳 식목일 기념 새 화분 들일 예정인가요?',
+      '🐶 봄꽃 명소 반려동물 동반 가능한 곳 추천해주세요!',
+      '📸 반려동물 봄 사진 어디서 찍으시나요?',
+    ],
+    tips: [
+      '벚꽃 피는 시기에 맞춘 콘텐츠 발행',
+      '식목일(4/5) 전후 식물 콘텐츠 강조',
+      '봄꽃 독성 정보 중요 (진달래, 철쭉 등)',
+    ],
   },
 
   // ========== 봄 ==========
@@ -982,6 +1014,33 @@ export const SEASONAL_CONTENT: SeasonalContent[] = [
       '🐕 커플 반려동물 합사 경험 있으신가요?',
     ],
     tips: ['자일리톨 위험성 강조', '반려동물 동반 데이트 장소 추천'],
+  },
+
+  // ========== 6월 ==========
+  {
+    id: 'environment-day',
+    name: '환경의 날',
+    period: { start: '06-01', end: '06-10' },
+    icon: '🌍',
+    theme: 'green-blue',
+    quizIdeas: [
+      '친환경 반려동물 용품이란?',
+      '반려동물 배변봉투 친환경 대안은?',
+      '공기정화 효과가 좋은 반려식물은?',
+      '반려동물 사료 포장재 재활용 방법은?',
+    ],
+    pollIdeas: [
+      '🌍 친환경 펫용품 사용하시나요?',
+      '♻️ 반려동물 용품 재활용 어떻게 하세요?',
+      '🌱 공기정화 식물 키우시나요?',
+      '🐕 산책 시 배변봉투 어떤 거 쓰세요?',
+      '🌿 친환경 사료/간식 관심 있으신가요?',
+    ],
+    tips: [
+      '환경의 날(6/5) 맞춤 콘텐츠',
+      '친환경 펫 브랜드 소개 기회',
+      '공기정화 식물 추천 콘텐츠',
+    ],
   },
 
   // ========== 여름 ==========
@@ -1310,6 +1369,420 @@ export interface TrendOperationGuide {
   frequency: string;
 }
 
+// ============================================================================
+// 후속 참여 전략 (퀴즈/투표 완료 후 이탈 방지)
+// ============================================================================
+
+export type FollowUpTiming = 'immediate' | 'delayed' | 'conditional';
+export type FollowUpGoal = 'engagement' | 'viral' | 'retention' | 'ugc';
+
+export interface FollowUpElement {
+  id: string;
+  name: string;
+  description: string;
+  timing: FollowUpTiming;
+  goal: FollowUpGoal[];
+  implementation: string;
+  examples: string[];
+  viralEffect: 1 | 2 | 3 | 4 | 5;  // 바이럴 효과
+  effort: 1 | 2 | 3;  // 구현 난이도
+}
+
+export interface FollowUpCategory {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  elements: FollowUpElement[];
+}
+
+// 즉시 반응 유도 (결과 화면에서)
+export const IMMEDIATE_REACTIONS: FollowUpElement[] = [
+  {
+    id: 'agree-button',
+    name: '"나도!" 공감 버튼',
+    description: '결과에 공감 표시 → 공감 수 실시간 표시',
+    timing: 'immediate',
+    goal: ['engagement', 'viral'],
+    implementation: '결과 화면에 "나도 이렇게 생각해" 버튼 + 실시간 카운터',
+    examples: [
+      '"나도!" 1,234명이 공감했어요',
+      '같은 선택 한 사람 N명과 함께해요',
+    ],
+    viralEffect: 3,
+    effort: 1,
+  },
+  {
+    id: 'one-line-comment',
+    name: '한줄 코멘트',
+    description: '짧은 의견 남기기 → 베스트 댓글 선정',
+    timing: 'immediate',
+    goal: ['engagement', 'ugc'],
+    implementation: '50자 이내 한줄 코멘트 입력창 + 좋아요 기능',
+    examples: [
+      '"한 마디 남기기" → 베스트 댓글 3개 노출',
+      '인기 댓글 작성자에게 포인트 보상',
+    ],
+    viralEffect: 4,
+    effort: 2,
+  },
+  {
+    id: 'related-content',
+    name: '관련 콘텐츠 바로가기',
+    description: '연관 투표/퀴즈로 자연스러운 이동',
+    timing: 'immediate',
+    goal: ['retention', 'engagement'],
+    implementation: '결과 하단에 "이것도 투표해보세요" 2-3개 추천',
+    examples: [
+      '습식 vs 건식 투표 후 → "고양이 사료 브랜드 투표"',
+      '연애 퀴즈 후 → "연애 스타일 투표"',
+    ],
+    viralEffect: 2,
+    effort: 1,
+  },
+  {
+    id: 'counter-proposal',
+    name: '반박 투표 제안',
+    description: '"반대 의견 있으면 새 투표 제안하기"',
+    timing: 'immediate',
+    goal: ['ugc', 'engagement'],
+    implementation: '결과 화면에 "다른 의견 제안하기" 버튼',
+    examples: [
+      '"이 주제로 새 투표 만들기"',
+      '"내 의견은 달라요" → 제안 폼으로 이동',
+    ],
+    viralEffect: 3,
+    effort: 2,
+  },
+];
+
+// 결과 기반 후속 콘텐츠
+export const RESULT_BASED_FOLLOWUPS: FollowUpElement[] = [
+  {
+    id: 'predict-majority',
+    name: '다수 의견 예측',
+    description: '"다른 사람들은 뭘 선택했을까?" 맞추기',
+    timing: 'immediate',
+    goal: ['engagement', 'retention'],
+    implementation: '투표 전 또는 결과 확인 전 예측 입력 → 맞추면 보너스',
+    examples: [
+      '"다수 의견 맞추기" → 정답 시 +50P',
+      '예측 정확도 누적 → "예언가" 뱃지',
+    ],
+    viralEffect: 4,
+    effort: 2,
+  },
+  {
+    id: 'why-vote',
+    name: 'Why 투표',
+    description: '선택 이유 묻는 2차 투표',
+    timing: 'immediate',
+    goal: ['engagement', 'ugc'],
+    implementation: '선택 후 "왜 이걸 선택하셨나요?" 이유 선택지 제공',
+    examples: [
+      'A 선택 이유: 경험상/추천받아서/직감으로...',
+      '이유별 분포 그래프 제공',
+    ],
+    viralEffect: 3,
+    effort: 2,
+  },
+  {
+    id: 'reversal-quiz',
+    name: '반전 퀴즈',
+    description: '"근데 실제로는..." 정보 제공 후 재투표',
+    timing: 'immediate',
+    goal: ['engagement', 'viral'],
+    implementation: '투표 결과 후 관련 팩트 제공 → "알고도 같은 선택?" 재투표',
+    examples: [
+      '"실제로 수의사 추천은 B입니다" → 의견 바뀌셨나요?',
+      '재투표 결과 vs 원래 결과 비교',
+    ],
+    viralEffect: 5,
+    effort: 2,
+  },
+  {
+    id: 'segment-result',
+    name: '유형별 결과 비교',
+    description: '성격/테스트 결과별 투표 결과 세그먼트',
+    timing: 'immediate',
+    goal: ['engagement', 'viral'],
+    implementation: '투표 결과를 테스트 유형별로 분류 → "ENFP는 70%가 A 선택"',
+    examples: [
+      '"당신과 같은 유형은 A를 더 선호해요"',
+      '"I 유형 vs E 유형 투표 결과가 이렇게 달라요"',
+    ],
+    viralEffect: 5,
+    effort: 3,
+  },
+  {
+    id: 'minority-highlight',
+    name: '소수 의견 하이라이트',
+    description: '소수 선택자에게 특별 메시지',
+    timing: 'immediate',
+    goal: ['engagement', 'viral'],
+    implementation: '10% 이하 선택지 선택 시 "당신은 특별해요" 메시지',
+    examples: [
+      '"단 8%만 이걸 선택했어요. 당신의 이유는?"',
+      '소수 의견 공유 시 특별 카드 제공',
+    ],
+    viralEffect: 4,
+    effort: 1,
+  },
+];
+
+// 소셜 연결 요소
+export const SOCIAL_CONNECTIONS: FollowUpElement[] = [
+  {
+    id: 'friend-tag',
+    name: '친구 태그',
+    description: '"이 결과 보여주고 싶은 사람?" 태그 유도',
+    timing: 'immediate',
+    goal: ['viral'],
+    implementation: '결과 화면에 "누구에게 보여줄까?" 공유 버튼',
+    examples: [
+      '"이 결과, 누구 생각나요?"',
+      '카카오톡/인스타 스토리 멘션 유도',
+    ],
+    viralEffect: 5,
+    effort: 1,
+  },
+  {
+    id: 'opinion-battle',
+    name: '의견 대결',
+    description: '친구 초대해서 의견 대결',
+    timing: 'immediate',
+    goal: ['viral', 'engagement'],
+    implementation: '링크 공유 → 친구 참여 → 둘의 선택 비교 결과',
+    examples: [
+      '"친구와 의견 대결!" → 링크 공유',
+      '둘의 선택이 같으면 "찰떡궁합!", 다르면 "토론해보세요!"',
+    ],
+    viralEffect: 5,
+    effort: 3,
+  },
+  {
+    id: 'same-choice-community',
+    name: '같은 선택 커뮤니티',
+    description: '같은 선택을 한 사람들 연결',
+    timing: 'immediate',
+    goal: ['retention', 'engagement'],
+    implementation: '"A 선택한 N명" 클릭 → 그들의 댓글/프로필 보기',
+    examples: [
+      '"같은 선택 한 1,234명의 이유 보기"',
+      '같은 선택자들만의 미니 토론방',
+    ],
+    viralEffect: 3,
+    effort: 3,
+  },
+  {
+    id: 'challenge-invite',
+    name: '챌린지 초대',
+    description: '"나보다 잘 맞출 수 있어?" 도전 유도',
+    timing: 'immediate',
+    goal: ['viral'],
+    implementation: '퀴즈 점수 기반 친구 도전장 보내기',
+    examples: [
+      '"나는 8/10 맞았어. 도전해볼래?"',
+      '친구 점수 vs 내 점수 비교 결과',
+    ],
+    viralEffect: 5,
+    effort: 2,
+  },
+];
+
+// 시간차 참여 유도
+export const DELAYED_ENGAGEMENTS: FollowUpElement[] = [
+  {
+    id: 'result-change-alert',
+    name: '결과 변화 알림',
+    description: '투표 결과가 뒤집히면 알림',
+    timing: 'delayed',
+    goal: ['retention', 'engagement'],
+    implementation: '결과 역전 시 참여자에게 푸시/알림',
+    examples: [
+      '"투표 결과가 뒤집혔어요! 확인해보세요"',
+      '"당신의 선택이 이제 다수 의견이 됐어요!"',
+    ],
+    viralEffect: 4,
+    effort: 2,
+  },
+  {
+    id: 'followup-poll-alert',
+    name: '후속 투표 알림',
+    description: '관련 새 투표 등록 시 알림',
+    timing: 'delayed',
+    goal: ['retention'],
+    implementation: '참여한 투표와 관련된 새 투표 → 알림 발송',
+    examples: [
+      '"습식 vs 건식" 참여자 → "사료 브랜드 투표" 알림',
+      '"이 주제 관심 있으셨죠? 새 투표 왔어요"',
+    ],
+    viralEffect: 3,
+    effort: 2,
+  },
+  {
+    id: 'best-comment-alert',
+    name: '베스트 댓글 알림',
+    description: '내 댓글이 인기 댓글 되면 알림',
+    timing: 'conditional',
+    goal: ['retention', 'engagement'],
+    implementation: '좋아요 N개 이상 시 알림 + 포인트 지급',
+    examples: [
+      '"당신의 댓글이 인기 댓글! +100P"',
+      '"50명이 당신의 의견에 공감했어요"',
+    ],
+    viralEffect: 4,
+    effort: 2,
+  },
+  {
+    id: 'weekly-recap',
+    name: '주간 참여 리캡',
+    description: '이번 주 참여 요약 + 다음 주 추천',
+    timing: 'delayed',
+    goal: ['retention'],
+    implementation: '주 1회 참여 통계 + 놓친 인기 투표 + 다음 주 예고',
+    examples: [
+      '"이번 주 5개 투표 참여! 상위 10%입니다"',
+      '"놓친 인기 투표 3개, 지금 참여해보세요"',
+    ],
+    viralEffect: 2,
+    effort: 2,
+  },
+  {
+    id: 'streak-reminder',
+    name: '스트릭 유지 알림',
+    description: '연속 참여 끊기기 전 리마인드',
+    timing: 'conditional',
+    goal: ['retention'],
+    implementation: '오늘 참여 없으면 저녁에 리마인드 알림',
+    examples: [
+      '"7일 연속 참여 중! 오늘도 1분 투표해요"',
+      '"스트릭 끊기기 3시간 전! 지금 참여하기"',
+    ],
+    viralEffect: 1,
+    effort: 1,
+  },
+];
+
+// 후속 참여 전략 카테고리
+export const FOLLOWUP_CATEGORIES: FollowUpCategory[] = [
+  {
+    id: 'immediate-reaction',
+    name: '즉시 반응 유도',
+    description: '결과 화면에서 바로 다음 행동 유도',
+    icon: '⚡',
+    color: '#7aa2ff',
+    elements: IMMEDIATE_REACTIONS,
+  },
+  {
+    id: 'result-based',
+    name: '결과 기반 후속',
+    description: '투표/퀴즈 결과를 활용한 추가 참여',
+    icon: '🎯',
+    color: '#55e6c1',
+    elements: RESULT_BASED_FOLLOWUPS,
+  },
+  {
+    id: 'social-connection',
+    name: '소셜 연결',
+    description: '친구/커뮤니티와 연결하여 바이럴 유도',
+    icon: '🔗',
+    color: '#ff6b9d',
+    elements: SOCIAL_CONNECTIONS,
+  },
+  {
+    id: 'delayed-engagement',
+    name: '시간차 참여',
+    description: '재방문 유도를 위한 알림/리마인드',
+    icon: '⏰',
+    color: '#ffd166',
+    elements: DELAYED_ENGAGEMENTS,
+  },
+];
+
+// 후속 참여 구현 우선순위
+export interface FollowUpRoadmapItem {
+  phase: string;
+  duration: string;
+  items: {
+    elementId: string;
+    name: string;
+    priority: 'high' | 'medium' | 'low';
+    reason: string;
+  }[];
+}
+
+export const FOLLOWUP_ROADMAP: FollowUpRoadmapItem[] = [
+  {
+    phase: 'Phase 1: 즉시 도입',
+    duration: '2주',
+    items: [
+      { elementId: 'agree-button', name: '"나도!" 공감 버튼', priority: 'high', reason: '구현 쉬움 + 즉시 효과' },
+      { elementId: 'related-content', name: '관련 콘텐츠 바로가기', priority: 'high', reason: '체류시간 증가' },
+      { elementId: 'friend-tag', name: '친구 태그', priority: 'high', reason: '바이럴 핵심' },
+      { elementId: 'minority-highlight', name: '소수 의견 하이라이트', priority: 'medium', reason: '공유 유도' },
+    ],
+  },
+  {
+    phase: 'Phase 2: 단기 도입',
+    duration: '1개월',
+    items: [
+      { elementId: 'one-line-comment', name: '한줄 코멘트', priority: 'high', reason: 'UGC 핵심' },
+      { elementId: 'segment-result', name: '유형별 결과 비교', priority: 'high', reason: '테스트 연동 시너지' },
+      { elementId: 'reversal-quiz', name: '반전 퀴즈', priority: 'medium', reason: '놀람 요소 → 공유' },
+      { elementId: 'challenge-invite', name: '챌린지 초대', priority: 'medium', reason: '바이럴 효과 높음' },
+    ],
+  },
+  {
+    phase: 'Phase 3: 중기 도입',
+    duration: '2-3개월',
+    items: [
+      { elementId: 'opinion-battle', name: '의견 대결', priority: 'high', reason: '친구 간 바이럴 핵심' },
+      { elementId: 'predict-majority', name: '다수 의견 예측', priority: 'medium', reason: '게임성 강화' },
+      { elementId: 'result-change-alert', name: '결과 변화 알림', priority: 'medium', reason: '재방문 유도' },
+      { elementId: 'best-comment-alert', name: '베스트 댓글 알림', priority: 'medium', reason: 'UGC 보상' },
+    ],
+  },
+  {
+    phase: 'Phase 4: 장기 도입',
+    duration: '3개월+',
+    items: [
+      { elementId: 'same-choice-community', name: '같은 선택 커뮤니티', priority: 'low', reason: '커뮤니티 기능 필요' },
+      { elementId: 'why-vote', name: 'Why 투표', priority: 'low', reason: '심층 데이터 수집' },
+      { elementId: 'counter-proposal', name: '반박 투표 제안', priority: 'low', reason: 'UGC 고도화' },
+      { elementId: 'weekly-recap', name: '주간 참여 리캡', priority: 'low', reason: '알림 시스템 필요' },
+    ],
+  },
+];
+
+// 후속 참여 전략 통합
+export const FOLLOWUP_STRATEGY = {
+  categories: FOLLOWUP_CATEGORIES,
+  roadmap: FOLLOWUP_ROADMAP,
+  // 모든 요소 flat 리스트
+  allElements: [
+    ...IMMEDIATE_REACTIONS,
+    ...RESULT_BASED_FOLLOWUPS,
+    ...SOCIAL_CONNECTIONS,
+    ...DELAYED_ENGAGEMENTS,
+  ],
+  // 바이럴 효과 높은 순
+  getHighViralElements: () => [
+    ...IMMEDIATE_REACTIONS,
+    ...RESULT_BASED_FOLLOWUPS,
+    ...SOCIAL_CONNECTIONS,
+    ...DELAYED_ENGAGEMENTS,
+  ].filter(e => e.viralEffect >= 4).sort((a, b) => b.viralEffect - a.viralEffect),
+  // 구현 쉬운 순
+  getEasyToImplement: () => [
+    ...IMMEDIATE_REACTIONS,
+    ...RESULT_BASED_FOLLOWUPS,
+    ...SOCIAL_CONNECTIONS,
+    ...DELAYED_ENGAGEMENTS,
+  ].filter(e => e.effort === 1).sort((a, b) => b.viralEffect - a.viralEffect),
+};
+
 export const TREND_OPERATION_GUIDE: TrendOperationGuide[] = [
   {
     step: 1,
@@ -1408,6 +1881,10 @@ export const CONTENT_SYSTEM = {
   trendSources: TREND_SOURCES,
   trendExamples: TREND_CONTENT_EXAMPLES,
   trendOperationGuide: TREND_OPERATION_GUIDE,
+  // 후속 참여 전략
+  followUpStrategy: FOLLOWUP_STRATEGY,
+  followUpCategories: FOLLOWUP_CATEGORIES,
+  followUpRoadmap: FOLLOWUP_ROADMAP,
 };
 
 export default CONTENT_SYSTEM;
