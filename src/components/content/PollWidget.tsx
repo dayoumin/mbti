@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, MessageCircle } from 'lucide-react';
+import { Check, ChevronRight } from 'lucide-react';
 import type { VSPoll } from '../../data/content/types';
 import type { PollResults } from './useContentParticipation';
 
@@ -11,8 +11,8 @@ export interface PollWidgetProps {
   results: PollResults;
   isLoadingStats: boolean;
   onVote: (choice: 'a' | 'b') => void;
-  variant?: 'compact' | 'full';
-  onExploreMore?: () => void;
+  remainingCount?: number;
+  onNext?: () => void;
 }
 
 export default function PollWidget({
@@ -22,101 +22,66 @@ export default function PollWidget({
   results,
   isLoadingStats,
   onVote,
-  variant = 'compact',
-  onExploreMore,
+  remainingCount = 0,
+  onNext,
 }: PollWidgetProps) {
-  const isCompact = variant === 'compact';
-
-  // compact: 사이드바/패널용 (그라디언트 배경, 세로 옵션)
-  // full: 모바일 인라인용 (흰 배경, 가로 옵션)
-  const containerClass = isCompact
-    ? 'bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 border border-purple-100'
-    : 'bg-white rounded-2xl p-3 shadow-sm border border-slate-100';
-
   return (
-    <div className={containerClass}>
-      <div className="flex items-center gap-1.5 mb-2">
-        <div className="w-5 h-5 bg-purple-100 rounded-md flex items-center justify-center">
-          <span className="text-[8px] font-black text-purple-600">VS</span>
+    <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+      {/* 헤더 */}
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
+          <span className="text-[9px] font-black text-purple-600">VS</span>
         </div>
-        <span className="text-[10px] font-bold text-purple-600">투표</span>
+        <span className="text-xs font-bold text-purple-600">오늘의 투표</span>
         {isVoted && (
-          <span className="ml-auto w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center">
-            <Check className="w-2.5 h-2.5 text-emerald-600" />
+          <span className="ml-auto w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center">
+            <Check className="w-3 h-3 text-emerald-600" />
           </span>
         )}
       </div>
 
-      <p className="text-xs font-bold text-slate-700 mb-2 line-clamp-2 leading-snug">
+      {/* 질문 */}
+      <p className="text-sm font-bold text-slate-800 mb-3 leading-snug">
         {poll.question}
       </p>
 
-      {isCompact ? (
-        // 세로 배치 (사이드바/패널)
-        <div className="space-y-1.5">
-          <PollOptionButton
-            option={poll.optionA}
-            choice="a"
-            selectedOption={selectedOption}
-            results={results}
-            isLoadingStats={isLoadingStats}
-            onVote={onVote}
-            layout="horizontal"
-          />
-          <PollOptionButton
-            option={poll.optionB}
-            choice="b"
-            selectedOption={selectedOption}
-            results={results}
-            isLoadingStats={isLoadingStats}
-            onVote={onVote}
-            layout="horizontal"
-          />
-        </div>
-      ) : (
-        // 가로 배치 (모바일)
-        <>
-          <div className="flex gap-2">
-            <PollOptionButton
-              option={poll.optionA}
-              choice="a"
-              selectedOption={selectedOption}
-              results={results}
-              isLoadingStats={isLoadingStats}
-              onVote={onVote}
-              layout="vertical"
-            />
-            <PollOptionButton
-              option={poll.optionB}
-              choice="b"
-              selectedOption={selectedOption}
-              results={results}
-              isLoadingStats={isLoadingStats}
-              onVote={onVote}
-              layout="vertical"
-            />
-          </div>
+      {/* 투표 옵션 - 가로 배치 */}
+      <div className="flex gap-3">
+        <PollOptionButton
+          option={poll.optionA}
+          choice="a"
+          selectedOption={selectedOption}
+          results={results}
+          isLoadingStats={isLoadingStats}
+          onVote={onVote}
+        />
+        <PollOptionButton
+          option={poll.optionB}
+          choice="b"
+          selectedOption={selectedOption}
+          results={results}
+          isLoadingStats={isLoadingStats}
+          onVote={onVote}
+        />
+      </div>
 
-          {/* 투표 후 참여자 수 & CTA */}
-          {selectedOption && (
-            <div className="mt-2 pt-2 border-t border-slate-100">
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] text-slate-400">
-                  {results.total > 0 ? `${results.total.toLocaleString()}명 참여` : '첫 번째 투표!'}
-                </span>
-                {onExploreMore && (
-                  <button
-                    onClick={onExploreMore}
-                    className="text-[9px] font-medium text-indigo-500 hover:text-indigo-600 flex items-center gap-0.5"
-                  >
-                    <MessageCircle className="w-3 h-3" />
-                    의견 보기
-                  </button>
-                )}
-              </div>
-            </div>
+      {/* 투표 후: 결과 & 다음 버튼 */}
+      {selectedOption && (
+        <div className="mt-3 pt-3 border-t border-slate-100">
+          {remainingCount > 0 && onNext ? (
+            <button
+              onClick={onNext}
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all shadow-sm"
+            >
+              다음 투표 참여하기
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <p className="text-center text-xs text-slate-400">
+              {results.total > 0 ? `${results.total.toLocaleString()}명이 참여했어요` : '첫 번째 투표!'}
+            </p>
           )}
-        </>
+        </div>
       )}
     </div>
   );
@@ -129,7 +94,6 @@ interface PollOptionButtonProps {
   results: PollResults;
   isLoadingStats: boolean;
   onVote: (choice: 'a' | 'b') => void;
-  layout: 'horizontal' | 'vertical';
 }
 
 function PollOptionButton({
@@ -139,83 +103,66 @@ function PollOptionButton({
   results,
   isLoadingStats,
   onVote,
-  layout,
 }: PollOptionButtonProps) {
   const isSelected = selectedOption === choice;
   const percentage = choice === 'a' ? results.a : results.b;
-  const colorA = choice === 'a' ? 'purple' : 'pink';
+  const isWinner = selectedOption && (
+    (choice === 'a' && results.a > results.b) ||
+    (choice === 'b' && results.b > results.a)
+  );
 
-  const baseClass = layout === 'horizontal'
-    ? 'w-full relative overflow-hidden rounded-lg border-2 transition-all'
-    : 'flex-1 relative overflow-hidden rounded-xl border-2 transition-all';
-
-  const stateClass = isSelected
-    ? `border-${colorA}-400 bg-${colorA}-50`
-    : selectedOption
-      ? 'border-slate-200 bg-slate-50'
-      : `border-${colorA}-200 bg-white hover:border-${colorA}-300 hover:bg-${colorA}-50`;
-
-  // Tailwind purge 대응 - 실제 사용 클래스
-  const selectedStyles = {
-    a: isSelected ? 'border-purple-400 bg-purple-50' : selectedOption ? 'border-slate-200 bg-slate-50' : 'border-purple-200 bg-white hover:border-purple-300 hover:bg-purple-50',
-    b: isSelected ? 'border-pink-400 bg-pink-50' : selectedOption ? 'border-slate-200 bg-slate-50' : 'border-pink-200 bg-white hover:border-pink-300 hover:bg-pink-50',
+  // 색상 정의
+  const colors = {
+    a: {
+      border: isSelected ? 'border-purple-400' : selectedOption ? 'border-slate-200' : 'border-purple-200',
+      bg: isSelected ? 'bg-purple-50' : selectedOption ? 'bg-slate-50' : 'bg-white',
+      hover: !selectedOption ? 'hover:border-purple-300 hover:bg-purple-50' : '',
+      bar: 'bg-purple-200/60',
+      percent: 'text-purple-600',
+    },
+    b: {
+      border: isSelected ? 'border-pink-400' : selectedOption ? 'border-slate-200' : 'border-pink-200',
+      bg: isSelected ? 'bg-pink-50' : selectedOption ? 'bg-slate-50' : 'bg-white',
+      hover: !selectedOption ? 'hover:border-pink-300 hover:bg-pink-50' : '',
+      bar: 'bg-pink-200/60',
+      percent: 'text-pink-600',
+    },
   };
 
-  const barColor = choice === 'a' ? 'bg-purple-200/50' : 'bg-pink-200/50';
-  const percentColor = choice === 'a' ? 'text-purple-600' : 'text-pink-600';
+  const c = colors[choice];
 
-  if (layout === 'horizontal') {
-    // 사이드바/패널용 가로 레이아웃
-    return (
-      <button
-        onClick={() => onVote(choice)}
-        disabled={!!selectedOption || isLoadingStats}
-        className={`${baseClass} ${selectedStyles[choice]}`}
-      >
-        <div className="p-2 flex items-center gap-2 relative z-10">
-          <span className="text-lg">{option.emoji}</span>
-          <span className="text-[10px] font-bold text-slate-700 flex-1 truncate">
-            {option.text}
-          </span>
-          {selectedOption && (
-            <span className={`text-xs font-black ${percentColor}`}>
-              {isLoadingStats ? '...' : `${percentage}%`}
-            </span>
-          )}
-        </div>
-        {selectedOption && (
-          <div
-            className={`absolute inset-y-0 left-0 ${barColor} transition-all duration-500`}
-            style={{ width: `${percentage}%` }}
-          />
-        )}
-      </button>
-    );
-  }
-
-  // 모바일용 세로 레이아웃
   return (
     <button
       onClick={() => onVote(choice)}
       disabled={!!selectedOption || isLoadingStats}
-      className={`${baseClass} ${selectedStyles[choice]}`}
+      className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${c.border} ${c.bg} ${c.hover}`}
     >
-      <div className="p-2 text-center relative z-10">
-        <span className="text-lg block">{option.emoji}</span>
-        <span className="text-[9px] font-bold text-slate-700 block truncate">
+      {/* 결과 바 (배경) */}
+      {selectedOption && (
+        <div
+          className={`absolute bottom-0 left-0 right-0 ${c.bar} transition-all duration-500`}
+          style={{ height: `${percentage}%` }}
+        />
+      )}
+
+      {/* 콘텐츠 */}
+      <div className="relative z-10 p-3 text-center">
+        <span className="text-2xl block mb-1">{option.emoji}</span>
+        <span className="text-[11px] font-bold text-slate-700 block leading-tight">
           {option.text}
         </span>
         {selectedOption && (
-          <div className={`text-sm font-black ${percentColor} mt-0.5`}>
+          <div className={`text-lg font-black ${c.percent} mt-1`}>
             {isLoadingStats ? '...' : `${percentage}%`}
           </div>
         )}
       </div>
-      {selectedOption && (
-        <div
-          className={`absolute bottom-0 left-0 right-0 ${barColor} transition-all duration-500`}
-          style={{ height: `${percentage}%` }}
-        />
+
+      {/* 우승 표시 */}
+      {isWinner && (
+        <div className="absolute top-1 right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+          <span className="text-[10px]">👑</span>
+        </div>
       )}
     </button>
   );

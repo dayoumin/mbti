@@ -5,14 +5,10 @@ import QuizWidget from './QuizWidget';
 import PollWidget from './PollWidget';
 
 export interface ContentWidgetContainerProps {
-  variant?: 'compact' | 'full';
-  onExploreMore?: () => void;
   className?: string;
 }
 
 export default function ContentWidgetContainer({
-  variant = 'compact',
-  onExploreMore,
   className = '',
 }: ContentWidgetContainerProps) {
   const {
@@ -25,20 +21,16 @@ export default function ContentWidgetContainer({
     pollResults,
     isPollVoted,
     isLoadingStats,
+    remainingQuizCount,
+    remainingPollCount,
     handleQuizAnswer,
     handlePollVote,
+    goToNextQuiz,
+    goToNextPoll,
   } = useContentParticipation();
 
-  const isCompact = variant === 'compact';
-
-  // compact: 세로 배치 (사이드바/패널)
-  // full: 가로 그리드 (모바일)
-  const containerClass = isCompact
-    ? `space-y-3 ${className}`
-    : `grid grid-cols-2 gap-3 ${className}`;
-
   return (
-    <div className={containerClass}>
+    <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${className}`}>
       {quiz && (
         <QuizWidget
           quiz={quiz}
@@ -46,8 +38,8 @@ export default function ContentWidgetContainer({
           selectedOption={selectedQuizOption}
           showResult={showQuizResult}
           onAnswer={handleQuizAnswer}
-          variant={variant}
-          onExploreMore={onExploreMore}
+          remainingCount={remainingQuizCount}
+          onNext={goToNextQuiz}
         />
       )}
 
@@ -59,8 +51,8 @@ export default function ContentWidgetContainer({
           results={pollResults}
           isLoadingStats={isLoadingStats}
           onVote={handlePollVote}
-          variant={variant}
-          onExploreMore={onExploreMore}
+          remainingCount={remainingPollCount}
+          onNext={goToNextPoll}
         />
       )}
     </div>

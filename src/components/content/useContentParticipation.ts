@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRandomQuiz, getRandomPoll } from '../../data/content';
 import { ALL_KNOWLEDGE_QUIZZES } from '../../data/content/quizzes';
 import { VS_POLLS } from '../../data/content/polls/vs-polls';
@@ -42,9 +42,15 @@ export interface UseContentParticipationReturn {
   isPollVoted: boolean;
   isLoadingStats: boolean;
 
+  // 남은 개수
+  remainingQuizCount: number;
+  remainingPollCount: number;
+
   // 액션
   handleQuizAnswer: (optionId: string) => void;
   handlePollVote: (choice: 'a' | 'b') => Promise<void>;
+  goToNextQuiz: () => void;
+  goToNextPoll: () => void;
 }
 
 export function useContentParticipation(): UseContentParticipationReturn {
@@ -61,11 +67,18 @@ export function useContentParticipation(): UseContentParticipationReturn {
   const [pollResults, setPollResults] = useState<PollResults>({ a: 50, b: 50, total: 0 });
   const [isLoadingStats, setIsLoadingStats] = useState(false);
 
-  // 투표 통계 로드
+  // 레이스 컨디션 방지: 현재 poll.id 추적
+  const currentPollIdRef = useRef<string | null>(null);
+
+  // 투표 통계 로드 (레이스 컨디션 방지)
   const loadPollStats = useCallback(async (pollId: string) => {
+    currentPollIdRef.current = pollId;
     setIsLoadingStats(true);
     try {
       const stats = await tursoService.getPollStats(pollId);
+      // 응답 도착 시 현재 poll과 일치하는지 확인
+      if (currentPollIdRef.current !== pollId) return;
+
       if (stats.totalVotes > 0) {
         const aOption = stats.options.find(o => o.optionId === 'a');
         const bOption = stats.options.find(o => o.optionId === 'b');
@@ -78,9 +91,13 @@ export function useContentParticipation(): UseContentParticipationReturn {
         setPollResults(getStablePollResults(pollId));
       }
     } catch {
-      setPollResults(getStablePollResults(pollId));
+      if (currentPollIdRef.current === pollId) {
+        setPollResults(getStablePollResults(pollId));
+      }
     } finally {
-      setIsLoadingStats(false);
+      if (currentPollIdRef.current === pollId) {
+        setIsLoadingStats(false);
+      }
     }
   }, []);
 
@@ -124,7 +141,7 @@ export function useContentParticipation(): UseContentParticipationReturn {
   }, [loadPollStats]);
 
   // 퀴즈 답변 처리
-  const handleQuizAnswer = useCallback((optionId: string) => {
+  const handleQuizAnswer = useCallback(async (optionId: string) => {
     if (showQuizResult || !quiz) return;
     setSelectedQuizOption(optionId);
     setShowQuizResult(true);
@@ -132,6 +149,13 @@ export function useContentParticipation(): UseContentParticipationReturn {
     const isCorrect = quiz.options.find(o => o.id === optionId)?.isCorrect || false;
     contentParticipationService.recordQuizAnswer(quiz.id, optionId, isCorrect);
     setParticipation(contentParticipationService.getParticipation());
+
+    // Turso에 저장 (실패해도 로컬 상태는 유지)
+    try {
+      await tursoService.saveQuizResponse(quiz.id, optionId, isCorrect);
+    } catch (e) {
+      console.error('[Quiz] Failed to save to Turso:', e);
+    }
   }, [quiz, showQuizResult]);
 
   // 투표 처리
@@ -142,15 +166,60 @@ export function useContentParticipation(): UseContentParticipationReturn {
     contentParticipationService.recordPollVote(poll.id, choice);
     setParticipation(contentParticipationService.getParticipation());
 
-    // Turso에 저장
-    await tursoService.savePollResponse(poll.id, choice);
+    // Turso에 저장 (실패해도 로컬 상태는 유지)
+    try {
+      await tursoService.savePollResponse(poll.id, choice);
+    } catch (e) {
+      console.error('[Poll] Failed to save to Turso:', e);
+    }
 
     // 통계 로드
     loadPollStats(poll.id);
   }, [poll, selectedPollOption, loadPollStats]);
 
+  // 남은 퀴즈/투표 계산
+  const getUnansweredQuizzes = useCallback(() => {
+    return ALL_KNOWLEDGE_QUIZZES.filter(
+      q => !participation.quizzes.some(p => p.quizId === q.id)
+    );
+  }, [participation]);
+
+  const getUnvotedPolls = useCallback(() => {
+    return VS_POLLS.filter(
+      p => !participation.polls.some(v => v.pollId === p.id)
+    );
+  }, [participation]);
+
+  // 다음 퀴즈로 이동
+  const goToNextQuiz = useCallback(() => {
+    const unanswered = getUnansweredQuizzes().filter(q => q.id !== quiz?.id);
+    if (unanswered.length > 0) {
+      const nextQuiz = unanswered[Math.floor(Math.random() * unanswered.length)];
+      setQuiz(nextQuiz);
+      setSelectedQuizOption(null);
+      setShowQuizResult(false);
+    }
+  }, [quiz, getUnansweredQuizzes]);
+
+  // 다음 투표로 이동
+  const goToNextPoll = useCallback(() => {
+    const unvoted = getUnvotedPolls().filter(p => p.id !== poll?.id);
+    if (unvoted.length > 0) {
+      const nextPoll = unvoted[Math.floor(Math.random() * unvoted.length)];
+      // 레이스 컨디션 방지: 새 poll.id로 갱신하여 이전 응답 무시
+      currentPollIdRef.current = nextPoll.id;
+      setPoll(nextPoll);
+      setSelectedPollOption(null);
+      setPollResults({ a: 50, b: 50, total: 0 });
+    }
+  }, [poll, getUnvotedPolls]);
+
   const isQuizAnswered = quiz ? participation.quizzes.some(q => q.quizId === quiz.id) : false;
   const isPollVoted = poll ? participation.polls.some(p => p.pollId === poll.id) : false;
+
+  // 현재 항목 제외한 남은 개수
+  const remainingQuizCount = getUnansweredQuizzes().filter(q => q.id !== quiz?.id).length;
+  const remainingPollCount = getUnvotedPolls().filter(p => p.id !== poll?.id).length;
 
   return {
     quiz,
@@ -162,7 +231,11 @@ export function useContentParticipation(): UseContentParticipationReturn {
     pollResults,
     isPollVoted,
     isLoadingStats,
+    remainingQuizCount,
+    remainingPollCount,
     handleQuizAnswer,
     handlePollVote,
+    goToNextQuiz,
+    goToNextPoll,
   };
 }
