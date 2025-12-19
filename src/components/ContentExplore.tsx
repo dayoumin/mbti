@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls/vs-polls';
 import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
@@ -13,6 +13,7 @@ import type { Tip, Question, Debate } from '@/data/community';
 import { nextActionService, type NextAction } from '@/services/NextActionService';
 import { NextActionInline } from '@/components/NextActionCard';
 import CommentSystem from '@/components/CommentSystem';
+import PopularPolls from '@/components/content/PopularPolls';
 
 // ============================================================================
 // 타입 정의
@@ -871,25 +872,33 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             )
           )}
           {activeTab === 'poll' && (
-            filteredPolls.length > 0 ? (
-              filteredPolls.map((poll) => {
-                const voted = participation.polls.find(p => p.pollId === poll.id);
-                return (
-                  <PollCard
-                    key={poll.id}
-                    poll={poll}
-                    isVoted={!!voted}
-                    previousVote={voted?.choice}
-                    onVote={handlePollVote}
-                    onNextAction={handleNextAction}
-                  />
-                );
-              })
-            ) : (
-              <div className="text-center py-12 text-gray-400">
-                <p>이 카테고리에 투표가 없습니다</p>
-              </div>
-            )
+            <>
+              {/* 인기 투표 섹션 (카테고리가 '전체'일 때만) */}
+              {selectedCategory === 'all' && (
+                <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
+              )}
+
+              {/* 기본 투표 목록 */}
+              {filteredPolls.length > 0 ? (
+                filteredPolls.map((poll) => {
+                  const voted = participation.polls.find(p => p.pollId === poll.id);
+                  return (
+                    <PollCard
+                      key={poll.id}
+                      poll={poll}
+                      isVoted={!!voted}
+                      previousVote={voted?.choice}
+                      onVote={handlePollVote}
+                      onNextAction={handleNextAction}
+                    />
+                  );
+                })
+              ) : (
+                <div className="text-center py-12 text-gray-400">
+                  <p>이 카테고리에 투표가 없습니다</p>
+                </div>
+              )}
+            </>
           )}
           {activeTab === 'community' && (
             <CommunityContent onNextAction={handleNextAction} />
