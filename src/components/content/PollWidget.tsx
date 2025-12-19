@@ -1,8 +1,11 @@
 'use client';
 
-import { Check, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Check, ChevronRight, Zap, MessageCircle, Heart } from 'lucide-react';
 import type { VSPoll } from '../../data/content/types';
-import type { PollResults } from './useContentParticipation';
+import type { PollResults, RewardInfo } from './useContentParticipation';
+import CommentSystem from '../CommentSystem';
+import { getDeviceId } from '@/utils/device';
 
 export interface PollWidgetProps {
   poll: VSPoll;
@@ -13,6 +16,8 @@ export interface PollWidgetProps {
   onVote: (choice: 'a' | 'b') => void;
   remainingCount?: number;
   onNext?: () => void;
+  reward?: RewardInfo | null;
+  showComments?: boolean;
 }
 
 export default function PollWidget({
@@ -24,7 +29,77 @@ export default function PollWidget({
   onVote,
   remainingCount = 0,
   onNext,
+  reward,
+  showComments = true,
 }: PollWidgetProps) {
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const isLikeInFlight = useRef(false);
+
+  // 좋아요 상태 로드
+  useEffect(() => {
+    let cancelled = false;
+    const loadLikeStatus = async () => {
+      try {
+        const deviceId = getDeviceId();
+        const res = await fetch(
+          `/api/likes?targetType=poll&targetId=${poll.id}&deviceId=${deviceId}`
+        );
+        if (res.ok && !cancelled) {
+          const data = await res.json();
+          setLiked(data.liked);
+          setLikeCount(data.count);
+        }
+      } catch {
+        // 실패해도 무시
+      }
+    };
+    // poll 변경 시 상태 초기화
+    setLiked(false);
+    setLikeCount(0);
+    loadLikeStatus();
+    return () => { cancelled = true; };
+  }, [poll.id]);
+
+  // 좋아요 토글
+  const handleLike = useCallback(async () => {
+    // 중복 요청 방지
+    if (isLikeInFlight.current) return;
+    isLikeInFlight.current = true;
+
+    const prevLiked = liked;
+    const prevCount = likeCount;
+
+    // Optimistic update
+    setLiked(!liked);
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      const res = await fetch('/api/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deviceId: getDeviceId(),
+          targetType: 'poll',
+          targetId: poll.id,
+        }),
+      });
+
+      if (!res.ok) {
+        // 롤백
+        setLiked(prevLiked);
+        setLikeCount(prevCount);
+      }
+    } catch {
+      // 롤백
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+    } finally {
+      isLikeInFlight.current = false;
+    }
+  }, [liked, likeCount, poll.id]);
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
       {/* 헤더 */}
@@ -67,19 +142,75 @@ export default function PollWidget({
 
       {/* 투표 후: 결과 & 다음 버튼 */}
       {selectedOption && (
-        <div className="mt-3 pt-3 border-t border-slate-100">
-          {remainingCount > 0 && onNext ? (
-            <button
-              onClick={onNext}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all shadow-sm"
-            >
-              다음 투표 참여하기
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          ) : (
-            <p className="text-center text-xs text-slate-400">
-              {results.total > 0 ? `${results.total.toLocaleString()}명이 참여했어요` : '첫 번째 투표!'}
-            </p>
+        <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+          {/* 포인트 획득 + 좋아요 + 참여자 수 */}
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-3">
+              <span className="text-slate-400">
+                {results.total > 0
+                  ? `${results.total.toLocaleString()}명 참여`
+                  : results.total === -1
+                    ? '집계중...'
+                    : '첫 번째 투표!'}
+              </span>
+              {/* 좋아요 버튼 */}
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-1 transition-colors ${
+                  liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
+                }`}
+              >
+                <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
+                <span>{likeCount}</span>
+              </button>
+            </div>
+            {reward && (
+              <span className="flex items-center gap-1 font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">
+                <Zap className="w-3 h-3" />
+                +{reward.points}pt
+              </span>
+            )}
+          </div>
+
+          {/* 액션 버튼들 */}
+          <div className="flex gap-2">
+            {/* 댓글 버튼 */}
+            {showComments && (
+              <button
+                onClick={() => setCommentsOpen(!commentsOpen)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${
+                  commentsOpen
+                    ? 'bg-slate-100 text-slate-600'
+                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                <MessageCircle className="w-4 h-4" />
+                의견 나누기
+              </button>
+            )}
+
+            {/* 다음 투표 버튼 */}
+            {remainingCount > 0 && onNext && (
+              <button
+                onClick={onNext}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all shadow-sm"
+              >
+                다음 투표
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* 댓글 섹션 */}
+          {showComments && commentsOpen && (
+            <div className="pt-3 border-t border-slate-100">
+              <CommentSystem
+                targetType="poll"
+                targetId={poll.id}
+                placeholder="이 투표에 대한 의견을 남겨주세요..."
+                maxDisplay={3}
+              />
+            </div>
           )}
         </div>
       )}

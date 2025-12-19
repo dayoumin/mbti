@@ -17,10 +17,13 @@ export default function ContentWidgetContainer({
     selectedQuizOption,
     showQuizResult,
     isQuizAnswered,
+    lastQuizReward,
     selectedPollOption,
     pollResults,
     isPollVoted,
     isLoadingStats,
+    lastPollReward,
+    quizAccuracy,
     remainingQuizCount,
     remainingPollCount,
     handleQuizAnswer,
@@ -40,6 +43,8 @@ export default function ContentWidgetContainer({
           onAnswer={handleQuizAnswer}
           remainingCount={remainingQuizCount}
           onNext={goToNextQuiz}
+          reward={lastQuizReward}
+          quizAccuracy={quizAccuracy}
         />
       )}
 
@@ -53,6 +58,7 @@ export default function ContentWidgetContainer({
           onVote={handlePollVote}
           remainingCount={remainingPollCount}
           onNext={goToNextPoll}
+          reward={lastPollReward}
         />
       )}
     </div>

@@ -6,6 +6,7 @@ import { ALL_KNOWLEDGE_QUIZZES } from '../../data/content/quizzes';
 import { VS_POLLS } from '../../data/content/polls/vs-polls';
 import { contentParticipationService } from '../../services/ContentParticipationService';
 import { tursoService } from '../../services/TursoService';
+import { getGamificationService } from '../../services/GamificationService';
 import type { KnowledgeQuiz, VSPoll } from '../../data/content/types';
 
 // 폴백용 안정적인 투표 결과 생성
@@ -26,6 +27,11 @@ export interface PollResults {
   total: number;
 }
 
+export interface RewardInfo {
+  points: number;
+  newBadges: string[];
+}
+
 export interface UseContentParticipationReturn {
   // 데이터
   quiz: KnowledgeQuiz | null;
@@ -35,12 +41,18 @@ export interface UseContentParticipationReturn {
   selectedQuizOption: string | null;
   showQuizResult: boolean;
   isQuizAnswered: boolean;
+  lastQuizReward: RewardInfo | null;
 
   // 투표 상태
   selectedPollOption: 'a' | 'b' | null;
   pollResults: PollResults;
   isPollVoted: boolean;
   isLoadingStats: boolean;
+  lastPollReward: RewardInfo | null;
+
+  // 전체 통계
+  totalPoints: number;
+  quizAccuracy: number;
 
   // 남은 개수
   remainingQuizCount: number;
@@ -61,11 +73,17 @@ export function useContentParticipation(): UseContentParticipationReturn {
   // 퀴즈 상태
   const [selectedQuizOption, setSelectedQuizOption] = useState<string | null>(null);
   const [showQuizResult, setShowQuizResult] = useState(false);
+  const [lastQuizReward, setLastQuizReward] = useState<RewardInfo | null>(null);
 
   // 투표 상태
   const [selectedPollOption, setSelectedPollOption] = useState<'a' | 'b' | null>(null);
   const [pollResults, setPollResults] = useState<PollResults>({ a: 50, b: 50, total: 0 });
   const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [lastPollReward, setLastPollReward] = useState<RewardInfo | null>(null);
+
+  // 전체 통계
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [quizAccuracy, setQuizAccuracy] = useState(0);
 
   // 레이스 컨디션 방지: 현재 poll.id 추적
   const currentPollIdRef = useRef<string | null>(null);
@@ -88,22 +106,34 @@ export function useContentParticipation(): UseContentParticipationReturn {
           total: stats.totalVotes,
         });
       } else {
-        setPollResults(getStablePollResults(pollId));
+        // total을 -1로 설정하여 "집계 전" 상태 표시
+        setPollResults({ ...getStablePollResults(pollId), total: -1 });
       }
     } catch {
       if (currentPollIdRef.current === pollId) {
-        setPollResults(getStablePollResults(pollId));
+        // 실패 시에도 -1로 설정
+        setPollResults({ ...getStablePollResults(pollId), total: -1 });
       }
     } finally {
-      if (currentPollIdRef.current === pollId) {
-        setIsLoadingStats(false);
-      }
+      // 항상 로딩 해제 (락 방지)
+      // id가 변경되었다면 goToNextPoll에서 이미 false로 리셋했으므로 무해함
+      setIsLoadingStats(false);
     }
   }, []);
 
   useEffect(() => {
     const currentParticipation = contentParticipationService.getParticipation();
     setParticipation(currentParticipation);
+
+    // 게이미피케이션 통계 로드
+    const gamificationService = getGamificationService();
+    if (gamificationService) {
+      const stats = gamificationService.getStats();
+      setTotalPoints(stats.totalPoints);
+      if (stats.quizzesAnswered > 0) {
+        setQuizAccuracy(Math.round((stats.quizzesCorrect / stats.quizzesAnswered) * 100));
+      }
+    }
 
     // 아직 안 푼 퀴즈 선택
     const unansweredQuizzes = ALL_KNOWLEDGE_QUIZZES.filter(
@@ -150,6 +180,20 @@ export function useContentParticipation(): UseContentParticipationReturn {
     contentParticipationService.recordQuizAnswer(quiz.id, optionId, isCorrect);
     setParticipation(contentParticipationService.getParticipation());
 
+    // 게이미피케이션: 포인트 & 배지 획득
+    const gamificationService = getGamificationService();
+    if (gamificationService) {
+      const reward = gamificationService.recordQuizAnswer(isCorrect, quiz.category);
+      setLastQuizReward(reward);
+      setTotalPoints(gamificationService.getStats().totalPoints);
+
+      // 정답률 업데이트
+      const stats = gamificationService.getStats();
+      if (stats.quizzesAnswered > 0) {
+        setQuizAccuracy(Math.round((stats.quizzesCorrect / stats.quizzesAnswered) * 100));
+      }
+    }
+
     // Turso에 저장 (실패해도 로컬 상태는 유지)
     try {
       await tursoService.saveQuizResponse(quiz.id, optionId, isCorrect);
@@ -165,6 +209,14 @@ export function useContentParticipation(): UseContentParticipationReturn {
 
     contentParticipationService.recordPollVote(poll.id, choice);
     setParticipation(contentParticipationService.getParticipation());
+
+    // 게이미피케이션: 포인트 & 배지 획득
+    const gamificationService = getGamificationService();
+    if (gamificationService) {
+      const reward = gamificationService.recordPollVote({ category: poll.category });
+      setLastPollReward(reward);
+      setTotalPoints(gamificationService.getStats().totalPoints);
+    }
 
     // Turso에 저장 (실패해도 로컬 상태는 유지)
     try {
@@ -198,6 +250,7 @@ export function useContentParticipation(): UseContentParticipationReturn {
       setQuiz(nextQuiz);
       setSelectedQuizOption(null);
       setShowQuizResult(false);
+      setLastQuizReward(null); // 보상 리셋
     }
   }, [quiz, getUnansweredQuizzes]);
 
@@ -211,6 +264,8 @@ export function useContentParticipation(): UseContentParticipationReturn {
       setPoll(nextPoll);
       setSelectedPollOption(null);
       setPollResults({ a: 50, b: 50, total: 0 });
+      setIsLoadingStats(false); // 로딩 상태 리셋 (락 방지)
+      setLastPollReward(null); // 보상 리셋
     }
   }, [poll, getUnvotedPolls]);
 
@@ -227,10 +282,14 @@ export function useContentParticipation(): UseContentParticipationReturn {
     selectedQuizOption,
     showQuizResult,
     isQuizAnswered,
+    lastQuizReward,
     selectedPollOption,
     pollResults,
     isPollVoted,
     isLoadingStats,
+    lastPollReward,
+    totalPoints,
+    quizAccuracy,
     remainingQuizCount,
     remainingPollCount,
     handleQuizAnswer,

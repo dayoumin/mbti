@@ -10,7 +10,8 @@ import Footer from './Footer';
 import HeroBanner from './HeroBanner';
 import DailyContentCards from './DailyContentCards';
 import { TrendingSection, RecentSection, RecommendedSection } from './ContentSections';
-import TodayRanking from './TodayRanking';
+import TodayRankingPreview from './TodayRankingPreview';
+import TodayRankingModal from './TodayRankingModal';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -290,6 +291,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     const [timeBasedAction, setTimeBasedAction] = useState(null);
     const [streakBonusAction, setStreakBonusAction] = useState(null);
 
+    // 랭킹 모달 상태
+    const [showRankingModal, setShowRankingModal] = useState(false);
+
     useEffect(() => {
         // 게이미피케이션 초기화 및 방문 기록
         /* eslint-disable react-hooks/set-state-in-effect */
@@ -444,10 +448,10 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     className="mb-4 animate-fade-in-up"
                 />
 
-                {/* 오늘의 랭킹 */}
-                <TodayRanking
+                {/* 오늘의 랭킹 - 미니 프리뷰 (클릭 시 모달) */}
+                <TodayRankingPreview
+                    onClick={() => setShowRankingModal(true)}
                     className="mb-4 animate-fade-in-up"
-                    style={{ animationDelay: '0.05s' }}
                 />
 
                 {/* PC: 2컬럼 레이아웃 / 모바일: 단일 컬럼 */}
@@ -572,6 +576,19 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 <Footer className="mt-8 mb-20" />
 
         </div>
+
+            {/* 오늘의 랭킹 모달 */}
+            <TodayRankingModal
+                isOpen={showRankingModal}
+                onClose={() => setShowRankingModal(false)}
+                onPollClick={(pollId) => {
+                    // TODO: 해당 투표로 이동하는 로직
+                    console.log('Poll clicked:', pollId);
+                }}
+                onViewAllClick={() => {
+                    onContentExplore?.();
+                }}
+            />
         </>
     );
 };

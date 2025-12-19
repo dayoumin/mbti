@@ -21,4 +21,39 @@
 
 ---
 
+## 회원가입/인증 시스템
+
+### 소셜 로그인 도입
+- **우선순위**: 중간 (다기기 동기화 필요 시)
+- **설명**: 현재 device_id 기반 익명 시스템에서 소셜 로그인으로 확장
+
+**현재 상태:**
+- `device_id` 기반 익명 사용자 추적
+- `user_profiles` 테이블에 `user_id` 필드 준비됨 (미사용)
+- 기기 변경 시 데이터 유실
+
+**구현 옵션:**
+| 옵션 | 장점 | 단점 |
+|------|------|------|
+| NextAuth.js | Next.js 통합 최적화, 다양한 프로바이더 | 설정 복잡도 |
+| Supabase Auth | DB와 통합, RLS 연동 | Supabase 종속 |
+
+**소셜 프로바이더 (우선순위):**
+1. 카카오 - 한국 사용자 다수
+2. 구글 - 범용성
+3. 네이버 - 선택적
+
+**필요 작업:**
+1. NextAuth.js 또는 Supabase Auth 설정
+2. 소셜 로그인 UI (로그인 버튼, 프로필 메뉴)
+3. 익명 → 로그인 계정 병합 로직 (`merge_anonymous_to_auth`)
+4. 다기기 데이터 동기화
+5. 로그아웃/계정 삭제 처리
+
+**참고 문서:**
+- [EXTENSION_ARCHITECTURE.md](EXTENSION_ARCHITECTURE.md) - Supabase 스키마 설계
+- [ROADMAP.md](../ROADMAP.md#L421) - Auth 계획 언급
+
+---
+
 *마지막 업데이트: 2025-12-19*

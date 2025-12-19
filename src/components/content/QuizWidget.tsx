@@ -1,7 +1,10 @@
 'use client';
 
-import { HelpCircle, Check, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { HelpCircle, Check, ChevronRight, Zap, TrendingUp, MessageCircle } from 'lucide-react';
 import type { KnowledgeQuiz } from '../../data/content/types';
+import type { RewardInfo } from './useContentParticipation';
+import CommentSystem from '../CommentSystem';
 
 export interface QuizWidgetProps {
   quiz: KnowledgeQuiz;
@@ -11,6 +14,9 @@ export interface QuizWidgetProps {
   onAnswer: (optionId: string) => void;
   remainingCount?: number;
   onNext?: () => void;
+  reward?: RewardInfo | null;
+  quizAccuracy?: number;
+  showComments?: boolean;
 }
 
 export default function QuizWidget({
@@ -21,7 +27,14 @@ export default function QuizWidget({
   onAnswer,
   remainingCount = 0,
   onNext,
+  reward,
+  quizAccuracy,
+  showComments = true,
 }: QuizWidgetProps) {
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const isCorrect = selectedOption
+    ? quiz.options.find(o => o.id === selectedOption)?.isCorrect
+    : false;
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
       {/* 헤더 */}
@@ -57,26 +70,72 @@ export default function QuizWidget({
         </div>
       ) : (
         <div className="space-y-3">
-          {/* 정답/오답 표시 */}
-          <div className={`p-3 rounded-xl text-sm font-bold ${
-            quiz.options.find(o => o.id === selectedOption)?.isCorrect
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-amber-50 text-amber-700 border border-amber-200'
+          {/* 정답/오답 + 포인트 표시 */}
+          <div className={`p-3 rounded-xl ${
+            isCorrect
+              ? 'bg-emerald-50 border border-emerald-200'
+              : 'bg-amber-50 border border-amber-200'
           }`}>
-            {quiz.options.find(o => o.id === selectedOption)?.isCorrect
-              ? '🎉 정답입니다!'
-              : '💡 아쉽네요!'}
+            <div className="flex items-center justify-between">
+              <span className={`text-sm font-bold ${isCorrect ? 'text-emerald-700' : 'text-amber-700'}`}>
+                {isCorrect ? '🎉 정답!' : '💡 아쉽네요!'}
+              </span>
+              {reward && (
+                <span className="flex items-center gap-1 text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">
+                  <Zap className="w-3 h-3" />
+                  +{reward.points}pt
+                </span>
+              )}
+            </div>
+
+            {/* 정답률 표시 */}
+            {typeof quizAccuracy === 'number' && (
+              <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600">
+                <TrendingUp className="w-3 h-3" />
+                <span>나의 정답률: <strong className="text-slate-800">{quizAccuracy}%</strong></span>
+              </div>
+            )}
           </div>
 
-          {/* 다음 퀴즈 버튼 */}
-          {remainingCount > 0 && onNext && (
-            <button
-              onClick={onNext}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 rounded-xl transition-all shadow-sm"
-            >
-              다음 퀴즈 풀기
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          {/* 액션 버튼들 */}
+          <div className="flex gap-2">
+            {/* 댓글 버튼 */}
+            {showComments && (
+              <button
+                onClick={() => setCommentsOpen(!commentsOpen)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${
+                  commentsOpen
+                    ? 'bg-slate-100 text-slate-600'
+                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                <MessageCircle className="w-4 h-4" />
+                의견 나누기
+              </button>
+            )}
+
+            {/* 다음 퀴즈 버튼 */}
+            {remainingCount > 0 && onNext && (
+              <button
+                onClick={onNext}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 rounded-xl transition-all shadow-sm"
+              >
+                다음 퀴즈
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* 댓글 섹션 */}
+          {showComments && commentsOpen && (
+            <div className="pt-3 border-t border-slate-100">
+              <CommentSystem
+                targetType="quiz"
+                targetId={quiz.id}
+                placeholder="이 퀴즈에 대한 의견을 남겨주세요..."
+                maxDisplay={3}
+              />
+            </div>
           )}
         </div>
       )}

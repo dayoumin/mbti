@@ -85,42 +85,48 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
         const total = pollStats.reduce((sum, p) => sum + p.totalVotes, 0);
         setTotalParticipants(total);
 
-        // 테스트 결과 랭킹 로드 (localStorage 기반)
-        const loadResultRankings = () => {
+        // 테스트 결과 랭킹 로드 (Turso DB 기반, localStorage 폴백)
+        const loadResultRankings = async () => {
           try {
-            const resultsKey = 'chemi_test_results';
-            const results = JSON.parse(localStorage.getItem(resultsKey) || '[]');
-
-            // 결과별 카운트
-            const resultCounts: Record<string, { count: number; emoji: string; testType: string }> = {};
-
-            results.forEach((r: { result_key?: string; result_emoji?: string; test_type?: string }) => {
-              const key = r.result_key;
-              if (key) {
-                if (!resultCounts[key]) {
-                  resultCounts[key] = { count: 0, emoji: r.result_emoji || '📊', testType: r.test_type || '' };
-                }
-                resultCounts[key].count++;
-              }
-            });
-
-            const sortedResults = Object.entries(resultCounts)
-              .map(([name, data]) => ({
-                resultName: name,
-                resultEmoji: data.emoji,
-                testType: data.testType,
-                count: data.count,
-              }))
-              .sort((a, b) => b.count - a.count)
-              .slice(0, 5);
-
-            setResultRankings(sortedResults);
+            const res = await fetch('/api/ranking?type=results&limit=5');
+            if (!res.ok) throw new Error('Failed to fetch rankings');
+            const data = await res.json();
+            setResultRankings(data.rankings || []);
           } catch {
-            setResultRankings([]);
+            // DB 실패 시 localStorage 폴백
+            try {
+              const resultsKey = 'chemi_test_results';
+              const results = JSON.parse(localStorage.getItem(resultsKey) || '[]');
+              const resultCounts: Record<string, { count: number; emoji: string; testType: string }> = {};
+
+              results.forEach((r: { result_key?: string; result_emoji?: string; test_type?: string }) => {
+                const key = r.result_key;
+                if (key) {
+                  if (!resultCounts[key]) {
+                    resultCounts[key] = { count: 0, emoji: r.result_emoji || '📊', testType: r.test_type || '' };
+                  }
+                  resultCounts[key].count++;
+                }
+              });
+
+              const sortedResults = Object.entries(resultCounts)
+                .map(([name, data]) => ({
+                  resultName: name,
+                  resultEmoji: data.emoji,
+                  testType: data.testType,
+                  count: data.count,
+                }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+
+              setResultRankings(sortedResults);
+            } catch {
+              setResultRankings([]);
+            }
           }
         };
 
-        loadResultRankings();
+        await loadResultRankings();
       } catch (error) {
         console.error('[TodayRanking] 랭킹 로드 실패:', error);
       } finally {
