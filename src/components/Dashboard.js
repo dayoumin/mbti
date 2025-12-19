@@ -9,6 +9,8 @@ import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import Footer from './Footer';
 import HeroBanner from './HeroBanner';
 import DailyContentCards from './DailyContentCards';
+import { TrendingSection, RecentSection, RecommendedSection } from './ContentSections';
+import TodayRanking from './TodayRanking';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -415,7 +417,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 />
             )}
 
-            <div className="relative max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8">
+            <div className="relative max-w-md md:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8">
                 {/* Header */}
                 <Header />
 
@@ -437,111 +439,134 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     className="mb-4 animate-fade-in-up"
                 />
 
-                {/* 오늘의 참여 - 2열 카드 그리드 (모바일만, 태블릿/PC는 사이드바/패널에 표시) */}
+                {/* 오늘의 참여 - 반응형 그리드 */}
                 <DailyContentCards
-                    onExploreMore={onContentExplore}
-                    className="mb-4 animate-fade-in-up md:hidden"
+                    className="mb-4 animate-fade-in-up"
                 />
 
-                {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
-                <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 pt-1 pb-2" style={{ minHeight: '76px' }}>
-                    {/* 1차 필터: 탭 스타일 (underline) */}
-                    <div className="flex items-center border-b border-slate-200">
-                        {Object.keys(TEST_TYPE_TABS).map((type) => (
-                            <TypeTab
-                                key={type}
-                                type={type}
-                                isActive={activeType === type}
-                                onClick={() => {
-                                    setActiveType(type);
-                                    setActiveSubject(null);
-                                }}
-                                count={typeCounts[type]}
-                            />
-                        ))}
-                    </div>
+                {/* 오늘의 랭킹 */}
+                <TodayRanking
+                    className="mb-4 animate-fade-in-up"
+                    style={{ animationDelay: '0.05s' }}
+                />
 
-                    {/* 2차 필터: 작은 칩 스타일 - 고정 높이 */}
-                    <div className="mt-2 overflow-x-auto no-scrollbar h-8">
-                        <div className="flex gap-1">
-                            {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
-                                const count = subjectCounts[sub] || 0;
-                                if (count === 0) return null;
-                                return (
-                                    <SubjectChip
-                                        key={sub}
-                                        subject={sub}
-                                        isActive={activeSubject === sub}
-                                        onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
-                                        count={count}
+                {/* PC: 2컬럼 레이아웃 / 모바일: 단일 컬럼 */}
+                <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-6">
+                    {/* 왼쪽 사이드바: 인기/추천/최근 섹션 */}
+                    {/* PC: 고정 사이드바 / 모바일: 상단 가로 스크롤 */}
+                    <aside className="mb-4 lg:mb-0 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                        <div className="lg:sticky lg:top-4">
+                            <div className="lg:bg-white/60 lg:backdrop-blur-sm lg:rounded-2xl lg:p-4 lg:border lg:border-white/80 lg:shadow-sm lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:no-scrollbar">
+                                <TrendingSection onStartTest={onStartTest} />
+                                <RecentSection onStartTest={onStartTest} />
+                                <RecommendedSection onStartTest={onStartTest} />
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* 오른쪽 메인 영역 (모바일에서는 전체 너비) */}
+                    <main>
+                        {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
+                        <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 lg:mx-0 lg:px-0 lg:bg-white/60 lg:rounded-xl lg:border lg:border-white/80 pt-1 pb-2 lg:p-3 lg:min-h-0" style={{ minHeight: '76px' }}>
+                            {/* 1차 필터: 탭 스타일 (underline) */}
+                            <div className="flex items-center border-b border-slate-200">
+                                {Object.keys(TEST_TYPE_TABS).map((type) => (
+                                    <TypeTab
+                                        key={type}
+                                        type={type}
+                                        isActive={activeType === type}
+                                        onClick={() => {
+                                            setActiveType(type);
+                                            setActiveSubject(null);
+                                        }}
+                                        count={typeCounts[type]}
                                     />
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
+                                ))}
+                            </div>
 
-                {/* All Tests - Single Grid */}
-                <section className="animate-fade-in-up">
-
-                    {/* Grid: 모바일 4열, PC 5-6열 - 더 큰 아이콘으로 탭 용이성 향상 */}
-                    <div className="grid gap-2 grid-cols-4 md:grid-cols-5 lg:grid-cols-6 min-h-[280px] content-start">
-                        {filteredTests.map((item) => (
-                            <TestCard
-                                key={item.key}
-                                item={item}
-                                onStart={onStartTest}
-                                badge={TEST_BADGES[item.key]}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Empty State */}
-                    {filteredTests.length === 0 && (
-                        <div className="text-center py-12 text-slate-400">
-                            <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
-                        </div>
-                    )}
-                </section>
-
-                {/* 세부 테스트 섹션 (접힘 가능) */}
-                {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
-                    <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                        <button
-                            onClick={() => setShowDetailTests(!showDetailTests)}
-                            className="flex items-center gap-2 mb-3 px-1 w-full text-left group"
-                        >
-                            <span className="text-sm font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
-                                🐾 반려동물 세부 추천
-                            </span>
-                            <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                {detailTests.length}
-                            </span>
-                            {showDetailTests ? (
-                                <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
-                            ) : (
-                                <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
-                            )}
-                        </button>
-
-                        {showDetailTests && (
-                            <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
-                                <p className="text-xs text-amber-700 mb-3 px-1">
-                                    💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
-                                </p>
-                                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-                                    {detailTests.map((item) => (
-                                        <TestCard
-                                            key={item.key}
-                                            item={item}
-                                            onStart={onStartTest}
-                                        />
-                                    ))}
+                            {/* 2차 필터: 작은 칩 스타일 - PC에서는 자동 높이 */}
+                            <div className="mt-2 overflow-x-auto no-scrollbar h-8 lg:h-auto lg:overflow-visible">
+                                <div className="flex gap-1 lg:flex-wrap">
+                                    {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
+                                        const count = subjectCounts[sub] || 0;
+                                        if (count === 0) return null;
+                                        return (
+                                            <SubjectChip
+                                                key={sub}
+                                                subject={sub}
+                                                isActive={activeSubject === sub}
+                                                onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
+                                                count={count}
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* All Tests - Single Grid */}
+                        <section className="animate-fade-in-up mt-3">
+
+                            {/* Grid: 모바일 4열, PC 4-5열 - 더 큰 아이콘으로 탭 용이성 향상 */}
+                            <div className="grid gap-2 grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 min-h-[280px] content-start">
+                                {filteredTests.map((item) => (
+                                    <TestCard
+                                        key={item.key}
+                                        item={item}
+                                        onStart={onStartTest}
+                                        badge={TEST_BADGES[item.key]}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Empty State */}
+                            {filteredTests.length === 0 && (
+                                <div className="text-center py-12 text-slate-400">
+                                    <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
+                                </div>
+                            )}
+                        </section>
+
+                        {/* 세부 테스트 섹션 (접힘 가능) */}
+                        {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
+                            <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                                <button
+                                    onClick={() => setShowDetailTests(!showDetailTests)}
+                                    className="flex items-center gap-2 mb-3 px-1 w-full text-left group"
+                                >
+                                    <span className="text-sm font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
+                                        🐾 반려동물 세부 추천
+                                    </span>
+                                    <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                        {detailTests.length}
+                                    </span>
+                                    {showDetailTests ? (
+                                        <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
+                                    )}
+                                </button>
+
+                                {showDetailTests && (
+                                    <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
+                                        <p className="text-xs text-amber-700 mb-3 px-1">
+                                            💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
+                                        </p>
+                                        <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                            {detailTests.map((item) => (
+                                                <TestCard
+                                                    key={item.key}
+                                                    item={item}
+                                                    onStart={onStartTest}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </section>
                         )}
-                    </section>
-                )}
+                    </main>
+                </div>
 
                 {/* 푸터 - 개인정보처리방침, 이용약관, 면책조항 */}
                 <Footer className="mt-8 mb-20" />
