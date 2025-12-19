@@ -5,8 +5,6 @@ import { Sparkles, Clock, TrendingUp } from 'lucide-react';
 import { NavTab, NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
-import { DesktopAccordion } from './responsive';
-import { ContentWidgetContainer } from './content';
 
 // 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
 export type SidebarTab = NavTab;
@@ -22,7 +20,6 @@ interface SidebarProps {
   activeTab: SidebarTab;
   onTabChange: (tab: SidebarTab) => void;
   onStartTest?: (testKey: string) => void;
-  onContentExplore?: () => void;
   className?: string;
 }
 
@@ -30,12 +27,10 @@ export default function Sidebar({
   activeTab,
   onTabChange,
   onStartTest,
-  onContentExplore,
   className = ''
 }: SidebarProps) {
   const [recentTests, setRecentTests] = useState<RecentTest[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
-  const [contentExpanded, setContentExpanded] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -78,11 +73,10 @@ export default function Sidebar({
       </div>
 
       {/* 네비게이션 */}
-      <nav className="p-4">
+      <nav className="p-4 pb-2">
         <ul className="space-y-1">
           {NAV_ITEMS.map(({ key, label, icon: Icon }) => {
             const isActive = activeTab === key;
-            const isExplore = key === 'explore';
 
             return (
               <li key={key}>
@@ -105,22 +99,6 @@ export default function Sidebar({
                     <div className="ml-auto w-1.5 h-1.5 bg-indigo-500 rounded-full" />
                   )}
                 </button>
-
-                {/* 퀴즈/투표 탭 아래에 아코디언 */}
-                {isExplore && (
-                  <DesktopAccordion
-                    title="오늘의 참여"
-                    isExpanded={contentExpanded}
-                    onToggle={() => setContentExpanded(!contentExpanded)}
-                    autoExpand={true}
-                    className="mt-1"
-                  >
-                    <ContentWidgetContainer
-                      variant="compact"
-                      onExploreMore={onContentExplore}
-                    />
-                  </DesktopAccordion>
-                )}
               </li>
             );
           })}

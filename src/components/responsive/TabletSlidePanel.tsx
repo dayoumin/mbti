@@ -153,12 +153,9 @@ export default function TabletSlidePanel({
             </button>
           </div>
 
-          {/* 패널 콘텐츠 */}
+          {/* 패널 콘텐츠 - 좁은 패널에서는 1열 유지 */}
           <div className="flex-1 overflow-y-auto p-4">
-            <ContentWidgetContainer
-              variant="compact"
-              onExploreMore={onExploreMore}
-            />
+            <ContentWidgetContainer className="!grid-cols-1" />
           </div>
         </div>
       )}

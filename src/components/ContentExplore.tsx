@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight } from 'lucide-react';
+import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls/vs-polls';
 import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
+import { CATEGORY_LABELS } from '@/data/content/categories';
 import { contentParticipationService } from '@/services/ContentParticipationService';
+import { getParticipationBridge } from '@/services/ParticipationBridge';
 import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/community';
 import type { Tip, Question, Debate } from '@/data/community';
 import { nextActionService, type NextAction } from '@/services/NextActionService';
 import { NextActionInline } from '@/components/NextActionCard';
+import CommentSystem from '@/components/CommentSystem';
 
 // ============================================================================
 // 타입 정의
@@ -24,17 +27,7 @@ interface ContentExploreProps {
 type TabType = 'quiz' | 'poll' | 'community';
 type CommunitySubTab = 'tips' | 'qna' | 'debate';
 
-const CATEGORY_LABELS: Record<ContentCategory, { label: string; emoji: string }> = {
-  cat: { label: '고양이', emoji: '🐱' },
-  dog: { label: '강아지', emoji: '🐕' },
-  rabbit: { label: '토끼', emoji: '🐰' },
-  hamster: { label: '햄스터', emoji: '🐹' },
-  general: { label: '일반', emoji: '📚' },
-  love: { label: '연애', emoji: '💕' },
-  lifestyle: { label: '라이프스타일', emoji: '☕' },
-  personality: { label: '성격', emoji: '🧠' },
-  plant: { label: '식물', emoji: '🌱' },
-};
+// CATEGORY_LABELS는 @/data/content/categories에서 import
 
 // ============================================================================
 // 퀴즈 카드 컴포넌트
@@ -51,6 +44,7 @@ interface QuizCardProps {
 function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: QuizCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(previousAnswer || null);
   const [showResult, setShowResult] = useState(isAnswered);
+  const [showComments, setShowComments] = useState(false);
 
   // 다음 액션 추천
   const nextActions = showResult
@@ -129,6 +123,30 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
           <NextActionInline actions={nextActions} onActionClick={onNextAction} />
         </div>
       )}
+
+      {/* 댓글 토글 버튼 */}
+      {showResult && (
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="w-full mt-3 py-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-700 border-t border-gray-100 transition-colors"
+        >
+          <MessageCircle className="w-3.5 h-3.5" />
+          <span>댓글</span>
+          {showComments ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
+      )}
+
+      {/* 댓글 섹션 */}
+      {showResult && showComments && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <CommentSystem
+            targetType="quiz"
+            targetId={quiz.id}
+            placeholder="이 퀴즈에 대한 의견을 남겨보세요..."
+            maxDisplay={3}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -158,6 +176,7 @@ function getStablePollResults(pollId: string) {
 
 function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCardProps) {
   const [localVoted, setLocalVoted] = useState<'a' | 'b' | null>(null);
+  const [showComments, setShowComments] = useState(false);
   const voted = previousVote ?? localVoted;
   const results = getStablePollResults(poll.id);
 
@@ -254,6 +273,30 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
       {voted && nextActions.length > 0 && (
         <div className="mt-4 pt-3 border-t border-gray-100">
           <NextActionInline actions={nextActions} onActionClick={onNextAction} />
+        </div>
+      )}
+
+      {/* 댓글 토글 버튼 */}
+      {voted && (
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="w-full mt-3 py-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-700 border-t border-gray-100 transition-colors"
+        >
+          <MessageCircle className="w-3.5 h-3.5" />
+          <span>댓글</span>
+          {showComments ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
+      )}
+
+      {/* 댓글 섹션 */}
+      {voted && showComments && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <CommentSystem
+            targetType="poll"
+            targetId={poll.id}
+            placeholder="이 투표에 대한 의견을 남겨보세요..."
+            maxDisplay={3}
+          />
         </div>
       )}
     </div>
@@ -605,15 +648,43 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
     : VS_POLLS.filter(p => p.category === selectedCategory);
 
   // 퀴즈 정답 처리
-  const handleQuizAnswer = (quizId: string, optionId: string, isCorrect: boolean) => {
+  // ContentParticipationService: UI 상태 (참여 여부 표시용)
+  // ParticipationBridge: 게이미피케이션 연동 (배지/포인트)
+  // 둘은 역할이 다르므로 각각 호출 (FeedbackService 중복 저장은 Bridge에서 처리)
+  const handleQuizAnswer = async (quizId: string, optionId: string, isCorrect: boolean) => {
+    // UI 상태 업데이트 (로컬 참여 기록)
     contentParticipationService.recordQuizAnswer(quizId, optionId, isCorrect);
     setParticipation(contentParticipationService.getParticipation());
+
+    // 게이미피케이션 연동 (배지/포인트만 처리, DB 저장은 별도)
+    const quiz = ALL_KNOWLEDGE_QUIZZES.find(q => q.id === quizId);
+    const bridge = getParticipationBridge();
+    if (bridge && quiz) {
+      await bridge.recordQuizAnswer(quizId, 0, optionId, isCorrect, quiz.category);
+    }
   };
 
   // 투표 처리
-  const handlePollVote = (pollId: string, choice: 'a' | 'b') => {
+  const handlePollVote = async (pollId: string, choice: 'a' | 'b') => {
+    // UI 상태 업데이트 (로컬 참여 기록)
     contentParticipationService.recordPollVote(pollId, choice);
     setParticipation(contentParticipationService.getParticipation());
+
+    // 게이미피케이션 연동
+    const poll = VS_POLLS.find(p => p.id === pollId);
+    const bridge = getParticipationBridge();
+    if (bridge && poll) {
+      // 소수 의견 판단용 통계 (getStablePollResults는 ID 기반 결정론적 값)
+      const results = getStablePollResults(pollId);
+      const pollStats = {
+        totalVotes: 100,
+        optionVotes: {
+          'a': results.a,
+          'b': results.b,
+        },
+      };
+      await bridge.recordPollVote(pollId, choice, pollStats, poll.category);
+    }
   };
 
   // 다음 액션 처리
