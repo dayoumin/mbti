@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import UTMInitializer from "@/components/UTMInitializer";
+import { ToastProvider } from "@/components/Toast";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://chemi.app';
 
@@ -57,8 +58,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased bg-gray-50 min-h-screen">
-        <UTMInitializer />
-        {children}
+        <ToastProvider>
+          <UTMInitializer />
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
