@@ -20,9 +20,11 @@ export type EventType =
   | 'quiz_complete'         // 퀴즈 완료
   | 'poll_vote'             // 투표 참여
   | 'content_view'          // 콘텐츠 조회
-  | 'share_click';          // 공유 클릭
+  | 'share_click'           // 공유 클릭
+  | 'page_view'             // 페이지 조회 (유입)
+  | 'session_start';        // 세션 시작 (UTM 포함 첫 방문)
 
-export type EventCategory = 'next_action' | 'content' | 'test' | 'community' | 'share';
+export type EventCategory = 'next_action' | 'content' | 'test' | 'community' | 'share' | 'acquisition';
 
 export type SourceEndpoint =
   | 'test_result'
@@ -61,6 +63,53 @@ interface EventData {
   recommendation_position: number | null;
   meta: Record<string, unknown>;
   created_at: string;
+}
+
+// ========== 전환 분석 타입 ==========
+
+interface FunnelStep {
+  eventType: EventType;
+  timestamp: string;
+  deviceId: string;
+  testType?: string;
+}
+
+export interface SourceConversionMetrics {
+  source: string;
+  sessions: number;
+  testStarts: number;
+  testCompletes: number;
+  shares: number;
+  startRate: number;      // 세션 → 시작 %
+  completeRate: number;   // 시작 → 완료 %
+  shareRate: number;      // 완료 → 공유 %
+  overallConversion: number; // 세션 → 완료 %
+}
+
+export interface FunnelAnalysis {
+  total: Omit<SourceConversionMetrics, 'source'>;
+  bySource: SourceConversionMetrics[];
+  period: {
+    start: string;
+    end: string;
+    eventCount: number;
+  };
+}
+
+export interface TestConversionAnalysis {
+  testType: string;
+  starts: number;
+  completes: number;
+  shares: number;
+  completionRate: number;
+  shareRate: number;
+}
+
+export interface ViralMetrics {
+  sharers: number;
+  viralUsers: number;
+  coefficient: number;
+  interpretation: string;
 }
 
 // ========== Supabase 클라이언트 ==========
@@ -277,6 +326,37 @@ class AnalyticsServiceClass {
     });
   }
 
+  /**
+   * 페이지 조회 추적 (유입 측정)
+   */
+  trackPageView(page: string): void {
+    this.track({
+      eventType: 'page_view',
+      eventCategory: 'acquisition',
+      meta: { page, url: window.location.href },
+    });
+  }
+
+  /**
+   * 세션 시작 추적 (UTM 유입 시)
+   */
+  trackSessionStart(): void {
+    // 이미 이 세션에서 추적했는지 확인
+    const sessionKey = 'chemi_session_tracked';
+    if (sessionStorage.getItem(sessionKey)) return;
+
+    sessionStorage.setItem(sessionKey, 'true');
+
+    this.track({
+      eventType: 'session_start',
+      eventCategory: 'acquisition',
+      meta: {
+        landing_page: window.location.pathname,
+        referrer: document.referrer || 'direct',
+      },
+    });
+  }
+
   // 배치 처리 스케줄링
   private scheduleBatch(): void {
     if (this.batchTimeout) return;
@@ -340,6 +420,154 @@ class AnalyticsServiceClass {
   clearLocalEvents(): void {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(STORAGE_KEY);
+  }
+
+  // ========== 전환 분석 (로컬 데이터 기반) ==========
+
+  /**
+   * 퍼널 분석: 유입 → 테스트 시작 → 테스트 완료
+   */
+  getFunnelAnalysis(): FunnelAnalysis {
+    const events = this.getLocalEvents();
+
+    // UTM 소스별 그룹핑
+    const bySource: Record<string, FunnelStep[]> = {};
+
+    events.forEach(event => {
+      const source = (event.meta?.utm_source as string) || 'direct';
+      if (!bySource[source]) {
+        bySource[source] = [];
+      }
+      bySource[source].push({
+        eventType: event.event_type,
+        timestamp: event.created_at,
+        deviceId: event.device_id,
+        testType: event.target_category || undefined,
+      });
+    });
+
+    // 각 소스별 전환율 계산
+    const sourceMetrics: SourceConversionMetrics[] = Object.entries(bySource).map(([source, steps]) => {
+      const uniqueDevices = new Set(steps.map(s => s.deviceId));
+      const sessions = uniqueDevices.size;
+
+      const startedDevices = new Set(
+        steps.filter(s => s.eventType === 'test_start').map(s => s.deviceId)
+      );
+      const completedDevices = new Set(
+        steps.filter(s => s.eventType === 'test_complete').map(s => s.deviceId)
+      );
+      const sharedDevices = new Set(
+        steps.filter(s => s.eventType === 'share_click').map(s => s.deviceId)
+      );
+
+      return {
+        source,
+        sessions,
+        testStarts: startedDevices.size,
+        testCompletes: completedDevices.size,
+        shares: sharedDevices.size,
+        startRate: sessions > 0 ? (startedDevices.size / sessions) * 100 : 0,
+        completeRate: startedDevices.size > 0 ? (completedDevices.size / startedDevices.size) * 100 : 0,
+        shareRate: completedDevices.size > 0 ? (sharedDevices.size / completedDevices.size) * 100 : 0,
+        overallConversion: sessions > 0 ? (completedDevices.size / sessions) * 100 : 0,
+      };
+    });
+
+    // 전체 통계
+    const totalSessions = sourceMetrics.reduce((sum, m) => sum + m.sessions, 0);
+    const totalStarts = sourceMetrics.reduce((sum, m) => sum + m.testStarts, 0);
+    const totalCompletes = sourceMetrics.reduce((sum, m) => sum + m.testCompletes, 0);
+    const totalShares = sourceMetrics.reduce((sum, m) => sum + m.shares, 0);
+
+    return {
+      total: {
+        sessions: totalSessions,
+        testStarts: totalStarts,
+        testCompletes: totalCompletes,
+        shares: totalShares,
+        startRate: totalSessions > 0 ? (totalStarts / totalSessions) * 100 : 0,
+        completeRate: totalStarts > 0 ? (totalCompletes / totalStarts) * 100 : 0,
+        shareRate: totalCompletes > 0 ? (totalShares / totalCompletes) * 100 : 0,
+        overallConversion: totalSessions > 0 ? (totalCompletes / totalSessions) * 100 : 0,
+      },
+      bySource: sourceMetrics.sort((a, b) => b.sessions - a.sessions),
+      period: {
+        start: events.length > 0 ? events[0].created_at : new Date().toISOString(),
+        end: events.length > 0 ? events[events.length - 1].created_at : new Date().toISOString(),
+        eventCount: events.length,
+      },
+    };
+  }
+
+  /**
+   * 테스트별 전환율 분석
+   */
+  getTestConversionAnalysis(): TestConversionAnalysis[] {
+    const events = this.getLocalEvents();
+    const byTest: Record<string, { starts: Set<string>; completes: Set<string>; shares: Set<string> }> = {};
+
+    events.forEach(event => {
+      const testType = event.target_category;
+      if (!testType) return;
+
+      if (!byTest[testType]) {
+        byTest[testType] = { starts: new Set(), completes: new Set(), shares: new Set() };
+      }
+
+      if (event.event_type === 'test_start') {
+        byTest[testType].starts.add(event.device_id);
+      } else if (event.event_type === 'test_complete') {
+        byTest[testType].completes.add(event.device_id);
+      } else if (event.event_type === 'share_click') {
+        byTest[testType].shares.add(event.device_id);
+      }
+    });
+
+    return Object.entries(byTest).map(([testType, data]) => ({
+      testType,
+      starts: data.starts.size,
+      completes: data.completes.size,
+      shares: data.shares.size,
+      completionRate: data.starts.size > 0 ? (data.completes.size / data.starts.size) * 100 : 0,
+      shareRate: data.completes.size > 0 ? (data.shares.size / data.completes.size) * 100 : 0,
+    })).sort((a, b) => b.starts - a.starts);
+  }
+
+  /**
+   * 바이럴 계수 추정 (공유 → 신규 유입)
+   */
+  getViralCoefficient(): ViralMetrics {
+    const events = this.getLocalEvents();
+
+    // 공유한 사용자 수
+    const sharers = new Set(
+      events.filter(e => e.event_type === 'share_click').map(e => e.device_id)
+    );
+
+    // 공유 링크로 유입된 사용자 (utm_medium=social 또는 share)
+    const viralUsers = new Set(
+      events
+        .filter(e => {
+          const medium = e.meta?.utm_medium as string;
+          return e.event_type === 'session_start' && (medium === 'social' || medium === 'share');
+        })
+        .map(e => e.device_id)
+    );
+
+    // 바이럴 계수 = 공유로 유입된 유저 / 공유한 유저
+    const coefficient = sharers.size > 0 ? viralUsers.size / sharers.size : 0;
+
+    return {
+      sharers: sharers.size,
+      viralUsers: viralUsers.size,
+      coefficient,
+      interpretation: coefficient >= 1
+        ? '바이럴 성장 중!'
+        : coefficient >= 0.5
+          ? '준수한 바이럴'
+          : '개선 필요',
+    };
   }
 }
 

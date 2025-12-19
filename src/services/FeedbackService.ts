@@ -559,6 +559,7 @@ class FeedbackServiceClass {
 
   /**
    * 투표 저장 시 소수 의견 여부 함께 저장 (확장된 버전)
+   * 주의: localStorage에만 저장 (Supabase 연동 시 별도 처리 필요)
    */
   async savePollResponseWithAnalysis(
     data: PollResponseData & { category?: string },
@@ -579,6 +580,7 @@ class FeedbackServiceClass {
       const existing = JSON.parse(localStorage.getItem(key) || '[]') as Array<
         PollResponseData & { category?: string; isMinority?: boolean; created_at?: string }
       >;
+      // 동일 투표 중복 방지
       const next = existing.filter((r) => r.pollId !== data.pollId);
       next.push({
         ...data,
@@ -587,10 +589,10 @@ class FeedbackServiceClass {
       });
       localStorage.setItem(key, JSON.stringify(next));
 
-      // 기존 저장 로직도 호출 (Supabase용)
-      const baseResult = await this.savePollResponse(data);
+      // TODO: Supabase 연동 시 여기에 서버 저장 추가
+      // await this.savePollResponse(data);
 
-      return { ...baseResult, isMinority };
+      return { success: true, isMinority };
     } catch (error) {
       return { success: false, error: (error as Error).message, isMinority: false };
     }
@@ -598,6 +600,7 @@ class FeedbackServiceClass {
 
   /**
    * 퀴즈 저장 시 카테고리 정보 함께 저장 (확장된 버전)
+   * 주의: localStorage에만 저장 (Supabase 연동 시 별도 처리 필요)
    */
   async saveQuizResponseWithCategory(
     data: QuizResponseData & { category?: string }
@@ -606,15 +609,21 @@ class FeedbackServiceClass {
     try {
       const key = 'mbti_quiz_responses';
       const existing = JSON.parse(localStorage.getItem(key) || '[]');
-      existing.push({
+      // 동일 퀴즈 중복 방지
+      const filtered = existing.filter(
+        (r: { quizId?: string }) => r.quizId !== data.quizId
+      );
+      filtered.push({
         ...data,
         device_id: getDeviceId(),
         created_at: new Date().toISOString(),
       });
-      localStorage.setItem(key, JSON.stringify(existing));
+      localStorage.setItem(key, JSON.stringify(filtered));
 
-      // 기존 저장 로직도 호출 (Supabase용)
-      return await this.saveQuizResponse(data);
+      // TODO: Supabase 연동 시 여기에 서버 저장 추가
+      // return await this.saveQuizResponse(data);
+
+      return { success: true };
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }
