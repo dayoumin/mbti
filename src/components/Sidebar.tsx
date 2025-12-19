@@ -5,7 +5,8 @@ import { Sparkles, Clock, TrendingUp } from 'lucide-react';
 import { NavTab, NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
-import { formatRelativeTime } from '@/utils/format';
+import { DesktopAccordion } from './responsive';
+import { ContentWidgetContainer } from './content';
 
 // 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
 export type SidebarTab = NavTab;
@@ -21,12 +22,20 @@ interface SidebarProps {
   activeTab: SidebarTab;
   onTabChange: (tab: SidebarTab) => void;
   onStartTest?: (testKey: string) => void;
+  onContentExplore?: () => void;
   className?: string;
 }
 
-export default function Sidebar({ activeTab, onTabChange, onStartTest, className = '' }: SidebarProps) {
+export default function Sidebar({
+  activeTab,
+  onTabChange,
+  onStartTest,
+  onContentExplore,
+  className = ''
+}: SidebarProps) {
   const [recentTests, setRecentTests] = useState<RecentTest[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
+  const [contentExpanded, setContentExpanded] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -46,8 +55,6 @@ export default function Sidebar({ activeTab, onTabChange, onStartTest, className
     };
     loadData();
   }, []);
-
-  // formatRelativeTime은 @/utils/format에서 import
 
   return (
     <aside
@@ -75,6 +82,8 @@ export default function Sidebar({ activeTab, onTabChange, onStartTest, className
         <ul className="space-y-1">
           {NAV_ITEMS.map(({ key, label, icon: Icon }) => {
             const isActive = activeTab === key;
+            const isExplore = key === 'explore';
+
             return (
               <li key={key}>
                 <button
@@ -96,37 +105,50 @@ export default function Sidebar({ activeTab, onTabChange, onStartTest, className
                     <div className="ml-auto w-1.5 h-1.5 bg-indigo-500 rounded-full" />
                   )}
                 </button>
+
+                {/* 퀴즈/투표 탭 아래에 아코디언 */}
+                {isExplore && (
+                  <DesktopAccordion
+                    title="오늘의 참여"
+                    isExpanded={contentExpanded}
+                    onToggle={() => setContentExpanded(!contentExpanded)}
+                    autoExpand={true}
+                    className="mt-1"
+                  >
+                    <ContentWidgetContainer
+                      variant="compact"
+                      onExploreMore={onContentExplore}
+                    />
+                  </DesktopAccordion>
+                )}
               </li>
             );
           })}
         </ul>
       </nav>
 
-      {/* 하단 위젯 영역 */}
-      <div className="flex-1 flex flex-col justify-end p-4 space-y-4">
+      {/* 하단 위젯 영역 - 스크롤 가능 */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {/* 최근 테스트 */}
         {recentTests.length > 0 && (
-          <div className="bg-slate-50/80 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-slate-400" />
-              <span className="text-xs font-semibold text-slate-600">최근 테스트</span>
+          <div className="bg-slate-50/80 rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-[10px] font-semibold text-slate-600">최근 테스트</span>
             </div>
-            <ul className="space-y-2">
-              {recentTests.map((test, idx) => {
+            <ul className="space-y-1">
+              {recentTests.slice(0, 2).map((test, idx) => {
                 const data = CHEMI_DATA[test.testType as keyof typeof CHEMI_DATA];
                 return (
                   <li key={idx}>
                     <button
                       onClick={() => onStartTest?.(test.testType)}
-                      className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/80 transition-colors text-left"
+                      className="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/80 transition-colors text-left"
                     >
-                      <span className="text-lg">{test.resultEmoji}</span>
+                      <span className="text-sm">{test.resultEmoji}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-slate-700 truncate">
+                        <p className="text-[10px] font-medium text-slate-700 truncate">
                           {data?.title || test.testType}
-                        </p>
-                        <p className="text-[10px] text-slate-400">
-                          {formatRelativeTime(test.createdAt)}
                         </p>
                       </div>
                     </button>
@@ -138,20 +160,15 @@ export default function Sidebar({ activeTab, onTabChange, onStartTest, className
         )}
 
         {/* 통계 */}
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-indigo-500" />
-            <span className="text-xs font-semibold text-slate-600">내 활동</span>
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
+            <span className="text-[10px] font-semibold text-slate-600">내 활동</span>
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black text-indigo-600">{completedCount}</span>
-            <span className="text-xs text-slate-500">개 테스트 완료</span>
+            <span className="text-xl font-black text-indigo-600">{completedCount}</span>
+            <span className="text-[10px] text-slate-500">개 테스트 완료</span>
           </div>
-          {completedCount === 0 && (
-            <p className="text-[10px] text-slate-400 mt-1">
-              첫 테스트를 시작해보세요!
-            </p>
-          )}
         </div>
       </div>
     </aside>

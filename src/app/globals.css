@@ -610,3 +610,44 @@ body {
 .animate-fade-in-up {
     animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Shimmer Animation for Progress Bar */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Slide In/Out Animations for Tablet Panel */
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutToRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.animate-slide-in-right {
+    animation: slideInFromRight 300ms ease-out forwards;
+}
+
+.animate-slide-out-right {
+    animation: slideOutToRight 200ms ease-in forwards;
+}

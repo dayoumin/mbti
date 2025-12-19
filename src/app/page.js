@@ -17,7 +17,13 @@ import FeedbackComments from '../components/FeedbackComments';
 import FunFactsCard from '../components/FunFactsCard';
 import BottomNav from '../components/BottomNav';
 import Sidebar from '../components/Sidebar';
+import { TabletSlidePanel } from '../components/responsive';
+import FriendInvite from '../components/FriendInvite';
+import FriendCompare from '../components/FriendCompare';
+import BadgeNotification from '../components/BadgeNotification';
+import ParticipationStats from '../components/ParticipationStats';
 import { nextActionService } from '../services/NextActionService';
+import { getGamificationService } from '../services/GamificationService';
 import { NextActionInline } from '../components/NextActionCard';
 import * as Icons from '../components/Icons';
 import {
@@ -444,8 +450,11 @@ export default function Home() {
     const [showShareCard, setShowShareCard] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showContentExplore, setShowContentExplore] = useState(false);
+    const [tabletContentTab, setTabletContentTab] = useState(null); // 태블릿 띠지 탭 상태
     const [parentInfo, setParentInfo] = useState(null); // petMatch → 세부 테스트 연결용
     const [activeNavTab, setActiveNavTab] = useState('home'); // 하단 내비게이션 상태
+    const [badgeQueue, setBadgeQueue] = useState([]); // 배지 알림 큐 (여러 배지 순차 표시)
+    const [showFriendCompare, setShowFriendCompare] = useState(false); // 친구 비교 모달
 
     // Ensure mode is valid - use useMemo to derive safe mode
     const safeMode = CHEMI_DATA[mode] ? mode : 'human';
@@ -555,6 +564,15 @@ export default function Home() {
             if (resultService && result) {
                 try {
                     await resultService.saveResult(mode, result, finalScores, isDeepMode, parentInfo);
+
+                    // 게이미피케이션 기록
+                    const gamification = getGamificationService();
+                    if (gamification) {
+                        const { newBadges } = gamification.recordTestComplete(mode);
+                        if (newBadges.length > 0) {
+                            setBadgeQueue(prev => [...prev, ...newBadges]); // 기존 큐에 추가
+                        }
+                    }
                 } catch (error) {
                     console.error('Save failed:', error);
                 }
@@ -644,6 +662,14 @@ export default function Home() {
                 />
             )}
 
+            {/* 배지 획득 알림 (큐에서 순차 표시) */}
+            {badgeQueue.length > 0 && (
+                <BadgeNotification
+                    badgeId={badgeQueue[0]}
+                    onClose={() => setBadgeQueue(prev => prev.slice(1))}
+                />
+            )}
+
             {/* PC 사이드바 */}
             {view === 'dashboard' && (
                 <Sidebar
@@ -652,6 +678,23 @@ export default function Home() {
                     onStartTest={(testKey) => {
                         setActiveNavTab('home');
                         handleStartTest(testKey);
+                    }}
+                    onContentExplore={() => {
+                        setShowContentExplore(true);
+                        setActiveNavTab('explore');
+                    }}
+                />
+            )}
+
+            {/* 태블릿 띠지 탭 + 슬라이드 패널 */}
+            {view === 'dashboard' && (
+                <TabletSlidePanel
+                    activeTab={tabletContentTab}
+                    onTabChange={setTabletContentTab}
+                    onExploreMore={() => {
+                        setTabletContentTab(null);
+                        setShowContentExplore(true);
+                        setActiveNavTab('explore');
                     }}
                 />
             )}
@@ -683,17 +726,31 @@ export default function Home() {
                             </div>
 
                             <div className="flex-1 flex flex-col items-center justify-center -mt-8">
-                                {/* Social Proof Badge */}
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/40 border border-white/60 text-slate-600 text-[11px] font-bold backdrop-blur-md mb-8 shadow-sm">
-                                    <div className="relative flex h-2 w-2">
-                                        <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></div>
-                                        <div className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></div>
+                                {/* Social Proof - Enhanced */}
+                                <div className="flex flex-col items-center gap-2 mb-6">
+                                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-100 shadow-sm">
+                                        <div className="relative flex h-2.5 w-2.5">
+                                            <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></div>
+                                            <div className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></div>
+                                        </div>
+                                        <span className="text-xl font-black text-rose-600">12,483</span>
+                                        <span className="text-sm font-bold text-slate-600">명이 했어요!</span>
                                     </div>
-                                    <span className="tracking-wide">1,248명 참여 중</span>
+                                    <div className="flex items-center gap-3 text-xs text-slate-500">
+                                        <span className="flex items-center gap-1">
+                                            <span className="text-amber-500">⭐</span>
+                                            <span className="font-bold">4.8</span>
+                                        </span>
+                                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                        <span className="flex items-center gap-1">
+                                            <span>⏱️</span>
+                                            <span className="font-bold">약 3분</span>
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {/* Main Icon */}
-                                <IconComponent mood="happy" className="w-40 h-40 mb-8 drop-shadow-2xl animate-bounce-slight" />
+                                <IconComponent mood="happy" className="w-36 h-36 mb-6 drop-shadow-2xl animate-bounce-slight" />
 
                                 {/* Title */}
                                 <h1 className="text-4xl font-black text-slate-800 mb-3 text-center leading-tight tracking-tight">
@@ -716,11 +773,14 @@ export default function Home() {
                                 </div>
                             </div>
 
-                            <div className="mt-auto space-y-4">
-                                <p className="text-center text-xs text-slate-400 font-medium">⏱️ 소요 시간: 약 3분</p>
-                                <GlassButton onClick={() => setStep("question")} variant="primary">
+                            <div className="mt-auto space-y-3">
+                                {/* Primary CTA - Enhanced */}
+                                <button
+                                    onClick={() => setStep("question")}
+                                    className="w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-lg flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-0.5 active:scale-[0.98]"
+                                >
                                     테스트 시작하기 <ArrowRight className="w-5 h-5" />
-                                </GlassButton>
+                                </button>
 
                                 {/* petMatch 전용: 직접 선택 모드 */}
                                 {mode === 'petMatch' && (
@@ -756,19 +816,26 @@ export default function Home() {
                                 </button>
                             </div>
 
-                            {/* Progress */}
-                            <div className="w-full bg-slate-100 rounded-full h-1.5 mb-12 overflow-hidden">
-                                <div
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-700 ease-out"
-                                    style={{ width: `${((displayQuestionNum) / displayTotalQuestions) * 100}%` }}
-                                ></div>
+                            {/* Progress - Enhanced */}
+                            <div className="mb-10">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm font-black text-indigo-600">Q{displayQuestionNum}</span>
+                                    <span className="text-xs font-bold text-slate-400">
+                                        {displayQuestionNum}/{displayTotalQuestions}
+                                    </span>
+                                </div>
+                                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden shadow-inner">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-700 ease-out relative"
+                                        style={{ width: `${((displayQuestionNum) / displayTotalQuestions) * 100}%` }}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Question */}
-                            <div className="flex-1 flex flex-col items-center justify-center -mt-10">
-                                <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-sm font-black mb-6">
-                                    Q{displayQuestionNum}
-                                </span>
+                            <div className="flex-1 flex flex-col items-center justify-center -mt-6">
                                 <h2 className="text-3xl font-black text-slate-800 text-center leading-snug break-keep drop-shadow-sm">
                                     {questions[qIdx]?.q}
                                 </h2>
@@ -1085,36 +1152,49 @@ export default function Home() {
                                         </button>
                                     )}
 
-                                    {/* Share & Compare CTA - 바이럴 핵심 */}
+                                    {/* Share & Compare CTA - 바이럴 최적화 순서 */}
                                     <div className="w-full mt-6 space-y-3">
-                                        {/* 친구와 비교하기 - 메인 CTA */}
-                                        <button
-                                            onClick={() => {
-                                                // TODO: 비교 기능 구현 후 연결
-                                                alert('친구와 비교하기 기능이 곧 추가됩니다!');
-                                            }}
-                                            className="w-full py-4 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-95"
-                                        >
-                                            <Users className="w-5 h-5" />
-                                            친구와 비교하기
-                                        </button>
-
-                                        {/* 내 순위 보기 */}
-                                        <button
-                                            onClick={() => setShowRanking(true)}
-                                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95"
-                                        >
-                                            <Trophy className="w-5 h-5" />
-                                            전체 랭킹에서 내 순위 보기
-                                        </button>
-
-                                        {/* 결과 공유하기 - 서브 CTA */}
+                                        {/* 1. 결과 카드 저장 - 가장 쉬운 액션 */}
                                         <button
                                             onClick={() => setShowShareCard(true)}
-                                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95"
+                                            className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 text-white font-black text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-[0.98] relative overflow-hidden group"
                                         >
-                                            <Share2 className="w-5 h-5" />
-                                            결과 카드 공유하기
+                                            <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-rose-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            <span className="relative flex items-center gap-2">
+                                                📸 결과 카드 저장하기
+                                            </span>
+                                            <span className="relative text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                                                1.2K
+                                            </span>
+                                        </button>
+
+                                        {/* 2. 카카오톡 공유 - 한국 최적화 */}
+                                        <button
+                                            onClick={() => setShowShareCard(true)}
+                                            className="w-full py-3.5 rounded-xl bg-[#FEE500] text-[#391B1B] font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                                        >
+                                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 3C6.48 3 2 6.48 2 10.5c0 2.52 1.67 4.73 4.17 6.02l-.67 3.48 4.08-2.7c.79.13 1.6.2 2.42.2 5.52 0 10-3.48 10-7.5S17.52 3 12 3z"/>
+                                            </svg>
+                                            카카오톡으로 공유하기
+                                        </button>
+
+                                        {/* 3. 내 순위 보기 */}
+                                        <button
+                                            onClick={() => setShowRanking(true)}
+                                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                                        >
+                                            <Trophy className="w-5 h-5" />
+                                            내 순위 확인하기
+                                        </button>
+
+                                        {/* 4. 친구와 비교하기 */}
+                                        <button
+                                            onClick={() => setShowFriendCompare(true)}
+                                            className="w-full py-3 rounded-xl bg-white/60 hover:bg-white border border-slate-200 text-slate-700 font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                                        >
+                                            <Users className="w-4 h-4" />
+                                            친구와 비교하기
                                         </button>
                                     </div>
 
@@ -1129,6 +1209,13 @@ export default function Home() {
                                             setShowContentExplore(true);
                                             setActiveNavTab('explore');
                                         }}
+                                    />
+
+                                    {/* 친구 초대 */}
+                                    <FriendInvite
+                                        testType={mode}
+                                        testName={currentModeData.title}
+                                        className="w-full mt-6"
                                     />
 
                                     {/* 결과 피드백 */}
@@ -1166,9 +1253,21 @@ export default function Home() {
                                     onClose={() => setShowShareCard(false)}
                                     onCompare={() => {
                                         setShowShareCard(false);
-                                        // TODO: 비교 기능 연결
-                                        alert('친구와 비교하기 기능이 곧 추가됩니다!');
+                                        setShowFriendCompare(true);
                                     }}
+                                />
+                            )}
+
+                            {/* Friend Compare Modal */}
+                            {showFriendCompare && finalResult && (
+                                <FriendCompare
+                                    testType={mode}
+                                    testName={currentModeData.title}
+                                    myResult={finalResult.name}
+                                    myResultEmoji={finalResult.emoji}
+                                    myScores={scores}
+                                    dimensions={dimensions}
+                                    onClose={() => setShowFriendCompare(false)}
                                 />
                             )}
                         </div>

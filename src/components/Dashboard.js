@@ -2,16 +2,13 @@ import { useMemo, useState, useEffect } from 'react';
 import * as Icons from './Icons';
 import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_DATA } from '../data/index';
-import { getRandomQuiz, getRandomPoll } from '../data/content';
-import { ALL_KNOWLEDGE_QUIZZES } from '../data/content/quizzes';
-import { VS_POLLS } from '../data/content/polls/vs-polls';
 import { gamificationService } from '../services/GamificationService';
-import { contentParticipationService } from '../services/ContentParticipationService';
 import { nextActionService } from '../services/NextActionService';
-import { ChevronRight, ChevronDown, HelpCircle, Flame, Star, Sunrise, Sun, Moon, Sparkles, Check } from 'lucide-react';
+import { ChevronRight, ChevronDown, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
-import { VSPollCard } from '../modules/vote';
 import Footer from './Footer';
+import HeroBanner from './HeroBanner';
+import DailyContentCards from './DailyContentCards';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -69,17 +66,17 @@ const TEST_BADGES = {
     tea: 'UPDATE', // 업데이트됨
 };
 
-// Compact Test Item (아이콘 + 제목 + 배지) - 더 작게
-const CompactTestItem = ({ item, onStart, badge }) => {
+// Test Card - 4열에 맞게 더 큰 아이콘 + 제목
+const TestCard = ({ item, onStart, badge }) => {
     const IconComponent = Icons[item.icon] || Icons.HumanIcon;
 
     return (
         <button
             onClick={() => onStart(item.key)}
-            className="group flex flex-col items-center gap-1 pt-3 pb-1.5 px-1.5 rounded-lg bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 relative"
+            className="group flex flex-col items-center gap-2 pt-4 pb-3 px-2 rounded-xl bg-white/80 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-md hover:-translate-y-1 relative"
         >
             {badge && (
-                <span className={`absolute top-0.5 right-0.5 px-1 py-0.5 text-[7px] font-bold rounded-full shadow-sm z-10 ${
+                <span className={`absolute top-1 right-1 px-1.5 py-0.5 text-[8px] font-bold rounded-full shadow-sm z-10 ${
                     badge === 'HOT' ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white' :
                     badge === 'NEW' ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white' :
                     badge === 'UPDATE' ? 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white' :
@@ -88,10 +85,10 @@ const CompactTestItem = ({ item, onStart, badge }) => {
                     {badge}
                 </span>
             )}
-            <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-md group-hover:scale-110 transition-transform duration-300">
-                <IconComponent mood="happy" className="w-6 h-6" />
+            <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                <IconComponent mood="happy" className="w-9 h-9" />
             </div>
-            <span className="text-[10px] font-bold text-slate-600 group-hover:text-indigo-600 transition-colors text-center leading-tight">
+            <span className="text-xs font-bold text-slate-700 group-hover:text-indigo-600 transition-colors text-center leading-tight">
                 {item.label}
             </span>
         </button>
@@ -273,127 +270,13 @@ const BackgroundDecoration = () => (
     </>
 );
 
-// 오늘의 퀴즈 카드 (접힘/펼침)
-const DailyQuizCard = ({ quiz, onAnswer, isExpanded, onToggle, isAnswered = false, previousAnswer = null }) => {
-    const [localSelectedOption, setLocalSelectedOption] = useState(null);
-    const [localShowResult, setLocalShowResult] = useState(false);
-
-    if (!quiz) return null;
-
-    const selectedOption = previousAnswer ?? localSelectedOption;
-    const showResult = isAnswered || localShowResult;
-
-    const handleSelect = (optionId) => {
-        if (showResult) return;
-        setLocalSelectedOption(optionId);
-        setLocalShowResult(true);
-        const isCorrect = quiz.options.find(o => o.id === optionId)?.isCorrect || false;
-        onAnswer?.(quiz.id, optionId, isCorrect);
-    };
-
-    const selectedIsCorrect = quiz.options.find(o => o.id === selectedOption)?.isCorrect;
-
-    // 컴팩트 모드 (접힌 상태)
-    if (!isExpanded) {
-        return (
-            <button
-                onClick={onToggle}
-                className="w-full flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100 hover:border-blue-200 transition-all group"
-            >
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <HelpCircle className="w-4 h-4 text-blue-500" />
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-bold text-blue-500 block">오늘의 퀴즈</span>
-                        {showResult && (
-                            <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
-                                완료
-                            </span>
-                        )}
-                    </div>
-                    <p className="text-xs font-medium text-slate-600 truncate">{quiz.question}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors flex-shrink-0" />
-            </button>
-        );
-    }
-
-    // 펼쳐진 상태
-    return (
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100">
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                    <HelpCircle className="w-4 h-4 text-blue-500" />
-                    <span className="text-xs font-bold text-blue-600">오늘의 퀴즈</span>
-                    {showResult && (
-                        <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
-                            완료
-                        </span>
-                    )}
-                    <span className="text-[10px] bg-blue-100 text-blue-500 px-1.5 py-0.5 rounded-full">
-                        {quiz.category === 'cat' ? '🐱' : quiz.category === 'dog' ? '🐕' : '📚'}
-                    </span>
-                </div>
-                <button onClick={onToggle} className="p-1 hover:bg-blue-100 rounded-lg transition-colors">
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                </button>
-            </div>
-            <p className="text-sm font-bold text-slate-700 mb-2">{quiz.question}</p>
-            <div className="space-y-1.5">
-                {quiz.options.map((option) => {
-                    const isSelected = selectedOption === option.id;
-                    const isCorrect = option.isCorrect;
-                    let bgClass = 'bg-white hover:bg-blue-50 border-slate-200';
-
-                    if (showResult) {
-                        if (isCorrect) {
-                            bgClass = 'bg-emerald-50 border-emerald-300 text-emerald-700';
-                        } else if (isSelected && !isCorrect) {
-                            bgClass = 'bg-red-50 border-red-300 text-red-700';
-                        } else {
-                            bgClass = 'bg-slate-50 border-slate-200 text-slate-400';
-                        }
-                    }
-
-                    return (
-                        <button
-                            key={option.id}
-                            onClick={() => handleSelect(option.id)}
-                            disabled={showResult}
-                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs border transition-all ${bgClass}`}
-                        >
-                            {option.text}
-                            {showResult && isCorrect && <span className="ml-1">✓</span>}
-                        </button>
-                    );
-                })}
-            </div>
-            {showResult && (
-                <div className={`mt-2 p-2 rounded-lg text-[11px] ${selectedIsCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {selectedIsCorrect ? '🎉 정답!' : '💡 오답!'} {quiz.explanation}
-                </div>
-            )}
-        </div>
-    );
-};
-
-// VSPollCard는 모듈에서 import: import { VSPollCard } from '../modules/vote';
+// DailyQuizCard와 VSPollCard는 DailyContentCards 컴포넌트로 통합됨
 
 const Dashboard = ({ onStartTest, onContentExplore }) => {
     // 2단계 필터 상태
     const [activeType, setActiveType] = useState('all');        // 1차: 심리/매칭
     const [activeSubject, setActiveSubject] = useState(null);   // 2차: 주제별 (null = 전체)
     const [showDetailTests, setShowDetailTests] = useState(false);
-
-    // 오늘의 퀴즈/투표 (클라이언트에서만 랜덤 선택)
-    const [dailyQuiz, setDailyQuiz] = useState(null);
-    const [dailyPoll, setDailyPoll] = useState(null);
-    const [contentParticipation, setContentParticipation] = useState(() => contentParticipationService.getParticipation());
-
-    // 퀴즈/투표 펼침 상태 (기본: 접힌 상태)
-    const [quizExpanded, setQuizExpanded] = useState(false);
-    const [pollExpanded, setPollExpanded] = useState(false);
 
     // 게이미피케이션 상태
     const [gameStats, setGameStats] = useState(null);
@@ -406,26 +289,8 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     const [streakBonusAction, setStreakBonusAction] = useState(null);
 
     useEffect(() => {
-        // 클라이언트 사이드에서만 랜덤 선택 (hydration mismatch 방지)
-        /* eslint-disable react-hooks/set-state-in-effect */
-        const currentParticipation = contentParticipationService.getParticipation();
-        setContentParticipation(currentParticipation);
-
-        const unansweredQuizzes = ALL_KNOWLEDGE_QUIZZES.filter(q => !currentParticipation.quizzes.some(p => p.quizId === q.id));
-        const unvotedPolls = VS_POLLS.filter(p => !currentParticipation.polls.some(v => v.pollId === p.id));
-
-        const nextQuiz = unansweredQuizzes.length > 0
-            ? unansweredQuizzes[Math.floor(Math.random() * unansweredQuizzes.length)]
-            : getRandomQuiz();
-
-        const nextPoll = unvotedPolls.length > 0
-            ? unvotedPolls[Math.floor(Math.random() * unvotedPolls.length)]
-            : getRandomPoll();
-
-        setDailyQuiz(nextQuiz);
-        setDailyPoll(nextPoll);
-
         // 게이미피케이션 초기화 및 방문 기록
+        /* eslint-disable react-hooks/set-state-in-effect */
         const stats = gamificationService.getStats();
         setGameStats(stats);
         setCurrentLevel(gamificationService.getLevel());
@@ -451,44 +316,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
         /* eslint-enable react-hooks/set-state-in-effect */
     }, []);
 
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        const handleUpdated = () => {
-            setContentParticipation(contentParticipationService.getParticipation());
-        };
-
-        window.addEventListener('chemi_content_participation_updated', handleUpdated);
-        return () => window.removeEventListener('chemi_content_participation_updated', handleUpdated);
-    }, []);
-
-    // 퀴즈 정답 처리
-    const handleQuizAnswer = (quizId, optionId, isCorrect) => {
-        if (!quizId || !optionId) return;
-
-        contentParticipationService.recordQuizAnswer(quizId, optionId, !!isCorrect);
-        setContentParticipation(contentParticipationService.getParticipation());
-
-        if (!dailyQuiz) return;
-        const result = gamificationService.recordQuizAnswer(!!isCorrect, dailyQuiz.category);
-        setPointsToast({ points: result.points, message: isCorrect ? '정답!' : '참여 완료' });
-        setGameStats(gamificationService.getStats());
-        setCurrentLevel(gamificationService.getLevel());
-    };
-
-    // 투표 참여 처리
-    const handlePollVote = (pollId, choice) => {
-        if (!pollId || !choice) return;
-
-        contentParticipationService.recordPollVote(pollId, choice);
-        setContentParticipation(contentParticipationService.getParticipation());
-
-        const result = gamificationService.recordPollVote();
-        setPointsToast({ points: result.points, message: '투표 완료!' });
-        setGameStats(gamificationService.getStats());
-        setCurrentLevel(gamificationService.getLevel());
-    };
-
     // 시간대/스트릭 보너스 액션 처리
     const handleBonusAction = (action) => {
         if (!action) return;
@@ -499,12 +326,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 onStartTest?.(action.targetId || 'human');
                 break;
             case 'quiz':
-                // 퀴즈 추천 → 퀴즈 펼치기
-                setQuizExpanded(true);
-                break;
             case 'poll':
-                // 투표 추천 → 투표 펼치기
-                setPollExpanded(true);
+                // 퀴즈/투표 추천 → 컨텐츠 탐색으로 이동
+                onContentExplore?.();
                 break;
             case 'share':
                 // 공유 추천 → 프로필로 이동
@@ -607,103 +431,17 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     />
                 )}
 
-                {/* 오늘의 참여 섹션 - 가로 스크롤 컴팩트 형태 */}
-                {(dailyQuiz || dailyPoll || timeBasedAction) && (
-                    <section className="mb-4 animate-fade-in-up">
-                        <div className="flex items-center justify-between mb-2 px-1">
-                            <span className="text-xs font-bold text-slate-500">오늘의 참여</span>
-                            {onContentExplore && (
-                                <button
-                                    onClick={onContentExplore}
-                                    className="text-[10px] font-medium text-indigo-500 hover:text-indigo-600 transition-colors flex items-center gap-0.5"
-                                >
-                                    더보기
-                                    <ChevronRight className="w-3 h-3" />
-                                </button>
-                            )}
-                        </div>
+                {/* 히어로 배너 - 인기 테스트 추천 */}
+                <HeroBanner
+                    onStartTest={onStartTest}
+                    className="mb-4 animate-fade-in-up"
+                />
 
-                        {/* 펼쳐진 카드가 있으면 세로 표시, 아니면 가로 스크롤 */}
-                        {(quizExpanded || pollExpanded) ? (
-                            <div className="space-y-2">
-                                {quizExpanded && dailyQuiz && (
-                                    <DailyQuizCard
-                                        quiz={dailyQuiz}
-                                        onAnswer={handleQuizAnswer}
-                                        isExpanded={true}
-                                        onToggle={() => setQuizExpanded(false)}
-                                        isAnswered={!!contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)}
-                                        previousAnswer={contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id)?.selectedOption}
-                                    />
-                                )}
-                                {pollExpanded && dailyPoll && (
-                                    <VSPollCard
-                                        poll={dailyPoll}
-                                        onVote={handlePollVote}
-                                        isExpanded={true}
-                                        onToggle={() => setPollExpanded(false)}
-                                        isVoted={!!contentParticipation.polls.find(p => p.pollId === dailyPoll.id)}
-                                        previousVote={contentParticipation.polls.find(p => p.pollId === dailyPoll.id)?.choice}
-                                    />
-                                )}
-                            </div>
-                        ) : (
-                            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                {/* 시간대별 추천 - 컴팩트 칩 */}
-                                {timeBasedAction && (
-                                    <button
-                                        onClick={() => handleBonusAction?.(timeBasedAction)}
-                                        className="flex-shrink-0 flex items-center gap-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full pl-2 pr-3 py-1.5 border border-indigo-100 hover:border-indigo-200 transition-all group"
-                                    >
-                                        <span className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-xs">
-                                            {timeBasedAction.icon}
-                                        </span>
-                                        <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{timeBasedAction.label}</span>
-                                        <ChevronRight className="w-3 h-3 text-slate-400" />
-                                    </button>
-                                )}
-                                {/* 퀴즈 - 컴팩트 칩 */}
-                                {dailyQuiz && (
-                                    <button
-                                        onClick={() => setQuizExpanded(true)}
-                                        className="flex-shrink-0 flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full pl-2 pr-3 py-1.5 border border-blue-100 hover:border-blue-200 transition-all group"
-                                    >
-                                        <span className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <HelpCircle className="w-3 h-3 text-blue-500" />
-                                        </span>
-                                        <span className="text-xs font-medium text-slate-700 whitespace-nowrap max-w-[120px] truncate">{dailyQuiz.question}</span>
-                                        {contentParticipation.quizzes.find(q => q.quizId === dailyQuiz.id) && (
-                                            <span className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center">
-                                                <Check className="w-2.5 h-2.5 text-emerald-600" />
-                                            </span>
-                                        )}
-                                        <ChevronRight className="w-3 h-3 text-slate-400" />
-                                    </button>
-                                )}
-                                {/* VS 투표 - 컴팩트 칩 */}
-                                {dailyPoll && (
-                                    <button
-                                        onClick={() => setPollExpanded(true)}
-                                        className="flex-shrink-0 flex items-center gap-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full pl-2 pr-3 py-1.5 border border-purple-100 hover:border-purple-200 transition-all group"
-                                    >
-                                        <span className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-[10px] font-bold text-purple-600">
-                                            VS
-                                        </span>
-                                        <span className="text-xs font-medium text-slate-700 whitespace-nowrap">
-                                            {dailyPoll.optionA?.text?.slice(0, 6)} vs {dailyPoll.optionB?.text?.slice(0, 6)}
-                                        </span>
-                                        {contentParticipation.polls.find(p => p.pollId === dailyPoll.id) && (
-                                            <span className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center">
-                                                <Check className="w-2.5 h-2.5 text-emerald-600" />
-                                            </span>
-                                        )}
-                                        <ChevronRight className="w-3 h-3 text-slate-400" />
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                    </section>
-                )}
+                {/* 오늘의 참여 - 2열 카드 그리드 (모바일만, 태블릿/PC는 사이드바/패널에 표시) */}
+                <DailyContentCards
+                    onExploreMore={onContentExplore}
+                    className="mb-4 animate-fade-in-up md:hidden"
+                />
 
                 {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
                 <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 pt-1 pb-2" style={{ minHeight: '76px' }}>
@@ -746,10 +484,10 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 {/* All Tests - Single Grid */}
                 <section className="animate-fade-in-up">
 
-                    {/* Grid: 모바일 5열, PC 6-7열 - 최소 높이로 레이아웃 안정화 */}
-                    <div className="grid gap-1 grid-cols-5 md:grid-cols-6 lg:grid-cols-7 min-h-[280px] content-start">
+                    {/* Grid: 모바일 4열, PC 5-6열 - 더 큰 아이콘으로 탭 용이성 향상 */}
+                    <div className="grid gap-2 grid-cols-4 md:grid-cols-5 lg:grid-cols-6 min-h-[280px] content-start">
                         {filteredTests.map((item) => (
-                            <CompactTestItem
+                            <TestCard
                                 key={item.key}
                                 item={item}
                                 onStart={onStartTest}
@@ -793,7 +531,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                                 </p>
                                 <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
                                     {detailTests.map((item) => (
-                                        <CompactTestItem
+                                        <TestCard
                                             key={item.key}
                                             item={item}
                                             onStart={onStartTest}
