@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { HelpCircle, Check, ChevronRight, Zap, TrendingUp, MessageCircle } from 'lucide-react';
+import { HelpCircle, Check, ChevronRight, Zap, TrendingUp, MessageCircle, Heart } from 'lucide-react';
 import type { KnowledgeQuiz } from '../../data/content/types';
 import type { RewardInfo } from './useContentParticipation';
 import CommentSystem from '../CommentSystem';
+import { useLike } from '@/hooks/useLike';
 
 export interface QuizWidgetProps {
   quiz: KnowledgeQuiz;
@@ -32,9 +33,12 @@ export default function QuizWidget({
   showComments = true,
 }: QuizWidgetProps) {
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const { liked, likeCount, handleLike } = useLike({ targetType: 'quiz', targetId: quiz.id });
+
   const isCorrect = selectedOption
     ? quiz.options.find(o => o.id === selectedOption)?.isCorrect
     : false;
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
       {/* 헤더 */}
@@ -88,13 +92,25 @@ export default function QuizWidget({
               )}
             </div>
 
-            {/* 정답률 표시 */}
-            {typeof quizAccuracy === 'number' && (
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600">
-                <TrendingUp className="w-3 h-3" />
-                <span>나의 정답률: <strong className="text-slate-800">{quizAccuracy}%</strong></span>
-              </div>
-            )}
+            {/* 정답률 + 좋아요 */}
+            <div className="flex items-center justify-between mt-2">
+              {typeof quizAccuracy === 'number' && (
+                <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                  <TrendingUp className="w-3 h-3" />
+                  <span>나의 정답률: <strong className="text-slate-800">{quizAccuracy}%</strong></span>
+                </div>
+              )}
+              {/* 좋아요 버튼 */}
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-1 text-xs transition-colors ${
+                  liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
+                }`}
+              >
+                <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
+                <span>{likeCount}</span>
+              </button>
+            </div>
           </div>
 
           {/* 액션 버튼들 */}

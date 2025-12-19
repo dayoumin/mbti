@@ -115,9 +115,10 @@ export function useContentParticipation(): UseContentParticipationReturn {
         setPollResults({ ...getStablePollResults(pollId), total: -1 });
       }
     } finally {
-      // 항상 로딩 해제 (락 방지)
-      // id가 변경되었다면 goToNextPoll에서 이미 false로 리셋했으므로 무해함
-      setIsLoadingStats(false);
+      // 현재 pollId와 일치할 때만 로딩 해제 (경합 방지)
+      if (currentPollIdRef.current === pollId) {
+        setIsLoadingStats(false);
+      }
     }
   }, []);
 

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import { Check, ChevronRight, Zap, MessageCircle, Heart } from 'lucide-react';
 import type { VSPoll } from '../../data/content/types';
 import type { PollResults, RewardInfo } from './useContentParticipation';
 import CommentSystem from '../CommentSystem';
-import { getDeviceId } from '@/utils/device';
+import { useLike } from '@/hooks/useLike';
 
 export interface PollWidgetProps {
   poll: VSPoll;
@@ -33,72 +33,7 @@ export default function PollWidget({
   showComments = true,
 }: PollWidgetProps) {
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const isLikeInFlight = useRef(false);
-
-  // 좋아요 상태 로드
-  useEffect(() => {
-    let cancelled = false;
-    const loadLikeStatus = async () => {
-      try {
-        const deviceId = getDeviceId();
-        const res = await fetch(
-          `/api/likes?targetType=poll&targetId=${poll.id}&deviceId=${deviceId}`
-        );
-        if (res.ok && !cancelled) {
-          const data = await res.json();
-          setLiked(data.liked);
-          setLikeCount(data.count);
-        }
-      } catch {
-        // 실패해도 무시
-      }
-    };
-    // poll 변경 시 상태 초기화
-    setLiked(false);
-    setLikeCount(0);
-    loadLikeStatus();
-    return () => { cancelled = true; };
-  }, [poll.id]);
-
-  // 좋아요 토글
-  const handleLike = useCallback(async () => {
-    // 중복 요청 방지
-    if (isLikeInFlight.current) return;
-    isLikeInFlight.current = true;
-
-    const prevLiked = liked;
-    const prevCount = likeCount;
-
-    // Optimistic update
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-
-    try {
-      const res = await fetch('/api/likes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          deviceId: getDeviceId(),
-          targetType: 'poll',
-          targetId: poll.id,
-        }),
-      });
-
-      if (!res.ok) {
-        // 롤백
-        setLiked(prevLiked);
-        setLikeCount(prevCount);
-      }
-    } catch {
-      // 롤백
-      setLiked(prevLiked);
-      setLikeCount(prevCount);
-    } finally {
-      isLikeInFlight.current = false;
-    }
-  }, [liked, likeCount, poll.id]);
+  const { liked, likeCount, handleLike } = useLike({ targetType: 'poll', targetId: poll.id });
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MessageCircle, Heart, ChevronDown, ChevronUp, Send, Reply } from 'lucide-react';
+import { MessageCircle, Heart, ChevronDown, ChevronUp, Send, Reply, Trash2 } from 'lucide-react';
 import { formatRelativeTime } from '@/utils/format';
 import { getDeviceId } from '@/utils/device';
 
@@ -288,6 +288,30 @@ export default function CommentSystem({
     setTimeout(() => replyInputRef.current?.focus(), 100);
   };
 
+  // 댓글 삭제
+  const handleDelete = async (commentId: number) => {
+    if (!deviceId || !isReady) return;
+    if (!confirm('댓글을 삭제하시겠습니까?')) return;
+
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId, commentId }),
+      });
+
+      if (res.ok) {
+        await loadComments();
+      } else {
+        const data = await res.json();
+        alert(data.error || '삭제에 실패했습니다');
+      }
+    } catch (error) {
+      console.error('[CommentSystem] Delete error:', error);
+      alert('네트워크 오류가 발생했습니다');
+    }
+  };
+
   // 표시할 댓글
   const displayComments = isExpanded ? comments : comments.slice(0, maxDisplay);
   const hasMore = comments.length > maxDisplay;
@@ -376,6 +400,7 @@ export default function CommentSystem({
               onLike={handleLike}
               onReply={openReplyInput}
               onToggleReplies={toggleReplies}
+              onDelete={handleDelete}
               replyingTo={replyingTo}
               replyContent={replyContent}
               setReplyContent={setReplyContent}
@@ -421,6 +446,7 @@ interface CommentItemProps {
   onLike: (id: number) => void;
   onReply: (id: number) => void;
   onToggleReplies: (id: number) => void;
+  onDelete: (id: number) => void;
   replyingTo: number | null;
   replyContent: string;
   setReplyContent: (v: string) => void;
@@ -439,6 +465,7 @@ function CommentItem({
   onLike,
   onReply,
   onToggleReplies,
+  onDelete,
   replyingTo,
   replyContent,
   setReplyContent,
@@ -523,6 +550,17 @@ function CommentItem({
               )}
             </button>
           )}
+
+          {/* 삭제 (본인 댓글만) */}
+          {isOwnComment && (
+            <button
+              onClick={() => onDelete(comment.id)}
+              className="flex items-center gap-1 text-slate-400 hover:text-rose-500 transition-colors ml-auto"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>삭제</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -562,6 +600,7 @@ function CommentItem({
               onLike={onLike}
               onReply={onReply}
               onToggleReplies={onToggleReplies}
+              onDelete={onDelete}
               replyingTo={replyingTo}
               replyContent={replyContent}
               setReplyContent={setReplyContent}

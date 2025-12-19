@@ -235,13 +235,32 @@ export async function GET(request: NextRequest) {
       0
     );
 
-    const options = result.rows.map(row => ({
-      optionId: row.option_id as string,
-      count: row.count as number,
-      percentage: totalVotes > 0
-        ? Math.round(((row.count as number) / totalVotes) * 100)
-        : 0,
-    }));
+    // 항상 a/b 두 옵션을 반환 (없는 옵션은 0으로)
+    const optionMap = new Map<string, number>();
+    for (const row of result.rows) {
+      optionMap.set(row.option_id as string, row.count as number);
+    }
+
+    const aCount = optionMap.get('a') ?? 0;
+    const bCount = optionMap.get('b') ?? 0;
+
+    // 퍼센트 계산: 반올림 오류로 합이 101/99가 되는 것을 방지
+    // A를 먼저 계산하고, B는 100 - A로 설정
+    const aPercent = totalVotes > 0 ? Math.round((aCount / totalVotes) * 100) : 50;
+    const bPercent = totalVotes > 0 ? 100 - aPercent : 50;
+
+    const options = [
+      {
+        optionId: 'a',
+        count: aCount,
+        percentage: aPercent,
+      },
+      {
+        optionId: 'b',
+        count: bCount,
+        percentage: bPercent,
+      },
+    ];
 
     return NextResponse.json({
       pollId,

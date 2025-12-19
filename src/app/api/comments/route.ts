@@ -3,6 +3,7 @@
  *
  * POST /api/comments - 댓글 작성
  * GET /api/comments?targetType=poll&targetId=xxx - 댓글 조회
+ * DELETE /api/comments - 댓글 삭제 (본인만 가능)
  *
  * targetType 종류:
  * - poll: 투표
@@ -115,6 +116,54 @@ export async function GET(request: NextRequest) {
     console.error('[Comments API] Get error:', error);
     return NextResponse.json(
       { error: 'Failed to get comments' },
+      { status: 500 }
+    );
+  }
+}
+
+// 댓글 삭제 (본인만 가능)
+export async function DELETE(request: NextRequest) {
+  try {
+    const { deviceId, commentId } = await request.json();
+
+    if (!deviceId || !commentId) {
+      return NextResponse.json(
+        { error: 'Missing required fields: deviceId, commentId' },
+        { status: 400 }
+      );
+    }
+
+    // 본인 댓글인지 확인 후 삭제 (1 쿼리로 처리)
+    const result = await query(
+      `DELETE FROM comments WHERE id = ? AND device_id = ?`,
+      [commentId, deviceId]
+    );
+
+    if (result.rowsAffected === 0) {
+      // 삭제된 행이 없음 = 본인 댓글이 아니거나 존재하지 않음
+      return NextResponse.json(
+        { error: 'Comment not found or not authorized' },
+        { status: 404 }
+      );
+    }
+
+    // 대댓글도 삭제 (부모 댓글 삭제 시)
+    await query(
+      `DELETE FROM comments WHERE parent_id = ?`,
+      [commentId]
+    );
+
+    // 해당 댓글의 좋아요도 삭제
+    await query(
+      `DELETE FROM likes WHERE target_type = 'comment' AND target_id = ?`,
+      [commentId.toString()]
+    );
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('[Comments API] Delete error:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete comment' },
       { status: 500 }
     );
   }
