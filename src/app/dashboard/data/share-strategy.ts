@@ -153,7 +153,7 @@ export const SHARE_ROADMAP: SharePhase[] = [
     id: 'phase-3',
     name: 'Phase 3: 추적 & 분석',
     description: '공유 효과 측정',
-    status: 'in_progress',
+    status: 'done',
     tasks: [
       {
         id: 'utm-util',
@@ -174,9 +174,9 @@ export const SHARE_ROADMAP: SharePhase[] = [
       {
         id: 'conversion-tracking',
         task: '전환 추적',
-        status: 'planned',
+        status: 'done',
         priority: 'low',
-        description: '공유 → 유입 → 테스트 완료 퍼널 추적',
+        description: '공유 → 유입 → 테스트 완료 퍼널 추적 (대시보드 전환 분석 탭)',
         owner: 'ai',
       },
     ],
@@ -268,7 +268,7 @@ export const IMAGE_RATIO_SPECS: ImageRatioSpec[] = [
     height: 630,
     param: 'default',
     usage: '링크 미리보기 (페이스북, 트위터, 카카오)',
-    implemented: false,
+    implemented: true,
   },
   {
     name: '세로 (스토리)',
@@ -277,7 +277,7 @@ export const IMAGE_RATIO_SPECS: ImageRatioSpec[] = [
     height: 1920,
     param: 'story',
     usage: '인스타/틱톡 스토리',
-    implemented: false,
+    implemented: true,
   },
   {
     name: '정사각',
@@ -286,7 +286,7 @@ export const IMAGE_RATIO_SPECS: ImageRatioSpec[] = [
     height: 1080,
     param: 'square',
     usage: '인스타 피드',
-    implemented: false,
+    implemented: true,
   },
   {
     name: '카카오',
@@ -295,7 +295,7 @@ export const IMAGE_RATIO_SPECS: ImageRatioSpec[] = [
     height: 400,
     param: 'kakao',
     usage: '카카오톡 피드',
-    implemented: false,
+    implemented: true,
   },
   {
     name: '현재 ShareCard',

@@ -74,6 +74,7 @@ import RetentionSystem from './components/RetentionSystem';
 import ShareStrategy from './components/ShareStrategy';
 import FairnessSystem from './components/FairnessSystem';
 import AnalyticsSystem from './components/AnalyticsSystem';
+import ConversionAnalysis from './components/ConversionAnalysis';
 
 // ============================================================================
 // Types
@@ -131,6 +132,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'share', label: '공유 전략', icon: <Share2 className="w-4 h-4" /> },
       { key: 'fairness', label: '공정성 시스템', icon: <Activity className="w-4 h-4" /> },
       { key: 'analytics', label: '분석/추적', icon: <BarChart3 className="w-4 h-4" /> },
+      { key: 'conversion', label: '전환 분석', icon: <TrendingUp className="w-4 h-4" /> },
     ],
   },
   {
@@ -346,6 +348,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'share' && <ShareStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'fairness' && <FairnessSystem />}
           {activeCategory === 'planning' && activeSubTab === 'analytics' && <AnalyticsSystem />}
+          {activeCategory === 'planning' && activeSubTab === 'conversion' && <ConversionAnalysis />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
