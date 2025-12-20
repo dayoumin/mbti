@@ -13,6 +13,9 @@ export { getRandomQuiz } from './quizzes';
 export * from './polls';
 export { getRandomPoll } from './polls';
 
+// Community
+export * from './community';
+
 // 통합 통계
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from './quizzes';
 import { VS_POLLS } from './polls/vs-polls';

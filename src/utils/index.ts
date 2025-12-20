@@ -4,6 +4,7 @@
 
 export { formatRelativeTime, timeAgo, formatNumber, formatDate } from './format';
 export { getDeviceId, hasDeviceId, USER_KEY } from './device';
+export { getIconComponent, type IconComponent } from './icons';
 export {
   generateShareUrl,
   generateCurrentPageShareUrl,

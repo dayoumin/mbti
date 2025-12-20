@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Flame, Users, ChevronLeft, ChevronRight } from 'lucide-react';
-import * as Icons from './Icons';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
 import { CHEMI_DATA } from '../data/index';
 import type { SubjectKey } from '../data/types';
@@ -26,7 +26,7 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
   const data = CHEMI_DATA[testKey];
   if (!config || !data) return null;
 
-  const IconComponent = (Icons[config.icon as keyof typeof Icons] || Icons.HumanIcon) as React.ComponentType<{ mood?: string; className?: string }>;
+  const IconComponent = getIconComponent(config.icon);
 
   const styles = [
     { bg: 'bg-[#EEF2FF]', border: 'border-indigo-100', iconBg: 'bg-white', iconColor: 'text-indigo-500', accent: 'bg-indigo-500', badge: 'bg-indigo-100/50 text-indigo-600' },

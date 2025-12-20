@@ -17,6 +17,7 @@ import FeedbackComments from '../components/FeedbackComments';
 import FunFactsCard from '../components/FunFactsCard';
 import BottomNav from '../components/BottomNav';
 import Sidebar from '../components/Sidebar';
+import RightSidebar from '../components/RightSidebar';
 import { TabletSlidePanel } from '../components/responsive';
 import FriendInvite from '../components/FriendInvite';
 import FriendCompare from '../components/FriendCompare';
@@ -687,7 +688,7 @@ export default function Home() {
                 />
             )}
 
-            {/* PC 사이드바 */}
+            {/* PC 좌측 사이드바 */}
             {view === 'dashboard' && (
                 <Sidebar
                     activeTab={activeNavTab}
@@ -699,6 +700,24 @@ export default function Home() {
                     onContentExplore={() => {
                         setShowContentExplore(true);
                         setActiveNavTab('explore');
+                    }}
+                />
+            )}
+
+            {/* PC 우측 사이드바 - 커뮤니티/랭킹/세부테스트 */}
+            {view === 'dashboard' && (
+                <RightSidebar
+                    onOpenCommunity={() => {
+                        setShowCommunity(true);
+                        setActiveNavTab('talk');
+                    }}
+                    onOpenRanking={() => {
+                        setShowRanking(true);
+                        setActiveNavTab('ranking');
+                    }}
+                    onStartTest={(testKey) => {
+                        setActiveNavTab('home');
+                        handleStartTest(testKey);
                     }}
                 />
             )}
@@ -716,7 +735,7 @@ export default function Home() {
                 />
             )}
 
-            <main className="flex-1 min-h-screen flex items-center justify-center p-4 pb-20 lg:pb-4">
+            <main className="flex-1 min-h-screen flex items-center justify-center p-4 pb-20 lg:pb-4 xl:mr-80">
                 {view === 'dashboard' ? (
                     <Dashboard
                         onStartTest={(testKey) => {

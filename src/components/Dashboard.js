@@ -106,13 +106,14 @@ const SubjectChip = ({ subject, isActive, onClick }) => (
 );
 
 // Header (프로필 버튼은 하단 네비게이션으로 통합됨)
+// PC에서는 좌측 사이드바에 로고가 있으므로 헤더 숨김
 const Header = () => (
-    <div className="flex items-center justify-center mb-6 animate-fade-in-up">
-        <div className="text-center lg:text-left lg:flex-1">
-            <h1 className="text-2xl md:text-3xl font-black text-slate-800 lg:hidden">
+    <div className="flex items-center justify-center mb-6 animate-fade-in-up lg:hidden">
+        <div className="text-center">
+            <h1 className="text-2xl md:text-3xl font-black text-slate-800">
                 Chemi <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-pink-500">Test</span>
             </h1>
-            <p className="text-sm text-slate-500 mt-1 lg:mt-0 lg:text-base lg:font-medium">오늘은 뭘 알아볼까?</p>
+            <p className="text-sm text-slate-500 mt-1">오늘은 뭘 알아볼까?</p>
         </div>
     </div>
 );
@@ -392,7 +393,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 />
             )}
 
-            <div className="relative max-w-md md:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-8">
+            <div className="relative max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto w-full pb-8 lg:pb-8 px-4 lg:px-6">
                 {/* Header */}
                 <Header />
 
@@ -414,20 +415,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     className="mb-4 animate-fade-in-up"
                 />
 
-                {/* 혼합 디스커버리 피드 (모바일/태블릿) / 기존 위젯들 대체 */}
-                {/* 혼합 디스커버리 피드 (모바일/태블릿) */}
-                <DiscoveryFeed
-                    onStartTest={onStartTest}
-                    onExploreAll={onContentExplore}
-                    className="mb-4 animate-fade-in-up lg:hidden"
-                />
-
-                {/* 오늘의 랭킹 - 미니 프리뷰 (클릭 시 모달) */}
-                <TodayRankingPreview
-                    onClick={() => setShowRankingModal(true)}
-                    className="mb-4 animate-fade-in-up"
-                />
-
                 {/* PC: 2컬럼 레이아웃 / 모바일: 단일 컬럼 */}
                 <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-6">
                     {/* 왼쪽 사이드바: 인기/추천/최근 섹션 */}
@@ -441,6 +428,23 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                             </div>
                         </div>
                     </aside>
+
+                    {/* 모바일/태블릿 추가 콘텐츠: 오늘의 랭킹 & 디스커버리 피드 */}
+                    {/* 이 위치로 이동하여 전체 탐색(CTA)이 페이지 하단에 오도록 함 */}
+                    <div className="lg:hidden">
+                        {/* 오늘의 랭킹 - 미니 프리뷰 */}
+                        <TodayRankingPreview
+                            onClick={() => setShowRankingModal(true)}
+                            className="mb-6 animate-fade-in-up xl:hidden"
+                        />
+
+                        {/* 혼합 디스커버리 피드 (모든 참여형 콘텐츠) */}
+                        <DiscoveryFeed
+                            onStartTest={onStartTest}
+                            onExploreAll={onContentExplore}
+                            className="mb-8 animate-fade-in-up"
+                        />
+                    </div>
 
                     {/* PC 전용: 전체 테스트 카탈로그 & 필터 */}
                     {/* 모바일에서는 DiscoveryFeed가 이 역할을 대신하므로 숨깁니다. */}
@@ -548,7 +552,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 </div>
 
                 {/* 푸터 - 개인정보처리방침, 이용약관, 면책조항 */}
-                <Footer className="mt-8 mb-20" />
+                <Footer className="mt-12 mb-24" />
 
             </div>
 

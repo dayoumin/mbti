@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Flame, Sparkles, Clock, ChevronRight, Heart } from 'lucide-react';
-import * as Icons from './Icons';
+import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
 import { POPULAR_TESTS } from '../data/recommendationPolicy';
 import { CHEMI_DATA } from '../data/index';
@@ -41,7 +41,7 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
 
   if (!config || !data) return null;
 
-  const IconComponent = (Icons[config.icon as keyof typeof Icons] || Icons.HumanIcon) as React.ComponentType<{ mood?: string; className?: string }>;
+  const IconComponent = getIconComponent(config.icon);
 
   return (
     <button
@@ -214,12 +214,23 @@ export function RecentSection({ onStartTest }: RecentSectionProps) {
 
   useEffect(() => {
     // 최근 결과에서 테스트 키 추출
-    const results = resultService.getMyResults();
-    const recent = Object.keys(results)
-      .filter(key => MAIN_TEST_KEYS.includes(key as SubjectKey))
-      .slice(0, 5) as SubjectKey[];
+    const loadRecent = async () => {
+      const results = await resultService.getMyResults();
+      // 최근 완료한 테스트 타입 추출 (중복 제거, 최근 순)
+      const seen = new Set<string>();
+      const recent = results
+        .filter(r => {
+          if (seen.has(r.testType)) return false;
+          if (!MAIN_TEST_KEYS.includes(r.testType as SubjectKey)) return false;
+          seen.add(r.testType);
+          return true;
+        })
+        .slice(0, 5)
+        .map(r => r.testType as SubjectKey);
 
-    setRecentTests(recent);
+      setRecentTests(recent);
+    };
+    loadRecent();
   }, []);
 
   if (recentTests.length === 0) return null;
@@ -256,20 +267,23 @@ export function RecommendedSection({ onStartTest }: RecommendedSectionProps) {
   const [recommended, setRecommended] = useState<SubjectKey[]>([]);
 
   useEffect(() => {
-    const results = resultService.getMyResults();
-    const completedKeys = Object.keys(results) as SubjectKey[];
+    const loadRecommended = async () => {
+      const results = await resultService.getMyResults();
+      const completedKeys = [...new Set(results.map(r => r.testType))] as SubjectKey[];
 
-    // 완료하지 않은 테스트 중 추천 (인기 테스트 제외하여 중복 방지)
-    const notCompleted = MAIN_TEST_KEYS.filter(key =>
-      !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
-    );
+      // 완료하지 않은 테스트 중 추천 (인기 테스트 제외하여 중복 방지)
+      const notCompleted = MAIN_TEST_KEYS.filter(key =>
+        !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
+      );
 
-    // 만약 추천할 게 너무 적으면 인기 테스트도 포함 (단, 완료한 건 제외)
-    const finalRecommended = notCompleted.length >= 3
-      ? notCompleted
-      : [...notCompleted, ...POPULAR_TESTS.filter(key => !completedKeys.includes(key))];
+      // 만약 추천할 게 너무 적으면 인기 테스트도 포함 (단, 완료한 건 제외)
+      const finalRecommended = notCompleted.length >= 3
+        ? notCompleted
+        : [...notCompleted, ...POPULAR_TESTS.filter(key => !completedKeys.includes(key))];
 
-    setRecommended(finalRecommended.slice(0, 5));
+      setRecommended(finalRecommended.slice(0, 5));
+    };
+    loadRecommended();
   }, []);
 
   if (recommended.length === 0) return null;
