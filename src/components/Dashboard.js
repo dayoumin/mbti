@@ -15,54 +15,86 @@ import TodayRankingModal from './TodayRankingModal';
 import TestCard from './TestCard';
 import { POPULAR_TESTS } from '../data/recommendationPolicy';
 
-// 1차 필터: 테스트 유형 (심리/매칭)
+// 1차 필터: 테스트 유형 (심리/매칭/관계/라이프)
 const TEST_TYPE_TABS = {
     all: { label: '전체', emoji: '✨' },
     personality: { label: '심리', emoji: '🧠' },
-    matching: { label: '매칭', emoji: '💫' }
+    matching: { label: '매칭', emoji: '💫' },
+    relationship: { label: '관계', emoji: '💕' },
+    lifestyle: { label: '라이프', emoji: '🏠' }
 };
 
-// 2차 필터: 주제별 카테고리 (전체 제거 - 1차 필터에서 이미 전체 선택 가능)
+// 2차 필터: 주제별 카테고리
 const SUBJECT_CATEGORIES = {
+    // 심리
     me: { label: '나', emoji: '👤' },
     pet: { label: '반려동물', emoji: '🐾' },
+    // 매칭
     drink: { label: '음료', emoji: '🥤' },
     food: { label: '음식', emoji: '🍽️' },
-    life: { label: '라이프', emoji: '🌿' },
-    love: { label: '연애', emoji: '💕' }
+    product: { label: '제품', emoji: '🛍️' },
+    // 관계 (바이럴 특화)
+    love: { label: '연애', emoji: '💕' },
+    social: { label: '소통', emoji: '🗣️' },
+    chemistry: { label: '궁합', emoji: '⚡' },
+    // 라이프 (제품 연계)
+    space: { label: '공간', emoji: '🏠' },
+    routine: { label: '루틴', emoji: '⏰' },
+    style: { label: '스타일', emoji: '👔' }
 };
 
-// 테스트별 주제 카테고리 매핑
+// 테스트별 주제 카테고리 매핑 (2차 필터용)
 const TEST_SUBJECT_MAP = {
-    // 나
-    human: 'me',
-    conflictStyle: 'me',
-    // 반려동물
-    cat: 'pet',
-    dog: 'pet',
-    rabbit: 'pet',
-    hamster: 'pet',
-    // 음료
-    coffee: 'drink',
-    tea: 'drink',
-    alcohol: 'drink',
-    // 음식
-    bread: 'food',
-    fruit: 'food',
-    // 라이프
-    plant: 'life',
-    petMatch: 'life',
-    perfume: 'life',
-    aroma: 'life',
-    // 연애
-    idealType: 'love',
-    // 세부 테스트 (반려동물)
+    // === 심리 (personality) ===
+    human: 'me',           // 사람 성격
+    cat: 'pet',            // 고양이 성격
+    dog: 'pet',            // 강아지 성격
+    rabbit: 'pet',         // 토끼 성격
+    hamster: 'pet',        // 햄스터 성격
+
+    // === 매칭 (matching) ===
+    coffee: 'drink',       // 커피 매칭
+    tea: 'drink',          // 차 매칭
+    alcohol: 'drink',      // 술 매칭
+    bread: 'food',         // 빵 매칭
+    fruit: 'food',         // 과일 매칭
+    plant: 'product',      // 식물 매칭 (제품 연계)
+    petMatch: 'product',   // 반려동물 매칭 (제품 연계)
+    perfume: 'product',    // 향수 매칭 (제품 연계)
+    aroma: 'product',      // 아로마 매칭 (제품 연계)
+
+    // === 관계 (relationship) - 바이럴 특화 ===
+    idealType: 'love',         // 연애 이상형
+    conflictStyle: 'social',   // 갈등 대처 (소통)
+    // TODO: 추가 예정 - 궁합 테스트, 사랑의 언어, 연애 스타일 등
+
+    // === 라이프 (lifestyle) - 제품 연계 ===
+    // TODO: 추가 예정 - 공간 스타일, 루틴, 소비 성향 등
+
+    // === 세부 테스트 (반려동물 품종) ===
     dogBreed: 'pet',
     catBreed: 'pet',
     smallPet: 'pet',
     fishType: 'pet',
     birdType: 'pet',
     reptileType: 'pet'
+};
+
+// 테스트별 1차 카테고리 매핑 (타입 필터용)
+// config.testType 외에 relationship/lifestyle 구분을 위한 추가 매핑
+const TEST_TYPE_MAP = {
+    // 관계 카테고리로 분류될 테스트
+    idealType: 'relationship',
+    conflictStyle: 'relationship',
+    // TODO: 추가될 관계 테스트들
+
+    // 라이프 카테고리로 분류될 테스트
+    // TODO: 추가될 라이프 테스트들
+};
+
+// 테스트의 실제 카테고리 타입 결정 (TEST_TYPE_MAP 우선, 없으면 config.testType)
+const getTestType = (test) => {
+    return TEST_TYPE_MAP[test.key] || test.testType || 'personality';
 };
 
 // 테스트 배지 설정
@@ -74,25 +106,41 @@ const TEST_BADGES = {
 };
 
 // 1차 필터 탭 (underline 스타일 - 고정 탭)
-// 1차 필터 탭 (underline 스타일 - 고정 탭)
-const TypeTab = ({ type, isActive, onClick, count }) => (
-    <button
-        onClick={onClick}
-        className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${isActive
-            ? 'text-indigo-600'
-            : 'text-slate-400 hover:text-slate-600'
+// count가 0이어도 탭은 표시하되 비활성 스타일 적용
+const TypeTab = ({ type, isActive, onClick, count }) => {
+    const isEmpty = count === 0;
+    const tabInfo = TEST_TYPE_TABS[type];
+
+    return (
+        <button
+            onClick={isEmpty ? undefined : onClick}
+            disabled={isEmpty}
+            className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${
+                isEmpty
+                    ? 'text-slate-200 cursor-not-allowed'
+                    : isActive
+                        ? 'text-indigo-600'
+                        : 'text-slate-400 hover:text-slate-600'
             }`}
-    >
-        <span>{TEST_TYPE_TABS[type].label}</span>
-        <span className={`text-[11px] ${isActive ? 'text-indigo-400' : 'text-slate-300'}`}>
-            {count}
-        </span>
-        {/* Underline indicator */}
-        {isActive && (
-            <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-indigo-500 rounded-full" />
-        )}
-    </button>
-);
+        >
+            <span>{tabInfo.emoji}</span>
+            <span>{tabInfo.label}</span>
+            <span className={`text-[11px] ${
+                isEmpty
+                    ? 'text-slate-200'
+                    : isActive
+                        ? 'text-indigo-400'
+                        : 'text-slate-300'
+            }`}>
+                {count}
+            </span>
+            {/* Underline indicator */}
+            {isActive && !isEmpty && (
+                <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-indigo-500 rounded-full" />
+            )}
+        </button>
+    );
+};
 
 // 2차 필터 칩 (작은 필터)
 const SubjectChip = ({ subject, isActive, onClick }) => (
@@ -352,10 +400,10 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
             .filter(t => DETAIL_TEST_KEYS.includes(t.key));
     }, [groupedConfigs]);
 
-    // 1차 필터 적용 (테스트 유형)
+    // 1차 필터 적용 (테스트 유형: 심리/매칭/관계/라이프)
     const typeFilteredTests = useMemo(() => {
         if (activeType === 'all') return allTests;
-        return allTests.filter(t => t.testType === activeType);
+        return allTests.filter(t => getTestType(t) === activeType);
     }, [allTests, activeType]);
 
     // 2차 필터 적용 (주제별)
@@ -368,8 +416,10 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     const typeCounts = useMemo(() => {
         return {
             all: allTests.length,
-            personality: allTests.filter(t => t.testType === 'personality').length,
-            matching: allTests.filter(t => t.testType === 'matching').length
+            personality: allTests.filter(t => getTestType(t) === 'personality').length,
+            matching: allTests.filter(t => getTestType(t) === 'matching').length,
+            relationship: allTests.filter(t => getTestType(t) === 'relationship').length,
+            lifestyle: allTests.filter(t => getTestType(t) === 'lifestyle').length
         };
     }, [allTests]);
 
@@ -440,9 +490,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 </div>
 
                 {/* PC 전용: 단일 컬럼 테스트 카탈로그 (좌우 사이드바가 있으므로 내부 2컬럼 불필요) */}
-                <div className="hidden lg:block">
+                <div className="hidden lg:block mt-4">
                     {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
-                    <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 lg:mx-0 lg:px-0 lg:bg-white/60 lg:rounded-xl lg:border lg:border-white/80 pt-1 pb-2 lg:p-3 lg:min-h-0" style={{ minHeight: '76px' }}>
+                    <div className="sticky top-4 z-20 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200/60 p-3 shadow-sm" style={{ minHeight: '84px' }}>
                         {/* 1차 필터: 탭 스타일 (underline) */}
                         <div className="flex items-center border-b border-slate-200">
                             {Object.keys(TEST_TYPE_TABS).map((type) => (
@@ -459,9 +509,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                             ))}
                         </div>
 
-                        {/* 2차 필터: 작은 칩 스타일 - PC에서는 자동 높이 */}
-                        <div className="mt-2 overflow-x-auto no-scrollbar h-8 lg:h-auto lg:overflow-visible">
-                            <div className="flex gap-1 lg:flex-wrap">
+                        {/* 2차 필터: 작은 칩 스타일 - 고정 높이 + 가로 스크롤 */}
+                        <div className="mt-2 overflow-x-auto no-scrollbar" style={{ height: '32px' }}>
+                            <div className="flex gap-1 flex-nowrap">
                                 {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
                                     const count = subjectCounts[sub] || 0;
                                     if (count === 0) return null;
@@ -495,8 +545,19 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
 
                         {/* Empty State */}
                         {filteredTests.length === 0 && (
-                            <div className="text-center py-12 text-slate-400">
-                                <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
+                            <div className="text-center py-16 text-slate-400">
+                                <div className="w-16 h-16 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                    <span className="text-2xl">{TEST_TYPE_TABS[activeType]?.emoji || '📋'}</span>
+                                </div>
+                                <p className="text-sm font-medium text-slate-500 mb-2">
+                                    {activeType === 'relationship' && '관계 테스트 준비 중'}
+                                    {activeType === 'lifestyle' && '라이프 테스트 준비 중'}
+                                    {activeType !== 'relationship' && activeType !== 'lifestyle' && '이 카테고리에 테스트가 없습니다'}
+                                </p>
+                                <p className="text-xs text-slate-400">
+                                    {activeType === 'relationship' && '궁합 테스트, 사랑의 언어 등 바이럴 특화 테스트가 곧 출시됩니다!'}
+                                    {activeType === 'lifestyle' && '공간 스타일, 소비 성향 등 제품 연계 테스트가 곧 출시됩니다!'}
+                                </p>
                             </div>
                         )}
                     </section>

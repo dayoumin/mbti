@@ -46,9 +46,9 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                         <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
                             일일 미션
                             {completedCount === missions.length ? (
-                                <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold animate-bounce">완료!</span>
+                                <span className="text-[11px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold animate-bounce">완료!</span>
                             ) : (
-                                <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">
+                                <span className="text-[11px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">
                                     {completedCount}/{missions.length}
                                 </span>
                             )}
@@ -60,7 +60,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                                     style={{ width: `${progressPercent}%` }}
                                 />
                             </div>
-                            <span className="text-[10px] font-bold text-slate-400">{progressPercent}%</span>
+                            <span className="text-[11px] font-bold text-slate-400">{progressPercent}%</span>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                             <span className="text-xs font-black text-slate-700">{totalPoints}P</span>
                         </div>
-                        <p className="text-[9px] text-slate-400 font-medium whitespace-nowrap">오늘 획득한 포인트</p>
+                        <p className="text-[11px] text-slate-400 font-medium whitespace-nowrap">오늘 획득한 포인트</p>
                     </div>
                     <ChevronRight className={`w-5 h-5 text-slate-300 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                 </div>
@@ -94,14 +94,14 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                                             <span className={`text-xs font-bold ${isDone ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                                                 {mission.label}
                                             </span>
-                                            <span className="text-[9px] text-slate-400">
+                                            <span className="text-[11px] text-slate-400">
                                                 {mission.currentCount} / {mission.targetCount} 완료
                                             </span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 rounded-full border border-amber-100">
                                         <Star className="w-2.5 h-2.5 text-amber-600 fill-amber-600" />
-                                        <span className="text-[10px] font-black text-amber-700">+{mission.points}</span>
+                                        <span className="text-[11px] font-black text-amber-700">+{mission.points}</span>
                                     </div>
                                 </div>
                             );
@@ -113,7 +113,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                             <Zap className="w-4 h-4 text-amber-300 fill-amber-300" />
                             <div className="flex flex-col">
                                 <span className="text-[11px] font-black">7일 연속 미션 성공 중!</span>
-                                <span className="text-[9px] opacity-80">보너스 100P 획득까지 2일 남음</span>
+                                <span className="text-[11px] opacity-80">보너스 100P 획득까지 2일 남음</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-1">

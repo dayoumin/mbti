@@ -29,23 +29,23 @@ export default function TalkPreview({ onClickAll, className = '' }: { onClickAll
                         className="p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group"
                     >
                         <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-white text-slate-500 rounded-full border border-slate-100">
+                            <span className="text-[11px] font-bold px-1.5 py-0.5 bg-white text-slate-500 rounded-full border border-slate-100">
                                 #{getPostCategoryLabel(post.category)}
                             </span>
-                            <span className="text-[10px] text-slate-400 font-medium">{post.author}</span>
+                            <span className="text-[11px] text-slate-400 font-medium">{post.author}</span>
                         </div>
-                        <h4 className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1 truncate">
+                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1 truncate">
                             {post.title}
                         </h4>
-                        <p className="text-[10px] text-slate-500 line-clamp-1 mb-2">
+                        <p className="text-xs text-slate-500 line-clamp-1 mb-2">
                             {post.content}
                         </p>
                         <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                                <Heart className="w-2.5 h-2.5" /> {post.likes}
+                            <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                                <Heart className="w-3 h-3" /> {post.likes}
                             </div>
-                            <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                                <MessageCircle className="w-2.5 h-2.5" /> {post.comments}
+                            <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                                <MessageCircle className="w-3 h-3" /> {post.comments}
                             </div>
                         </div>
                     </div>

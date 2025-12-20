@@ -40,7 +40,7 @@ export default function PollWidget({
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
         <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
-          <span className="text-[9px] font-black text-purple-600">VS</span>
+          <span className="text-[10px] font-black text-purple-600">VS</span>
         </div>
         <span className="text-xs font-bold text-purple-600">오늘의 투표</span>
         {isVoted && (

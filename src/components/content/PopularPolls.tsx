@@ -286,7 +286,7 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
-              <span className="text-[9px] font-black text-purple-600">VS</span>
+              <span className="text-[10px] font-black text-purple-600">VS</span>
             </div>
             <span className="text-sm font-bold text-purple-600">인기 투표</span>
             {selectedOption && (

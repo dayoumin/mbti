@@ -202,10 +202,10 @@ export default function Sidebar({
                     {post.title}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="flex items-center gap-0.5 text-[9px] text-slate-400">
+                    <span className="flex items-center gap-0.5 text-[10px] text-slate-400">
                       <Heart className="w-2.5 h-2.5" /> {post.likes}
                     </span>
-                    <span className="flex items-center gap-0.5 text-[9px] text-slate-400">
+                    <span className="flex items-center gap-0.5 text-[10px] text-slate-400">
                       <MessageCircle className="w-2.5 h-2.5" /> {post.comments}
                     </span>
                   </div>

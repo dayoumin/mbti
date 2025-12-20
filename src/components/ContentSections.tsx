@@ -50,14 +50,14 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
     >
       {/* 순위 배지 */}
       {rank && (
-        <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm z-10">
+        <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[11px] font-black rounded-full flex items-center justify-center shadow-sm z-10">
           {rank}
         </span>
       )}
 
       {/* HOT/NEW 배지 */}
       {badge && !rank && (
-        <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[8px] font-bold rounded-full shadow-sm z-10 ${badge === 'HOT'
+        <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm z-10 ${badge === 'HOT'
           ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white'
           : 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white'
           }`}>
@@ -70,10 +70,10 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
       </div>
 
       <div className="flex-1 min-w-0 text-center lg:text-left">
-        <p className="text-xs font-bold text-slate-700 truncate">
+        <p className="text-sm font-bold text-slate-700 truncate">
           {data.title || config.label}
         </p>
-        <p className="text-[10px] text-slate-400 mt-0.5 truncate">
+        <p className="text-xs text-slate-400 mt-0.5 truncate">
           {data.subtitle || `${data.resultLabels?.length || 0}가지 결과`}
         </p>
       </div>
@@ -100,7 +100,7 @@ function SectionHeader({ icon, title, subtitle, onMore, moreLabel = '더보기' 
         {icon}
         <div>
           <h3 className="text-sm font-bold text-slate-700">{title}</h3>
-          {subtitle && <p className="text-[10px] text-slate-400">{subtitle}</p>}
+          {subtitle && <p className="text-[11px] text-slate-400">{subtitle}</p>}
         </div>
       </div>
       {onMore && (
@@ -133,8 +133,7 @@ function HorizontalScroll({ children }: HorizontalScrollProps) {
           {children}
         </div>
       </div>
-      {/* 가로 스크롤 힌트 - PC가 아닐 때만 노출되는 그라데이션 */}
-      <div className="absolute top-0 right-0 bottom-2 w-12 bg-gradient-to-l from-[#F0F2F5] to-transparent pointer-events-none lg:hidden" />
+      {/* 가로 스크롤 힌트 제거 - 공간 확보 */}
     </div>
   );
 }
