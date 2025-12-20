@@ -43,7 +43,8 @@ export type LikeTargetType = 'comment' | 'post' | 'poll' | 'quiz';
 
 export interface Comment {
   id: number;
-  deviceId: string;
+  authorId: string;  // 해시화된 익명 ID (deviceId 대신)
+  isOwner: boolean;  // 본인 댓글 여부
   content: string;
   likes: number;
   parentId: number | null;
@@ -251,9 +252,11 @@ class TursoServiceClass {
     offset: number = 0
   ): Promise<CommentsResponse> {
     try {
+      const deviceId = getDeviceId();
       const params = new URLSearchParams({
         targetType,
         targetId,
+        deviceId,
         limit: String(limit),
         offset: String(offset),
       });
@@ -271,7 +274,7 @@ class TursoServiceClass {
    * 내 댓글인지 확인
    */
   isMyComment(comment: Comment): boolean {
-    return comment.deviceId === getDeviceId();
+    return comment.isOwner;
   }
 
   // ========== 좋아요 ==========

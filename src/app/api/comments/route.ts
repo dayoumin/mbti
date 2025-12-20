@@ -10,10 +10,31 @@
  * - quiz: 퀴즈
  * - test_result: 테스트 결과 (testType_resultName 형태)
  * - ranking: 랭킹
+ *
+ * 보안:
+ * - deviceId는 응답에서 해시화하여 노출 (타인이 수집해도 악용 불가)
+ * - 본인 확인용으로만 사용 (isOwner 플래그)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/turso';
+
+/**
+ * deviceId를 익명 표시용 해시로 변환
+ * - 원본 deviceId 노출 방지
+ * - 같은 deviceId는 같은 해시 (일관된 표시)
+ */
+function hashDeviceId(deviceId: string): string {
+  // 간단한 해시 (보안용이 아닌 익명화용)
+  let hash = 0;
+  for (let i = 0; i < deviceId.length; i++) {
+    const char = deviceId.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // 32bit 정수로 변환
+  }
+  // 양수로 변환 후 16진수 6자리
+  return Math.abs(hash).toString(16).slice(0, 6).padStart(6, '0');
+}
 
 // 댓글 작성
 export async function POST(request: NextRequest) {
@@ -68,6 +89,7 @@ export async function GET(request: NextRequest) {
   try {
     const targetType = request.nextUrl.searchParams.get('targetType');
     const targetId = request.nextUrl.searchParams.get('targetId');
+    const currentDeviceId = request.nextUrl.searchParams.get('deviceId'); // 본인 확인용
     // limit 상한 100, 기본 20
     const rawLimit = parseInt(request.nextUrl.searchParams.get('limit') || '20');
     const limit = Math.min(Math.max(rawLimit, 1), 100);
@@ -97,14 +119,20 @@ export async function GET(request: NextRequest) {
     );
 
     const total = (countResult.rows[0]?.total as number) || 0;
-    const comments = result.rows.map(row => ({
-      id: row.id,
-      deviceId: row.device_id,
-      content: row.content,
-      likes: row.likes || 0,
-      parentId: row.parent_id,
-      createdAt: row.created_at,
-    }));
+    const comments = result.rows.map(row => {
+      const rawDeviceId = row.device_id as string;
+      return {
+        id: row.id,
+        // deviceId 대신 해시화된 authorId 반환 (익명 표시용)
+        authorId: hashDeviceId(rawDeviceId),
+        content: row.content,
+        likes: row.likes || 0,
+        parentId: row.parent_id,
+        createdAt: row.created_at,
+        // 본인 댓글인지 여부 (삭제 버튼 표시용)
+        isOwner: currentDeviceId ? rawDeviceId === currentDeviceId : false,
+      };
+    });
 
     // hasMore: 현재 위치 + 가져온 개수 < 전체 개수
     return NextResponse.json({

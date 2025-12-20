@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MessageCircle, Heart, ChevronDown, ChevronUp, Send, Reply, Trash2 } from 'lucide-react';
+import { MessageCircle, Heart, ChevronDown, ChevronUp, Send, Reply, Trash2, X } from 'lucide-react';
 import { formatRelativeTime } from '@/utils/format';
 import { getDeviceId } from '@/utils/device';
 
@@ -13,7 +13,8 @@ const LIKE_STORAGE_KEY = 'chemi_comment_likes';
 
 export interface Comment {
   id: number;
-  deviceId: string;
+  authorId: string;  // 해시화된 익명 ID (deviceId 대신)
+  isOwner: boolean;  // 본인 댓글 여부
   content: string;
   likes: number;
   parentId: number | null;
@@ -47,17 +48,17 @@ const ANONYMOUS_BADGES = [
   '🎵 리듬감 있는',
 ];
 
-function getAnonymousBadge(deviceId: string): string {
-  // deviceId 해시로 일관된 배지 선택
-  const hash = deviceId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+function getAnonymousBadge(authorId: string | undefined | null): string {
+  if (!authorId) return ANONYMOUS_BADGES[0]; // 기본 배지 반환
+  // authorId 해시로 일관된 배지 선택
+  const hash = authorId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return ANONYMOUS_BADGES[hash % ANONYMOUS_BADGES.length];
 }
 
-function shortenDeviceId(deviceId: string): string {
-  // anon_1234567890_xxx -> 익명#7890
-  const match = deviceId.match(/_(\d{4})\d*_/);
-  if (match) return `익명#${match[1]}`;
-  return `익명#${deviceId.slice(-4)}`;
+function formatAuthorId(authorId: string | undefined | null): string {
+  if (!authorId) return '익명';
+  // authorId는 이미 6자리 해시이므로 앞 4자리 사용
+  return `익명#${authorId.slice(0, 4)}`;
 }
 
 // ========== 좋아요 상태 로컬 저장 (서버 동기화 보완) ==========
@@ -118,12 +119,18 @@ export default function CommentSystem({
   }, []);
 
   // 댓글 로드
-  const loadComments = useCallback(async () => {
+  const loadComments = useCallback(async (signal?: AbortSignal) => {
     try {
       setIsLoading(true);
+      // deviceId를 쿼리에 포함하여 isOwner 플래그 설정
+      const deviceIdParam = deviceId ? `&deviceId=${encodeURIComponent(deviceId)}` : '';
       const res = await fetch(
-        `/api/comments?targetType=${targetType}&targetId=${encodeURIComponent(targetId)}&limit=50`
+        `/api/comments?targetType=${targetType}&targetId=${encodeURIComponent(targetId)}&limit=50${deviceIdParam}`,
+        { signal }
       );
+
+      if (signal?.aborted) return;
+
       const data = await res.json();
 
       if (data.comments) {
@@ -156,18 +163,28 @@ export default function CommentSystem({
           );
         });
 
-        setComments(rootComments);
-        setTotalCount(data.total);
+        if (!signal?.aborted) {
+          setComments(rootComments);
+          setTotalCount(data.total);
+        }
       }
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
       console.error('[CommentSystem] Load error:', error);
     } finally {
-      setIsLoading(false);
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
     }
-  }, [targetType, targetId]);
+  }, [targetType, targetId, deviceId]);
 
+  // 초기 로드 및 deviceId 변경 시 재로드 (AbortController로 메모리 누수 방지)
+  // deviceId가 준비된 후에만 로드하여 이중 로딩 방지
   useEffect(() => {
-    loadComments();
+    if (!deviceId) return;
+    const controller = new AbortController();
+    loadComments(controller.signal);
+    return () => controller.abort();
   }, [loadComments]);
 
   // 댓글 작성
@@ -281,10 +298,17 @@ export default function CommentSystem({
     ));
   };
 
-  // 답글 입력창 열기
+  // 답글 입력창 열기/닫기
   const openReplyInput = (commentId: number) => {
+    // 같은 댓글 클릭 시 닫기
+    if (replyingTo === commentId) {
+      setReplyingTo(null);
+      setReplyContent('');
+      return;
+    }
     setReplyingTo(commentId);
     setReplyContent('');
+    // DOM 렌더링 후 포커스 (React 상태 업데이트 → DOM 반영 대기)
     setTimeout(() => replyInputRef.current?.focus(), 100);
   };
 
@@ -394,7 +418,6 @@ export default function CommentSystem({
             <CommentItem
               key={comment.id}
               comment={comment}
-              deviceId={deviceId}
               userBadge={userBadge}
               liked={likedComments.has(comment.id)}
               onLike={handleLike}
@@ -440,7 +463,6 @@ export default function CommentSystem({
 
 interface CommentItemProps {
   comment: Comment;
-  deviceId: string;
   userBadge?: string;
   liked: boolean;
   onLike: (id: number) => void;
@@ -459,7 +481,6 @@ interface CommentItemProps {
 
 function CommentItem({
   comment,
-  deviceId,
   userBadge,
   liked,
   onLike,
@@ -475,9 +496,9 @@ function CommentItem({
   likedComments,
   isReply = false,
 }: CommentItemProps) {
-  const isOwnComment = comment.deviceId === deviceId;
-  const badge = isOwnComment && userBadge ? userBadge : getAnonymousBadge(comment.deviceId);
-  const displayName = shortenDeviceId(comment.deviceId);
+  const isOwnComment = comment.isOwner;
+  const badge = isOwnComment && userBadge ? userBadge : getAnonymousBadge(comment.authorId);
+  const displayName = formatAuthorId(comment.authorId);
   const replyCount = comment.replies?.length || 0;
 
   return (
@@ -572,7 +593,10 @@ function CommentItem({
             type="text"
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && onSubmitReply(comment.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) onSubmitReply(comment.id);
+              if (e.key === 'Escape') onReply(comment.id); // ESC로 닫기
+            }}
             placeholder="답글을 입력하세요..."
             maxLength={500}
             className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
@@ -584,6 +608,13 @@ function CommentItem({
           >
             <Send className="w-4 h-4" />
           </button>
+          <button
+            onClick={() => onReply(comment.id)}
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+            title="닫기"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
@@ -594,7 +625,6 @@ function CommentItem({
             <CommentItem
               key={reply.id}
               comment={reply}
-              deviceId={deviceId}
               userBadge={userBadge}
               liked={likedComments.has(reply.id)}
               onLike={onLike}

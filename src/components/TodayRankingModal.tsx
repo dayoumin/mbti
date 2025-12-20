@@ -13,7 +13,8 @@ import { formatRelativeTime } from '@/utils/format';
 
 interface Comment {
   id: number;
-  deviceId: string;
+  authorId: string;  // 해시화된 익명 ID
+  isOwner: boolean;  // 본인 댓글 여부
   content: string;
   likes: number;
   createdAt: string;
@@ -32,7 +33,8 @@ async function getCommentCount(targetType: string, targetId: string): Promise<nu
 
 async function getComments(targetType: string, targetId: string, limit = 20, offset = 0): Promise<{ comments: Comment[]; total: number; hasMore: boolean }> {
   try {
-    const res = await fetch(`/api/comments?targetType=${targetType}&targetId=${targetId}&limit=${limit}&offset=${offset}`);
+    const deviceId = getDeviceId();
+    const res = await fetch(`/api/comments?targetType=${targetType}&targetId=${targetId}&limit=${limit}&offset=${offset}&deviceId=${deviceId}`);
     if (!res.ok) return { comments: [], total: 0, hasMore: false };
     return await res.json();
   } catch {
@@ -432,7 +434,7 @@ export default function TodayRankingModal({
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-[10px] text-gray-400">
-                          익명 {comment.deviceId.slice(-4)}
+                          익명#{comment.authorId.slice(0, 4)}{comment.isOwner && ' (나)'}
                         </span>
                         <span className="text-[10px] text-gray-400">
                           {formatRelativeTime(comment.createdAt)}

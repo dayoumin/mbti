@@ -17,6 +17,7 @@ const client = createClient({
 
 const schemas = [
   // 테스트 결과 저장
+  // UNIQUE 제약: 같은 device_id + test_type + created_at 조합은 중복 불가
   `CREATE TABLE IF NOT EXISTS test_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     device_id TEXT NOT NULL,
@@ -25,7 +26,8 @@ const schemas = [
     result_name TEXT NOT NULL,
     scores TEXT,
     parent_info TEXT,
-    created_at TEXT DEFAULT (datetime('now'))
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(device_id, test_type, created_at)
   )`,
 
   // 피드백 (테스트 결과 정확도)
@@ -131,6 +133,17 @@ const schemas = [
     updated_at TEXT DEFAULT (datetime('now'))
   )`,
 
+  // device_id와 user_id 매핑 (익명 데이터 병합용)
+  // - device_id당 하나의 user_id만 허용 (UNIQUE 제약)
+  // - 소유 검증: device_id 최초 생성 시점 기록
+  `CREATE TABLE IF NOT EXISTS device_id_mappings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT UNIQUE NOT NULL,
+    user_id TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    merged_at TEXT
+  )`,
+
   // 인덱스 생성
   `CREATE INDEX IF NOT EXISTS idx_test_results_device ON test_results(device_id)`,
   `CREATE INDEX IF NOT EXISTS idx_test_results_type ON test_results(test_type)`,
@@ -143,6 +156,7 @@ const schemas = [
   `CREATE INDEX IF NOT EXISTS idx_likes_device ON likes(device_id)`,
   `CREATE INDEX IF NOT EXISTS idx_comments_target ON comments(target_type, target_id)`,
   `CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_device_mappings_user ON device_id_mappings(user_id)`,
 ];
 
 async function setupSchema() {
