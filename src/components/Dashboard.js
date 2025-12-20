@@ -416,38 +416,29 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     className="mb-4 animate-fade-in-up"
                 />
 
-                {/* PC: 2컬럼 레이아웃 / 모바일: 단일 컬럼 */}
-                <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-6">
-                    {/* 왼쪽 사이드바: 추천 섹션 (지금 뜨는/최근 본 → 좌측 네비 사이드바로 이동됨) */}
-                    {/* PC: 고정 사이드바 / 모바일: 상단 가로 스크롤 */}
-                    <aside className="mb-4 lg:mb-0 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        <div className="lg:sticky lg:top-4">
-                            <div className="lg:bg-white/60 lg:backdrop-blur-sm lg:rounded-2xl lg:p-4 lg:border lg:border-white/80 lg:shadow-sm lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:no-scrollbar">
-                                <RecommendedSection onStartTest={onStartTest} />
-                            </div>
-                        </div>
-                    </aside>
-
-                    {/* 모바일/태블릿 추가 콘텐츠: 오늘의 랭킹 & 디스커버리 피드 */}
-                    {/* 이 위치로 이동하여 전체 탐색(CTA)이 페이지 하단에 오도록 함 */}
-                    <div className="lg:hidden">
-                        {/* 오늘의 랭킹 - 미니 프리뷰 */}
-                        <TodayRankingPreview
-                            onClick={() => setShowRankingModal(true)}
-                            className="mb-6 animate-fade-in-up xl:hidden"
-                        />
-
-                        {/* 혼합 디스커버리 피드 (모든 참여형 콘텐츠) */}
-                        <DiscoveryFeed
-                            onStartTest={onStartTest}
-                            onExploreAll={onContentExplore}
-                            className="mb-8 animate-fade-in-up"
-                        />
+                {/* 모바일/태블릿: 디스커버리 피드 */}
+                <div className="lg:hidden">
+                    {/* 추천 섹션 - 모바일에서만 표시 (PC는 RightSidebar에서 표시) */}
+                    <div className="mb-4 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                        <RecommendedSection onStartTest={onStartTest} />
                     </div>
 
-                    {/* PC 전용: 전체 테스트 카탈로그 & 필터 */}
-                    {/* 모바일에서는 DiscoveryFeed가 이 역할을 대신하므로 숨깁니다. */}
-                    <main className="hidden lg:block">
+                    {/* 오늘의 랭킹 - 미니 프리뷰 */}
+                    <TodayRankingPreview
+                        onClick={() => setShowRankingModal(true)}
+                        className="mb-6 animate-fade-in-up"
+                    />
+
+                    {/* 혼합 디스커버리 피드 (모든 참여형 콘텐츠) */}
+                    <DiscoveryFeed
+                        onStartTest={onStartTest}
+                        onExploreAll={onContentExplore}
+                        className="mb-8 animate-fade-in-up"
+                    />
+                </div>
+
+                {/* PC 전용: 단일 컬럼 테스트 카탈로그 (좌우 사이드바가 있으므로 내부 2컬럼 불필요) */}
+                <div className="hidden lg:block">
                         {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
                         <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 lg:mx-0 lg:px-0 lg:bg-white/60 lg:rounded-xl lg:border lg:border-white/80 pt-1 pb-2 lg:p-3 lg:min-h-0" style={{ minHeight: '76px' }}>
                             {/* 1차 필터: 탭 스타일 (underline) */}
@@ -547,7 +538,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                                 )}
                             </section>
                         )}
-                    </main>
                 </div>
 
                 {/* 푸터 - 개인정보처리방침, 이용약관, 면책조항 */}
