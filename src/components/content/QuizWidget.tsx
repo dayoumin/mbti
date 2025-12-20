@@ -33,6 +33,7 @@ export default function QuizWidget({
   showComments = true,
 }: QuizWidgetProps) {
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { liked, likeCount, handleLike } = useLike({ targetType: 'quiz', targetId: quiz.id });
 
   const isCorrect = selectedOption
@@ -42,7 +43,7 @@ export default function QuizWidget({
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
       {/* 헤더 */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-2">
         <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
           <HelpCircle className="w-3.5 h-3.5 text-blue-500" />
         </div>
@@ -55,31 +56,49 @@ export default function QuizWidget({
       </div>
 
       {/* 질문 */}
-      <p className="text-sm font-bold text-slate-800 mb-3 leading-snug">
+      <p className="text-sm font-bold text-slate-800 mb-2 leading-snug">
         {quiz.question}
       </p>
 
       {/* 옵션 또는 결과 */}
       {!showResult ? (
-        <div className="space-y-2">
-          {quiz.options.map((option) => (
+        <>
+          {/* 미참여 + 접힘 상태 (모바일) */}
+          {!isExpanded && !isAnswered && (
             <button
-              key={option.id}
-              onClick={() => onAnswer(option.id)}
-              className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all"
+              onClick={() => setIsExpanded(true)}
+              className="w-full flex items-center justify-center gap-2 py-3 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-black rounded-xl border border-blue-100 transition-all sm:hidden"
             >
-              {option.text}
+              퀴즈 풀어보기
+              <ChevronRight className="w-4 h-4" />
             </button>
-          ))}
-        </div>
+          )}
+
+          {/* 펼침 상태 또는 PC */}
+          <div className={`${!isExpanded && !isAnswered ? 'hidden sm:grid' : 'grid'} grid-cols-1 sm:grid-cols-2 gap-2`}>
+            {quiz.options.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => onAnswer(option.id)}
+                className="w-full text-left px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs font-bold bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all hover:shadow-sm active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[9px] md:text-[10px] text-slate-400 group-hover:text-blue-500 group-hover:border-blue-300 transition-all flex-shrink-0">
+                    {quiz.options.indexOf(option) + 1}
+                  </span>
+                  {option.text}
+                </div>
+              </button>
+            ))}
+          </div>
+        </>
       ) : (
         <div className="space-y-3">
           {/* 정답/오답 + 포인트 표시 */}
-          <div className={`p-3 rounded-xl ${
-            isCorrect
-              ? 'bg-emerald-50 border border-emerald-200'
-              : 'bg-amber-50 border border-amber-200'
-          }`}>
+          <div className={`p-3 rounded-xl ${isCorrect
+            ? 'bg-emerald-50 border border-emerald-200'
+            : 'bg-amber-50 border border-amber-200'
+            }`}>
             <div className="flex items-center justify-between">
               <span className={`text-sm font-bold ${isCorrect ? 'text-emerald-700' : 'text-amber-700'}`}>
                 {isCorrect ? '🎉 정답!' : '💡 아쉽네요!'}
@@ -103,9 +122,8 @@ export default function QuizWidget({
               {/* 좋아요 버튼 */}
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-1 text-xs transition-colors ${
-                  liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
-                }`}
+                className={`flex items-center gap-1 text-xs transition-colors ${liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
+                  }`}
               >
                 <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
                 <span>{likeCount}</span>
@@ -119,11 +137,10 @@ export default function QuizWidget({
             {showComments && (
               <button
                 onClick={() => setCommentsOpen(!commentsOpen)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${
-                  commentsOpen
-                    ? 'bg-slate-100 text-slate-600'
-                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
-                }`}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${commentsOpen
+                  ? 'bg-slate-100 text-slate-600'
+                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                  }`}
               >
                 <MessageCircle className="w-4 h-4" />
                 의견 나누기

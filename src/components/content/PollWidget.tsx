@@ -50,29 +50,32 @@ export default function PollWidget({
         )}
       </div>
 
-      {/* 질문 */}
-      <p className="text-sm font-bold text-slate-800 mb-3 leading-snug">
-        {poll.question}
-      </p>
+      {/* 질문 및 투표 옵션: 모바일에서도 가로 배치 시도 */}
+      <div className="flex gap-3 items-center">
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] md:text-sm font-black text-slate-800 leading-tight">
+            {poll.question}
+          </p>
+        </div>
 
-      {/* 투표 옵션 - 가로 배치 */}
-      <div className="flex gap-3">
-        <PollOptionButton
-          option={poll.optionA}
-          choice="a"
-          selectedOption={selectedOption}
-          results={results}
-          isLoadingStats={isLoadingStats}
-          onVote={onVote}
-        />
-        <PollOptionButton
-          option={poll.optionB}
-          choice="b"
-          selectedOption={selectedOption}
-          results={results}
-          isLoadingStats={isLoadingStats}
-          onVote={onVote}
-        />
+        <div className="flex gap-2 w-[160px] md:w-[200px] flex-shrink-0">
+          <PollOptionButton
+            option={poll.optionA}
+            choice="a"
+            selectedOption={selectedOption}
+            results={results}
+            isLoadingStats={isLoadingStats}
+            onVote={onVote}
+          />
+          <PollOptionButton
+            option={poll.optionB}
+            choice="b"
+            selectedOption={selectedOption}
+            results={results}
+            isLoadingStats={isLoadingStats}
+            onVote={onVote}
+          />
+        </div>
       </div>
 
       {/* 투표 후: 결과 & 다음 버튼 */}
@@ -91,9 +94,8 @@ export default function PollWidget({
               {/* 좋아요 버튼 */}
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-1 transition-colors ${
-                  liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
-                }`}
+                className={`flex items-center gap-1 transition-colors ${liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
+                  }`}
               >
                 <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
                 <span>{likeCount}</span>
@@ -113,11 +115,10 @@ export default function PollWidget({
             {showComments && (
               <button
                 onClick={() => setCommentsOpen(!commentsOpen)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${
-                  commentsOpen
-                    ? 'bg-slate-100 text-slate-600'
-                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
-                }`}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${commentsOpen
+                  ? 'bg-slate-100 text-slate-600'
+                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                  }`}
               >
                 <MessageCircle className="w-4 h-4" />
                 의견 나누기
@@ -212,13 +213,13 @@ function PollOptionButton({
       )}
 
       {/* 콘텐츠 */}
-      <div className="relative z-10 p-3 text-center">
-        <span className="text-2xl block mb-1">{option.emoji}</span>
-        <span className="text-[11px] font-bold text-slate-700 block leading-tight">
+      <div className="relative z-10 p-3.5 md:p-5 text-center flex flex-col items-center justify-center">
+        <span className="text-3xl md:text-4xl block mb-1 md:mb-2 transition-transform group-hover:scale-125 duration-300">{option.emoji}</span>
+        <span className="text-[11px] md:text-xs font-black text-slate-800 block leading-tight mb-1.5 md:mb-2">
           {option.text}
         </span>
         {selectedOption && (
-          <div className={`text-lg font-black ${c.percent} mt-1`}>
+          <div className={`text-xl md:text-2xl font-black ${c.percent}`}>
             {isLoadingStats ? '...' : `${percentage}%`}
           </div>
         )}
@@ -226,8 +227,8 @@ function PollOptionButton({
 
       {/* 우승 표시 */}
       {isWinner && (
-        <div className="absolute top-1 right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-          <span className="text-[10px]">👑</span>
+        <div className="absolute top-2 right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-md animate-bounce-slight">
+          <span className="text-xs">👑</span>
         </div>
       )}
     </button>

@@ -8,10 +8,11 @@ import { ChevronRight, ChevronDown, Flame, Star, Sunrise, Sun, Moon, Sparkles } 
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import Footer from './Footer';
 import HeroBanner from './HeroBanner';
-import DailyContentCards from './DailyContentCards';
+import DiscoveryFeed from './DiscoveryFeed';
 import { TrendingSection, RecentSection, RecommendedSection } from './ContentSections';
 import TodayRankingPreview from './TodayRankingPreview';
 import TodayRankingModal from './TodayRankingModal';
+import TestCard from './TestCard';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -69,44 +70,15 @@ const TEST_BADGES = {
     tea: 'UPDATE', // 업데이트됨
 };
 
-// Test Card - 4열에 맞게 더 큰 아이콘 + 제목
-const TestCard = ({ item, onStart, badge }) => {
-    const IconComponent = Icons[item.icon] || Icons.HumanIcon;
-
-    return (
-        <button
-            onClick={() => onStart(item.key)}
-            className="group flex flex-col items-center gap-2 pt-4 pb-3 px-2 rounded-xl bg-white/80 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-md hover:-translate-y-1 relative"
-        >
-            {badge && (
-                <span className={`absolute top-1 right-1 px-1.5 py-0.5 text-[8px] font-bold rounded-full shadow-sm z-10 ${
-                    badge === 'HOT' ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white' :
-                    badge === 'NEW' ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white' :
-                    badge === 'UPDATE' ? 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white' :
-                    'bg-slate-200 text-slate-600'
-                }`}>
-                    {badge}
-                </span>
-            )}
-            <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                <IconComponent mood="happy" className="w-9 h-9" />
-            </div>
-            <span className="text-xs font-bold text-slate-700 group-hover:text-indigo-600 transition-colors text-center leading-tight">
-                {item.label}
-            </span>
-        </button>
-    );
-};
-
+// 1차 필터 탭 (underline 스타일 - 고정 탭)
 // 1차 필터 탭 (underline 스타일 - 고정 탭)
 const TypeTab = ({ type, isActive, onClick, count }) => (
     <button
         onClick={onClick}
-        className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${
-            isActive
-                ? 'text-indigo-600'
-                : 'text-slate-400 hover:text-slate-600'
-        }`}
+        className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${isActive
+            ? 'text-indigo-600'
+            : 'text-slate-400 hover:text-slate-600'
+            }`}
     >
         <span>{TEST_TYPE_TABS[type].label}</span>
         <span className={`text-[10px] ${isActive ? 'text-indigo-400' : 'text-slate-300'}`}>
@@ -123,11 +95,10 @@ const TypeTab = ({ type, isActive, onClick, count }) => (
 const SubjectChip = ({ subject, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-            isActive
-                ? 'bg-slate-700 text-white'
-                : 'bg-white/80 text-slate-500 hover:bg-white hover:text-slate-700 border border-slate-200'
-        }`}
+        className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${isActive
+            ? 'bg-slate-700 text-white'
+            : 'bg-white/80 text-slate-500 hover:bg-white hover:text-slate-700 border border-slate-200'
+            }`}
     >
         <span>{SUBJECT_CATEGORIES[subject].emoji}</span>
         <span>{SUBJECT_CATEGORIES[subject].label}</span>
@@ -443,9 +414,12 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     className="mb-4 animate-fade-in-up"
                 />
 
-                {/* 오늘의 참여 - 반응형 그리드 */}
-                <DailyContentCards
-                    className="mb-4 animate-fade-in-up"
+                {/* 혼합 디스커버리 피드 (모바일/태블릿) / 기존 위젯들 대체 */}
+                {/* 혼합 디스커버리 피드 (모바일/태블릿) */}
+                <DiscoveryFeed
+                    onStartTest={onStartTest}
+                    onExploreAll={onContentExplore}
+                    className="mb-4 animate-fade-in-up lg:hidden"
                 />
 
                 {/* 오늘의 랭킹 - 미니 프리뷰 (클릭 시 모달) */}
@@ -468,8 +442,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                         </div>
                     </aside>
 
-                    {/* 오른쪽 메인 영역 (모바일에서는 전체 너비) */}
-                    <main>
+                    {/* PC 전용: 전체 테스트 카탈로그 & 필터 */}
+                    {/* 모바일에서는 DiscoveryFeed가 이 역할을 대신하므로 숨깁니다. */}
+                    <main className="hidden lg:block">
                         {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
                         <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 lg:mx-0 lg:px-0 lg:bg-white/60 lg:rounded-xl lg:border lg:border-white/80 pt-1 pb-2 lg:p-3 lg:min-h-0" style={{ minHeight: '76px' }}>
                             {/* 1차 필터: 탭 스타일 (underline) */}
@@ -511,8 +486,8 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                         {/* All Tests - Single Grid */}
                         <section className="animate-fade-in-up mt-3">
 
-                            {/* Grid: 모바일 4열, PC 4-5열 - 더 큰 아이콘으로 탭 용이성 향상 */}
-                            <div className="grid gap-2 grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 min-h-[280px] content-start">
+                            {/* Grid: 모바일 4열, 태블릿 5열, PC 5-6열 - 최적화된 밀도 */}
+                            <div className="grid gap-2 grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 min-h-[280px] content-start">
                                 {filteredTests.map((item) => (
                                     <TestCard
                                         key={item.key}
@@ -575,7 +550,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 {/* 푸터 - 개인정보처리방침, 이용약관, 면책조항 */}
                 <Footer className="mt-8 mb-20" />
 
-        </div>
+            </div>
 
             {/* 오늘의 랭킹 모달 */}
             <TodayRankingModal

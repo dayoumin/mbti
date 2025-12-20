@@ -75,6 +75,7 @@ import ShareStrategy from './components/ShareStrategy';
 import FairnessSystem from './components/FairnessSystem';
 import AnalyticsSystem from './components/AnalyticsSystem';
 import ConversionAnalysis from './components/ConversionAnalysis';
+import PersonalizationStrategy from './components/PersonalizationStrategy';
 
 // ============================================================================
 // Types
@@ -1943,10 +1944,17 @@ function Roadmap() {
     {
       phase: 'Phase 3',
       title: '게이미피케이션',
-      items: ['데일리 콘텐츠', '스트릭', '뱃지/레벨'],
+      items: [
+        '데일리 콘텐츠',
+        '일일 미션 (이벤트성)',
+        '연속 참여 스트릭',
+        '뱃지/레벨 시스템',
+        '토너먼트/대결'
+      ],
       done: false,
       current: false,
-      color: '#55e6c1'
+      color: '#55e6c1',
+      note: '⚠️ 콘텐츠가 충분히 쌓인 후 이벤트성으로 도입 검토. 상시 기능보다 특별 이벤트로 활용 권장.'
     },
     {
       phase: 'Phase 4',
@@ -2032,6 +2040,9 @@ function Roadmap() {
                       </span>
                     ))}
                   </div>
+                  {item.note && (
+                    <p className="mt-3 text-sm text-[var(--db-muted)] italic">{item.note}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -3531,13 +3542,14 @@ function FeedbackAnalysis() {
 // ============================================================================
 
 function ProductFeatures() {
-  const [activeTab, setActiveTab] = useState<'content' | 'social' | 'community' | 'retention' | 'marketing'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'social' | 'community' | 'retention' | 'personalization' | 'marketing'>('content');
 
   const tabs = [
     { key: 'content' as const, label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
     { key: 'social' as const, label: '소셜 기능', icon: <Share2 className="w-4 h-4" /> },
     { key: 'community' as const, label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
     { key: 'retention' as const, label: '리텐션', icon: <RefreshCw className="w-4 h-4" /> },
+    { key: 'personalization' as const, label: '개인화', icon: <User className="w-4 h-4" /> },
     { key: 'marketing' as const, label: '마케팅', icon: <TrendingUp className="w-4 h-4" /> },
   ];
 
@@ -3568,6 +3580,7 @@ function ProductFeatures() {
       {activeTab === 'social' && <SocialFeatures />}
       {activeTab === 'community' && <CommunityStrategy />}
       {activeTab === 'retention' && <RetentionStrategy />}
+      {activeTab === 'personalization' && <PersonalizationStrategy />}
       {activeTab === 'marketing' && <MarketingStrategy />}
     </div>
   );

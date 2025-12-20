@@ -36,8 +36,8 @@ export default function Sidebar({
     const loadData = async () => {
       try {
         const results = await resultService.getMyResults();
-        // 최근 3개만
-        setRecentTests(results.slice(0, 3).map(r => ({
+        // 최근 2개만 (사이드바 표시용)
+        setRecentTests(results.slice(0, 2).map(r => ({
           testType: r.testType,
           resultKey: r.resultKey,
           resultEmoji: r.resultEmoji,
@@ -57,8 +57,11 @@ export default function Sidebar({
       role="navigation"
       aria-label="사이드 네비게이션"
     >
-      {/* 로고 영역 */}
-      <div className="p-6 border-b border-slate-100">
+      {/* 로고 영역 - 클릭 시 홈으로 */}
+      <button
+        onClick={() => onTabChange('home')}
+        className="p-6 border-b border-slate-100 text-left hover:bg-slate-50/50 transition-colors"
+      >
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
             <Sparkles className="w-5 h-5 text-white" />
@@ -70,7 +73,7 @@ export default function Sidebar({
             <p className="text-[10px] text-slate-400">오늘은 뭘 알아볼까?</p>
           </div>
         </div>
-      </div>
+      </button>
 
       {/* 네비게이션 */}
       <nav className="p-4 pb-2">
@@ -82,17 +85,15 @@ export default function Sidebar({
               <li key={key}>
                 <button
                   onClick={() => onTabChange(key)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-600 font-bold'
-                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${isActive
+                    ? 'bg-indigo-50 text-indigo-600 font-bold'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                    }`}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   <Icon
-                    className={`w-5 h-5 ${
-                      isActive ? 'stroke-[2.5px]' : 'stroke-[1.5px]'
-                    }`}
+                    className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.5px]'
+                      }`}
                   />
                   <span className="text-sm">{label}</span>
                   {isActive && (
@@ -106,7 +107,7 @@ export default function Sidebar({
       </nav>
 
       {/* 하단 위젯 영역 - 스크롤 가능 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
         {/* 최근 테스트 */}
         {recentTests.length > 0 && (
           <div className="bg-slate-50/80 rounded-xl p-3">
@@ -115,10 +116,10 @@ export default function Sidebar({
               <span className="text-[10px] font-semibold text-slate-600">최근 테스트</span>
             </div>
             <ul className="space-y-1">
-              {recentTests.slice(0, 2).map((test, idx) => {
+              {recentTests.map((test) => {
                 const data = CHEMI_DATA[test.testType as keyof typeof CHEMI_DATA];
                 return (
-                  <li key={idx}>
+                  <li key={`${test.testType}-${test.createdAt}`}>
                     <button
                       onClick={() => onStartTest?.(test.testType)}
                       className="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/80 transition-colors text-left"

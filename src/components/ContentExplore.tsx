@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls/vs-polls';
@@ -14,6 +14,42 @@ import { nextActionService, type NextAction } from '@/services/NextActionService
 import { NextActionInline } from '@/components/NextActionCard';
 import CommentSystem from '@/components/CommentSystem';
 import PopularPolls from '@/components/content/PopularPolls';
+import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
+import { DETAIL_TEST_KEYS } from '@/config/testKeys';
+import TestCard from '@/components/TestCard';
+import { Search, Sparkles, Brain, LayoutGrid } from 'lucide-react';
+
+const TEST_BADGES: Record<string, string> = {
+  human: 'HOT',
+  fruit: 'NEW',
+  tea: 'UPDATE',
+};
+
+const TEST_SUBJECT_MAP: Record<string, string> = {
+  human: 'me',
+  conflictStyle: 'me',
+  cat: 'pet',
+  dog: 'pet',
+  rabbit: 'pet',
+  hamster: 'pet',
+  coffee: 'drink',
+  tea: 'drink',
+  alcohol: 'drink',
+  bread: 'food',
+  fruit: 'food',
+  plant: 'life',
+  petMatch: 'life',
+  idealType: 'love',
+};
+
+const TEST_SUBJECT_LABELS: Record<string, { label: string; emoji: string }> = {
+  me: { label: '나', emoji: '👤' },
+  pet: { label: '반려동물', emoji: '🐾' },
+  drink: { label: '음료', emoji: '🥤' },
+  food: { label: '음식', emoji: '🍽️' },
+  life: { label: '라이프', emoji: '🌿' },
+  love: { label: '연애', emoji: '💕' }
+};
 
 // ============================================================================
 // 타입 정의
@@ -21,11 +57,11 @@ import PopularPolls from '@/components/content/PopularPolls';
 
 interface ContentExploreProps {
   onClose: () => void;
-  initialTab?: 'quiz' | 'poll' | 'community';
+  initialTab?: 'test' | 'quiz' | 'poll' | 'community';
   onStartTest?: (testKey: string) => void;
 }
 
-type TabType = 'quiz' | 'poll' | 'community';
+type TabType = 'test' | 'quiz' | 'poll' | 'community';
 type CommunitySubTab = 'tips' | 'qna' | 'debate';
 
 // CATEGORY_LABELS는 @/data/content/categories에서 import
@@ -50,9 +86,9 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
   // 다음 액션 추천
   const nextActions = showResult
     ? nextActionService.getRecommendations({
-        endpoint: 'quiz_result',
-        category: quiz.category,
-      }).slice(0, 2)
+      endpoint: 'quiz_result',
+      category: quiz.category,
+    }).slice(0, 2)
     : [];
 
   const handleSelect = (optionId: string) => {
@@ -184,9 +220,9 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
   // 다음 액션 추천
   const nextActions = voted
     ? nextActionService.getRecommendations({
-        endpoint: 'poll_result',
-        category: poll.category,
-      }).slice(0, 2)
+      endpoint: 'poll_result',
+      category: poll.category,
+    }).slice(0, 2)
     : [];
 
   const handleVote = (choice: 'a' | 'b') => {
@@ -218,11 +254,10 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
         <button
           onClick={() => handleVote('a')}
           disabled={!!voted}
-          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
-            voted === 'a' ? 'border-purple-400 bg-purple-50' :
+          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-            'border-purple-200 bg-white hover:border-purple-300 hover:bg-purple-50'
-          }`}
+              'border-purple-200 bg-white hover:border-purple-300 hover:bg-purple-50'
+            }`}
         >
           <div className="p-3 text-center relative z-10">
             <span className="text-2xl block mb-1">{poll.optionA.emoji}</span>
@@ -248,11 +283,10 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
         <button
           onClick={() => handleVote('b')}
           disabled={!!voted}
-          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
-            voted === 'b' ? 'border-pink-400 bg-pink-50' :
+          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-            'border-pink-200 bg-white hover:border-pink-300 hover:bg-pink-50'
-          }`}
+              'border-pink-200 bg-white hover:border-pink-300 hover:bg-pink-50'
+            }`}
         >
           <div className="p-3 text-center relative z-10">
             <span className="text-2xl block mb-1">{poll.optionB.emoji}</span>
@@ -389,20 +423,18 @@ function QnACard({ question, onNextAction }: QnACardProps) {
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-start gap-3">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 ${
-          question.status === 'answered'
-            ? 'bg-gradient-to-br from-emerald-100 to-green-100'
-            : 'bg-gradient-to-br from-blue-100 to-indigo-100'
-        }`}>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 ${question.status === 'answered'
+          ? 'bg-gradient-to-br from-emerald-100 to-green-100'
+          : 'bg-gradient-to-br from-blue-100 to-indigo-100'
+          }`}>
           {question.status === 'answered' ? '✅' : '❓'}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
-              question.status === 'answered'
-                ? 'bg-emerald-100 text-emerald-700'
-                : 'bg-blue-100 text-blue-700'
-            }`}>
+            <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${question.status === 'answered'
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-blue-100 text-blue-700'
+              }`}>
               {question.status === 'answered' ? '답변완료' : '답변대기'}
             </span>
             <span className="text-[10px] text-gray-400">{question.author.nickname}</span>
@@ -449,9 +481,9 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
   // 투표 후 다음 액션 추천
   const nextActions = voted
     ? nextActionService.getRecommendations({
-        endpoint: 'community_view',
-        category: debate.category,
-      }).filter(a => a.type === 'test').slice(0, 1)
+      endpoint: 'community_view',
+      category: debate.category,
+    }).filter(a => a.type === 'test').slice(0, 1)
     : [];
 
   return (
@@ -470,11 +502,10 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
         <button
           onClick={() => !voted && setVoted('a')}
           disabled={!!voted}
-          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
-            voted === 'a' ? 'border-purple-400 bg-purple-50' :
+          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-            'border-purple-200 bg-white hover:border-purple-300'
-          }`}
+              'border-purple-200 bg-white hover:border-purple-300'
+            }`}
         >
           <div className="p-3 text-center relative z-10">
             <span className="text-2xl block mb-1">{debate.optionA.emoji}</span>
@@ -498,11 +529,10 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
         <button
           onClick={() => !voted && setVoted('b')}
           disabled={!!voted}
-          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
-            voted === 'b' ? 'border-pink-400 bg-pink-50' :
+          className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-            'border-pink-200 bg-white hover:border-pink-300'
-          }`}
+              'border-pink-200 bg-white hover:border-pink-300'
+            }`}
         >
           <div className="p-3 text-center relative z-10">
             <span className="text-2xl block mb-1">{debate.optionB.emoji}</span>
@@ -551,33 +581,30 @@ function CommunityContent({ onNextAction }: CommunityContentProps) {
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setSubTab('tips')}
-          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-            subTab === 'tips'
-              ? 'bg-amber-500 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${subTab === 'tips'
+            ? 'bg-amber-500 text-white'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
         >
           <Lightbulb className="w-3.5 h-3.5 inline mr-1" />
           팁 베스트
         </button>
         <button
           onClick={() => setSubTab('qna')}
-          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-            subTab === 'qna'
-              ? 'bg-emerald-500 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${subTab === 'qna'
+            ? 'bg-emerald-500 text-white'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
         >
           <MessageCircle className="w-3.5 h-3.5 inline mr-1" />
           Q&A
         </button>
         <button
           onClick={() => setSubTab('debate')}
-          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-            subTab === 'debate'
-              ? 'bg-rose-500 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${subTab === 'debate'
+            ? 'bg-rose-500 text-white'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
         >
           ⚔️ 토론
         </button>
@@ -625,9 +652,10 @@ function CommunityContent({ onNextAction }: CommunityContentProps) {
 // 메인 컴포넌트
 // ============================================================================
 
-export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTest }: ContentExploreProps) {
+export default function ContentExplore({ onClose, initialTab = 'test', onStartTest }: ContentExploreProps) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
-  const [selectedCategory, setSelectedCategory] = useState<ContentCategory | 'all'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [participation, setParticipation] = useState(contentParticipationService.getParticipation());
 
   useEffect(() => {
@@ -639,14 +667,39 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
     return () => window.removeEventListener('chemi_content_participation_updated', handleUpdated);
   }, []);
 
-  // 카테고리별 필터링
-  const filteredQuizzes = selectedCategory === 'all'
-    ? ALL_KNOWLEDGE_QUIZZES
-    : ALL_KNOWLEDGE_QUIZZES.filter(q => q.category === selectedCategory);
+  // 1. 테스트 필터링
+  const allTests = useMemo(() => {
+    return [...MAIN_TEST_KEYS, ...DETAIL_TEST_KEYS].map(key => ({
+      key,
+      ...SUBJECT_CONFIG[key as keyof typeof SUBJECT_CONFIG]
+    })).filter(t => t.label); // label이 있는 것만
+  }, []);
 
-  const filteredPolls = selectedCategory === 'all'
-    ? VS_POLLS
-    : VS_POLLS.filter(p => p.category === selectedCategory);
+  const filteredTests = useMemo(() => {
+    return allTests.filter(t => {
+      const matchesCategory = selectedCategory === 'all' || TEST_SUBJECT_MAP[t.key] === selectedCategory;
+      const matchesSearch = t.label.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [allTests, selectedCategory, searchQuery]);
+
+  // 2. 퀴즈 필터링
+  const filteredQuizzes = useMemo(() => {
+    return ALL_KNOWLEDGE_QUIZZES.filter(q => {
+      const matchesCategory = selectedCategory === 'all' || q.category === selectedCategory;
+      const matchesSearch = q.question.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery]);
+
+  // 3. 투표 필터링
+  const filteredPolls = useMemo(() => {
+    return VS_POLLS.filter(p => {
+      const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+      const matchesSearch = p.question.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery]);
 
   // 퀴즈 정답 처리
   // ContentParticipationService: UI 상태 (참여 여부 표시용)
@@ -732,13 +785,27 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
   };
 
   // 현재 필터에 있는 카테고리들
-  const availableCategories = activeTab === 'quiz'
-    ? [...new Set(ALL_KNOWLEDGE_QUIZZES.map(q => q.category))]
-    : [...new Set(VS_POLLS.map(p => p.category))];
+  const availableCategories = useMemo(() => {
+    if (activeTab === 'test') {
+      return Object.keys(TEST_SUBJECT_LABELS);
+    }
+    if (activeTab === 'quiz') {
+      return [...new Set(ALL_KNOWLEDGE_QUIZZES.map(q => q.category))];
+    }
+    if (activeTab === 'poll') {
+      return [...new Set(VS_POLLS.map(p => p.category))];
+    }
+    return [];
+  }, [activeTab]);
 
   // 헤더 타이틀 & 서브타이틀
   const getHeaderInfo = () => {
     switch (activeTab) {
+      case 'test':
+        return {
+          title: '테스트 탐색',
+          subtitle: `전체 ${allTests.length}개의 다양한 테스트`,
+        };
       case 'quiz':
         return {
           title: '퀴즈 & 투표',
@@ -780,129 +847,186 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
           </div>
 
           {/* 메인 탭 */}
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
             <button
-              onClick={() => setActiveTab('quiz')}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'quiz'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              onClick={() => { setActiveTab('test'); setSelectedCategory('all'); }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'test'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
-              <HelpCircle className="w-3.5 h-3.5 inline mr-1" />
+              <LayoutGrid className="w-3.5 h-3.5" />
+              테스트
+            </button>
+            <button
+              onClick={() => { setActiveTab('quiz'); setSelectedCategory('all'); }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'quiz'
+                ? 'bg-blue-500 text-white shadow-sm'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
               퀴즈
             </button>
             <button
-              onClick={() => setActiveTab('poll')}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'poll'
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              onClick={() => { setActiveTab('poll'); setSelectedCategory('all'); }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'poll'
+                ? 'bg-purple-500 text-white shadow-sm'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
-              <Vote className="w-3.5 h-3.5 inline mr-1" />
+              <Vote className="w-3.5 h-3.5" />
               투표
             </button>
             <button
-              onClick={() => setActiveTab('community')}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'community'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              onClick={() => { setActiveTab('community'); setSelectedCategory('all'); }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'community'
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
-              <MessageCircle className="w-3.5 h-3.5 inline mr-1" />
+              <MessageCircle className="w-3.5 h-3.5" />
               커뮤니티
             </button>
           </div>
 
-          {/* 카테고리 필터 (퀴즈/투표에서만 표시) */}
+          {/* 검색 바 */}
+          {activeTab !== 'community' && (
+            <div className="relative mt-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder={`${activeTab === 'test' ? '테스트' : activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+              />
+            </div>
+          )}
+
+          {/* 카테고리 필터 */}
           {activeTab !== 'community' && (
             <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
               <button
                 onClick={() => setSelectedCategory('all')}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                  selectedCategory === 'all'
-                    ? 'bg-slate-800 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === 'all'
+                  ? 'bg-slate-800 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
               >
                 전체
               </button>
-              {availableCategories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                    selectedCategory === cat
-                      ? 'bg-slate-800 text-white'
+              {availableCategories.map((cat) => {
+                const labelInfo = activeTab === 'test'
+                  ? TEST_SUBJECT_LABELS[cat]
+                  : CATEGORY_LABELS[cat as ContentCategory];
+
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === cat
+                      ? 'bg-slate-800 text-white shadow-sm'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {CATEGORY_LABELS[cat].emoji} {CATEGORY_LABELS[cat].label}
-                </button>
-              ))}
+                      }`}
+                  >
+                    {labelInfo?.emoji} {labelInfo?.label}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
       </div>
 
       {/* 콘텐츠 */}
-      <div className="overflow-y-auto h-[calc(100vh-180px)] pb-20">
-        <div className="max-w-lg mx-auto px-4 py-4 space-y-3">
-          {activeTab === 'quiz' && (
-            filteredQuizzes.length > 0 ? (
-              filteredQuizzes.map((quiz) => {
-                const answered = participation.quizzes.find(q => q.quizId === quiz.id);
-                return (
-                  <QuizCard
-                    key={quiz.id}
-                    quiz={quiz}
-                    isAnswered={!!answered}
-                    previousAnswer={answered?.selectedOption}
-                    onAnswer={handleQuizAnswer}
-                    onNextAction={handleNextAction}
+      <div className="overflow-y-auto h-[calc(100vh-210px)] pb-32">
+        <div className="max-w-lg mx-auto px-4 py-4">
+          {activeTab === 'test' && (
+            filteredTests.length > 0 ? (
+              <div className="grid grid-cols-3 gap-3">
+                {filteredTests.map((item) => (
+                  <TestCard
+                    key={item.key}
+                    item={item as any}
+                    onStart={(key) => {
+                      onClose();
+                      onStartTest?.(key);
+                    }}
+                    badge={TEST_BADGES[item.key]}
                   />
-                );
-              })
+                ))}
+              </div>
             ) : (
-              <div className="text-center py-12 text-gray-400">
-                <p>이 카테고리에 퀴즈가 없습니다</p>
+              <div className="text-center py-20">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-gray-300" />
+                </div>
+                <p className="text-slate-400 text-sm">검색 결과가 없습니다</p>
+                <button
+                  onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+                  className="mt-4 text-xs text-indigo-500 font-bold"
+                >
+                  필터 초기화
+                </button>
               </div>
             )
           )}
-          {activeTab === 'poll' && (
-            <>
-              {/* 인기 투표 섹션 (카테고리가 '전체'일 때만) */}
-              {selectedCategory === 'all' && (
-                <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
-              )}
-
-              {/* 기본 투표 목록 */}
-              {filteredPolls.length > 0 ? (
-                filteredPolls.map((poll) => {
-                  const voted = participation.polls.find(p => p.pollId === poll.id);
+          <div className="space-y-3">
+            {activeTab === 'quiz' && (
+              filteredQuizzes.length > 0 ? (
+                filteredQuizzes.map((quiz) => {
+                  const answered = participation.quizzes.find(q => q.quizId === quiz.id);
                   return (
-                    <PollCard
-                      key={poll.id}
-                      poll={poll}
-                      isVoted={!!voted}
-                      previousVote={voted?.choice}
-                      onVote={handlePollVote}
+                    <QuizCard
+                      key={quiz.id}
+                      quiz={quiz}
+                      isAnswered={!!answered}
+                      previousAnswer={answered?.selectedOption}
+                      onAnswer={handleQuizAnswer}
                       onNextAction={handleNextAction}
                     />
                   );
                 })
               ) : (
                 <div className="text-center py-12 text-gray-400">
-                  <p>이 카테고리에 투표가 없습니다</p>
+                  <p>이 카테고리에 퀴즈가 없습니다</p>
                 </div>
-              )}
-            </>
-          )}
-          {activeTab === 'community' && (
-            <CommunityContent onNextAction={handleNextAction} />
-          )}
+              )
+            )}
+            {activeTab === 'poll' && (
+              <>
+                {/* 인기 투표 섹션 (카테고리가 '전체'일 때만) */}
+                {selectedCategory === 'all' && (
+                  <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
+                )}
+
+                {/* 기본 투표 목록 */}
+                {filteredPolls.length > 0 ? (
+                  filteredPolls.map((poll) => {
+                    const voted = participation.polls.find(p => p.pollId === poll.id);
+                    return (
+                      <PollCard
+                        key={poll.id}
+                        poll={poll}
+                        isVoted={!!voted}
+                        previousVote={voted?.choice}
+                        onVote={handlePollVote}
+                        onNextAction={handleNextAction}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-12 text-gray-400">
+                    <p>이 카테고리에 투표가 없습니다</p>
+                  </div>
+                )}
+              </>
+            )}
+            {activeTab === 'community' && (
+              <CommunityContent onNextAction={handleNextAction} />
+            )}
+          </div>
         </div>
       </div>
     </div>

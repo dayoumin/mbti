@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { useProfile } from '@/hooks/useProfile';
 import {
   RadarChart,
@@ -12,6 +13,7 @@ import {
 } from 'recharts';
 import { Share2, Check } from 'lucide-react';
 import { profileService, MyProfileData } from '@/services/ProfileService';
+import { LoginPromptBanner } from '@/components/auth';
 
 // ============================================================================
 // 탭 타입 정의
@@ -37,6 +39,7 @@ interface CompactProfileProps {
 
 export function CompactProfile({ onViewFull }: CompactProfileProps) {
   const { profile, loading } = useProfile();
+  const { data: session } = useSession();
 
   if (loading) {
     return (
@@ -128,6 +131,22 @@ export function CompactProfile({ onViewFull }: CompactProfileProps) {
           </span>
         )}
       </div>
+
+      {/* 로그인 안내 (비로그인 + 테스트 1개 이상 완료 시) */}
+      {!session && profile.completedTests >= 1 && (
+        <div className="mt-4 pt-3 border-t border-slate-200">
+          <div className="flex items-center gap-2 text-xs text-orange-600">
+            <span>⚠️</span>
+            <span>브라우저 초기화 시 데이터가 사라질 수 있어요</span>
+          </div>
+          <a
+            href="/login"
+            className="mt-2 block text-center py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-xs font-medium text-slate-700 transition-all"
+          >
+            로그인하고 안전하게 저장하기
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -143,6 +162,7 @@ interface FullProfileProps {
 
 export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
   const { profile, loading } = useProfile();
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<ProfileTab>('me');
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
 
@@ -264,6 +284,13 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
           )}
           {activeTab === 'achieve' && (
             <TabAchieve profile={profile} />
+          )}
+
+          {/* 로그인 유도 배너 (비로그인 시) */}
+          {!session && profile.completedTests >= 1 && (
+            <div className="mt-4">
+              <LoginPromptBanner />
+            </div>
           )}
         </div>
 

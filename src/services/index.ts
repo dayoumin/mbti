@@ -1,6 +1,7 @@
 // Services export
 export { resultService } from './ResultService';
 export { profileService } from './ProfileService';
+export { authService } from './AuthService';
 export { rankingService } from './RankingService';
 export { feedbackService } from './FeedbackService';
 export { nextActionService } from './NextActionService';
