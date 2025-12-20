@@ -127,9 +127,6 @@ export default function HeroBanner({ onStartTest, className = '' }: HeroBannerPr
             요즘 인기
             <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
           </h2>
-          <p className="text-slate-400 text-xs md:text-sm font-bold mt-1">
-            {itemsPerPage === 8 ? '실시간으로 가장 핫한 테스트 8선' : '오늘의 추천 테스트'}
-          </p>
         </div>
 
         {/* 내비게이션 컨트롤 */}

@@ -9,10 +9,11 @@ import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import Footer from './Footer';
 import HeroBanner from './HeroBanner';
 import DiscoveryFeed from './DiscoveryFeed';
-import { TrendingSection, RecentSection, RecommendedSection } from './ContentSections';
+import { RecommendedSection } from './ContentSections';
 import TodayRankingPreview from './TodayRankingPreview';
 import TodayRankingModal from './TodayRankingModal';
 import TestCard from './TestCard';
+import { POPULAR_TESTS } from '../data/recommendationPolicy';
 
 // 1차 필터: 테스트 유형 (심리/매칭)
 const TEST_TYPE_TABS = {
@@ -301,7 +302,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
         switch (action.type) {
             case 'test':
                 // 테스트 추천 → targetId가 있으면 해당 테스트, 없으면 인기 테스트
-                onStartTest?.(action.targetId || 'human');
+                onStartTest?.(action.targetId || POPULAR_TESTS[0] || 'human');
                 break;
             case 'quiz':
             case 'poll':
@@ -417,13 +418,11 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
 
                 {/* PC: 2컬럼 레이아웃 / 모바일: 단일 컬럼 */}
                 <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-6">
-                    {/* 왼쪽 사이드바: 인기/추천/최근 섹션 */}
+                    {/* 왼쪽 사이드바: 추천 섹션 (지금 뜨는/최근 본 → 좌측 네비 사이드바로 이동됨) */}
                     {/* PC: 고정 사이드바 / 모바일: 상단 가로 스크롤 */}
                     <aside className="mb-4 lg:mb-0 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                         <div className="lg:sticky lg:top-4">
                             <div className="lg:bg-white/60 lg:backdrop-blur-sm lg:rounded-2xl lg:p-4 lg:border lg:border-white/80 lg:shadow-sm lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:no-scrollbar">
-                                <TrendingSection onStartTest={onStartTest} />
-                                <RecentSection onStartTest={onStartTest} />
                                 <RecommendedSection onStartTest={onStartTest} />
                             </div>
                         </div>

@@ -38,8 +38,9 @@ interface TopPollItem {
 
 function CommunityPreview({ onOpenCommunity }: { onOpenCommunity: () => void }) {
   return (
-    <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
-      <div className="flex items-center justify-between mb-4">
+    <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      {/* 헤더 - 히어로 배너와 동일한 스타일 */}
+      <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center">
             <MessageSquare className="w-4 h-4 text-pink-600" />
@@ -54,7 +55,8 @@ function CommunityPreview({ onOpenCommunity }: { onOpenCommunity: () => void }) 
         </button>
       </div>
 
-      <div className="space-y-2.5">
+      {/* 게시물 목록 */}
+      <div className="px-3 pb-3 space-y-2">
         {MOCK_COMMUNITY_PREVIEW.map(post => (
           <button
             key={post.id}
@@ -330,7 +332,7 @@ export default function RightSidebar({
       role="complementary"
       aria-label="사이드 정보"
     >
-      {/* 커뮤니티 미리보기 */}
+      {/* 커뮤니티 미리보기 - 히어로 배너와 동일한 높이감 */}
       <CommunityPreview onOpenCommunity={onOpenCommunity} />
 
       {/* 오늘의 랭킹 */}
