@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Heart, Share2, Search, Filter, Plus, ChevronRight } from 'lucide-react';
 import CommentSystem from './CommentSystem';
-import { MOCK_COMMUNITY_POSTS, CATEGORY_LABELS, type PostCategory } from '@/data/content/community';
+import { MOCK_COMMUNITY_POSTS, CATEGORY_LABELS, getCategoryLabel, getCategoryStyle, type PostCategory } from '@/data/content/community';
 
 type CategoryKey = 'all' | PostCategory;
 
@@ -33,8 +33,8 @@ export default function CommunityBoard({ className = '' }: { className?: string 
 
                 <div className="flex-1 overflow-y-auto p-6">
                     <div className="mb-6">
-                        <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full mb-2 inline-block">
-                            {CATEGORY_LABELS[selectedPost.category]}
+                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full mb-2 inline-block ${getCategoryStyle(selectedPost.category)}`}>
+                            {getCategoryLabel(selectedPost.category)}
                         </span>
                         <h1 className="text-xl font-black text-slate-800 leading-tight mb-3">
                             {selectedPost.title}
@@ -102,12 +102,8 @@ export default function CommunityBoard({ className = '' }: { className?: string 
                         className="w-full bg-white p-4 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:shadow-md transition-all text-left flex flex-col gap-2 group"
                     >
                         <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${post.category === 'tip' ? 'bg-emerald-50 text-emerald-600' :
-                                    post.category === 'qna' ? 'bg-amber-50 text-amber-600' :
-                                        post.category === 'boast' ? 'bg-pink-50 text-pink-600' :
-                                            'bg-slate-50 text-slate-500'
-                                }`}>
-                                {CATEGORY_LABELS[post.category]}
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${getCategoryStyle(post.category)}`}>
+                                {getCategoryLabel(post.category)}
                             </span>
                             <span className="text-[10px] text-slate-400">{post.date}</span>
                         </div>

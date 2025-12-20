@@ -12,7 +12,7 @@ import { VS_POLLS } from '@/data/content/polls/vs-polls';
 import { SUBJECT_CONFIG } from '@/data/config';
 import { CHEMI_DATA } from '@/data/index';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
-import { MOCK_COMMUNITY_PREVIEW, getCategoryLabel } from '@/data/content/community';
+import { MOCK_COMMUNITY_PREVIEW, getCategoryLabel, getCategoryStyle } from '@/data/content/community';
 import type { SubjectKey, SubjectConfig, SubjectData } from '@/data/types';
 
 // ============================================================================
@@ -62,11 +62,7 @@ function CommunityPreview({ onOpenCommunity }: { onOpenCommunity: () => void }) 
             className="w-full p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors text-left group"
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                post.category === 'tip' ? 'bg-emerald-50 text-emerald-600' :
-                post.category === 'qna' ? 'bg-amber-50 text-amber-600' :
-                'bg-pink-50 text-pink-600'
-              }`}>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${getCategoryStyle(post.category)}`}>
                 {getCategoryLabel(post.category)}
               </span>
               <span className="text-[11px] text-slate-400">{post.author}</span>

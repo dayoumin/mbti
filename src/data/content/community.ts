@@ -31,9 +31,23 @@ export const CATEGORY_LABELS: Record<PostCategory | 'all', string> = {
   general: '자유'
 };
 
+/** 카테고리별 색상 스타일 */
+export const CATEGORY_STYLES: Record<PostCategory, { bg: string; text: string }> = {
+  tip: { bg: 'bg-emerald-50', text: 'text-emerald-600' },
+  qna: { bg: 'bg-amber-50', text: 'text-amber-600' },
+  boast: { bg: 'bg-pink-50', text: 'text-pink-600' },
+  general: { bg: 'bg-slate-50', text: 'text-slate-500' }
+};
+
 /** 카테고리 라벨 조회 헬퍼 */
 export function getCategoryLabel(category: PostCategory): string {
   return CATEGORY_LABELS[category];
+}
+
+/** 카테고리 스타일 클래스 조회 헬퍼 */
+export function getCategoryStyle(category: PostCategory): string {
+  const style = CATEGORY_STYLES[category];
+  return `${style.bg} ${style.text}`;
 }
 
 // ============================================================================
