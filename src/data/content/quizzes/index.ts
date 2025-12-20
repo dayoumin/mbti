@@ -1,33 +1,56 @@
 // ============================================================================
 // 퀴즈 데이터 통합 Export
 // ============================================================================
+//
+// 새 퀴즈 추가 방법:
+// 1. {category}-knowledge.ts 또는 {category}-scenario.ts 파일 생성
+// 2. 아래 QUIZ_REGISTRY에 한 줄 추가
+// ============================================================================
 
-// 지식 퀴즈
+import type { ContentCategory, KnowledgeQuiz, ScenarioQuiz } from '../types';
+
+// --- 지식 퀴즈 import ---
+import { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
+import { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
+
+// --- 시나리오 퀴즈 import ---
+import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
+import { DOG_SCENARIO_QUIZZES } from './dog-scenario';
+
+// ============================================================================
+// 퀴즈 레지스트리 (새 퀴즈는 여기에 추가)
+// ============================================================================
+
+const KNOWLEDGE_QUIZ_REGISTRY: KnowledgeQuiz[][] = [
+  CAT_KNOWLEDGE_QUIZZES,
+  DOG_KNOWLEDGE_QUIZZES,
+  // 새 지식 퀴즈는 여기에 추가 (예: RABBIT_KNOWLEDGE_QUIZZES)
+];
+
+const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
+  CAT_SCENARIO_QUIZZES,
+  DOG_SCENARIO_QUIZZES,
+  // 새 시나리오 퀴즈는 여기에 추가 (예: RABBIT_SCENARIO_QUIZZES)
+];
+
+// ============================================================================
+// 통합 배열 (자동 생성)
+// ============================================================================
+
+export const ALL_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = KNOWLEDGE_QUIZ_REGISTRY.flat();
+export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = SCENARIO_QUIZ_REGISTRY.flat();
+
+// 개별 퀴즈 배열도 export (필요시 직접 접근용)
 export { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
 export { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
-
-// 시나리오 퀴즈
 export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 
-// 통합 데이터
-import { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
-import { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
-import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
-import { DOG_SCENARIO_QUIZZES } from './dog-scenario';
-import type { ContentCategory, KnowledgeQuiz, ScenarioQuiz } from '../types';
+// ============================================================================
+// 조회 함수
+// ============================================================================
 
-export const ALL_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
-  ...CAT_KNOWLEDGE_QUIZZES,
-  ...DOG_KNOWLEDGE_QUIZZES,
-];
-
-export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = [
-  ...CAT_SCENARIO_QUIZZES,
-  ...DOG_SCENARIO_QUIZZES,
-];
-
-// 카테고리별 퀴즈 조회
+/** 카테고리별 퀴즈 조회 */
 export function getQuizzesByCategory(category: ContentCategory) {
   return {
     knowledge: ALL_KNOWLEDGE_QUIZZES.filter(q => q.category === category),
@@ -35,7 +58,7 @@ export function getQuizzesByCategory(category: ContentCategory) {
   };
 }
 
-// 랜덤 퀴즈 선택 (빈 배열이면 undefined 반환)
+/** 랜덤 지식 퀴즈 선택 */
 export function getRandomQuiz(category?: ContentCategory): KnowledgeQuiz | undefined {
   const filtered = category
     ? ALL_KNOWLEDGE_QUIZZES.filter(q => q.category === category)
@@ -45,7 +68,21 @@ export function getRandomQuiz(category?: ContentCategory): KnowledgeQuiz | undef
   return filtered[Math.floor(Math.random() * filtered.length)];
 }
 
-// 시나리오 퀴즈 점수 범위 검증
+/** 랜덤 시나리오 퀴즈 선택 */
+export function getRandomScenarioQuiz(category?: ContentCategory): ScenarioQuiz | undefined {
+  const filtered = category
+    ? ALL_SCENARIO_QUIZZES.filter(q => q.category === category)
+    : ALL_SCENARIO_QUIZZES;
+
+  if (filtered.length === 0) return undefined;
+  return filtered[Math.floor(Math.random() * filtered.length)];
+}
+
+// ============================================================================
+// 검증 함수
+// ============================================================================
+
+/** 시나리오 퀴즈 점수 범위 검증 */
 export function validateScenarioQuizScores(quiz: ScenarioQuiz): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   const maxPossibleScore = quiz.questions.reduce((sum, q) => {
@@ -84,3 +121,30 @@ export function validateScenarioQuizScores(quiz: ScenarioQuiz): { valid: boolean
 
   return { valid: errors.length === 0, errors };
 }
+
+// ============================================================================
+// 통계
+// ============================================================================
+
+export const QUIZ_STATS = {
+  knowledge: {
+    total: ALL_KNOWLEDGE_QUIZZES.length,
+    byCategory: () => {
+      const counts: Partial<Record<ContentCategory, number>> = {};
+      ALL_KNOWLEDGE_QUIZZES.forEach(q => {
+        counts[q.category] = (counts[q.category] || 0) + 1;
+      });
+      return counts;
+    },
+  },
+  scenario: {
+    total: ALL_SCENARIO_QUIZZES.length,
+    byCategory: () => {
+      const counts: Partial<Record<ContentCategory, number>> = {};
+      ALL_SCENARIO_QUIZZES.forEach(q => {
+        counts[q.category] = (counts[q.category] || 0) + 1;
+      });
+      return counts;
+    },
+  },
+};

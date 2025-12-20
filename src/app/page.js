@@ -735,6 +735,7 @@ export default function Home() {
                 />
             )}
 
+            {/* 메인 콘텐츠 영역: 좌측 Sidebar(flex) + 우측 RightSidebar(fixed w-80) */}
             <main className="flex-1 min-h-screen flex items-center justify-center p-4 pb-20 lg:pb-4 xl:mr-80">
                 {view === 'dashboard' ? (
                     <Dashboard

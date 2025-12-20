@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getRandomQuiz, getRandomPoll } from '../../data/content';
 import { ALL_KNOWLEDGE_QUIZZES } from '../../data/content/quizzes';
-import { VS_POLLS } from '../../data/content/polls/vs-polls';
+import { VS_POLLS } from '../../data/content/polls';
 import { contentParticipationService } from '../../services/ContentParticipationService';
 import { tursoService } from '../../services/TursoService';
 import { getGamificationService } from '../../services/GamificationService';

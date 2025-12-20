@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
-import { VS_POLLS } from '@/data/content/polls/vs-polls';
+import { VS_POLLS } from '@/data/content/polls';
 import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
 import { CATEGORY_LABELS } from '@/data/content/categories';
 import { contentParticipationService } from '@/services/ContentParticipationService';

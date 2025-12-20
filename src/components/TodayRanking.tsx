@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Trophy, TrendingUp, Users, ChevronRight, Flame, Star, BarChart3 } from 'lucide-react';
 import { feedbackService } from '@/services/FeedbackService';
-import { VS_POLLS } from '@/data/content/polls/vs-polls';
+import { VS_POLLS } from '@/data/content/polls';
 
 // ============================================================================
 // 타입 정의

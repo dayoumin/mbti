@@ -1149,16 +1149,86 @@ function AppDesignSystem() {
     ],
   };
 
-  const components = [
-    { name: 'TestCard', file: 'TestCard.js', desc: '테스트 선택 카드' },
-    { name: 'TraitBar', file: 'TraitBar.tsx', desc: '성향 비율 막대' },
-    { name: 'ShareCard', file: 'ShareCard.tsx', desc: 'SNS 공유 카드' },
-    { name: 'ResultFeedback', file: 'ResultFeedback.tsx', desc: '피드백 버튼' },
-    { name: 'FeedbackComments', file: 'FeedbackComments.tsx', desc: '피드백 댓글' },
-    { name: 'ResultRankingView', file: 'ResultRankingView.tsx', desc: '결과 미리보기/랭킹' },
-    { name: 'Dashboard', file: 'Dashboard.js', desc: '메인 홈' },
-    { name: 'MyProfile', file: 'MyProfile.tsx', desc: '프로필 페이지' },
+  // 컴포넌트 카테고리별 분류
+  const componentCategories = {
+    core: {
+      label: '핵심 UI',
+      items: [
+        { name: 'TestCard', file: 'TestCard.tsx', desc: '테스트 선택 카드' },
+        { name: 'TraitBar', file: 'TraitBar.tsx', desc: '성향 비율 막대' },
+        { name: 'ShareCard', file: 'ShareCard.tsx', desc: 'SNS 공유 카드' },
+        { name: 'Toast', file: 'Toast.tsx', desc: '알림 토스트' },
+      ],
+    },
+    layout: {
+      label: '레이아웃',
+      items: [
+        { name: 'Dashboard', file: 'Dashboard.js', desc: '메인 홈' },
+        { name: 'BottomNav', file: 'BottomNav.tsx', desc: '하단 네비게이션' },
+        { name: 'Sidebar', file: 'Sidebar.tsx', desc: '사이드바 (데스크탑)' },
+        { name: 'RightSidebar', file: 'RightSidebar.tsx', desc: '우측 사이드바' },
+        { name: 'HeroBanner', file: 'HeroBanner.tsx', desc: '히어로 배너' },
+      ],
+    },
+    content: {
+      label: '콘텐츠',
+      items: [
+        { name: 'ContentExplore', file: 'ContentExplore.tsx', desc: '퀴즈/투표/팁 탐색' },
+        { name: 'TodayRanking', file: 'TodayRanking.tsx', desc: '오늘의 랭킹' },
+        { name: 'DailyContentCards', file: 'DailyContentCards.tsx', desc: '일일 콘텐츠' },
+        { name: 'NextActionCard', file: 'NextActionCard.tsx', desc: '다음 행동 추천' },
+      ],
+    },
+    community: {
+      label: '커뮤니티',
+      items: [
+        { name: 'CommunityBoard', file: 'CommunityBoard.tsx', desc: '게시판' },
+        { name: 'TalkPreview', file: 'TalkPreview.tsx', desc: '커뮤니티 미리보기' },
+        { name: 'CommentSystem', file: 'CommentSystem.tsx', desc: '댓글 시스템' },
+        { name: 'ParticipationStats', file: 'ParticipationStats.tsx', desc: '참여 통계' },
+      ],
+    },
+    feedback: {
+      label: '피드백/결과',
+      items: [
+        { name: 'ResultFeedback', file: 'ResultFeedback.tsx', desc: '피드백 버튼' },
+        { name: 'FeedbackComments', file: 'FeedbackComments.tsx', desc: '피드백 댓글' },
+        { name: 'ResultRankingView', file: 'ResultRankingView.tsx', desc: '결과 미리보기' },
+        { name: 'MinorityVoteBadge', file: 'MinorityVoteBadge.tsx', desc: '소수파 뱃지' },
+      ],
+    },
+    profile: {
+      label: '프로필',
+      items: [
+        { name: 'MyProfile', file: 'MyProfile.tsx', desc: '프로필 페이지' },
+        { name: 'BadgeNotification', file: 'BadgeNotification.tsx', desc: '배지 알림' },
+      ],
+    },
+  };
+
+  // 서비스 모듈
+  const services = [
+    { name: 'ResultService', desc: '결과 저장/조회', api: 'Supabase' },
+    { name: 'RankingService', desc: '랭킹 투표/통계', api: 'Supabase' },
+    { name: 'FeedbackService', desc: '피드백/퀴즈/투표', api: 'Supabase' },
+    { name: 'GamificationService', desc: '배지/레벨/포인트', api: 'Local' },
+    { name: 'NextActionService', desc: '다음 행동 추천', api: 'Local' },
+    { name: 'AuthService', desc: '소셜 로그인', api: 'NextAuth' },
+    { name: 'ProfileService', desc: '사용자 프로필', api: 'Supabase' },
+    { name: 'ContentParticipationService', desc: '콘텐츠 참여 기록', api: 'Local' },
+    { name: 'AnalyticsService', desc: '분석/추적', api: 'Vercel' },
   ];
+
+  // 데이터 구조
+  const dataStructures = [
+    { name: 'QUIZ_REGISTRY', path: 'content/quizzes', desc: '퀴즈 자동 수집 (지식/시나리오)' },
+    { name: 'POLL_REGISTRY', path: 'content/polls', desc: '투표 자동 수집' },
+    { name: 'ContentCategory', path: 'content/types', desc: '15개 콘텐츠 카테고리' },
+    { name: 'SUBJECT_CONFIG', path: 'config', desc: '테스트별 설정' },
+  ];
+
+  // 하위호환용 flat 배열
+  const components = Object.values(componentCategories).flatMap(cat => cat.items);
 
   return (
     <div className="space-y-6">
@@ -1307,20 +1377,68 @@ function AppDesignSystem() {
         </div>
       </div>
 
-      {/* 컴포넌트 목록 - 심플 테이블 */}
+      {/* 컴포넌트 목록 - 카테고리별 */}
       <div className="db-card">
         <div className="db-card-header px-5 py-4">
-          <h3 className="text-sm font-semibold text-[var(--db-text)]">컴포넌트 목록</h3>
+          <h3 className="text-sm font-semibold text-[var(--db-text)]">컴포넌트 ({components.length}개)</h3>
           <p className="text-xs text-[var(--db-muted)] mt-0.5">src/components/</p>
         </div>
-        <div className="divide-y divide-[var(--db-line)]">
-          {components.map((comp) => (
-            <div key={comp.name} className="px-5 py-3 flex items-center justify-between hover:bg-[var(--db-alpha-hover)] transition-colors">
-              <div className="flex items-center gap-3">
-                <code className="text-sm font-medium text-[var(--db-text)]">{comp.name}</code>
-                <span className="text-xs text-[var(--db-muted)]">{comp.desc}</span>
+        <div className="p-5 space-y-4">
+          {Object.entries(componentCategories).map(([key, category]) => (
+            <div key={key}>
+              <p className="text-xs font-medium text-[var(--db-muted)] mb-2">{category.label}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {category.items.map((comp) => (
+                  <div key={comp.name} className="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--db-alpha-hover)] transition-colors">
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs font-medium text-[var(--db-text)]">{comp.name}</code>
+                    </div>
+                    <span className="text-[10px] text-[var(--db-muted)]">{comp.desc}</span>
+                  </div>
+                ))}
               </div>
-              <code className="text-xs text-[var(--db-muted)]">{comp.file}</code>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 서비스 모듈 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-sm font-semibold text-[var(--db-text)]">서비스 모듈 ({services.length}개)</h3>
+          <p className="text-xs text-[var(--db-muted)] mt-0.5">src/services/</p>
+        </div>
+        <div className="divide-y divide-[var(--db-line)]">
+          {services.map((svc) => (
+            <div key={svc.name} className="px-5 py-2.5 flex items-center justify-between hover:bg-[var(--db-alpha-hover)] transition-colors">
+              <div className="flex items-center gap-3">
+                <code className="text-xs font-medium text-[var(--db-text)]">{svc.name}</code>
+                <span className="text-xs text-[var(--db-muted)]">{svc.desc}</span>
+              </div>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                svc.api === 'Supabase' ? 'bg-emerald-500/10 text-emerald-400' :
+                svc.api === 'Local' ? 'bg-slate-500/10 text-slate-400' :
+                'bg-blue-500/10 text-blue-400'
+              }`}>{svc.api}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 데이터 구조 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-sm font-semibold text-[var(--db-text)]">데이터 구조</h3>
+          <p className="text-xs text-[var(--db-muted)] mt-0.5">src/data/</p>
+        </div>
+        <div className="divide-y divide-[var(--db-line)]">
+          {dataStructures.map((ds) => (
+            <div key={ds.name} className="px-5 py-2.5 flex items-center justify-between hover:bg-[var(--db-alpha-hover)] transition-colors">
+              <div className="flex items-center gap-3">
+                <code className="text-xs font-medium text-[var(--db-brand)]">{ds.name}</code>
+                <span className="text-xs text-[var(--db-muted)]">{ds.desc}</span>
+              </div>
+              <code className="text-[10px] text-[var(--db-muted)]">{ds.path}</code>
             </div>
           ))}
         </div>

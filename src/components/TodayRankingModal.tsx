@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Trophy, TrendingUp, Users, ChevronRight, Flame, Star, BarChart3, MessageCircle, Send, ArrowLeft } from 'lucide-react';
 import { feedbackService } from '@/services/FeedbackService';
-import { VS_POLLS } from '@/data/content/polls/vs-polls';
+import { VS_POLLS } from '@/data/content/polls';
 import { getDeviceId } from '@/utils/device';
 import { formatRelativeTime } from '@/utils/format';
 

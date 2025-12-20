@@ -21,7 +21,7 @@ export * from './explore';
 
 // 통합 통계
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from './quizzes';
-import { VS_POLLS } from './polls/vs-polls';
+import { VS_POLLS } from './polls';
 import type { ContentCategory } from './types';
 
 export const CONTENT_STATS = {

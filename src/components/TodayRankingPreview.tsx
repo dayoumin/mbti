@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronRight, Flame, Users } from 'lucide-react';
 import { feedbackService } from '@/services/FeedbackService';
-import { VS_POLLS } from '@/data/content/polls/vs-polls';
+import { VS_POLLS } from '@/data/content/polls';
 
 interface TopPollItem {
   pollId: string;
