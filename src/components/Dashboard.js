@@ -258,7 +258,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     const [gameStats, setGameStats] = useState(null);
     const [currentLevel, setCurrentLevel] = useState(null);
     const [pointsToast, setPointsToast] = useState(null);
-    const [showStreakBanner, setShowStreakBanner] = useState(true);
+    const [showStreakBanner, setShowStreakBanner] = useState(false); // 오늘 첫 방문 시에만 true
 
     // 시간대/스트릭 기반 추천
     const [timeBasedAction, setTimeBasedAction] = useState(null);
@@ -274,11 +274,12 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
         setGameStats(stats);
         setCurrentLevel(gamificationService.getLevel());
 
-        // 일일 방문 포인트
+        // 일일 방문 포인트 (오늘 첫 방문인 경우에만 streak 배너 표시)
         const visitResult = gamificationService.recordVisit();
         if (visitResult.streakUpdated && visitResult.points > 0) {
             setPointsToast({ points: visitResult.points, message: '오늘도 방문!' });
             setGameStats(gamificationService.getStats());
+            setShowStreakBanner(true); // 오늘 첫 방문 시에만 배너 표시
         }
 
         // 시간대별 추천 초기화

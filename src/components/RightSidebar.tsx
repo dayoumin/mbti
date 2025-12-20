@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import {
   MessageSquare, MessageCircle, Heart, ChevronRight, ChevronDown,
-  Flame, Users, Trophy, Sparkles, PawPrint
+  Flame, Users, Trophy, Sparkles, PawPrint, TrendingUp
 } from 'lucide-react';
 import { getIconComponent } from '@/utils';
 import { feedbackService } from '@/services/FeedbackService';
 import { resultService } from '@/services/ResultService';
 import { VS_POLLS } from '@/data/content/polls';
-import { SUBJECT_CONFIG } from '@/data/config';
+import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
+import { POPULAR_TESTS } from '@/data/recommendationPolicy';
 import { CHEMI_DATA } from '@/data/index';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
 import { MOCK_COMMUNITY_PREVIEW, getPostCategoryLabel, getPostCategoryStyle } from '@/data/content/community';
@@ -30,6 +31,130 @@ interface TopPollItem {
   pollId: string;
   question: string;
   totalVotes: number;
+}
+
+// ============================================================================
+// 지금 뜨는 테스트 섹션 (PC용 - 모바일에서는 Dashboard에서 표시)
+// ============================================================================
+
+function TrendingTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) => void }) {
+  // 인기 테스트 + 추천 테스트 조합
+  const [recommendedTests, setRecommendedTests] = useState<SubjectKey[]>([]);
+
+  useEffect(() => {
+    const loadRecommended = async () => {
+      const results = await resultService.getMyResults();
+      const completedKeys = [...new Set(results.map(r => r.testType))] as SubjectKey[];
+
+      // 완료하지 않은 인기 테스트 우선
+      const notCompletedPopular = POPULAR_TESTS.filter(key => !completedKeys.includes(key));
+      // 완료하지 않은 다른 테스트
+      const notCompletedOther = MAIN_TEST_KEYS.filter(key =>
+        !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
+      );
+
+      // 인기 테스트 먼저, 그 다음 추천
+      setRecommendedTests([...notCompletedPopular, ...notCompletedOther].slice(0, 4));
+    };
+    loadRecommended();
+  }, []);
+
+  if (recommendedTests.length === 0) {
+    // 모든 테스트 완료한 경우 인기 테스트 표시
+    return (
+      <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+          <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-indigo-600" />
+          </div>
+          <h3 className="text-base font-bold text-slate-800">지금 뜨는 테스트</h3>
+        </div>
+        <div className="px-3 pb-3 space-y-2">
+          {POPULAR_TESTS.slice(0, 4).map((key, index) => {
+            const config = SUBJECT_CONFIG[key];
+            const data = CHEMI_DATA[key];
+            if (!config || !data) return null;
+            const IconComponent = getIconComponent(config.icon);
+
+            return (
+              <button
+                key={key}
+                onClick={() => onStartTest(key)}
+                className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
+              >
+                <span className="w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm">
+                  {index + 1}
+                </span>
+                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <IconComponent mood="happy" className="w-7 h-7" />
+                </div>
+                <div className="flex-1 text-left min-w-0">
+                  <p className="text-sm font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
+                    {data.title || config.label}
+                  </p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+              </button>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div>
+          <h3 className="text-base font-bold text-slate-800">추천 테스트</h3>
+          <p className="text-[10px] text-slate-400">아직 안 해본 테스트</p>
+        </div>
+      </div>
+      <div className="px-3 pb-3 space-y-2">
+        {recommendedTests.map((key, index) => {
+          const config = SUBJECT_CONFIG[key];
+          const data = CHEMI_DATA[key];
+          if (!config || !data) return null;
+          const IconComponent = getIconComponent(config.icon);
+          const isPopular = POPULAR_TESTS.includes(key);
+
+          return (
+            <button
+              key={key}
+              onClick={() => onStartTest(key)}
+              className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
+            >
+              {isPopular && (
+                <span className="w-5 h-5 bg-gradient-to-br from-rose-500 to-orange-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">
+                  🔥
+                </span>
+              )}
+              {!isPopular && (
+                <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {index + 1}
+                </span>
+              )}
+              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <IconComponent mood="happy" className="w-7 h-7" />
+              </div>
+              <div className="flex-1 text-left min-w-0">
+                <p className="text-sm font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
+                  {data.title || config.label}
+                </p>
+                <p className="text-[10px] text-slate-400 truncate">
+                  {data.resultLabels?.length || 0}가지 결과
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 // ============================================================================
@@ -332,7 +457,10 @@ export default function RightSidebar({
       role="complementary"
       aria-label="사이드 정보"
     >
-      {/* 커뮤니티 미리보기 - 히어로 배너와 동일한 높이감 */}
+      {/* 추천 테스트 - PC에서 Dashboard의 RecommendedSection 역할 */}
+      <TrendingTestsSection onStartTest={onStartTest} />
+
+      {/* 커뮤니티 미리보기 */}
       <CommunityPreview onOpenCommunity={onOpenCommunity} />
 
       {/* 오늘의 랭킹 */}
