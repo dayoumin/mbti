@@ -25,7 +25,7 @@ export default function Footer({ className = '', variant = 'default' }: FooterPr
   }
 
   return (
-    <footer className={`border-t border-slate-100 bg-slate-50/50 ${className}`}>
+    <footer className={`hidden md:block border-t border-slate-100 bg-slate-50/50 ${className}`}>
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* 면책 조항 */}
         <p className="text-xs text-slate-400 text-center mb-4">

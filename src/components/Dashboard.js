@@ -82,7 +82,7 @@ const TypeTab = ({ type, isActive, onClick, count }) => (
             }`}
     >
         <span>{TEST_TYPE_TABS[type].label}</span>
-        <span className={`text-[10px] ${isActive ? 'text-indigo-400' : 'text-slate-300'}`}>
+        <span className={`text-[11px] ${isActive ? 'text-indigo-400' : 'text-slate-300'}`}>
             {count}
         </span>
         {/* Underline indicator */}
@@ -148,12 +148,12 @@ const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusActi
                             {streak.currentStreak}일 연속!
                         </span>
                         {streak.currentStreak >= 7 && (
-                            <span className="text-[10px] bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
+                            <span className="text-[11px] bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
                                 🔥 불타는 중
                             </span>
                         )}
                     </div>
-                    <p className="text-[10px] text-amber-600">
+                    <p className="text-[11px] text-amber-600">
                         최장 {streak.longestStreak}일 | {level?.emoji} {level?.name} Lv.{level?.level}
                     </p>
                 </div>
@@ -205,7 +205,7 @@ const TimeBasedCard = ({ action, onAction }) => {
             </div>
             <div className="flex-1 text-left min-w-0">
                 <div className="flex items-center gap-1.5">
-                    <span className={`text-[10px] font-bold ${style.text}`}>{action.icon} {action.label}</span>
+                    <span className={`text-[11px] font-bold ${style.text}`}>{action.icon} {action.label}</span>
                 </div>
                 <p className="text-xs font-medium text-slate-600 truncate">{action.description}</p>
             </div>
@@ -395,7 +395,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                 />
             )}
 
-            <div className="relative max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto w-full pb-8 lg:pb-8 px-4 lg:px-6">
+            <div className="relative max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto w-full pb-24 lg:pb-8 px-4 lg:px-6">
                 {/* Header */}
                 <Header />
 
@@ -440,105 +440,104 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
 
                 {/* PC 전용: 단일 컬럼 테스트 카탈로그 (좌우 사이드바가 있으므로 내부 2컬럼 불필요) */}
                 <div className="hidden lg:block">
-                        {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
-                        <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 lg:mx-0 lg:px-0 lg:bg-white/60 lg:rounded-xl lg:border lg:border-white/80 pt-1 pb-2 lg:p-3 lg:min-h-0" style={{ minHeight: '76px' }}>
-                            {/* 1차 필터: 탭 스타일 (underline) */}
-                            <div className="flex items-center border-b border-slate-200">
-                                {Object.keys(TEST_TYPE_TABS).map((type) => (
-                                    <TypeTab
-                                        key={type}
-                                        type={type}
-                                        isActive={activeType === type}
-                                        onClick={() => {
-                                            setActiveType(type);
-                                            setActiveSubject(null);
-                                        }}
-                                        count={typeCounts[type]}
-                                    />
-                                ))}
-                            </div>
-
-                            {/* 2차 필터: 작은 칩 스타일 - PC에서는 자동 높이 */}
-                            <div className="mt-2 overflow-x-auto no-scrollbar h-8 lg:h-auto lg:overflow-visible">
-                                <div className="flex gap-1 lg:flex-wrap">
-                                    {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
-                                        const count = subjectCounts[sub] || 0;
-                                        if (count === 0) return null;
-                                        return (
-                                            <SubjectChip
-                                                key={sub}
-                                                subject={sub}
-                                                isActive={activeSubject === sub}
-                                                onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
-                                                count={count}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                    {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
+                    <div className="sticky top-0 z-20 bg-[#F0F2F5]/95 backdrop-blur-sm -mx-4 px-4 lg:mx-0 lg:px-0 lg:bg-white/60 lg:rounded-xl lg:border lg:border-white/80 pt-1 pb-2 lg:p-3 lg:min-h-0" style={{ minHeight: '76px' }}>
+                        {/* 1차 필터: 탭 스타일 (underline) */}
+                        <div className="flex items-center border-b border-slate-200">
+                            {Object.keys(TEST_TYPE_TABS).map((type) => (
+                                <TypeTab
+                                    key={type}
+                                    type={type}
+                                    isActive={activeType === type}
+                                    onClick={() => {
+                                        setActiveType(type);
+                                        setActiveSubject(null);
+                                    }}
+                                    count={typeCounts[type]}
+                                />
+                            ))}
                         </div>
 
-                        {/* All Tests - Single Grid */}
-                        <section className="animate-fade-in-up mt-3">
-
-                            {/* Grid: 모바일 4열, 태블릿 5열, PC 5-6열 - 최적화된 밀도 */}
-                            <div className="grid gap-2 grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 min-h-[280px] content-start">
-                                {filteredTests.map((item) => (
-                                    <TestCard
-                                        key={item.key}
-                                        item={item}
-                                        onStart={onStartTest}
-                                        badge={TEST_BADGES[item.key]}
-                                    />
-                                ))}
+                        {/* 2차 필터: 작은 칩 스타일 - PC에서는 자동 높이 */}
+                        <div className="mt-2 overflow-x-auto no-scrollbar h-8 lg:h-auto lg:overflow-visible">
+                            <div className="flex gap-1 lg:flex-wrap">
+                                {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
+                                    const count = subjectCounts[sub] || 0;
+                                    if (count === 0) return null;
+                                    return (
+                                        <SubjectChip
+                                            key={sub}
+                                            subject={sub}
+                                            isActive={activeSubject === sub}
+                                            onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
+                                            count={count}
+                                        />
+                                    );
+                                })}
                             </div>
+                        </div>
+                    </div>
 
-                            {/* Empty State */}
-                            {filteredTests.length === 0 && (
-                                <div className="text-center py-12 text-slate-400">
-                                    <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
+                    {/* All Tests - Single Grid */}
+                    <section className="animate-fade-in-up mt-3">
+                        {/* Grid: 모바일 4열, 태블릿 5열, PC 5-6열 - 최적화된 밀도 */}
+                        <div className="grid gap-2 grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 min-h-[280px] content-start">
+                            {filteredTests.map((item) => (
+                                <TestCard
+                                    key={item.key}
+                                    item={item}
+                                    onStart={onStartTest}
+                                    badge={TEST_BADGES[item.key]}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Empty State */}
+                        {filteredTests.length === 0 && (
+                            <div className="text-center py-12 text-slate-400">
+                                <p className="text-sm">이 카테고리에 테스트가 없습니다</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* 세부 테스트 섹션 (접힘 가능) */}
+                    {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
+                        <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                            <button
+                                onClick={() => setShowDetailTests(!showDetailTests)}
+                                className="flex items-center gap-2 mb-3 px-1 w-full text-left group"
+                            >
+                                <span className="text-sm font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
+                                    🐾 반려동물 세부 추천
+                                </span>
+                                <span className="text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                    {detailTests.length}
+                                </span>
+                                {showDetailTests ? (
+                                    <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
+                                ) : (
+                                    <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
+                                )}
+                            </button>
+
+                            {showDetailTests && (
+                                <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
+                                    <p className="text-xs text-amber-700 mb-3 px-1">
+                                        💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
+                                    </p>
+                                    <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                        {detailTests.map((item) => (
+                                            <TestCard
+                                                key={item.key}
+                                                item={item}
+                                                onStart={onStartTest}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </section>
-
-                        {/* 세부 테스트 섹션 (접힘 가능) */}
-                        {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
-                            <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                                <button
-                                    onClick={() => setShowDetailTests(!showDetailTests)}
-                                    className="flex items-center gap-2 mb-3 px-1 w-full text-left group"
-                                >
-                                    <span className="text-sm font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
-                                        🐾 반려동물 세부 추천
-                                    </span>
-                                    <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                        {detailTests.length}
-                                    </span>
-                                    {showDetailTests ? (
-                                        <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
-                                    ) : (
-                                        <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
-                                    )}
-                                </button>
-
-                                {showDetailTests && (
-                                    <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
-                                        <p className="text-xs text-amber-700 mb-3 px-1">
-                                            💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
-                                        </p>
-                                        <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                                            {detailTests.map((item) => (
-                                                <TestCard
-                                                    key={item.key}
-                                                    item={item}
-                                                    onStart={onStartTest}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </section>
-                        )}
+                    )}
                 </div>
 
                 {/* 푸터 - 개인정보처리방침, 이용약관, 면책조항 */}
