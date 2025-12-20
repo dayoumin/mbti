@@ -143,6 +143,7 @@ export interface TestType {
 export interface SubjectConfig {
   testType: string;
   icon: string;
+  emoji: string;
   label: string;
   intro: string[];
   resultFormat: 'simple' | 'tabs' | 'matching';

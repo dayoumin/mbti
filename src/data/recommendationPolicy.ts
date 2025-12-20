@@ -16,6 +16,12 @@ export const RECOMMENDATION_ORDER: SubjectKey[] = [
   'conflictStyle',
   'rabbit',
   'hamster',
+  'tea',
+  'fruit',
+  'alcohol',
+  'bread',
+  'perfume',
+  'aroma',
 ];
 
 export const COLD_START_POPULARITY_LIMIT = 2;
