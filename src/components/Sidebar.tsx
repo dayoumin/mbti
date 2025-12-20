@@ -8,7 +8,7 @@ import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG } from '../data/config';
 import type { SubjectKey } from '../data/types';
-import { getCategoryLabel, getCategoryStyle } from '../data/content/community';
+import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
 
 // 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
 export type SidebarTab = NavTab;
@@ -194,8 +194,8 @@ export default function Sidebar({
                   className="w-full p-2 bg-white/60 rounded-lg hover:bg-white transition-colors text-left group"
                 >
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${getCategoryStyle(post.category)}`}>
-                      {getCategoryLabel(post.category)}
+                    <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${getPostCategoryStyle(post.category)}`}>
+                      {getPostCategoryLabel(post.category)}
                     </span>
                   </div>
                   <p className="text-[10px] font-medium text-slate-700 truncate group-hover:text-pink-600 transition-colors">

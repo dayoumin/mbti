@@ -23,7 +23,7 @@ export interface CommunityPost {
 
 export type PostCategory = CommunityPost['category'];
 
-export const CATEGORY_LABELS: Record<PostCategory | 'all', string> = {
+export const POST_CATEGORY_LABELS: Record<PostCategory | 'all', string> = {
   all: '전체',
   tip: '꿀팁',
   qna: '질문/답변',
@@ -39,13 +39,13 @@ export const CATEGORY_STYLES: Record<PostCategory, { bg: string; text: string }>
   general: { bg: 'bg-slate-50', text: 'text-slate-500' }
 };
 
-/** 카테고리 라벨 조회 헬퍼 */
-export function getCategoryLabel(category: PostCategory): string {
-  return CATEGORY_LABELS[category];
+/** 게시판 카테고리 라벨 조회 */
+export function getPostCategoryLabel(category: PostCategory): string {
+  return POST_CATEGORY_LABELS[category];
 }
 
-/** 카테고리 스타일 클래스 조회 헬퍼 */
-export function getCategoryStyle(category: PostCategory): string {
+/** 게시판 카테고리 스타일 클래스 조회 */
+export function getPostCategoryStyle(category: PostCategory): string {
   const style = CATEGORY_STYLES[category];
   return `${style.bg} ${style.text}`;
 }

@@ -126,6 +126,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
       { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
+      { key: 'community', label: '커뮤니티 전략', icon: <MessageCircle className="w-4 h-4" /> },
       { key: 'profile', label: '프로필 시스템', icon: <User className="w-4 h-4" /> },
       { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
       { key: 'viral', label: '바이럴 콘텐츠', icon: <Sparkles className="w-4 h-4" /> },
@@ -342,6 +343,7 @@ export default function DashboardPage() {
           {/* 기획 */}
           {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
           {activeCategory === 'planning' && activeSubTab === 'features' && <ProductFeatures />}
+          {activeCategory === 'planning' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'profile' && <ProfileSystem />}
           {activeCategory === 'planning' && activeSubTab === 'ranking' && <PopularRanking />}
           {activeCategory === 'planning' && activeSubTab === 'viral' && <ViralContent />}

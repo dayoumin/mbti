@@ -8,8 +8,8 @@ import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/type
 import { CATEGORY_LABELS } from '@/data/content/categories';
 import { contentParticipationService } from '@/services/ContentParticipationService';
 import { getParticipationBridge } from '@/services/ParticipationBridge';
-import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/community';
-import type { Tip, Question, Debate } from '@/data/community';
+import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/content/explore';
+import type { Tip, Question, Debate } from '@/data/content/explore';
 import { nextActionService, type NextAction } from '@/services/NextActionService';
 import { NextActionInline } from '@/components/NextActionCard';
 import CommentSystem from '@/components/CommentSystem';
@@ -17,7 +17,8 @@ import PopularPolls from '@/components/content/PopularPolls';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
 import TestCard from '@/components/TestCard';
-import { Search, Sparkles, Brain, LayoutGrid } from 'lucide-react';
+import { Search, Sparkles, Brain, LayoutGrid, X } from 'lucide-react';
+import { CHEMI_DATA } from '@/data';
 
 const TEST_BADGES: Record<string, string> = {
   human: 'HOT',
@@ -40,15 +41,21 @@ const TEST_SUBJECT_MAP: Record<string, string> = {
   plant: 'life',
   petMatch: 'life',
   idealType: 'love',
+  dogBreed: 'pet',
+  catBreed: 'pet',
+  smallPet: 'pet',
+  fishType: 'pet',
+  birdType: 'pet',
+  reptileType: 'pet'
 };
 
-const TEST_SUBJECT_LABELS: Record<string, { label: string; emoji: string }> = {
-  me: { label: '나', emoji: '👤' },
-  pet: { label: '반려동물', emoji: '🐾' },
-  drink: { label: '음료', emoji: '🥤' },
-  food: { label: '음식', emoji: '🍽️' },
-  life: { label: '라이프', emoji: '🌿' },
-  love: { label: '연애', emoji: '💕' }
+const TEST_SUBJECT_LABELS: Record<string, { name: string; emoji: string }> = {
+  me: { name: '나', emoji: '👤' },
+  pet: { name: '반려동물', emoji: '🐾' },
+  drink: { name: '음료', emoji: '🥤' },
+  food: { name: '음식', emoji: '🍽️' },
+  life: { name: '라이프', emoji: '🌿' },
+  love: { name: '연애', emoji: '💕' }
 };
 
 // ============================================================================
@@ -107,7 +114,7 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
       <div className="flex items-center gap-2 mb-3">
         <HelpCircle className="w-4 h-4 text-blue-500" />
         <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-          {categoryInfo.emoji} {categoryInfo.label}
+          {categoryInfo.emoji} {categoryInfo.name}
         </span>
         {isAnswered && (
           <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full ml-auto flex items-center gap-1">
@@ -238,7 +245,7 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
       <div className="flex items-center gap-2 mb-3">
         <Vote className="w-4 h-4 text-purple-500" />
         <span className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">
-          {categoryInfo.emoji} {categoryInfo.label}
+          {categoryInfo.emoji} {categoryInfo.name}
         </span>
         {(isVoted || voted) && (
           <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full ml-auto flex items-center gap-1">
@@ -667,18 +674,34 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
     return () => window.removeEventListener('chemi_content_participation_updated', handleUpdated);
   }, []);
 
-  // 1. 테스트 필터링
+  // 1. 테스트 데이터 통합
   const allTests = useMemo(() => {
-    return [...MAIN_TEST_KEYS, ...DETAIL_TEST_KEYS].map(key => ({
-      key,
-      ...SUBJECT_CONFIG[key as keyof typeof SUBJECT_CONFIG]
-    })).filter(t => t.label); // label이 있는 것만
+    return [...MAIN_TEST_KEYS, ...DETAIL_TEST_KEYS].map(key => {
+      const config = SUBJECT_CONFIG[key as keyof typeof SUBJECT_CONFIG];
+      const data = CHEMI_DATA[key as keyof typeof CHEMI_DATA];
+
+      return {
+        key,
+        ...config,
+        title: data?.title || config.label,
+        subtitle: data?.subtitle || config.intro?.[0] || '',
+      };
+    }).filter(t => t.label);
   }, []);
 
   const filteredTests = useMemo(() => {
+    const term = searchQuery.trim().toLowerCase();
+
     return allTests.filter(t => {
+      // 카테고리 필터
       const matchesCategory = selectedCategory === 'all' || TEST_SUBJECT_MAP[t.key] === selectedCategory;
-      const matchesSearch = t.label.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // 검색 필터 (레이블, 제목, 부제목 모두 검색)
+      const matchesSearch = !term ||
+        t.label.toLowerCase().includes(term) ||
+        t.title?.toLowerCase().includes(term) ||
+        t.subtitle?.toLowerCase().includes(term);
+
       return matchesCategory && matchesSearch;
     });
   }, [allTests, selectedCategory, searchQuery]);
@@ -829,19 +852,19 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
   const headerInfo = getHeaderInfo();
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-slate-100 to-slate-200 z-50 overflow-hidden">
+    <div className="fixed inset-0 bg-white z-[60] overflow-hidden flex flex-col">
       {/* 헤더 */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10">
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all"
+              className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all group"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
+              <ChevronLeft className="w-6 h-6 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
             </button>
-            <div>
-              <h1 className="font-bold text-slate-800">{headerInfo.title}</h1>
+            <div className="flex-1">
+              <h1 className="font-black text-slate-800 tracking-tight">{headerInfo.title}</h1>
               <p className="text-[10px] text-slate-500">{headerInfo.subtitle}</p>
             </div>
           </div>
@@ -899,8 +922,16 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
                 placeholder={`${activeTab === 'test' ? '테스트' : activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5 text-gray-400" />
+                </button>
+              )}
             </div>
           )}
 
@@ -930,7 +961,7 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                   >
-                    {labelInfo?.emoji} {labelInfo?.label}
+                    {labelInfo?.emoji} {labelInfo?.name}
                   </button>
                 );
               })}
@@ -940,7 +971,7 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
       </div>
 
       {/* 콘텐츠 */}
-      <div className="overflow-y-auto h-[calc(100vh-210px)] pb-32">
+      <div className="flex-1 overflow-y-auto pb-32">
         <div className="max-w-lg mx-auto px-4 py-4">
           {activeTab === 'test' && (
             filteredTests.length > 0 ? (
@@ -958,14 +989,15 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-gray-300" />
+              <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Search className="w-8 h-8 text-slate-200" />
                 </div>
-                <p className="text-slate-400 text-sm">검색 결과가 없습니다</p>
+                <h3 className="font-bold text-slate-700">검색 결과가 없습니다</h3>
+                <p className="text-slate-400 text-xs mt-1">다른 검색어나 카테고리를 선택해보세요</p>
                 <button
                   onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
-                  className="mt-4 text-xs text-indigo-500 font-bold"
+                  className="mt-6 px-6 py-2.5 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-lg shadow-slate-200 active:scale-95 transition-all"
                 >
                   필터 초기화
                 </button>

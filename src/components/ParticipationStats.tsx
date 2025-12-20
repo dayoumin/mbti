@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getParticipationBridge, type ParticipationSummary } from '@/services/ParticipationBridge';
-import { getCategoryLabel } from '@/data/content/categories';
+import { getContentCategoryInfo } from '@/data/content/categories';
 
 interface ParticipationStatsProps {
   className?: string;
@@ -123,7 +123,7 @@ function StatBadge({
 }
 
 function CategoryTag({ category, count }: { category: string; count: number }) {
-  const { emoji, label } = getCategoryLabel(category);
+  const { emoji, label } = getContentCategoryInfo(category);
 
   return (
     <span className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-xs px-2 py-1 rounded-full">

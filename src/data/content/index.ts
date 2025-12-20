@@ -13,8 +13,11 @@ export { getRandomQuiz } from './quizzes';
 export * from './polls';
 export { getRandomPoll } from './polls';
 
-// Community
+// Community (게시판용)
 export * from './community';
+
+// Explore (팁, Q&A, 투표, 퀴즈, 토론)
+export * from './explore';
 
 // 통합 통계
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from './quizzes';

@@ -5,20 +5,34 @@
 
 import type { ContentCategory } from './types';
 
-export const CATEGORY_LABELS: Record<ContentCategory, { label: string; emoji: string }> = {
-  cat: { label: '고양이', emoji: '🐱' },
-  dog: { label: '강아지', emoji: '🐕' },
-  rabbit: { label: '토끼', emoji: '🐰' },
-  hamster: { label: '햄스터', emoji: '🐹' },
-  general: { label: '일반', emoji: '📚' },
-  love: { label: '연애', emoji: '💕' },
-  lifestyle: { label: '라이프스타일', emoji: '☕' },
-  personality: { label: '성격', emoji: '🧠' },
-  plant: { label: '식물', emoji: '🌱' },
+// 카테고리 라벨 (name으로 통일)
+export const CATEGORY_LABELS: Record<ContentCategory, { name: string; emoji: string }> = {
+  // 반려동물
+  cat: { name: '고양이', emoji: '🐱' },
+  dog: { name: '강아지', emoji: '🐕' },
+  rabbit: { name: '토끼', emoji: '🐰' },
+  hamster: { name: '햄스터', emoji: '🐹' },
+  // 특수동물
+  fish: { name: '관상어', emoji: '🐟' },
+  bird: { name: '새', emoji: '🐦' },
+  reptile: { name: '파충류', emoji: '🦎' },
+  smallPet: { name: '소동물', emoji: '🐾' },
+  // 라이프스타일
+  plant: { name: '식물', emoji: '🌿' },
+  coffee: { name: '커피', emoji: '☕' },
+  lifestyle: { name: '라이프스타일', emoji: '🏠' },
+  // 심리/관계
+  personality: { name: '성격', emoji: '🧠' },
+  love: { name: '연애', emoji: '💕' },
+  relationship: { name: '관계', emoji: '💑' },
+  // 일반
+  general: { name: '일반', emoji: '📚' },
 };
 
 export const CATEGORY_KEYS = Object.keys(CATEGORY_LABELS) as ContentCategory[];
 
-export function getCategoryLabel(category: string): { label: string; emoji: string } {
-  return CATEGORY_LABELS[category as ContentCategory] || { label: category, emoji: '📊' };
+/** 콘텐츠 카테고리 정보 조회 (이름, 이모지) */
+export function getContentCategoryInfo(category: string): { name: string; label: string; emoji: string } {
+  const info = CATEGORY_LABELS[category as ContentCategory] || { name: category, emoji: '📊' };
+  return { ...info, label: info.name };
 }

@@ -1,10 +1,21 @@
 // ============================================================================
-// 퀴즈/투표 콘텐츠 타입 정의
+// 콘텐츠 카테고리 통합 타입
 // ============================================================================
 
 export type ContentCategory =
+  // 반려동물
   | 'cat' | 'dog' | 'rabbit' | 'hamster'
-  | 'plant' | 'love' | 'personality' | 'lifestyle' | 'general';
+  // 특수동물
+  | 'fish' | 'bird' | 'reptile' | 'smallPet'
+  // 라이프스타일
+  | 'plant' | 'coffee' | 'lifestyle'
+  // 심리/관계
+  | 'personality' | 'love' | 'relationship'
+  // 일반
+  | 'general';
+
+// CommunityCategory는 ContentCategory의 alias (하위 호환)
+export type CommunityCategory = ContentCategory;
 
 // ============================================================================
 // 지식 퀴즈

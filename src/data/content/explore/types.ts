@@ -2,13 +2,10 @@
 // 커뮤니티 콘텐츠 타입 정의
 // ============================================================================
 
-// 콘텐츠 카테고리 (테스트 종류와 연동)
-export type CommunityCategory =
-  | 'cat' | 'dog' | 'rabbit' | 'hamster'  // 반려동물
-  | 'fish' | 'bird' | 'reptile' | 'smallPet'  // 특수동물
-  | 'plant' | 'coffee'  // 라이프스타일
-  | 'personality' | 'relationship'  // 심리
-  | 'general';  // 일반
+// ContentCategory를 재사용 (타입 통합)
+// CommunityCategory는 @/data/content/types에서 export됨
+import type { CommunityCategory } from '../types';
+export type { CommunityCategory };
 
 // ============================================================================
 // 팁 (Tip) - 전문가/사용자 꿀팁
