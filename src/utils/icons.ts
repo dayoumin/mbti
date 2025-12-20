@@ -4,10 +4,11 @@
  * 아이콘 컴포넌트 동적 로드를 위한 헬퍼 함수
  */
 
+import type { ComponentType } from 'react';
 import * as Icons from '@/components/Icons';
 
 // 아이콘 컴포넌트 타입 정의
-export type IconComponent = React.ComponentType<{ mood?: string; className?: string }>;
+export type IconComponent = ComponentType<{ mood?: string; className?: string }>;
 
 // 기본 아이콘 (폴백)
 const DefaultIcon = Icons.HumanIcon as IconComponent;

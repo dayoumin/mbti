@@ -12,7 +12,7 @@ import { VS_POLLS } from '@/data/content/polls/vs-polls';
 import { SUBJECT_CONFIG } from '@/data/config';
 import { CHEMI_DATA } from '@/data/index';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
-import { MOCK_COMMUNITY_PREVIEW } from '@/data/content/community';
+import { MOCK_COMMUNITY_PREVIEW, getCategoryLabel } from '@/data/content/community';
 import type { SubjectKey, SubjectConfig, SubjectData } from '@/data/types';
 
 // ============================================================================
@@ -67,7 +67,7 @@ function CommunityPreview({ onOpenCommunity }: { onOpenCommunity: () => void }) 
                 post.category === 'qna' ? 'bg-amber-50 text-amber-600' :
                 'bg-pink-50 text-pink-600'
               }`}>
-                {post.categoryLabel}
+                {getCategoryLabel(post.category)}
               </span>
               <span className="text-[11px] text-slate-400">{post.author}</span>
             </div>

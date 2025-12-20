@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MessageSquare, MessageCircle, Heart, ChevronRight, Hash } from 'lucide-react';
-import { MOCK_COMMUNITY_PREVIEW } from '@/data/content/community';
+import { MOCK_COMMUNITY_PREVIEW, getCategoryLabel } from '@/data/content/community';
 
 export default function TalkPreview({ onClickAll, className = '' }: { onClickAll?: () => void, className?: string }) {
     return (
@@ -30,7 +30,7 @@ export default function TalkPreview({ onClickAll, className = '' }: { onClickAll
                     >
                         <div className="flex items-center gap-1.5 mb-1.5">
                             <span className="text-[9px] font-bold px-1.5 py-0.5 bg-white text-slate-500 rounded-full border border-slate-100">
-                                #{post.categoryLabel}
+                                #{getCategoryLabel(post.category)}
                             </span>
                             <span className="text-[10px] text-slate-400 font-medium">{post.author}</span>
                         </div>
