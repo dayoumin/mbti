@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ProfileService - 테스트 결과를 프로필 데이터로 변환
  *
  * 테스트 결과를 수집하여 "나의 프로필"을 구성
@@ -10,7 +10,9 @@
 
 import { resultService } from './ResultService';
 import { CHEMI_DATA } from '@/data';
+import type { SubjectKey } from '@/data/types';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
+import { RECOMMENDATION_ORDER } from '@/data/recommendationPolicy';
 
 // ========== 타입 정의 ==========
 
@@ -208,18 +210,18 @@ const COMBO_DEFINITIONS: Omit<HiddenCombo, 'unlocked' | 'completedTests'>[] = [
 
 // ========== 테스트 추천 우선순위 ==========
 
-const RECOMMENDATION_PRIORITY: { key: string; label: string; emoji: string; reason: string; reward: string; category: string }[] = [
-  { key: 'human', label: '사람', emoji: '🧠', reason: '나를 알아야 시작이죠!', reward: '자아 탐험가 뱃지 획득', category: 'me' },
-  { key: 'coffee', label: '커피', emoji: '☕', reason: '가볍게 시작해보세요', reward: '라이프스타일 뱃지 진행', category: 'lifestyle' },
-  { key: 'cat', label: '고양이', emoji: '🐱', reason: '냥이와의 케미는?', reward: '펫 마스터 뱃지 진행', category: 'pet' },
-  { key: 'dog', label: '강아지', emoji: '🐕', reason: '멍멍이와의 케미는?', reward: '펫 마스터 뱃지 진행', category: 'pet' },
-  { key: 'idealType', label: '이상형', emoji: '💘', reason: '내 이상형을 찾아보세요', reward: '연애박사 뱃지 진행', category: 'love' },
-  { key: 'plant', label: '식물', emoji: '🌱', reason: '반려식물 찾기', reward: '라이프스타일 뱃지 완성!', category: 'lifestyle' },
-  { key: 'petMatch', label: '반려동물', emoji: '🐾', reason: '어떤 동물이 맞을까?', reward: '동물 왕국 조합 진행', category: 'pet' },
-  { key: 'conflictStyle', label: '갈등 대처', emoji: '🤝', reason: '관계에서 중요해요', reward: '연애박사 뱃지 완성!', category: 'love' },
-  { key: 'rabbit', label: '토끼', emoji: '🐰', reason: '토끼와의 케미는?', reward: '펫 마스터 뱃지 진행', category: 'pet' },
-  { key: 'hamster', label: '햄스터', emoji: '🐹', reason: '햄찌와의 케미는?', reward: '펫 마스터 뱃지 완성!', category: 'pet' },
-];
+const RECOMMENDATION_DETAILS: Partial<Record<SubjectKey, { label: string; emoji: string; reason: string; reward: string; category: string }>> = {
+  human: { label: '사람', emoji: '??', reason: '나를 알아야 시작이죠!', reward: '자아 탐험가 뱃지 획득', category: 'me' },
+  coffee: { label: '커피', emoji: '?', reason: '가볍게 시작해보세요', reward: '라이프스타일 뱃지 진행', category: 'lifestyle' },
+  cat: { label: '고양이', emoji: '??', reason: '냥이와의 케미는?', reward: '펫 마스터 뱃지 진행', category: 'pet' },
+  dog: { label: '강아지', emoji: '??', reason: '멍멍이와의 케미는?', reward: '펫 마스터 뱃지 진행', category: 'pet' },
+  idealType: { label: '이상형', emoji: '??', reason: '내 이상형을 찾아보세요', reward: '연애박사 뱃지 진행', category: 'love' },
+  plant: { label: '식물', emoji: '??', reason: '반려식물 찾기', reward: '라이프스타일 뱃지 완성!', category: 'lifestyle' },
+  petMatch: { label: '반려동물', emoji: '??', reason: '어떤 동물이 맞을까?', reward: '동물 왕국 조합 진행', category: 'pet' },
+  conflictStyle: { label: '갈등 대처', emoji: '??', reason: '관계에서 중요해요', reward: '연애박사 뱃지 완성!', category: 'love' },
+  rabbit: { label: '토끼', emoji: '??', reason: '토끼와의 케미는?', reward: '펫 마스터 뱃지 진행', category: 'pet' },
+  hamster: { label: '햄스터', emoji: '??', reason: '햄찌와의 케미는?', reward: '펫 마스터 뱃지 완성!', category: 'pet' },
+};
 
 // ========== 유틸리티 함수 ==========
 
@@ -373,16 +375,17 @@ class ProfileServiceClass {
 
   // 다음 추천 테스트 계산
   private getNextRecommendation(completedTests: Set<string>): NextRecommendation | null {
-    for (const rec of RECOMMENDATION_PRIORITY) {
-      if (!completedTests.has(rec.key)) {
-        return {
-          testKey: rec.key,
-          testLabel: rec.label,
-          testEmoji: rec.emoji,
-          reason: rec.reason,
-          reward: rec.reward,
-        };
-      }
+    for (const key of RECOMMENDATION_ORDER) {
+      if (completedTests.has(key)) continue;
+      const rec = RECOMMENDATION_DETAILS[key];
+      if (!rec) continue;
+      return {
+        testKey: key,
+        testLabel: rec.label,
+        testEmoji: rec.emoji,
+        reason: rec.reason,
+        reward: rec.reward,
+      };
     }
     return null;
   }
@@ -476,3 +479,4 @@ class ProfileServiceClass {
 export const profileService = new ProfileServiceClass();
 
 export default profileService;
+

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Flame, Sparkles, Clock, ChevronRight, Heart } from 'lucide-react';
 import * as Icons from './Icons';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
+import { POPULAR_TESTS } from '../data/recommendationPolicy';
 import { CHEMI_DATA } from '../data/index';
 import type { SubjectKey } from '../data/types';
 import { resultService } from '../services/ResultService';
@@ -21,7 +22,6 @@ interface ContentSectionsProps {
 // 인기 테스트 데이터 (나중에 API에서 가져올 수 있음)
 // ============================================================================
 
-const TRENDING_TESTS: SubjectKey[] = ['human', 'dog', 'cat', 'coffee', 'idealType'];
 const NEW_TESTS: SubjectKey[] = ['fruit', 'tea', 'bread'];
 
 // ============================================================================
@@ -46,36 +46,37 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
   return (
     <button
       onClick={() => onStart(testKey)}
-      className="flex-shrink-0 w-28 lg:w-auto bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all hover:-translate-y-0.5 relative group"
+      className="flex-shrink-0 w-28 lg:w-full bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all hover:-translate-y-0.5 relative group flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3"
     >
       {/* 순위 배지 */}
       {rank && (
-        <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm">
+        <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm z-10">
           {rank}
         </span>
       )}
 
       {/* HOT/NEW 배지 */}
       {badge && !rank && (
-        <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[8px] font-bold rounded-full shadow-sm ${
-          badge === 'HOT'
-            ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white'
-            : 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white'
-        }`}>
+        <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[8px] font-bold rounded-full shadow-sm z-10 ${badge === 'HOT'
+          ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white'
+          : 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white'
+          }`}>
           {badge}
         </span>
       )}
 
-      <div className="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-        <IconComponent mood="happy" className="w-9 h-9" />
+      <div className="w-12 h-12 lg:w-10 lg:h-10 mx-auto lg:mx-0 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+        <IconComponent mood="happy" className="w-9 h-9 lg:w-7 lg:h-7" />
       </div>
 
-      <p className="text-xs font-bold text-slate-700 text-center truncate">
-        {config.label}
-      </p>
-      <p className="text-[10px] text-slate-400 text-center mt-0.5">
-        {data.resultLabels?.length || 0}가지 결과
-      </p>
+      <div className="flex-1 min-w-0 text-center lg:text-left">
+        <p className="text-xs font-bold text-slate-700 truncate">
+          {data.title || config.label}
+        </p>
+        <p className="text-[10px] text-slate-400 mt-0.5 truncate">
+          {data.subtitle || `${data.resultLabels?.length || 0}가지 결과`}
+        </p>
+      </div>
     </button>
   );
 }
@@ -126,10 +127,14 @@ interface HorizontalScrollProps {
 function HorizontalScroll({ children }: HorizontalScrollProps) {
   return (
     // 모바일: 가로 스크롤 / PC: 세로 그리드 (사이드바에서 사용)
-    <div className="overflow-x-auto no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-visible">
-      <div className="flex gap-2 pb-2 lg:grid lg:grid-cols-2 lg:gap-2 lg:pb-0">
-        {children}
+    <div className="relative group/scroll">
+      <div className="overflow-x-auto no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-visible">
+        <div className="flex gap-2 pb-2 pr-8 lg:pr-0 lg:grid lg:grid-cols-2 lg:gap-2 lg:pb-0">
+          {children}
+        </div>
       </div>
+      {/* 가로 스크롤 힌트 - PC가 아닐 때만 노출되는 그라데이션 */}
+      <div className="absolute top-0 right-0 bottom-2 w-12 bg-gradient-to-l from-[#F0F2F5] to-transparent pointer-events-none lg:hidden" />
     </div>
   );
 }
@@ -151,7 +156,7 @@ export function TrendingSection({ onStartTest }: TrendingSectionProps) {
         subtitle="실시간 인기"
       />
       <HorizontalScroll>
-        {TRENDING_TESTS.map((key, index) => (
+        {POPULAR_TESTS.map((key, index) => (
           <SmallTestCard
             key={key}
             testKey={key}
@@ -254,12 +259,17 @@ export function RecommendedSection({ onStartTest }: RecommendedSectionProps) {
     const results = resultService.getMyResults();
     const completedKeys = Object.keys(results) as SubjectKey[];
 
-    // 완료하지 않은 테스트 중 추천
-    const notCompleted = MAIN_TEST_KEYS.filter(key => !completedKeys.includes(key));
+    // 완료하지 않은 테스트 중 추천 (인기 테스트 제외하여 중복 방지)
+    const notCompleted = MAIN_TEST_KEYS.filter(key =>
+      !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
+    );
 
-    // 카테고리 기반 추천 (완료한 테스트와 같은 카테고리 우선)
-    // 간단히 처음 5개만 추천
-    setRecommended(notCompleted.slice(0, 5));
+    // 만약 추천할 게 너무 적으면 인기 테스트도 포함 (단, 완료한 건 제외)
+    const finalRecommended = notCompleted.length >= 3
+      ? notCompleted
+      : [...notCompleted, ...POPULAR_TESTS.filter(key => !completedKeys.includes(key))];
+
+    setRecommended(finalRecommended.slice(0, 5));
   }, []);
 
   if (recommended.length === 0) return null;

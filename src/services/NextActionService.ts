@@ -4,6 +4,12 @@
 // 목적: 콘텐츠 완료 후 다음 액션을 체계적으로 추천
 
 import { SubjectKey } from '@/data/types';
+import {
+  filterMainTests,
+  pickColdStartTest,
+  pickFirstAvailable,
+  RECOMMENDATION_ORDER,
+} from '@/data/recommendationPolicy';
 
 // ============================================================================
 // Types
@@ -161,12 +167,6 @@ const TEST_META: Record<string, { label: string; icon: string; category: string 
   perfume: { label: '향수 성향', icon: '🌸', category: 'lifestyle' },
   aroma: { label: '아로마 성향', icon: '🕯️', category: 'lifestyle' },
 };
-
-// 추천 우선순위 (미완료 테스트 추천 시 사용)
-const RECOMMENDATION_PRIORITY: SubjectKey[] = [
-  'human', 'petMatch', 'idealType', 'coffee', 'plant',
-  'cat', 'dog', 'conflictStyle', 'rabbit', 'hamster',
-];
 
 // ============================================================================
 // NextActionService
@@ -553,16 +553,25 @@ class NextActionService {
     // 현재 테스트의 카테고리
     const currentCategory = currentTest ? TEST_META[currentTest]?.category : undefined;
 
-    // 같은 카테고리의 미완료 테스트 우선
-    let recommended: string | undefined;
+    const completedMainTests = filterMainTests(completedTests);
+    const incompleteMainTests = filterMainTests(incompleteTests);
+    const candidateTests = incompleteMainTests.length > 0
+      ? incompleteMainTests
+      : (incompleteTests as SubjectKey[]);
 
-    if (currentCategory) {
-      recommended = incompleteTests.find(t => TEST_META[t]?.category === currentCategory);
+    // 같은 카테고리의 미완료 테스트 우선
+    let recommended: string | undefined = pickColdStartTest(
+      incompleteMainTests,
+      completedMainTests.length
+    );
+
+    if (!recommended && currentCategory) {
+      recommended = candidateTests.find(t => TEST_META[t]?.category === currentCategory);
     }
 
     // 없으면 우선순위 순
     if (!recommended) {
-      recommended = RECOMMENDATION_PRIORITY.find(t => incompleteTests.includes(t));
+      recommended = pickFirstAvailable(RECOMMENDATION_ORDER, incompleteMainTests);
     }
 
     // 그래도 없으면 첫 번째

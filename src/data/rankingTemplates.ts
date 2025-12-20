@@ -3,6 +3,24 @@
 
 import { ResultLabel, ResultMeta, SubjectData } from './types';
 
+const DEFAULT_META: ResultMeta = {
+  heatTolerance: 3,
+  coldTolerance: 3,
+  humidityTolerance: 3,
+  beginnerFriendly: 3,
+  careLevel: 3,
+  monthlyCoast: 'medium',
+  spaceNeeded: 'medium',
+  noiseLevel: 'medium',
+};
+
+function applyMetaDefaults(meta?: ResultMeta): ResultMeta {
+  return {
+    ...DEFAULT_META,
+    ...(meta || {}),
+  };
+}
+
 // 랭킹 템플릿 타입
 export interface RankingTemplate {
   id: string;
@@ -186,7 +204,11 @@ export function generateRanking(
   template: RankingTemplate,
   results: ResultLabel[]
 ): ResultLabel[] {
-  let filtered = results.filter(r => r.meta);  // 메타데이터 있는 것만
+  const normalizedResults = results.map(result => ({
+    ...result,
+    meta: applyMetaDefaults(result.meta),
+  }));
+  let filtered = normalizedResults;
 
   // 필터 적용
   if (template.filter) {

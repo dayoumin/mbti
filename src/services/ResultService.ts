@@ -7,6 +7,12 @@
 
 import { ResultLabel } from '@/data/types';
 import { CHEMI_DATA } from '@/data';
+import {
+  filterMainTests,
+  pickColdStartTest,
+  pickFirstAvailable,
+  RECOMMENDATION_ORDER,
+} from '@/data/recommendationPolicy';
 import { getDeviceId, USER_KEY } from '@/utils/device';
 
 // ========== 타입 정의 ==========
@@ -353,7 +359,9 @@ class ResultServiceClass {
   }
 
   async getRecommendedTest(): Promise<RecommendedTest | null> {
-    const incomplete = await this.getIncompleteTests();
+    const completed = await this.getCompletedTests();
+    const allTests = Object.keys(CHEMI_DATA);
+    const incomplete = allTests.filter((test) => !completed.includes(test));
 
     if (incomplete.length === 0) {
       const results = await this.getMyResults();
@@ -377,8 +385,12 @@ class ResultServiceClass {
       };
     }
 
-    const priority = ['human', 'cat', 'dog', 'idealType', 'petMatch', 'coffee', 'rabbit', 'hamster', 'plant'];
-    const recommended = priority.find((test) => incomplete.includes(test)) || incomplete[0];
+    const completedMain = filterMainTests(completed);
+    const incompleteMain = filterMainTests(incomplete);
+
+    const coldStart = pickColdStartTest(incompleteMain, completedMain.length);
+    const ordered = pickFirstAvailable(RECOMMENDATION_ORDER, incompleteMain);
+    const recommended = coldStart || ordered || incomplete[0];
 
     return {
       testType: recommended,
