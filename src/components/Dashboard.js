@@ -4,7 +4,7 @@ import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_DATA } from '../data/index';
 import { gamificationService } from '../services/GamificationService';
 import { nextActionService } from '../services/NextActionService';
-import { ChevronRight, ChevronDown, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
+import { ChevronRight, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import Footer from './Footer';
 import HeroBanner from './HeroBanner';
@@ -52,6 +52,8 @@ const TEST_SUBJECT_MAP = {
     // 라이프
     plant: 'life',
     petMatch: 'life',
+    perfume: 'life',
+    aroma: 'life',
     // 연애
     idealType: 'love',
     // 세부 테스트 (반려동물)
@@ -252,7 +254,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     // 2단계 필터 상태
     const [activeType, setActiveType] = useState('all');        // 1차: 심리/매칭
     const [activeSubject, setActiveSubject] = useState(null);   // 2차: 주제별 (null = 전체)
-    const [showDetailTests, setShowDetailTests] = useState(false);
 
     // 게이미피케이션 상태
     const [gameStats, setGameStats] = useState(null);
@@ -500,42 +501,32 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                         )}
                     </section>
 
-                    {/* 세부 테스트 섹션 (접힘 가능) */}
+                    {/* 세부 테스트 섹션 - 항상 표시 */}
                     {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
                         <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                            <button
-                                onClick={() => setShowDetailTests(!showDetailTests)}
-                                className="flex items-center gap-2 mb-3 px-1 w-full text-left group"
-                            >
-                                <span className="text-sm font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
-                                    🐾 반려동물 세부 추천
+                            <div className="flex items-center gap-2 mb-3 px-1">
+                                <span className="text-sm font-bold text-slate-600">
+                                    🐾 세부 추천
                                 </span>
                                 <span className="text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                                     {detailTests.length}
                                 </span>
-                                {showDetailTests ? (
-                                    <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
-                                ) : (
-                                    <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
-                                )}
-                            </button>
+                            </div>
 
-                            {showDetailTests && (
-                                <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
-                                    <p className="text-xs text-amber-700 mb-3 px-1">
-                                        💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
-                                    </p>
-                                    <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                                        {detailTests.map((item) => (
-                                            <TestCard
-                                                key={item.key}
-                                                item={item}
-                                                onStart={onStartTest}
-                                            />
-                                        ))}
-                                    </div>
+                            <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
+                                <p className="text-xs text-amber-700 mb-3 px-1">
+                                    💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
+                                </p>
+                                <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                    {detailTests.map((item) => (
+                                        <TestCard
+                                            key={item.key}
+                                            item={item}
+                                            onStart={onStartTest}
+                                        />
+                                    ))}
                                 </div>
-                            )}
+                            </div>
                         </section>
                     )}
                 </div>
