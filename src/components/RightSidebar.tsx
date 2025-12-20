@@ -453,7 +453,7 @@ export default function RightSidebar({
 }: RightSidebarProps) {
   return (
     <aside
-      className={`hidden xl:flex flex-col w-80 h-screen fixed right-0 top-0 bg-[#F0F2F5] overflow-y-auto no-scrollbar pt-6 px-4 pb-4 space-y-4 border-l border-slate-200/50 ${className}`}
+      className={`hidden xl:flex flex-col w-80 h-screen fixed right-0 top-0 bg-[#F0F2F5] overflow-y-auto no-scrollbar pt-4 px-4 pb-4 space-y-4 border-l border-slate-200/50 ${className}`}
       role="complementary"
       aria-label="사이드 정보"
     >
