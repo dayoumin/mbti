@@ -6,6 +6,7 @@
  */
 
 import { getDeviceId } from '@/utils/device';
+import type { ContentCategory } from '@/data/content/types';
 
 // ========== 타입 정의 ==========
 
@@ -293,6 +294,99 @@ class DemographicServiceClass {
   // 사용자 ID 반환
   getUserId(): string {
     return getDeviceId();
+  }
+
+  // ========== 맞춤 콘텐츠 추천 ==========
+
+  /**
+   * 인구통계 기반 추천 카테고리 반환
+   * 연령대/성별에 따라 관심있을 카테고리 우선순위 반환
+   */
+  getRecommendedCategories(): ContentCategory[] {
+    const demographic = this.getDemographic();
+
+    // 인구통계 없으면 기본 추천
+    if (!demographic?.ageGroup) {
+      return ['personality', 'cat', 'dog', 'coffee', 'love'];
+    }
+
+    const { ageGroup, gender } = demographic;
+
+    // 연령대 + 성별 조합별 추천 카테고리
+    const recommendations = this.getCategoryRecommendations(ageGroup, gender);
+
+    return recommendations;
+  }
+
+  /**
+   * 연령대/성별 조합별 카테고리 추천
+   * 각 그룹의 관심사에 맞게 우선순위 설정
+   */
+  private getCategoryRecommendations(
+    ageGroup: AgeGroup,
+    gender?: Gender
+  ): ContentCategory[] {
+    // 연령대별 기본 추천 (공통)
+    const ageBasedCategories: Record<AgeGroup, ContentCategory[]> = {
+      '10s': ['personality', 'love', 'cat', 'dog', 'rabbit', 'hamster'],
+      '20s': ['love', 'personality', 'coffee', 'cat', 'dog', 'lifestyle'],
+      '30s': ['coffee', 'plant', 'lifestyle', 'cat', 'dog', 'relationship'],
+      '40s+': ['plant', 'lifestyle', 'coffee', 'dog', 'cat', 'relationship'],
+    };
+
+    // 성별에 따른 가중치 조정
+    const genderAdjustments: Record<AgeGroup, Partial<Record<Gender, ContentCategory[]>>> = {
+      '10s': {
+        male: ['dog', 'personality', 'cat', 'love', 'rabbit'],
+        female: ['cat', 'love', 'personality', 'rabbit', 'hamster'],
+      },
+      '20s': {
+        male: ['coffee', 'personality', 'dog', 'love', 'lifestyle'],
+        female: ['love', 'cat', 'coffee', 'personality', 'plant'],
+      },
+      '30s': {
+        male: ['coffee', 'dog', 'lifestyle', 'plant', 'personality'],
+        female: ['plant', 'cat', 'coffee', 'lifestyle', 'love'],
+      },
+      '40s+': {
+        male: ['plant', 'dog', 'coffee', 'lifestyle', 'fish'],
+        female: ['plant', 'cat', 'lifestyle', 'coffee', 'bird'],
+      },
+    };
+
+    // 성별 정보가 있으면 성별 맞춤 추천, 없으면 연령대 기본
+    if (gender && gender !== 'other' && genderAdjustments[ageGroup]?.[gender]) {
+      return genderAdjustments[ageGroup][gender]!;
+    }
+
+    return ageBasedCategories[ageGroup];
+  }
+
+  /**
+   * 특정 카테고리가 현재 사용자에게 추천되는지 확인
+   */
+  isRecommendedCategory(category: ContentCategory): boolean {
+    const recommended = this.getRecommendedCategories();
+    return recommended.slice(0, 3).includes(category); // 상위 3개만 "추천"으로 표시
+  }
+
+  /**
+   * 추천 콘텐츠 문구 생성
+   * 예: "20대 여성에게 인기 있는 콘텐츠"
+   */
+  getRecommendationLabel(): string | null {
+    const demographic = this.getDemographic();
+    if (!demographic?.ageGroup) return null;
+
+    const { ageGroup, gender } = demographic;
+    const ageLabel = AGE_GROUP_LABELS[ageGroup];
+
+    if (gender && gender !== 'other') {
+      const genderLabel = GENDER_LABELS[gender];
+      return `${ageLabel} ${genderLabel}에게 인기`;
+    }
+
+    return `${ageLabel}에게 인기`;
   }
 }
 

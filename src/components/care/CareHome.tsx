@@ -626,6 +626,24 @@ function ProfileDetailModal({ profile, onClose, onDelete, refresh }: ProfileDeta
 
         {/* Info */}
         <div className="p-6 space-y-4">
+          {/* 테스트 결과 연동 배지 */}
+          {profile.testResult && (
+            <div className={`p-4 ${config.color} rounded-xl border border-slate-200`}>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{profile.testResult.resultEmoji}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-slate-700">케미 테스트 결과</p>
+                  <p className="text-xs text-slate-500">
+                    {new Date(profile.testResult.completedAt).toLocaleDateString('ko-KR')} 진단
+                  </p>
+                </div>
+                <span className="px-2 py-1 bg-white/80 rounded-lg text-xs font-medium text-slate-600">
+                  {profile.testResult.resultKey}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3 bg-slate-50 rounded-xl">
               <p className="text-xs text-slate-500">등록일</p>

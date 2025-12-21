@@ -26,6 +26,26 @@ export const CARE_TARGET_CONFIG: Record<CareTargetType, CareTargetConfig> = {
   rabbit: { key: 'rabbit', name: '토끼', emoji: '🐰', color: 'bg-pink-100', accentColor: 'bg-pink-500' },
 };
 
+// 테스트 SubjectKey → 케어 타입 매핑
+export const TEST_TO_CARE_TYPE: Record<string, CareTargetType> = {
+  dog: 'dog',
+  cat: 'cat',
+  rabbit: 'rabbit',
+  hamster: 'hamster',
+  plant: 'plant',
+  // petMatch 결과는 동적으로 매핑 (결과에 따라 다름)
+};
+
+// petMatch 결과 → 케어 타입 매핑
+export const PET_MATCH_RESULT_TO_CARE_TYPE: Record<string, CareTargetType> = {
+  dog: 'dog',
+  cat: 'cat',
+  rabbit: 'rabbit',
+  hamster: 'hamster',
+  fish: 'fish',
+  // 기타 petMatch 결과들도 추가 가능
+};
+
 // ============================================================================
 // 프로필
 // ============================================================================

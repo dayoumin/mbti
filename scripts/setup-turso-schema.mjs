@@ -144,6 +144,20 @@ const schemas = [
     merged_at TEXT
   )`,
 
+  // 사용자 인구통계 데이터 (연령대, 성별)
+  // - 보너스 질문으로 수집
+  // - 맞춤 콘텐츠 추천 및 통계 비교에 활용
+  `CREATE TABLE IF NOT EXISTS user_demographics (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT UNIQUE NOT NULL,
+    user_id TEXT,
+    age_group TEXT,
+    gender TEXT,
+    source TEXT DEFAULT 'bonus_question',
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+  )`,
+
   // 인덱스 생성
   `CREATE INDEX IF NOT EXISTS idx_test_results_device ON test_results(device_id)`,
   `CREATE INDEX IF NOT EXISTS idx_test_results_type ON test_results(test_type)`,
@@ -157,6 +171,7 @@ const schemas = [
   `CREATE INDEX IF NOT EXISTS idx_comments_target ON comments(target_type, target_id)`,
   `CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id)`,
   `CREATE INDEX IF NOT EXISTS idx_device_mappings_user ON device_id_mappings(user_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_demographics_age_gender ON user_demographics(age_group, gender)`,
 ];
 
 async function setupSchema() {

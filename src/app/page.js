@@ -25,7 +25,7 @@ import FriendCompare from '../components/FriendCompare';
 import BadgeNotification from '../components/BadgeNotification';
 import { getGamificationService } from '../services/GamificationService';
 import CommunityBoard from '../components/CommunityBoard';
-import { CareHome } from '../components/care';
+import { CareHome, CareProfilePrompt } from '../components/care';
 import BreedDetailCard from '../components/BreedDetailCard';
 import NextTestRecommendation from '../components/NextTestRecommendation';
 import ContentActions from '../components/ContentActions';
@@ -907,6 +907,14 @@ export default function Home() {
                                             testType={mode}
                                             testName={currentModeData.title}
                                             className="w-full mt-6"
+                                        />
+
+                                        {/* 케어 프로필 생성 유도 (동물/식물 테스트일 때만) */}
+                                        <CareProfilePrompt
+                                            testSubject={mode}
+                                            resultKey={finalResult.name}
+                                            resultEmoji={finalResult.emoji}
+                                            resultName={finalResult.name}
                                         />
 
                                         {/* 결과 피드백 */}

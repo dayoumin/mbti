@@ -419,11 +419,122 @@ class CareService {
   }
 
   // ==========================================================================
+  // 테스트 결과 연동
+  // ==========================================================================
+
+  /**
+   * 테스트 결과로 케어 프로필 생성
+   * @param testSubject 테스트 종류 (dog, cat, plant 등)
+   * @param resultKey 결과 키
+   * @param resultEmoji 결과 이모지
+   * @param profileName 프로필 이름 (사용자 입력)
+   * @param additionalData 추가 프로필 데이터
+   */
+  createProfileFromTestResult(
+    testSubject: string,
+    resultKey: string,
+    resultEmoji: string,
+    profileName: string,
+    additionalData?: Record<string, unknown>
+  ): AnyCareProfile | null {
+    // 테스트 타입 → 케어 타입 매핑
+    const careType = this.getCareTypeFromTest(testSubject, resultKey);
+    if (!careType) return null;
+
+    const profileData: Record<string, unknown> = {
+      type: careType,
+      name: profileName,
+      testResult: {
+        resultKey,
+        resultEmoji,
+        completedAt: new Date().toISOString(),
+      },
+      ...additionalData,
+    };
+
+    return this.addProfile(profileData as Parameters<typeof this.addProfile>[0]);
+  }
+
+  /**
+   * 테스트 종류와 결과로 케어 타입 결정
+   */
+  getCareTypeFromTest(testSubject: string, resultKey?: string): CareTargetType | null {
+    // 직접 매핑되는 테스트 (dog, cat, rabbit, hamster, plant)
+    const directMapping: Record<string, CareTargetType> = {
+      dog: 'dog',
+      cat: 'cat',
+      rabbit: 'rabbit',
+      hamster: 'hamster',
+      plant: 'plant',
+    };
+
+    if (testSubject in directMapping) {
+      return directMapping[testSubject];
+    }
+
+    // petMatch는 결과에 따라 다른 케어 타입
+    if (testSubject === 'petMatch' && resultKey) {
+      // 결과 키에서 동물 타입 추출 (예: 'dog_active' → 'dog')
+      const animalType = resultKey.split('_')[0];
+      const petMatchMapping: Record<string, CareTargetType> = {
+        dog: 'dog',
+        cat: 'cat',
+        rabbit: 'rabbit',
+        hamster: 'hamster',
+        fish: 'fish',
+      };
+      return petMatchMapping[animalType] || null;
+    }
+
+    return null;
+  }
+
+  /**
+   * 특정 테스트 결과와 연동된 프로필 찾기
+   */
+  getProfilesWithTestResult(testSubject?: string): AnyCareProfile[] {
+    return this.getProfiles().filter(p => {
+      if (!p.testResult) return false;
+      if (testSubject) {
+        // 특정 테스트 타입으로 필터링
+        const careType = this.getCareTypeFromTest(testSubject);
+        return careType === p.type;
+      }
+      return true;
+    });
+  }
+
+  /**
+   * 프로필에 테스트 결과 연동
+   */
+  linkTestResult(
+    profileId: string,
+    resultKey: string,
+    resultEmoji: string
+  ): AnyCareProfile | undefined {
+    return this.updateProfile(profileId, {
+      testResult: {
+        resultKey,
+        resultEmoji,
+        completedAt: new Date().toISOString(),
+      },
+    });
+  }
+
+  // ==========================================================================
   // 헬퍼
   // ==========================================================================
 
   getTargetConfig(type: CareTargetType) {
     return CARE_TARGET_CONFIG[type];
+  }
+
+  /**
+   * 테스트가 케어 대상과 연동 가능한지 확인
+   */
+  isTestLinkable(testSubject: string): boolean {
+    const linkableTests = ['dog', 'cat', 'rabbit', 'hamster', 'plant', 'petMatch'];
+    return linkableTests.includes(testSubject);
   }
 }
 
