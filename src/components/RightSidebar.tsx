@@ -453,24 +453,26 @@ export default function RightSidebar({
 }: RightSidebarProps) {
   return (
     <aside
-      className={`hidden xl:flex flex-col w-80 h-screen fixed right-0 top-0 bg-[#F0F2F5] overflow-y-auto no-scrollbar pt-4 px-4 pb-4 space-y-4 border-l border-slate-200/50 ${className}`}
+      className={`hidden xl:block w-80 flex-shrink-0 ${className}`}
       role="complementary"
       aria-label="사이드 정보"
     >
-      {/* 추천 테스트 - PC에서 Dashboard의 RecommendedSection 역할 */}
-      <TrendingTestsSection onStartTest={onStartTest} />
+      <div className="sticky top-4 space-y-4 max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
+        {/* 추천 테스트 - PC에서 Dashboard의 RecommendedSection 역할 */}
+        <TrendingTestsSection onStartTest={onStartTest} />
 
-      {/* 커뮤니티 미리보기 */}
-      <CommunityPreview onOpenCommunity={onOpenCommunity} />
+        {/* 커뮤니티 미리보기 */}
+        <CommunityPreview onOpenCommunity={onOpenCommunity} />
 
-      {/* 오늘의 랭킹 */}
-      <RankingMini onOpenRanking={onOpenRanking} />
+        {/* 오늘의 랭킹 */}
+        <RankingMini onOpenRanking={onOpenRanking} />
 
-      {/* 세부 반려동물 테스트 */}
-      <DetailTestsSection onStartTest={onStartTest} />
+        {/* 세부 반려동물 테스트 */}
+        <DetailTestsSection onStartTest={onStartTest} />
 
-      {/* 하단 여백 */}
-      <div className="h-4" />
+        {/* 하단 여백 */}
+        <div className="h-4" />
+      </div>
     </aside>
   );
 }

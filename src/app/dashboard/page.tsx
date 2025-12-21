@@ -77,6 +77,7 @@ import AnalyticsSystem from './components/AnalyticsSystem';
 import ConversionAnalysis from './components/ConversionAnalysis';
 import PersonalizationStrategy from './components/PersonalizationStrategy';
 import CategoryStrategy from './components/CategoryStrategy';
+import UserStrategy from './components/UserStrategy';
 
 // ============================================================================
 // Types
@@ -127,6 +128,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
       { key: 'category', label: '카테고리 전략', icon: <Layers className="w-4 h-4" /> },
+      { key: 'userStrategy', label: '사용자 전략', icon: <User className="w-4 h-4" /> },
       { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
       { key: 'community', label: '커뮤니티 전략', icon: <MessageCircle className="w-4 h-4" /> },
       { key: 'profile', label: '프로필 시스템', icon: <User className="w-4 h-4" /> },
@@ -345,6 +347,7 @@ export default function DashboardPage() {
           {/* 기획 */}
           {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
           {activeCategory === 'planning' && activeSubTab === 'category' && <CategoryStrategy />}
+          {activeCategory === 'planning' && activeSubTab === 'userStrategy' && <UserStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'features' && <ProductFeatures />}
           {activeCategory === 'planning' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'profile' && <ProfileSystem />}
