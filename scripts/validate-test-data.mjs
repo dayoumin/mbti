@@ -143,11 +143,16 @@ function loadNextData(subject) {
   if (!existsSync(filePath)) return null;
 
   const content = readFileSync(filePath, 'utf-8');
-  const match = content.match(/export\s+const\s+\w+Data[^=]*=\s*(\{[\s\S]*\})\s*;?\s*$/);
+  // UPPER_CASE_DATA 또는 camelCaseData 패턴 모두 지원
+  // 파일 끝의 window 등록 코드가 있을 수 있으므로, }; 뒤 if문 허용
+  const match = content.match(/export\s+const\s+\w+(?:_DATA|Data)[^=]*=\s*(\{[\s\S]*?\n\};?)/);
   if (!match) return null;
 
   try {
-    return eval(`(${match[1].replace(/\/\/.*$/gm, '')})`);
+    // 닫는 중괄호와 세미콜론으로 끝나도록 정리
+    let objStr = match[1].trim();
+    if (objStr.endsWith(';')) objStr = objStr.slice(0, -1);
+    return eval(`(${objStr.replace(/\/\/.*$/gm, '')})`);
   } catch (e) {
     return null;
   }

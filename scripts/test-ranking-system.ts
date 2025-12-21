@@ -3,8 +3,8 @@
  * 실행: npx tsx scripts/test-ranking-system.ts
  */
 
-import { petMatchData } from '../src/data/subjects/petMatch';
-import { plantData } from '../src/data/subjects/plant';
+import { PETMATCH_DATA as petMatchData } from '../src/data/subjects/petMatch';
+import { PLANT_DATA as plantData } from '../src/data/subjects/plant';
 import {
   generateRanking,
   getCurrentSeasonTemplates,

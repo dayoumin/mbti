@@ -19,53 +19,95 @@ import BonusInsightCard from '../components/BonusInsightCard';
 import BottomNav from '../components/BottomNav';
 import Sidebar from '../components/Sidebar';
 import RightSidebar from '../components/RightSidebar';
-import { TabletSlidePanel } from '../components/responsive';
+import { TabletSlidePanel, type TabletContentTab } from '../components/responsive';
 import FriendInvite from '../components/FriendInvite';
 import FriendCompare from '../components/FriendCompare';
 import BadgeNotification from '../components/BadgeNotification';
 import { getGamificationService } from '../services/GamificationService';
 import CommunityBoard from '../components/CommunityBoard';
-import { CareHome, CareProfilePrompt } from '../components/care';
+import { CareProfilePrompt } from '../components/care';
 import BreedDetailCard from '../components/BreedDetailCard';
 import NextTestRecommendation from '../components/NextTestRecommendation';
 import ContentActions from '../components/ContentActions';
 import * as Icons from '../components/Icons';
+import type { SubjectKey, ResultLabel, Dimension, SubjectConfig } from '../data/types';
+import type { NavTab } from '../components/nav/types';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
     Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, Users, MessageSquare,
     Dog, Cat, Fish, Bird, Bug
 } from 'lucide-react';
 
-// Icons extraction for Result Characters (Keep custom SVGs for character art)
-const { Capsule, HumanIcon } = Icons;
+// Icons extraction for Result Characters
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { Capsule, HumanIcon } = Icons as any;
 
 const MAX_SCORE_PER_QUESTION = CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
 
-export default function Home() {
-    const [view, setView] = useState('dashboard');
-    const [mode, setMode] = useState('human');
-    const [step, setStep] = useState('intro');
-    const [qIdx, setQIdx] = useState(0);
-    const [scores, setScores] = useState({});
-    const [finalResult, setFinalResult] = useState(null);
-    const [detailTab, setDetailTab] = useState("interpretation");
-    const [isDeepMode, setIsDeepMode] = useState(false);
-    const [showGraphPopup, setShowGraphPopup] = useState(false);
-    const [answers, setAnswers] = useState([]);
-    const [showRanking, setShowRanking] = useState(false);
-    const [showShareCard, setShowShareCard] = useState(false);
-    const [showProfile, setShowProfile] = useState(false);
-    const [showContentExplore, setShowContentExplore] = useState(false);
-    const [tabletContentTab, setTabletContentTab] = useState(null); // 태블릿 띠지 탭 상태
-    const [parentInfo, setParentInfo] = useState(null); // petMatch → 세부 테스트 연결용
-    const [activeNavTab, setActiveNavTab] = useState('home'); // 하단 내비게이션 상태
-    const [badgeQueue, setBadgeQueue] = useState([]); // 배지 알림 큐 (여러 배지 순차 표시)
-    const [showFriendCompare, setShowFriendCompare] = useState(false); // 친구 비교 모달
-    const [showCommunity, setShowCommunity] = useState(false); // 커뮤니티 게시판
-    const [showCare, setShowCare] = useState(false); // 케어 탭
+// ============================================================================
+// 타입 정의
+// ============================================================================
 
-    // Ensure mode is valid - use useMemo to derive safe mode
-    const safeMode = CHEMI_DATA[mode] ? mode : 'human';
+type ViewType = 'dashboard' | 'test';
+type StepType = 'intro' | 'question' | 'directSelect' | 'loading' | 'result';
+type DetailTabType = 'interpretation' | 'guide';
+
+// 모달 상태 통합 - 7개 boolean → 1개 유니온 타입
+// care는 프로필 > 동물 탭에서 직접 관리하므로 제거
+type ActiveModal =
+    | 'profile'
+    | 'contentExplore'
+    | 'ranking'
+    | 'community'
+    | 'shareCard'
+    | 'friendCompare'
+    | 'graphPopup'
+    | null;
+
+interface Answer {
+    qIdx: number;
+    dimension: string;
+    score: number;
+}
+
+interface ParentInfo {
+    testType: string;
+    resultName: string;
+    directSelect?: boolean;
+}
+
+
+// ============================================================================
+// 메인 컴포넌트
+// ============================================================================
+
+export default function Home() {
+    // 뷰/테스트 상태
+    const [view, setView] = useState<ViewType>('dashboard');
+    const [mode, setMode] = useState<SubjectKey>('human');
+    const [step, setStep] = useState<StepType>('intro');
+    const [qIdx, setQIdx] = useState(0);
+    const [scores, setScores] = useState<Record<string, number>>({});
+    const [finalResult, setFinalResult] = useState<ResultLabel | null>(null);
+    const [detailTab, setDetailTab] = useState<DetailTabType>('interpretation');
+    const [isDeepMode, setIsDeepMode] = useState(false);
+    const [answers, setAnswers] = useState<Answer[]>([]);
+
+    // 모달 상태 통합 (기존 7개 boolean → 1개)
+    const [activeModal, setActiveModal] = useState<ActiveModal>(null);
+
+    // 기타 상태
+    const [tabletContentTab, setTabletContentTab] = useState<TabletContentTab>(null);
+    const [parentInfo, setParentInfo] = useState<ParentInfo | null>(null);
+    const [activeNavTab, setActiveNavTab] = useState<NavTab>('home');
+    const [badgeQueue, setBadgeQueue] = useState<string[]>([]);
+
+    // 헬퍼: 모달 열기/닫기
+    const openModal = (modal: ActiveModal) => setActiveModal(modal);
+    const closeModal = () => setActiveModal(null);
+
+    // Ensure mode is valid
+    const safeMode: SubjectKey = CHEMI_DATA[mode] ? mode : 'human';
 
     const currentModeData = CHEMI_DATA[safeMode];
     const dimensions = currentModeData.dimensions;
@@ -78,17 +120,14 @@ export default function Home() {
     const displayTotalQuestions = questions.length;
 
     const getInitialScores = useCallback(() => {
-        const initial = {};
+        const initial: Record<string, number> = {};
         Object.keys(dimensions).forEach(dim => initial[dim] = 0);
         return initial;
     }, [dimensions]);
 
-    // Reset scores when mode changes via handleStartTest, not useEffect
-    // The scores are reset in handleStartTest function using getInitialScores()
+    const subjectConfig = (SUBJECT_CONFIG[mode as keyof typeof SUBJECT_CONFIG] || {}) as Partial<SubjectConfig>;
 
-    const subjectConfig = SUBJECT_CONFIG[mode] || {};
-
-    const handleStartTest = (testType, fromParent = null) => {
+    const handleStartTest = (testType: SubjectKey, fromParent: ParentInfo | null = null) => {
         setMode(testType);
         setStep('intro');
         setQIdx(0);
@@ -96,11 +135,12 @@ export default function Home() {
         setAnswers([]);
         setIsDeepMode(false);
         setFinalResult(null);
-        setParentInfo(fromParent); // { testType: 'petMatch', resultName: '강아지' }
+        setParentInfo(fromParent);
         setView('test');
+        closeModal(); // 모달 닫기
     };
 
-    const handleAnswer = (dimension, scoreVal) => {
+    const handleAnswer = (dimension: string, scoreVal: number) => {
         setAnswers(prev => [...prev, { qIdx, dimension, score: scoreVal }]);
         const newScores = { ...scores, [dimension]: (scores[dimension] || 0) + scoreVal };
         setScores(newScores);
@@ -128,92 +168,87 @@ export default function Home() {
         setQIdx(0);
         setIsDeepMode(false);
         setActiveNavTab('home');
+        closeModal();
     };
 
     // 하단 내비게이션 탭 변경 핸들러
-    const handleNavTabChange = (tab) => {
+    const handleNavTabChange = (tab: NavTab) => {
         setActiveNavTab(tab);
-        // 모든 상태 초기화
-        setShowProfile(false);
-        setShowContentExplore(false);
-        setShowRanking(false);
-        setShowCommunity(false);
-        setShowCare(false);
+        closeModal(); // 모든 모달 닫기
         setView('dashboard');
 
-        if (tab === 'explore') {
-            setShowContentExplore(true);
-        } else if (tab === 'talk') {
-            setShowCommunity(true);
-        } else if (tab === 'ranking') {
-            setShowRanking(true);
-        } else if (tab === 'care') {
-            setShowCare(true);
-        } else if (tab === 'profile') {
-            setShowProfile(true);
+        // 탭에 따라 모달 열기
+        const tabToModal: Record<NavTab, ActiveModal> = {
+            home: null,
+            explore: 'contentExplore',
+            talk: 'community',
+            ranking: 'ranking',
+            profile: 'profile',
+        };
+
+        if (tabToModal[tab]) {
+            openModal(tabToModal[tab]);
         }
     };
 
-    const calculateResult = (finalScores) => {
-        setStep("loading");
+    const calculateResult = (finalScores: Record<string, number>) => {
+        setStep('loading');
         setTimeout(async () => {
-            const dimCounts = {};
+            const dimCounts: Record<string, number> = {};
             questions.forEach(q => {
                 dimCounts[q.dimension] = (dimCounts[q.dimension] || 0) + 1;
             });
 
-            const result = matchResultLabel(finalScores, dimensions, currentModeData.resultLabels, dimCounts);
+            const result = matchResultLabel(finalScores, dimensions, currentModeData.resultLabels as ResultLabel[], dimCounts);
             setFinalResult(result);
-            setStep("result");
-            setDetailTab("interpretation");
+            setStep('result');
+            setDetailTab('interpretation');
 
             if (resultService && result) {
                 try {
-                    await resultService.saveResult(mode, result, finalScores, isDeepMode, parentInfo);
+                    await resultService.saveResult(mode, result, finalScores, isDeepMode, parentInfo || undefined);
 
-                    // 게이미피케이션 기록
                     const gamification = getGamificationService();
                     if (gamification) {
                         const { newBadges } = gamification.recordTestComplete(mode);
                         if (newBadges.length > 0) {
-                            setBadgeQueue(prev => [...prev, ...newBadges]); // 기존 큐에 추가
+                            setBadgeQueue(prev => [...prev, ...newBadges]);
                         }
                     }
                 } catch (error) {
                     console.error('Save failed:', error);
                 }
             }
-        }, 2000); // 2s loading
+        }, 2000);
     };
 
-    const restart = (newMode = mode) => {
+    const restart = (newMode: SubjectKey = mode) => {
         setMode(newMode);
-        setStep("intro");
+        setStep('intro');
         setQIdx(0);
         setScores(getInitialScores());
         setFinalResult(null);
         setIsDeepMode(false);
-        setShowGraphPopup(false);
         setAnswers([]);
+        closeModal();
     };
 
     const startDeepTest = () => {
         const deepStartIndex = basicQuestions.length;
         setQIdx(deepStartIndex);
         setIsDeepMode(true);
-        setStep("question");
+        setStep('question');
     };
 
-    const getScorePercentage = (dimension) => {
+    const getScorePercentage = (dimension: string) => {
         const questionsForDim = questions.filter(q => q.dimension === dimension);
         const maxPossible = questionsForDim.length * MAX_SCORE_PER_QUESTION;
         const score = scores[dimension] || 0;
         return maxPossible > 0 ? Math.round((score / maxPossible) * 100) : 0;
     };
 
-    // 차원별 최대 점수 계산 (ShareCard에 전달)
     const getMaxScores = () => {
-        const maxScores = {};
+        const maxScores: Record<string, number> = {};
         Object.keys(dimensions).forEach(dim => {
             const questionsForDim = questions.filter(q => q.dimension === dim);
             maxScores[dim] = questionsForDim.length * MAX_SCORE_PER_QUESTION;
@@ -221,88 +256,81 @@ export default function Home() {
         return maxScores;
     };
 
+    // @ts-expect-error - Icons는 동적 접근
     const IconComponent = Icons[subjectConfig.icon] || HumanIcon;
 
     return (
         <div className="min-h-screen bg-[#F0F2F5] flex">
-            {/* 전역 모달들 - 사이드바 포함 전체 화면에 오버레이 */}
-            {showProfile && (
+            {/* 전역 모달들 - activeModal 기반으로 렌더링 */}
+            {activeModal === 'profile' && (
                 <FullProfile
                     onClose={() => {
-                        setShowProfile(false);
+                        closeModal();
                         setActiveNavTab('home');
                     }}
-                    onStartTest={(testKey) => {
-                        setShowProfile(false);
+                    onStartTest={(testKey: string) => {
+                        closeModal();
                         setActiveNavTab('home');
-                        handleStartTest(testKey);
+                        handleStartTest(testKey as SubjectKey);
                     }}
                 />
             )}
 
-            {showContentExplore && (
+            {activeModal === 'contentExplore' && (
                 <ContentExplore
                     onClose={() => {
-                        setShowContentExplore(false);
+                        closeModal();
                         setActiveNavTab('home');
                     }}
-                    onStartTest={(testKey) => {
-                        setShowContentExplore(false);
+                    onStartTest={(testKey: string) => {
+                        closeModal();
                         setActiveNavTab('home');
-                        handleStartTest(testKey);
+                        handleStartTest(testKey as SubjectKey);
                     }}
-                    onNavigate={(target) => {
-                        setShowContentExplore(false);
+                    onNavigate={(target: string) => {
+                        closeModal();
                         if (target === 'ranking') {
-                            setShowRanking(true);
+                            openModal('ranking');
                             setActiveNavTab('ranking');
                         } else if (target === 'community') {
-                            setShowCommunity(true);
+                            openModal('community');
                             setActiveNavTab('talk');
                         }
                     }}
                 />
             )}
 
-            {showCommunity && (
+            {activeModal === 'community' && (
                 <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-64 lg:right-0">
                     <CommunityBoard className="h-full" />
                 </div>
             )}
 
-            {showCare && (
-                <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-64 lg:right-0 overflow-y-auto">
-                    <div className="max-w-2xl mx-auto p-4 pb-24">
-                        <CareHome />
-                    </div>
-                </div>
-            )}
-
-            {view === 'dashboard' && showRanking && (
+            {view === 'dashboard' && activeModal === 'ranking' && (
                 <RankingTab
                     onClose={() => {
-                        setShowRanking(false);
+                        closeModal();
                         setActiveNavTab('home');
                     }}
-                    onStartTest={(testKey) => {
-                        setShowRanking(false);
+                    onStartTest={(testKey?: string) => {
+                        closeModal();
                         setActiveNavTab('home');
-                        handleStartTest(testKey || mode);
+                        handleStartTest((testKey || mode) as SubjectKey);
                     }}
-                    onNavigate={(target) => {
-                        setShowRanking(false);
+                    onNavigate={(target: string) => {
+                        closeModal();
                         if (target === 'poll' || target === 'quiz') {
-                            setShowContentExplore(true);
+                            openModal('contentExplore');
                             setActiveNavTab('explore');
                         } else if (target === 'community') {
-                            setShowCommunity(true);
+                            openModal('community');
                             setActiveNavTab('talk');
                         }
                     }}
                 />
             )}
 
-            {/* 배지 획득 알림 (큐에서 순차 표시) */}
+            {/* 배지 획득 알림 */}
             {badgeQueue.length > 0 && (
                 <BadgeNotification
                     badgeId={badgeQueue[0]}
@@ -315,13 +343,9 @@ export default function Home() {
                 <Sidebar
                     activeTab={activeNavTab}
                     onTabChange={handleNavTabChange}
-                    onStartTest={(testKey) => {
+                    onStartTest={(testKey: string) => {
                         setActiveNavTab('home');
-                        handleStartTest(testKey);
-                    }}
-                    onContentExplore={() => {
-                        setShowContentExplore(true);
-                        setActiveNavTab('explore');
+                        handleStartTest(testKey as SubjectKey);
                     }}
                 />
             )}
@@ -333,44 +357,41 @@ export default function Home() {
                     onTabChange={setTabletContentTab}
                     onExploreMore={() => {
                         setTabletContentTab(null);
-                        setShowContentExplore(true);
+                        openModal('contentExplore');
                         setActiveNavTab('explore');
                     }}
                 />
             )}
 
-            {/* 메인 콘텐츠 영역: 좌측 Sidebar(flex) + 우측 RightSidebar(sticky) */}
+            {/* 메인 콘텐츠 영역 */}
             <main className="flex-1 min-h-screen flex p-4 pb-20 lg:pb-4">
                 {view === 'dashboard' ? (
                     <div className="flex-1 flex justify-center">
-                        {/* 메인 Dashboard + RightSidebar 래퍼 - 함께 중앙 정렬 */}
                         <div className="flex gap-6 w-full max-w-[1400px]">
-                            {/* 메인 Dashboard */}
                             <div className="flex-1 min-w-0">
-                            <Dashboard
-                                onStartTest={(testKey) => {
-                                    setActiveNavTab('home');
-                                    handleStartTest(testKey);
-                                }}
-                                onContentExplore={() => {
-                                    setShowContentExplore(true);
-                                    setActiveNavTab('explore');
-                                }}
-                            />
+                                <Dashboard
+                                    onStartTest={(testKey: string) => {
+                                        setActiveNavTab('home');
+                                        handleStartTest(testKey as SubjectKey);
+                                    }}
+                                    onContentExplore={() => {
+                                        openModal('contentExplore');
+                                        setActiveNavTab('explore');
+                                    }}
+                                />
                             </div>
-                            {/* PC 우측 사이드바 - 콘텐츠와 함께 중앙 정렬 */}
                             <RightSidebar
                                 onOpenCommunity={() => {
-                                    setShowCommunity(true);
+                                    openModal('community');
                                     setActiveNavTab('talk');
                                 }}
                                 onOpenRanking={() => {
-                                    setShowRanking(true);
+                                    openModal('ranking');
                                     setActiveNavTab('ranking');
                                 }}
-                                onStartTest={(testKey) => {
+                                onStartTest={(testKey: string) => {
                                     setActiveNavTab('home');
-                                    handleStartTest(testKey);
+                                    handleStartTest(testKey as SubjectKey);
                                 }}
                             />
                         </div>
@@ -381,7 +402,7 @@ export default function Home() {
                         <div className="absolute top-[-20%] left-[-20%] w-[150%] h-[150%] bg-gradient-to-br from-indigo-100/40 via-purple-100/40 to-pink-100/40 blur-3xl -z-10 animate-pulse-slow"></div>
 
                         {/* --- INTRO VIEW --- */}
-                        {step === "intro" && (
+                        {step === 'intro' && (
                             <div className="flex flex-col h-full animate-fade-in px-8 py-10">
                                 <div className="flex justify-between items-center mb-4">
                                     <button onClick={() => setView('dashboard')} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
@@ -390,7 +411,6 @@ export default function Home() {
                                 </div>
 
                                 <div className="flex-1 flex flex-col items-center justify-center -mt-8">
-                                    {/* Social Proof - Enhanced */}
                                     <div className="flex flex-col items-center gap-2 mb-6">
                                         <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-100 shadow-sm">
                                             <div className="relative flex h-2.5 w-2.5">
@@ -413,10 +433,8 @@ export default function Home() {
                                         </div>
                                     </div>
 
-                                    {/* Main Icon */}
                                     <IconComponent mood="happy" className="w-36 h-36 mb-6 drop-shadow-2xl animate-bounce-slight" />
 
-                                    {/* Title */}
                                     <h1 className="text-4xl font-black text-slate-800 mb-3 text-center leading-tight tracking-tight">
                                         {currentModeData.title}
                                     </h1>
@@ -424,9 +442,8 @@ export default function Home() {
                                         {currentModeData.subtitle}
                                     </p>
 
-                                    {/* Features List */}
                                     <div className="w-full bg-white/40 backdrop-blur-sm rounded-2xl p-5 border border-white/40 shadow-sm space-y-3 mb-8">
-                                        {(subjectConfig.intro || []).map((text, idx) => (
+                                        {(subjectConfig.intro || []).map((text: string, idx: number) => (
                                             <div key={idx} className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                                                 <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
                                                     <Check className="w-3 h-3" />
@@ -438,18 +455,16 @@ export default function Home() {
                                 </div>
 
                                 <div className="mt-auto space-y-3">
-                                    {/* Primary CTA - Enhanced */}
                                     <button
-                                        onClick={() => setStep("question")}
+                                        onClick={() => setStep('question')}
                                         className="w-full py-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-lg flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-0.5 active:scale-[0.98]"
                                     >
                                         테스트 시작하기 <ArrowRight className="w-5 h-5" />
                                     </button>
 
-                                    {/* petMatch 전용: 직접 선택 모드 */}
                                     {mode === 'petMatch' && (
                                         <button
-                                            onClick={() => setStep("directSelect")}
+                                            onClick={() => setStep('directSelect')}
                                             className="w-full py-3.5 rounded-xl bg-white/60 hover:bg-white border border-white/60 text-slate-600 font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
                                         >
                                             <Check className="w-4 h-4 text-amber-500" />
@@ -457,7 +472,7 @@ export default function Home() {
                                         </button>
                                     )}
 
-                                    <button onClick={() => setShowRanking(true)} className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5">
+                                    <button onClick={() => openModal('ranking')} className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5">
                                         <Trophy className="w-4 h-4" /> 어떤 결과가 나올까? 미리보기
                                     </button>
                                 </div>
@@ -465,9 +480,8 @@ export default function Home() {
                         )}
 
                         {/* --- QUESTION VIEW --- */}
-                        {step === "question" && (
+                        {step === 'question' && (
                             <div className="flex flex-col h-full animate-fade-in px-6 py-8">
-                                {/* Header */}
                                 <div className="flex justify-between items-center mb-8">
                                     <button onClick={handleGoBack} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
                                         <ChevronLeft className="w-6 h-6" />
@@ -480,7 +494,6 @@ export default function Home() {
                                     </button>
                                 </div>
 
-                                {/* Progress - Enhanced */}
                                 <div className="mb-10">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-sm font-black text-indigo-600">Q{displayQuestionNum}</span>
@@ -498,16 +511,14 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                {/* Question */}
                                 <div className="flex-1 flex flex-col items-center justify-center -mt-6">
                                     <h2 className="text-3xl font-black text-slate-800 text-center leading-snug break-keep drop-shadow-sm">
                                         {questions[qIdx]?.q}
                                     </h2>
                                 </div>
 
-                                {/* Answers */}
                                 <div className="space-y-3 mt-auto mb-8">
-                                    {questions[qIdx]?.a.map((ans, idx) => (
+                                    {questions[qIdx]?.a.map((ans: { text: string; score: number }, idx: number) => (
                                         <button
                                             key={idx}
                                             onClick={() => handleAnswer(questions[qIdx].dimension, ans.score)}
@@ -522,20 +533,18 @@ export default function Home() {
                         )}
 
                         {/* --- DIRECT SELECT VIEW (petMatch 전용) --- */}
-                        {step === "directSelect" && mode === 'petMatch' && (
+                        {step === 'directSelect' && mode === 'petMatch' && (
                             <div className="flex flex-col h-full animate-fade-in px-6 py-8">
-                                {/* Header */}
                                 <div className="flex justify-between items-center mb-6">
-                                    <button onClick={() => setStep("intro")} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
+                                    <button onClick={() => setStep('intro')} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                         직접 선택
                                     </span>
-                                    <div className="w-10" /> {/* spacer */}
+                                    <div className="w-10" />
                                 </div>
 
-                                {/* Title */}
                                 <div className="text-center mb-8">
                                     <h2 className="text-2xl font-black text-slate-800 mb-2">
                                         어떤 반려동물을 원하세요?
@@ -545,12 +554,12 @@ export default function Home() {
                                     </p>
                                 </div>
 
-                                {/* Pet Options */}
                                 <div className="flex-1 space-y-3 overflow-y-auto">
-                                    {currentModeData.resultLabels.map((result) => {
-                                        const nextTest = result.nextTest;
+                                    {(currentModeData.resultLabels as ResultLabel[]).map((result: ResultLabel) => {
+                                        const nextTest = result.nextTest as SubjectKey | undefined;
                                         const nextData = nextTest ? CHEMI_DATA[nextTest] : null;
                                         const nextConfig = nextTest ? SUBJECT_CONFIG[nextTest] : null;
+                                        // @ts-expect-error - Icons는 동적 접근
                                         const PetIcon = nextConfig ? Icons[nextConfig.icon] : null;
 
                                         if (!nextTest || !nextData) return null;
@@ -585,10 +594,9 @@ export default function Home() {
                                     })}
                                 </div>
 
-                                {/* Footer */}
                                 <div className="mt-6 pt-4 border-t border-slate-100">
                                     <button
-                                        onClick={() => setStep("question")}
+                                        onClick={() => setStep('question')}
                                         className="w-full py-3 text-slate-500 text-sm font-bold hover:text-indigo-600 transition-colors flex items-center justify-center gap-1.5"
                                     >
                                         <Sparkles className="w-4 h-4" />
@@ -599,7 +607,7 @@ export default function Home() {
                         )}
 
                         {/* --- LOADING VIEW --- */}
-                        {step === "loading" && (
+                        {step === 'loading' && (
                             <div className="flex flex-col items-center justify-center h-full animate-fade-in p-8 text-center">
                                 <div className="relative mb-12">
                                     <div className="absolute inset-0 bg-indigo-300 rounded-full animate-ping opacity-20"></div>
@@ -613,45 +621,35 @@ export default function Home() {
                         )}
 
                         {/* --- RESULT VIEW --- */}
-                        {step === "result" && finalResult && (
-                            <div className={`flex flex-col h-full animate-fade-in relative`}>
-                                {/* Fixed Header */}
+                        {step === 'result' && finalResult && (
+                            <div className="flex flex-col h-full animate-fade-in relative">
                                 <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10 bg-gradient-to-b from-white/90 to-transparent">
                                     <button onClick={() => setView('dashboard')} className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white">
                                         <HomeIcon className="w-5 h-5 text-slate-600" />
                                     </button>
                                     <button
-                                        onClick={() => setShowShareCard(true)}
+                                        onClick={() => openModal('shareCard')}
                                         className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white text-indigo-600"
                                     >
                                         <Share2 className="w-5 h-5" />
                                     </button>
                                 </div>
 
-                                {/* Scrollable Content */}
                                 <div className="flex-1 overflow-y-auto no-scrollbar pt-14 px-5 pb-20">
-                                    {/* Result Card Content - Compact */}
                                     <div className="flex flex-col items-center text-center">
-                                        {/* HERO: 결과 카드 - 매칭 테스트일 때 더 강조 */}
                                         {subjectConfig.resultFormat === 'matching' ? (
-                                            // 매칭 결과: 카드 스타일로 크게 표시
                                             <div className="w-full mb-4">
                                                 <div className="relative bg-gradient-to-br from-white to-slate-50 rounded-2xl p-5 border-2 border-indigo-100 shadow-lg overflow-hidden">
-                                                    {/* 배경 장식 */}
                                                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100/50 to-pink-100/50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-
-                                                    {/* 상단 라벨 */}
                                                     <div className="flex items-center justify-between mb-3">
                                                         <span className="text-xs font-bold text-slate-400">{currentModeData.title} 결과</span>
                                                         <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500">
                                                             MATCH
                                                         </span>
                                                     </div>
-
-                                                    {/* 메인 결과 */}
                                                     <div className="flex items-center gap-4">
                                                         <div className="relative flex-shrink-0">
-                                                            <IconComponent mood={finalResult.mood || "happy"} className="w-20 h-20 drop-shadow-lg" />
+                                                            <IconComponent mood={finalResult.mood || 'happy'} className="w-20 h-20 drop-shadow-lg" />
                                                         </div>
                                                         <div className="flex-1 text-left">
                                                             <div className="text-3xl mb-1">{finalResult.emoji}</div>
@@ -660,23 +658,20 @@ export default function Home() {
                                                             </h1>
                                                         </div>
                                                     </div>
-
-                                                    {/* 한줄 설명 */}
                                                     <p className="mt-3 text-sm font-medium text-slate-600 leading-relaxed break-keep border-t border-slate-100 pt-3">
                                                         &quot;{finalResult.desc}&quot;
                                                     </p>
                                                 </div>
                                             </div>
                                         ) : (
-                                            // 성격 테스트: 기존 컴팩트 스타일
                                             <>
                                                 <div className="flex items-center gap-4 mb-4 w-full">
                                                     <div className="relative flex-shrink-0">
                                                         <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/50 to-pink-200/50 blur-2xl rounded-full scale-150"></div>
-                                                        <IconComponent mood={finalResult.mood || "happy"} className="w-24 h-24 relative z-10 drop-shadow-xl" />
+                                                        <IconComponent mood={finalResult.mood || 'happy'} className="w-24 h-24 relative z-10 drop-shadow-xl" />
                                                     </div>
                                                     <div className="flex-1 text-left">
-                                                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold text-white mb-1 bg-indigo-400`}>
+                                                        <span className="inline-block px-2 py-0.5 rounded-full text-xs font-bold text-white mb-1 bg-indigo-400">
                                                             {finalResult.mood || 'RARE'} TYPE
                                                         </span>
                                                         <h1 className="text-2xl font-black text-slate-800 leading-tight">
@@ -693,20 +688,17 @@ export default function Home() {
                                             </>
                                         )}
 
-                                        {/* Deep Mode CTA - Inline */}
                                         {isDeepMode && (
-                                            <button onClick={() => setShowGraphPopup(true)} className="w-full mb-4 py-2.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-bold flex items-center justify-center gap-2 hover:bg-indigo-100 transition-colors">
+                                            <button onClick={() => openModal('graphPopup')} className="w-full mb-4 py-2.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-bold flex items-center justify-center gap-2 hover:bg-indigo-100 transition-colors">
                                                 <BarChart2 className="w-4 h-4" /> 상세 성향 그래프
                                             </button>
                                         )}
 
-                                        {/* Detailed Content - Compact */}
                                         <div className="w-full space-y-3 text-left">
                                             {subjectConfig.resultFormat === 'matching' ? (
                                                 <>
-                                                    {/* 해석/조언 탭 먼저 (핵심 정보) */}
                                                     <div className="bg-white/60 rounded-xl p-1 border border-white/50 flex">
-                                                        {['interpretation', 'guide'].map((tab) => (
+                                                        {(['interpretation', 'guide'] as const).map((tab) => (
                                                             <button
                                                                 key={tab}
                                                                 onClick={() => setDetailTab(tab)}
@@ -718,16 +710,15 @@ export default function Home() {
                                                     </div>
                                                     <div className="bg-white/60 rounded-xl p-4 border border-white/50">
                                                         <p className="text-slate-600 text-sm leading-relaxed">
-                                                            {detailTab === "interpretation" ? finalResult.interpretation : finalResult.guide}
+                                                            {detailTab === 'interpretation' ? finalResult.interpretation : finalResult.guide}
                                                         </p>
                                                     </div>
 
-                                                    {/* Match Points - 보조 정보로 축소 */}
                                                     {(finalResult.matchPoints || []).length > 0 && (
                                                         <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-100">
                                                             <h3 className="font-bold text-slate-500 mb-2 flex items-center gap-1.5 text-xs">
                                                                 <Check className="w-3 h-3 text-green-500" />
-                                                                {subjectConfig.matchPointsTitle || "추천 포인트"}
+                                                                {subjectConfig.matchPointsTitle || '추천 포인트'}
                                                             </h3>
                                                             <div className="flex flex-wrap gap-1">
                                                                 {(finalResult.matchPoints || []).map((point, idx) => (
@@ -739,7 +730,6 @@ export default function Home() {
                                                         </div>
                                                     )}
 
-                                                    {/* FunFacts - 바이럴 콘텐츠 (petMatch, plant) */}
                                                     {finalResult.meta?.funFacts && (
                                                         <FunFactsCard
                                                             funFacts={finalResult.meta.funFacts}
@@ -748,17 +738,14 @@ export default function Home() {
                                                         />
                                                     )}
 
-                                                    {/* 보너스 인사이트 - 연령대 비교 */}
                                                     <BonusInsightCard
                                                         testType={safeMode}
                                                         resultName={finalResult.name}
                                                         resultEmoji={finalResult.emoji}
                                                     />
 
-                                                    {/* 품종/종류 상세 정보 - 세부 테스트 결과에서만 표시 */}
                                                     {finalResult.detailInfo && (() => {
-                                                        // 테스트 타입별 제목과 아이콘 설정
-                                                        const detailConfig = {
+                                                        const detailConfig: Record<string, { title: string; icon: typeof Dog | null }> = {
                                                             dogBreed: { title: '품종 상세 정보', icon: Dog },
                                                             catBreed: { title: '품종 상세 정보', icon: Cat },
                                                             smallPet: { title: '종류 상세 정보', icon: Bug },
@@ -770,8 +757,7 @@ export default function Home() {
                                                         return <BreedDetailCard detailInfo={finalResult.detailInfo} title={config.title} icon={config.icon} />;
                                                     })()}
 
-                                                    {/* nextTest CTA - 세부 테스트 연결 */}
-                                                    {finalResult.nextTest && CHEMI_DATA[finalResult.nextTest] && (
+                                                    {finalResult.nextTest && CHEMI_DATA[finalResult.nextTest as SubjectKey] && (
                                                         <div className="mt-4 p-0.5 bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 rounded-xl shadow-lg">
                                                             <div className="bg-white rounded-[10px] p-4">
                                                                 <div className="flex items-center gap-1 mb-2">
@@ -782,13 +768,13 @@ export default function Home() {
                                                                     어떤 {finalResult.name === '강아지' ? '품종' : finalResult.name === '고양이' ? '품종' : '종류'}가 나와 맞을까?
                                                                 </h4>
                                                                 <p className="text-xs text-slate-500 mb-3">
-                                                                    {CHEMI_DATA[finalResult.nextTest].resultLabels?.length || 0}개 {finalResult.name === '강아지' || finalResult.name === '고양이' ? '품종' : '종류'} 중 나의 베스트 매치를 찾아보세요!
+                                                                    {CHEMI_DATA[finalResult.nextTest as SubjectKey].resultLabels?.length || 0}개 {finalResult.name === '강아지' || finalResult.name === '고양이' ? '품종' : '종류'} 중 나의 베스트 매치를 찾아보세요!
                                                                 </p>
                                                                 <button
-                                                                    onClick={() => handleStartTest(finalResult.nextTest, { testType: mode, resultName: finalResult.name })}
+                                                                    onClick={() => handleStartTest(finalResult.nextTest as SubjectKey, { testType: mode, resultName: finalResult.name })}
                                                                     className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95"
                                                                 >
-                                                                    {CHEMI_DATA[finalResult.nextTest].title} 시작하기
+                                                                    {CHEMI_DATA[finalResult.nextTest as SubjectKey].title} 시작하기
                                                                     <ArrowRight className="w-4 h-4" />
                                                                 </button>
                                                             </div>
@@ -808,7 +794,6 @@ export default function Home() {
                                                         </div>
                                                     </div>
 
-                                                    {/* 보너스 인사이트 - 연령대 비교 */}
                                                     <BonusInsightCard
                                                         testType={safeMode}
                                                         resultName={finalResult.name}
@@ -818,7 +803,6 @@ export default function Home() {
                                             )}
                                         </div>
 
-                                        {/* Upgrade to Deep Mode - Compact */}
                                         {!isDeepMode && deepQuestions.length > 0 && (
                                             <button
                                                 onClick={startDeepTest}
@@ -832,11 +816,9 @@ export default function Home() {
                                             </button>
                                         )}
 
-                                        {/* Share & Compare CTA - 바이럴 최적화 순서 */}
                                         <div className="w-full mt-6 space-y-3">
-                                            {/* 1. 결과 카드 저장 - 가장 쉬운 액션 */}
                                             <button
-                                                onClick={() => setShowShareCard(true)}
+                                                onClick={() => openModal('shareCard')}
                                                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 text-white font-black text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-[0.98] relative overflow-hidden group"
                                             >
                                                 <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-rose-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -848,9 +830,8 @@ export default function Home() {
                                                 </span>
                                             </button>
 
-                                            {/* 2. 카카오톡 공유 - 한국 최적화 */}
                                             <button
-                                                onClick={() => setShowShareCard(true)}
+                                                onClick={() => openModal('shareCard')}
                                                 className="w-full py-3.5 rounded-xl bg-[#FEE500] text-[#391B1B] font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
                                             >
                                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -859,28 +840,26 @@ export default function Home() {
                                                 카카오톡으로 공유하기
                                             </button>
 
-                                            {/* 3. 내 순위 보기 */}
                                             <button
-                                                onClick={() => setShowRanking(true)}
+                                                onClick={() => openModal('ranking')}
                                                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
                                             >
                                                 <Trophy className="w-5 h-5" />
                                                 내 순위 확인하기
                                             </button>
 
-                                            {/* 4. 친구와 비교하기 */}
                                             <button
-                                                onClick={() => setShowFriendCompare(true)}
+                                                onClick={() => openModal('friendCompare')}
                                                 className="w-full py-3 rounded-xl bg-white/60 hover:bg-white border border-slate-200 text-slate-700 font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                                             >
                                                 <Users className="w-4 h-4" />
                                                 친구와 비교하기
                                             </button>
-                                            {/* 5. 커뮤니티 자랑하기 - 신규 연동 */}
+
                                             <button
                                                 onClick={() => {
                                                     setActiveNavTab('talk');
-                                                    setShowCommunity(true);
+                                                    openModal('community');
                                                 }}
                                                 className="w-full py-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 font-black text-base flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
                                             >
@@ -889,27 +868,24 @@ export default function Home() {
                                             </button>
                                         </div>
 
-                                        {/* 퀴즈/투표 다음 액션 */}
                                         <ContentActions
                                             testType={mode}
                                             onQuizClick={() => {
-                                                setShowContentExplore(true);
+                                                openModal('contentExplore');
                                                 setActiveNavTab('explore');
                                             }}
                                             onPollClick={() => {
-                                                setShowContentExplore(true);
+                                                openModal('contentExplore');
                                                 setActiveNavTab('explore');
                                             }}
                                         />
 
-                                        {/* 친구 초대 */}
                                         <FriendInvite
                                             testType={mode}
                                             testName={currentModeData.title}
                                             className="w-full mt-6"
                                         />
 
-                                        {/* 케어 프로필 생성 유도 (동물/식물 테스트일 때만) */}
                                         <CareProfilePrompt
                                             testSubject={mode}
                                             resultKey={finalResult.name}
@@ -917,18 +893,15 @@ export default function Home() {
                                             resultName={finalResult.name}
                                         />
 
-                                        {/* 결과 피드백 */}
                                         <div className="w-full mt-6 space-y-4">
                                             <ResultFeedback testType={mode} resultName={finalResult.name} />
                                             <FeedbackComments testType={mode} resultName={finalResult.name} />
                                         </div>
 
-                                        {/* Recommendations - Compact */}
                                         <NextTestRecommendation currentTest={mode} onSelectTest={handleStartTest} onGoHome={() => setView('dashboard')} />
                                     </div>
                                 </div>
 
-                                {/* Floating Restart Button */}
                                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                                     <button
                                         onClick={() => restart()}
@@ -939,7 +912,7 @@ export default function Home() {
                                 </div>
 
                                 {/* Share Card Modal */}
-                                {showShareCard && finalResult && (
+                                {activeModal === 'shareCard' && finalResult && (
                                     <ShareCard
                                         testTitle={currentModeData.title}
                                         testKey={safeMode}
@@ -949,16 +922,15 @@ export default function Home() {
                                         dimensions={dimensions}
                                         scores={scores}
                                         maxScores={getMaxScores()}
-                                        onClose={() => setShowShareCard(false)}
+                                        onClose={closeModal}
                                         onCompare={() => {
-                                            setShowShareCard(false);
-                                            setShowFriendCompare(true);
+                                            openModal('friendCompare');
                                         }}
                                     />
                                 )}
 
                                 {/* Friend Compare Modal */}
-                                {showFriendCompare && finalResult && (
+                                {activeModal === 'friendCompare' && finalResult && (
                                     <FriendCompare
                                         testType={mode}
                                         testName={currentModeData.title}
@@ -966,14 +938,14 @@ export default function Home() {
                                         myResultEmoji={finalResult.emoji}
                                         myScores={scores}
                                         dimensions={dimensions}
-                                        onClose={() => setShowFriendCompare(false)}
+                                        onClose={closeModal}
                                     />
                                 )}
                             </div>
                         )}
 
                         {/* --- GRAPH POPUP --- */}
-                        {showGraphPopup && (
+                        {activeModal === 'graphPopup' && (
                             <div className="absolute inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
                                 <div className="bg-white w-full sm:w-[90%] max-w-sm rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 shadow-2xl animate-slide-up relative max-h-[85%] overflow-y-auto">
                                     <h3 className="text-xl font-black text-slate-800 mb-6 text-center flex items-center justify-center gap-2">
@@ -987,22 +959,22 @@ export default function Home() {
                                                 <div key={key}>
                                                     <div className="flex justify-between items-center mb-1.5">
                                                         <span className="font-bold text-slate-700 text-sm flex items-center gap-2">
-                                                            <span className="text-lg">{dim.emoji}</span> {dim.name}
+                                                            <span className="text-lg">{(dim as { emoji: string }).emoji}</span> {(dim as { name: string }).name}
                                                         </span>
                                                         <span className="font-bold text-indigo-600 text-sm">{percentage}%</span>
                                                     </div>
                                                     <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                                                         <div className={`h-full rounded-full ${colorClass} transition-all duration-1000 ease-out`} style={{ width: `${percentage}%` }}></div>
                                                     </div>
-                                                    <p className="text-xs text-slate-400 mt-1.5 line-clamp-1">{dim.desc}</p>
+                                                    <p className="text-xs text-slate-400 mt-1.5 line-clamp-1">{(dim as { desc: string }).desc}</p>
                                                 </div>
                                             );
                                         })}
                                     </div>
-                                    <button onClick={() => setShowGraphPopup(false)} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800">
+                                    <button onClick={closeModal} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800">
                                         <X className="w-6 h-6" />
                                     </button>
-                                    <button onClick={() => setShowGraphPopup(false)} className="w-full mt-8 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">
+                                    <button onClick={closeModal} className="w-full mt-8 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">
                                         닫기
                                     </button>
                                 </div>
@@ -1010,24 +982,23 @@ export default function Home() {
                         )}
 
                         {/* --- RESULT RANKING VIEW --- */}
-                        {showRanking && (
+                        {activeModal === 'ranking' && view === 'test' && (
                             <ResultRankingView
                                 testType={mode}
                                 viewMode={step === 'result' && finalResult ? 'compare' : 'preview'}
-                                myResult={step === 'result' ? finalResult : undefined}
-                                onClose={() => setShowRanking(false)}
+                                myResult={step === 'result' && finalResult ? finalResult : null}
+                                onClose={closeModal}
                                 onStartTest={step !== 'result' ? () => handleStartTest(mode) : undefined}
                                 onRestart={step === 'result' ? () => restart() : undefined}
                                 onShare={step === 'result' ? () => {
-                                    setShowRanking(false);
-                                    setShowShareCard(true);
+                                    openModal('shareCard');
                                 } : undefined}
                             />
                         )}
                     </div>
                 )}
 
-                {/* 하단 내비게이션 - 대시보드에서만 표시, 테스트 중에는 숨김 */}
+                {/* 하단 내비게이션 */}
                 {view === 'dashboard' && (
                     <BottomNav
                         activeTab={activeNavTab}

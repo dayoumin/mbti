@@ -110,7 +110,7 @@ export interface ResultLabel {
   name: string;
   emoji: string;
   desc: string;
-  condition: Record<string, Level>;
+  condition: Record<string, string>;  // 'high' | 'medium' | 'low' 값들
   interpretation: string;
   guide: string;
   mood: string;
@@ -143,11 +143,11 @@ export interface TestType {
 export interface SubjectConfig {
   testType: string;
   icon: string;
-  emoji: string;
+  emoji?: string;
   label: string;
-  intro: string[];
-  resultFormat: 'simple' | 'tabs' | 'matching';
-  deepButtonText: string;
+  intro?: string[];
+  resultFormat?: 'simple' | 'tabs' | 'matching';
+  deepButtonText?: string;
   matchPointsTitle?: string;
   tabLabels?: { interpretation: string; guide: string };
   tabActiveColor?: string;

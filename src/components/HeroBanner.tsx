@@ -8,7 +8,7 @@ import { CHEMI_DATA } from '../data/index';
 import type { SubjectKey } from '../data/types';
 
 interface HeroBannerProps {
-  onStartTest: (testKey: SubjectKey) => void;
+  onStartTest?: (testKey: SubjectKey) => void;
   className?: string;
 }
 
@@ -17,7 +17,7 @@ const FEATURED_POOL: SubjectKey[] = [...MAIN_TEST_KEYS].sort(() => 0.5 - Math.ra
 
 interface HeroCardProps {
   testKey: SubjectKey;
-  onStart: (key: SubjectKey) => void;
+  onStart?: (key: SubjectKey) => void;
   index: number;
 }
 
@@ -46,11 +46,14 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
     .trim();
 
   const isMatching = config.testType === 'matching';
+  const isDisabled = !onStart;
 
   return (
     <button
-      onClick={() => onStart(testKey)}
-      className={`relative w-full h-[100px] md:h-32 ${s.bg} rounded-[1.25rem] md:rounded-[1.5rem] p-3 md:p-5 border ${s.border} transition-all hover:shadow-xl hover:shadow-slate-200/50 hover:border-white hover:-translate-y-1 active:scale-[0.98] overflow-hidden group text-left`}
+      onClick={() => onStart?.(testKey)}
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
+      className={`relative w-full h-[100px] md:h-32 ${s.bg} rounded-[1.25rem] md:rounded-[1.5rem] p-3 md:p-5 border ${s.border} transition-all overflow-hidden group text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl hover:shadow-slate-200/50 hover:border-white hover:-translate-y-1 active:scale-[0.98]'}`}
     >
       <div className={`absolute top-0 right-0 w-24 h-24 ${s.accent} opacity-[0.03] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000`} />
 

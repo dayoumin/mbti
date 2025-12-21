@@ -1,7 +1,34 @@
+'use client';
+
 import { useMemo, useState, useEffect } from 'react';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
+import type { SubjectKey } from '../data/types';
+
+// 타입 정의
+interface StreakData {
+    currentStreak: number;
+    longestStreak: number;
+}
+
+interface LevelData {
+    emoji: string;
+    name: string;
+    level: number;
+}
+
+interface BonusAction {
+    icon: string;
+    label: string;
+    type: string;
+    targetId?: string;
+}
+
+interface DashboardProps {
+    onStartTest?: (testKey: SubjectKey) => void;
+    onContentExplore?: () => void;
+}
 import { CHEMI_DATA } from '../data/index';
-import { gamificationService } from '../services/GamificationService';
+import { gamificationService, type UserGameStats } from '../services/GamificationService';
 import { nextActionService } from '../services/NextActionService';
 import { ChevronRight, Flame, Star } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
@@ -92,8 +119,8 @@ const TEST_TYPE_MAP = {
 };
 
 // 테스트의 실제 카테고리 타입 결정 (TEST_TYPE_MAP 우선, 없으면 config.testType)
-const getTestType = (test) => {
-    return TEST_TYPE_MAP[test.key] || test.testType || 'personality';
+const getTestType = (test: { key: string; testType?: string }) => {
+    return TEST_TYPE_MAP[test.key as keyof typeof TEST_TYPE_MAP] || test.testType || 'personality';
 };
 
 // 테스트 배지 설정
@@ -106,7 +133,7 @@ const TEST_BADGES = {
 
 // 1차 필터 탭 (underline 스타일 - 고정 탭)
 // count가 0이어도 탭은 표시하되 비활성 스타일 적용
-const TypeTab = ({ type, isActive, onClick, count }) => {
+const TypeTab = ({ type, isActive, onClick, count }: { type: keyof typeof TEST_TYPE_TABS; isActive: boolean; onClick: () => void; count: number }) => {
     const isEmpty = count === 0;
     const tabInfo = TEST_TYPE_TABS[type];
 
@@ -142,7 +169,7 @@ const TypeTab = ({ type, isActive, onClick, count }) => {
 };
 
 // 2차 필터 칩 (작은 필터)
-const SubjectChip = ({ subject, isActive, onClick }) => (
+const SubjectChip = ({ subject, isActive, onClick, count }: { subject: keyof typeof SUBJECT_CATEGORIES; isActive: boolean; onClick: () => void; count?: number }) => (
     <button
         onClick={onClick}
         className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${isActive
@@ -169,7 +196,16 @@ const Header = () => (
 );
 
 // 스트릭 배너 컴포넌트 (5초 후 자동 사라짐) + 보너스 액션 CTA
-const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusAction }) => {
+interface StreakBannerProps {
+    streak: StreakData | null;
+    level: LevelData | null;
+    points: number;
+    onClose: () => void;
+    onBonusAction?: (action: BonusAction) => void;
+    bonusAction?: BonusAction | null;
+}
+
+const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusAction }: StreakBannerProps) => {
     useEffect(() => {
         const timer = setTimeout(onClose, 8000); // 보너스 액션 있으면 8초로 연장
         return () => clearTimeout(timer);
@@ -229,7 +265,7 @@ const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusActi
 };
 
 // 포인트 획득 토스트 컴포넌트
-const PointsToast = ({ points, message, onClose }) => {
+const PointsToast = ({ points, message, onClose }: { points: number | null; message: string | null; onClose: () => void }) => {
     useEffect(() => {
         const timer = setTimeout(onClose, 2500);
         return () => clearTimeout(timer);
@@ -262,19 +298,26 @@ const BackgroundDecoration = () => (
 
 // DailyQuizCard와 VSPollCard는 DailyContentCards 컴포넌트로 통합됨
 
-const Dashboard = ({ onStartTest, onContentExplore }) => {
+type TestTypeFilter = keyof typeof TEST_TYPE_TABS;
+type SubjectFilter = keyof typeof SUBJECT_CATEGORIES | null;
+
+const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
     // 2단계 필터 상태
-    const [activeType, setActiveType] = useState('all');        // 1차: 심리/매칭
-    const [activeSubject, setActiveSubject] = useState(null);   // 2차: 주제별 (null = 전체)
+    const [activeType, setActiveType] = useState<TestTypeFilter>('all');        // 1차: 심리/매칭
+    const [activeSubject, setActiveSubject] = useState<SubjectFilter>(null);   // 2차: 주제별 (null = 전체)
 
     // 게이미피케이션 상태
-    const [gameStats, setGameStats] = useState(null);
-    const [currentLevel, setCurrentLevel] = useState(null);
-    const [pointsToast, setPointsToast] = useState(null);
+    const [gameStats, setGameStats] = useState<{
+        streak: StreakData;
+        totalPoints: number;
+        testsCompleted: number;
+    } | null>(null);
+    const [currentLevel, setCurrentLevel] = useState<LevelData | null>(null);
+    const [pointsToast, setPointsToast] = useState<{ points: number; message: string } | null>(null);
     const [showStreakBanner, setShowStreakBanner] = useState(false); // 오늘 첫 방문 시에만 true
 
     // 스트릭 보너스 추천
-    const [streakBonusAction, setStreakBonusAction] = useState(null);
+    const [streakBonusAction, setStreakBonusAction] = useState<BonusAction | null>(null);
 
     // 랭킹 모달 상태
     const [showRankingModal, setShowRankingModal] = useState(false);
@@ -309,13 +352,13 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     }, []);
 
     // 시간대/스트릭 보너스 액션 처리
-    const handleBonusAction = (action) => {
+    const handleBonusAction = (action: BonusAction) => {
         if (!action) return;
 
         switch (action.type) {
             case 'test':
                 // 테스트 추천 → targetId가 있으면 해당 테스트, 없으면 인기 테스트
-                onStartTest?.(action.targetId || POPULAR_TESTS[0] || MAIN_TEST_KEYS[0]);
+                onStartTest?.((action.targetId || POPULAR_TESTS[0] || MAIN_TEST_KEYS[0]) as SubjectKey);
                 break;
             case 'quiz':
             case 'poll':
@@ -333,12 +376,20 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
 
     // Group configs by testType (excluding detail tests from main list)
     const groupedConfigs = useMemo(() => {
-        const groups = {};
+        const groups: Record<string, Array<{
+            key: string;
+            label: string;
+            icon: string;
+            title: string;
+            subtitle: string;
+            color: string;
+            [k: string]: unknown;
+        }>> = {};
         Object.entries(SUBJECT_CONFIG).forEach(([key, config]) => {
             const type = config.testType || 'personality';
             if (!groups[type]) groups[type] = [];
 
-            const data = CHEMI_DATA[key] || {};
+            const data = CHEMI_DATA[key as keyof typeof CHEMI_DATA] || {};
 
             groups[type].push({
                 key,
@@ -354,13 +405,13 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     // All tests list (excluding detail tests)
     const allTests = useMemo(() => {
         return [...(groupedConfigs.personality || []), ...(groupedConfigs.matching || [])]
-            .filter(t => !DETAIL_TEST_KEYS.includes(t.key));
+            .filter(t => !(DETAIL_TEST_KEYS as readonly string[]).includes(t.key));
     }, [groupedConfigs]);
 
     // Detail tests
     const detailTests = useMemo(() => {
         return [...(groupedConfigs.personality || []), ...(groupedConfigs.matching || [])]
-            .filter(t => DETAIL_TEST_KEYS.includes(t.key));
+            .filter(t => (DETAIL_TEST_KEYS as readonly string[]).includes(t.key));
     }, [groupedConfigs]);
 
     // 1차 필터 적용 (테스트 유형: 심리/매칭/관계/라이프)
@@ -372,7 +423,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     // 2차 필터 적용 (주제별)
     const filteredTests = useMemo(() => {
         if (!activeSubject) return typeFilteredTests;
-        return typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === activeSubject);
+        return typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key as keyof typeof TEST_SUBJECT_MAP] === activeSubject);
     }, [typeFilteredTests, activeSubject]);
 
     // 1차 필터별 카운트
@@ -388,9 +439,9 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
 
     // 2차 필터별 카운트 (현재 1차 필터 기준)
     const subjectCounts = useMemo(() => {
-        const counts = {};
+        const counts: Record<string, number> = {};
         Object.keys(SUBJECT_CATEGORIES).forEach(sub => {
-            counts[sub] = typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key] === sub).length;
+            counts[sub] = typeFilteredTests.filter(t => TEST_SUBJECT_MAP[t.key as keyof typeof TEST_SUBJECT_MAP] === sub).length;
         });
         return counts;
     }, [typeFilteredTests]);
@@ -458,7 +509,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                     <div className="sticky top-4 z-20 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200/60 p-3 shadow-sm" style={{ minHeight: '84px' }}>
                         {/* 1차 필터: 탭 스타일 (underline) */}
                         <div className="flex items-center border-b border-slate-200">
-                            {Object.keys(TEST_TYPE_TABS).map((type) => (
+                            {(Object.keys(TEST_TYPE_TABS) as Array<keyof typeof TEST_TYPE_TABS>).map((type) => (
                                 <TypeTab
                                     key={type}
                                     type={type}
@@ -475,8 +526,8 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                         {/* 2차 필터: 작은 칩 스타일 - 고정 높이 + 가로 스크롤 */}
                         <div className="mt-2 overflow-x-auto no-scrollbar" style={{ height: '32px' }}>
                             <div className="flex gap-1 flex-nowrap">
-                                {Object.keys(SUBJECT_CATEGORIES).map((sub) => {
-                                    const count = subjectCounts[sub] || 0;
+                                {(Object.keys(SUBJECT_CATEGORIES) as Array<keyof typeof SUBJECT_CATEGORIES>).map((sub) => {
+                                    const count = subjectCounts[sub as string] || 0;
                                     if (count === 0) return null;
                                     return (
                                         <SubjectChip
@@ -484,7 +535,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                                             subject={sub}
                                             isActive={activeSubject === sub}
                                             onClick={() => setActiveSubject(activeSubject === sub ? null : sub)}
-                                            count={count}
                                         />
                                     );
                                 })}
@@ -501,7 +551,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                                     key={item.key}
                                     item={item}
                                     onStart={onStartTest}
-                                    badge={TEST_BADGES[item.key]}
+                                    badge={TEST_BADGES[item.key as keyof typeof TEST_BADGES]}
                                 />
                             ))}
                         </div>

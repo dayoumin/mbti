@@ -390,7 +390,7 @@ class ProfileServiceClass {
       return {
         testKey: key,
         testLabel: config.label,
-        testEmoji: config.emoji,
+        testEmoji: ('emoji' in config && typeof config.emoji === 'string') ? config.emoji : '',
         reason: rec.reason,
         reward: rec.reward,
       };

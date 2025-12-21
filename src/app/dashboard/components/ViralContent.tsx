@@ -29,9 +29,8 @@ import {
   getCurrentSeason,
   getSeasonalVoteTopics,
 } from '@/data/viralContent';
-import { petMatchData } from '@/data/subjects/petMatch';
-import { plantData } from '@/data/subjects/plant';
-import { FunFacts } from '@/data/types';
+import { petMatchData, plantData } from '@/data';
+import { FunFacts, ResultLabel, SubjectData } from '@/data/types';
 
 // ============================================================================
 // 타입 정의
@@ -93,19 +92,15 @@ export default function ViralContent() {
 
   // FunFacts 데이터
   const funFactsData = useMemo(() => {
-    if (funFactsCategory === 'pet') {
-      return petMatchData.resultLabels.map(r => ({
-        name: r.name,
-        emoji: r.emoji,
-        funFacts: r.meta?.funFacts,
-      })).filter(r => r.funFacts);
-    } else {
-      return plantData.resultLabels.map(r => ({
-        name: r.name,
-        emoji: r.emoji,
-        funFacts: r.meta?.funFacts,
-      })).filter(r => r.funFacts);
-    }
+    const labels = funFactsCategory === 'pet'
+      ? petMatchData.resultLabels
+      : plantData.resultLabels;
+
+    return (labels as ResultLabel[]).map(r => ({
+      name: r.name,
+      emoji: r.emoji,
+      funFacts: r.meta?.funFacts,
+    })).filter(r => r.funFacts);
   }, [funFactsCategory]);
 
   // 복사 핸들러
@@ -278,7 +273,7 @@ export default function ViralContent() {
                   : 'bg-gray-800 text-gray-400 border-2 border-transparent hover:border-gray-700'
               }`}
             >
-              🐾 반려동물 ({petMatchData.resultLabels.filter(r => r.meta?.funFacts).length})
+              🐾 반려동물 ({(petMatchData.resultLabels as ResultLabel[]).filter(r => r.meta?.funFacts).length})
             </button>
             <button
               onClick={() => setFunFactsCategory('plant')}
@@ -288,7 +283,7 @@ export default function ViralContent() {
                   : 'bg-gray-800 text-gray-400 border-2 border-transparent hover:border-gray-700'
               }`}
             >
-              🌱 반려식물 ({plantData.resultLabels.filter(r => r.meta?.funFacts).length})
+              🌱 반려식물 ({(plantData.resultLabels as unknown as ResultLabel[]).filter(r => r.meta?.funFacts).length})
             </button>
           </div>
 

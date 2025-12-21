@@ -261,7 +261,7 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
 interface ResultRankingViewProps {
   testType?: SubjectKey | null;  // null이면 테스트 선택 UI 표시
   viewMode?: ViewMode;        // 'preview' (기본) | 'compare'
-  myResult?: ResultLabel;     // compare 모드일 때 내 결과
+  myResult?: ResultLabel | null;     // compare 모드일 때 내 결과
   onClose: () => void;
   onStartTest?: (testKey?: SubjectKey) => void;   // preview 모드
   onRestart?: () => void;     // compare 모드

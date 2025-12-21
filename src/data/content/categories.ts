@@ -21,6 +21,7 @@ export const CATEGORY_LABELS: Record<ContentCategory, { name: string; emoji: str
   plant: { name: '식물', emoji: '🌿' },
   coffee: { name: '커피', emoji: '☕' },
   lifestyle: { name: '라이프스타일', emoji: '🏠' },
+  alcohol: { name: '술', emoji: '🍺' },
   // 심리/관계
   personality: { name: '성격', emoji: '🧠' },
   love: { name: '연애', emoji: '💕' },

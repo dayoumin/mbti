@@ -3,29 +3,40 @@
 import React, { useState } from 'react';
 import { Lightbulb, AlertCircle, Sparkles, Share2, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 
-/**
- * FunFacts 카드 컴포넌트
- * 결과 페이지에서 바이럴 콘텐츠 표시
- *
- * @param {Object} funFacts - FunFacts 데이터
- * @param {string[]} funFacts.didYouKnow - 알고 계셨나요? 내용들
- * @param {string[]} funFacts.commonMistakes - 흔한 오해 내용들
- * @param {string[]} funFacts.proTips - 프로 팁 내용들
- * @param {string} funFacts.viralOneLiner - SNS용 한 줄
- * @param {string} resultName - 결과 이름 (예: "강아지", "몬스테라")
- * @param {string} resultEmoji - 결과 이모지
- */
-export default function FunFactsCard({ funFacts, resultName, resultEmoji }) {
+interface FunFacts {
+    didYouKnow?: string[];
+    commonMistakes?: string[];
+    proTips?: string[];
+    viralOneLiner?: string;
+}
+
+interface FunFactsCardProps {
+    funFacts: FunFacts;
+    resultName: string;
+    resultEmoji: string;
+}
+
+type TabKey = 'didYouKnow' | 'commonMistakes' | 'proTips';
+
+interface Tab {
+    key: TabKey;
+    label: string;
+    icon: typeof Sparkles;
+    color: string;
+    data: string[];
+}
+
+export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunFactsCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [copiedOneLiner, setCopiedOneLiner] = useState(false);
-    const [activeTab, setActiveTab] = useState('didYouKnow'); // didYouKnow, commonMistakes, proTips
+    const [activeTab, setActiveTab] = useState<TabKey>('didYouKnow');
 
     if (!funFacts) return null;
 
     const { didYouKnow = [], commonMistakes = [], proTips = [], viralOneLiner } = funFacts;
 
     // 탭 데이터
-    const tabs = [
+    const tabs: Tab[] = [
         {
             key: 'didYouKnow',
             label: '알고 계셨나요?',
@@ -78,7 +89,7 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }) {
                     url: window.location.href,
                 });
             } catch (err) {
-                if (err.name !== 'AbortError') {
+                if ((err as Error).name !== 'AbortError') {
                     console.error('Share failed:', err);
                 }
             }

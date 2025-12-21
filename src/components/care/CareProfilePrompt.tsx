@@ -66,6 +66,9 @@ export default function CareProfilePrompt({
     }
   };
 
+  // 케어 타입에 따른 안내 탭 결정
+  const careTabGuide = careType === 'plant' ? '라이프' : '동물';
+
   if (isCreated) {
     return (
       <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-2xl">
@@ -75,7 +78,7 @@ export default function CareProfilePrompt({
           </div>
           <div>
             <p className="font-medium text-green-800">케어 프로필이 생성되었어요!</p>
-            <p className="text-sm text-green-600">케어 탭에서 관리할 수 있어요</p>
+            <p className="text-sm text-green-600">프로필 → {careTabGuide} 탭에서 관리할 수 있어요</p>
           </div>
         </div>
       </div>

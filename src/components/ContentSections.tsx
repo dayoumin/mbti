@@ -30,7 +30,7 @@ const NEW_TESTS: SubjectKey[] = ['fruit', 'tea', 'bread'];
 
 interface SmallTestCardProps {
   testKey: SubjectKey;
-  onStart: (key: SubjectKey) => void;
+  onStart?: (key: SubjectKey) => void;
   badge?: 'HOT' | 'NEW' | null;
   rank?: number;
 }
@@ -45,7 +45,7 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
 
   return (
     <button
-      onClick={() => onStart(testKey)}
+      onClick={() => onStart?.(testKey)}
       className="flex-shrink-0 w-28 lg:w-full bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all hover:-translate-y-0.5 relative group flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3"
     >
       {/* 순위 배지 */}
@@ -259,7 +259,7 @@ export function RecentSection({ onStartTest }: RecentSectionProps) {
 // ============================================================================
 
 interface RecommendedSectionProps {
-  onStartTest: (key: SubjectKey) => void;
+  onStartTest?: (key: SubjectKey) => void;
 }
 
 export function RecommendedSection({ onStartTest }: RecommendedSectionProps) {

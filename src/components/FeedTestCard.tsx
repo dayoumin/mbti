@@ -9,7 +9,7 @@ import { ChevronRight, Users } from 'lucide-react';
 
 interface FeedTestCardProps {
     testKey: SubjectKey;
-    onStart: (key: SubjectKey) => void;
+    onStart?: (key: SubjectKey) => void;
     className?: string;
 }
 
@@ -21,10 +21,14 @@ export default function FeedTestCard({ testKey, onStart, className = '' }: FeedT
 
     const IconComponent = getIconComponent(config.icon);
 
+    const isDisabled = !onStart;
+
     return (
         <button
-            onClick={() => onStart(testKey)}
-            className={`w-full bg-white rounded-2xl p-4 border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all group relative overflow-hidden text-left ${className}`}
+            onClick={() => onStart?.(testKey)}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
+            className={`w-full bg-white rounded-2xl p-4 border border-slate-100 transition-all group relative overflow-hidden text-left ${className} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-indigo-200 hover:shadow-lg'}`}
         >
             {/* Decorative Background */}
             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50/30 rounded-full blur-2xl -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-500" />

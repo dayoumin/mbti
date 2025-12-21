@@ -519,7 +519,7 @@ export default function PopularRanking() {
       : [selectedTest];
 
     testsToCheck.forEach(testKey => {
-      const data = CHEMI_DATA[testKey] as SubjectData | undefined;
+      const data = (CHEMI_DATA as unknown as Record<string, SubjectData | undefined>)[testKey];
       if (!data) return;
 
       data.resultLabels.forEach(result => {

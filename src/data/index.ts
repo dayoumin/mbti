@@ -1,15 +1,15 @@
 // 케미 테스트 데이터 통합 모듈
+// 생성일: 2025-12-11
 
-import { ChemiData, SubjectKey } from './types';
-import { humanData } from './subjects/human';
-import { catData } from './subjects/cat';
-import { dogData } from './subjects/dog';
-import { rabbitData } from './subjects/rabbit';
-import { hamsterData } from './subjects/hamster';
-import { idealTypeData } from './subjects/idealType';
-import { plantData } from './subjects/plant';
-import { petMatchData } from './subjects/petMatch';
-import { coffeeData } from './subjects/coffee';
+import { HUMAN_DATA } from './subjects/human';
+import { CAT_DATA } from './subjects/cat';
+import { DOG_DATA } from './subjects/dog';
+import { RABBIT_DATA } from './subjects/rabbit';
+import { HAMSTER_DATA } from './subjects/hamster';
+import { IDEALTYPE_DATA } from './subjects/idealType';
+import { PLANT_DATA } from './subjects/plant';
+import { PETMATCH_DATA } from './subjects/petMatch';
+import { COFFEE_DATA } from './subjects/coffee';
 import { teaData } from './subjects/tea';
 import { conflictStyleData } from './subjects/conflictStyle';
 import { fruitData } from './subjects/fruit';
@@ -17,7 +17,7 @@ import { alcoholData } from './subjects/alcohol';
 import { breadData } from './subjects/bread';
 import { perfumeData } from './subjects/perfume';
 import { aromaData } from './subjects/aroma';
-// petMatch 세부 테스트
+// 세부 테스트
 import { dogBreedData } from './subjects/dogBreed';
 import { catBreedData } from './subjects/catBreed';
 import { smallPetData } from './subjects/smallPet';
@@ -25,42 +25,46 @@ import { fishTypeData } from './subjects/fishType';
 import { birdTypeData } from './subjects/birdType';
 import { reptileTypeData } from './subjects/reptileType';
 
-export const CHEMI_DATA: ChemiData = {
-  human: humanData,
-  cat: catData,
-  dog: dogData,
-  rabbit: rabbitData,
-  hamster: hamsterData,
-  idealType: idealTypeData,
-  plant: plantData,
-  petMatch: petMatchData,
-  coffee: coffeeData,
-  tea: teaData,
-  conflictStyle: conflictStyleData,
-  fruit: fruitData,
-  alcohol: alcoholData,
-  bread: breadData,
-  perfume: perfumeData,
-  aroma: aromaData,
-  // petMatch 세부 테스트
-  dogBreed: dogBreedData,
-  catBreed: catBreedData,
-  smallPet: smallPetData,
-  fishType: fishTypeData,
-  birdType: birdTypeData,
-  reptileType: reptileTypeData
+export const CHEMI_DATA = {
+    human: HUMAN_DATA,
+    cat: CAT_DATA,
+    dog: DOG_DATA,
+    rabbit: RABBIT_DATA,
+    hamster: HAMSTER_DATA,
+    idealType: IDEALTYPE_DATA,
+    plant: PLANT_DATA,
+    petMatch: PETMATCH_DATA,
+    coffee: COFFEE_DATA,
+    tea: teaData,
+    conflictStyle: conflictStyleData,
+    fruit: fruitData,
+    alcohol: alcoholData,
+    bread: breadData,
+    perfume: perfumeData,
+    aroma: aromaData,
+    // 세부 테스트
+    dogBreed: dogBreedData,
+    catBreed: catBreedData,
+    smallPet: smallPetData,
+    fishType: fishTypeData,
+    birdType: birdTypeData,
+    reptileType: reptileTypeData,
 };
 
-export const SUBJECT_KEYS: SubjectKey[] = [
-  'human', 'cat', 'dog', 'rabbit', 'hamster', 'idealType', 'plant', 'petMatch', 'coffee', 'tea', 'conflictStyle',
-  'fruit', 'alcohol', 'bread', 'perfume', 'aroma',
-  // petMatch 세부 테스트
-  'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
-];
+// config.ts에서 re-export
+export { SUBJECT_CONFIG, MAIN_TEST_KEYS, RANKABLE_TESTS, RANKABLE_TEST_KEYS, TEST_TYPES } from './config';
 
-// Re-export everything
-export * from './types';
-// constants에서 Level 제외 (types에서 re-export됨)
-export { CHEMI_CONSTANTS } from './constants';
-export * from './utils';
-export * from './config';
+// camelCase alias exports (하위 호환성)
+export const humanData = HUMAN_DATA;
+export const catData = CAT_DATA;
+export const dogData = DOG_DATA;
+export const rabbitData = RABBIT_DATA;
+export const hamsterData = HAMSTER_DATA;
+export const idealTypeData = IDEALTYPE_DATA;
+export const plantData = PLANT_DATA;
+export const petMatchData = PETMATCH_DATA;
+export const coffeeData = COFFEE_DATA;
+// 신규 테스트 re-export (이미 camelCase로 import됨)
+export { teaData, conflictStyleData, fruitData, alcoholData, breadData, perfumeData, aromaData };
+// 세부 테스트 re-export
+export { dogBreedData, catBreedData, smallPetData, fishTypeData, birdTypeData, reptileTypeData };

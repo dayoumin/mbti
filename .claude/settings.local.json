@@ -70,7 +70,14 @@
       "Bash(src/components/ParticipationStats.tsx )",
       "Bash(src/components/HeroBanner.tsx)",
       "Bash(npx playwright test:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(del \".next\\\\lock\")",
+      "Bash(del \"D:\\\\Projects\\\\MBTI\\\\.next\\\\lock\")",
+      "Bash(npm test:*)",
+      "Bash(del \"d:\\\\Projects\\\\MBTI\\\\.next\\\\lock\")",
+      "Bash(git status:*)",
+      "Bash(xargs:*)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

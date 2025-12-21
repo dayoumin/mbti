@@ -11,7 +11,7 @@ import TalkPreview from './TalkPreview';
 import { ChevronRight, LayoutGrid } from 'lucide-react';
 
 interface DiscoveryFeedProps {
-    onStartTest: (key: SubjectKey) => void;
+    onStartTest?: (key: SubjectKey) => void;
     onExploreAll?: () => void;
     className?: string;
 }

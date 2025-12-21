@@ -3,6 +3,7 @@
 // ============================================================================
 
 import type { UserGameStats, StreakInfo, DailyActivity, ExpertSubject, ExpertTrackProgress, CommunityStats, DuelStats, Badge, BadgeTier } from '../data/gamification/types';
+export type { UserGameStats };
 import type { SubjectKey } from '../data/types';
 import { BADGES, getBadgeById } from '../data/gamification/badges';
 import { getLevelByPoints, getPointsToNextLevel, DAILY_MISSIONS } from '../data/gamification/levels';

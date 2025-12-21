@@ -2,6 +2,7 @@
 
 import React from 'react';
 import * as Icons from './Icons';
+import type { SubjectKey } from '../data/types';
 
 interface TestCardProps {
     item: {
@@ -10,7 +11,7 @@ interface TestCardProps {
         title?: string;
         icon: string;
     };
-    onStart: (key: string) => void;
+    onStart?: (key: SubjectKey) => void;
     badge?: string;
 }
 
@@ -19,7 +20,7 @@ const TestCard = ({ item, onStart, badge }: TestCardProps) => {
 
     return (
         <button
-            onClick={() => onStart(item.key)}
+            onClick={() => onStart?.(item.key as SubjectKey)}
             className="group flex flex-col items-center gap-2 pt-4 pb-3 px-2 rounded-xl bg-white/80 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-md hover:-translate-y-1 relative"
         >
             {badge && (

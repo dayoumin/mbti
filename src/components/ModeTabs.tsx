@@ -34,13 +34,13 @@ export const ModeTabs = ({ mode, onRestart }: ModeTabsProps) => {
   });
 
   // testTypes 순서대로 렌더링
-  const typeOrder = Object.keys(TEST_TYPES);
+  const typeOrder = Object.keys(TEST_TYPES) as Array<keyof typeof TEST_TYPES>;
 
   return (
     <div className="w-full mb-6 space-y-3">
       {typeOrder.map((typeKey) => {
         const typeInfo = TEST_TYPES[typeKey];
-        const tabs = groupedTabs[typeKey] || [];
+        const tabs = groupedTabs[typeKey as string] || [];
         if (tabs.length === 0) return null;
 
         return (

@@ -670,7 +670,7 @@ interface TestSelectorProps {
 function getTestsByType(): Record<string, SubjectKey[]> {
   const grouped: Record<string, SubjectKey[]> = {};
   (Object.keys(CHEMI_DATA) as SubjectKey[]).forEach((key) => {
-    const config = SUBJECT_CONFIG[key];
+    const config = SUBJECT_CONFIG[key as keyof typeof SUBJECT_CONFIG];
     if (!config) return; // 테스트가 없는 카테고리 건너뛰기
     const type = config.testType;
     if (!grouped[type]) grouped[type] = [];
@@ -692,7 +692,7 @@ function TypeTabs({ selectedType, onSelectType }: TypeTabsProps) {
   return (
     <div className="db-tabs flex gap-2 p-2 rounded-xl mb-6">
       {types.map((type) => {
-        const typeInfo = TEST_TYPES[type];
+        const typeInfo = TEST_TYPES[type as keyof typeof TEST_TYPES];
         const isSelected = selectedType === type;
         const count = testsByType[type].length;
 
@@ -754,7 +754,7 @@ function TestList({ selectedTest, onSelectTest }: TestSelectorProps) {
   const types = Object.keys(testsByType);
   const [selectedType, setSelectedType] = useState(types[0] || 'personality');
   const testsForType = testsByType[selectedType] || [];
-  const typeInfo = TEST_TYPES[selectedType];
+  const typeInfo = TEST_TYPES[selectedType as keyof typeof TEST_TYPES];
 
   return (
     <div className="space-y-6">
@@ -958,7 +958,7 @@ function ResultSimulator({ selectedTest, onSelectTest }: TestSelectorProps) {
           </div>
           <div className="p-5 space-y-4">
             {dimensionKeys.map((key) => {
-              const dim = data.dimensions[key];
+              const dim = (data.dimensions as Record<string, { name: string; emoji: string; desc: string }>)[key];
               return (
                 <div key={key}>
                   <div className="flex items-center justify-between mb-2">

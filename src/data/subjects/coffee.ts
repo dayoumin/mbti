@@ -1,8 +1,7 @@
-// coffee 테스트 데이터
+// coffee 테스트 데이터 (나에게 맞는 커피 매칭)
+// 생성일: 2025-12-11
 
-import { SubjectData } from '../types';
-
-export const coffeeData: SubjectData = {
+export const COFFEE_DATA = {
     "title": "나의 커피 찾기",
     "subtitle": "어떤 커피가 나와 맞을까?",
     "themeColor": "bg-amber-700",
@@ -438,3 +437,8 @@ export const coffeeData: SubjectData = {
         }
     ]
 };
+
+if (typeof window !== 'undefined') {
+  window.CHEMI_SUBJECTS = window.CHEMI_SUBJECTS || {};
+  window.CHEMI_SUBJECTS.coffee = COFFEE_DATA;
+}

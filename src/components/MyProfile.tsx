@@ -11,9 +11,25 @@ import {
   Radar,
   ResponsiveContainer,
 } from 'recharts';
-import { Share2, Check } from 'lucide-react';
+import { Share2, Check, Heart } from 'lucide-react';
 import { profileService, MyProfileData } from '@/services/ProfileService';
 import { LoginPromptBanner } from '@/components/auth';
+import CareHome from '@/components/care/CareHome';
+
+// ============================================================================
+// 커스텀 훅 - ESC 키 핸들링
+// ============================================================================
+
+function useEscapeKey(onClose: (() => void) | undefined, isActive: boolean = true) {
+  useEffect(() => {
+    if (!onClose || !isActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, isActive]);
+}
 
 // ============================================================================
 // 탭 타입 정의
@@ -166,6 +182,9 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
   const [activeTab, setActiveTab] = useState<ProfileTab>('me');
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
 
+  // ESC 키로 모달 닫기
+  useEscapeKey(onClose);
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -191,7 +210,12 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="내 프로필"
+    >
       <div className="bg-white rounded-2xl w-full max-w-md h-[85vh] flex flex-col shadow-xl overflow-hidden">
         {/* 컴팩트 헤더 */}
         <div className="bg-gradient-to-r from-slate-700 via-slate-600 to-slate-500 px-4 py-3 flex items-center justify-between shrink-0">
@@ -319,6 +343,56 @@ export function FullProfile({ onClose, onStartTest }: FullProfileProps) {
 }
 
 // ============================================================================
+// 케어 버튼 + 모달 공통 컴포넌트
+// ============================================================================
+
+interface CareButtonProps {
+  label?: string;
+  className?: string;
+}
+
+function CareButtonWithModal({ label = '케어 관리', className = '' }: CareButtonProps) {
+  const [showCareHome, setShowCareHome] = useState(false);
+
+  // ESC 키로 모달 닫기
+  useEscapeKey(() => setShowCareHome(false), showCareHome);
+
+  return (
+    <>
+      <button
+        onClick={() => setShowCareHome(true)}
+        className={`w-full flex items-center justify-center gap-2 py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-medium transition-colors border border-rose-200 ${className}`}
+      >
+        <Heart className="w-4 h-4" />
+        {label}
+      </button>
+
+      {showCareHome && (
+        <div
+          className="fixed inset-0 z-[60] bg-[#F0F2F5] overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-label="케어 관리"
+        >
+          <div className="max-w-2xl mx-auto p-4 pb-24">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setShowCareHome(false)}
+                className="flex items-center gap-2 text-slate-600 hover:text-slate-800 font-medium"
+                autoFocus
+              >
+                ← 프로필로 돌아가기
+              </button>
+            </div>
+            <CareHome />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ============================================================================
 // 탭 컴포넌트들
 // ============================================================================
 
@@ -432,15 +506,21 @@ function TabPet({ profile, onStartTest, onClose }: TabProps) {
 
   if (!hasPetScores && !hasRecommended) {
     return (
-      <EmptyTab
-        icon="🐾"
-        title="반려동물 케미 알아보기"
-        description="고양이, 강아지, 토끼, 햄스터와의 케미를 확인해보세요"
-        testKey="cat"
-        testLabel="고양이 테스트 시작"
-        onStartTest={onStartTest}
-        onClose={onClose}
-      />
+      <>
+        <EmptyTab
+          icon="🐾"
+          title="반려동물 케미 알아보기"
+          description="고양이, 강아지, 토끼, 햄스터와의 케미를 확인해보세요"
+          testKey="cat"
+          testLabel="고양이 테스트 시작"
+          onStartTest={onStartTest}
+          onClose={onClose}
+        />
+        {/* 케어 관리 버튼 - 테스트 결과 없어도 표시 (동물+식물 통합) */}
+        <div className="mt-4">
+          <CareButtonWithModal label="반려생물 케어 관리" />
+        </div>
+      </>
     );
   }
 
@@ -501,6 +581,9 @@ function TabPet({ profile, onStartTest, onClose }: TabProps) {
           )}
         </div>
       )}
+
+      {/* 케어 관리 버튼 (동물+식물 통합) */}
+      <CareButtonWithModal label="반려생물 케어 관리" />
     </div>
   );
 }
@@ -567,6 +650,9 @@ function TabLife({ profile, onStartTest, onClose }: TabProps) {
           onClose={onClose}
         />
       )}
+
+      {/* 케어 관리 버튼 (식물 케어용) */}
+      {hasPlant && <CareButtonWithModal label="내 식물 케어 관리" />}
     </div>
   );
 }
@@ -577,34 +663,42 @@ function TabHistory({ onStartTest, onClose }: { onStartTest?: (testKey: string) 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const loadHistory = async () => {
+      try {
+        const { resultService } = await import('@/services/ResultService');
+        const results = await resultService.getMyResults();
+
+        if (cancelled) return;
+
+        // 결과를 HistoryItem 형태로 변환
+        const items: HistoryItem[] = results.map(r => ({
+          id: r.id,
+          testType: r.testType,
+          testLabel: getTestLabel(r.testType),
+          resultName: r.resultKey,
+          resultEmoji: r.resultEmoji,
+          isDeepMode: r.isDeepMode,
+          createdAt: r.createdAt,
+          parentTest: r.parentTest,
+          parentResult: r.parentResult,
+        }));
+
+        setHistory(items);
+      } catch (error) {
+        console.error('Failed to load history:', error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
     loadHistory();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
-
-  const loadHistory = async () => {
-    try {
-      const { resultService } = await import('@/services/ResultService');
-      const results = await resultService.getMyResults();
-
-      // 결과를 HistoryItem 형태로 변환
-      const items: HistoryItem[] = results.map(r => ({
-        id: r.id,
-        testType: r.testType,
-        testLabel: getTestLabel(r.testType),
-        resultName: r.resultKey,
-        resultEmoji: r.resultEmoji,
-        isDeepMode: r.isDeepMode,
-        createdAt: r.createdAt,
-        parentTest: r.parentTest,
-        parentResult: r.parentResult,
-      }));
-
-      setHistory(items);
-    } catch (error) {
-      console.error('Failed to load history:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
