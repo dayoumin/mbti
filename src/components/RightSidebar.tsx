@@ -82,7 +82,7 @@ function TrendingTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) 
                 onClick={() => onStartTest(key)}
                 className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
               >
-                <span className="w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm">
+                <span className="w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xs font-black rounded-full flex items-center justify-center shadow-sm">
                   {index + 1}
                 </span>
                 <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -110,7 +110,7 @@ function TrendingTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) 
         </div>
         <div>
           <h3 className="text-base font-bold text-slate-800">추천 테스트</h3>
-          <p className="text-[10px] text-slate-400">아직 안 해본 테스트</p>
+          <p className="text-xs text-slate-400">아직 안 해본 테스트</p>
         </div>
       </div>
       <div className="px-3 pb-3 space-y-2">
@@ -128,12 +128,12 @@ function TrendingTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) 
               className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
             >
               {isPopular && (
-                <span className="w-5 h-5 bg-gradient-to-br from-rose-500 to-orange-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">
+                <span className="w-5 h-5 bg-gradient-to-br from-rose-500 to-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                   🔥
                 </span>
               )}
               {!isPopular && (
-                <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full flex items-center justify-center">
                   {index + 1}
                 </span>
               )}
@@ -144,7 +144,7 @@ function TrendingTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) 
                 <p className="text-sm font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
                   {data.title || config.label}
                 </p>
-                <p className="text-[10px] text-slate-400 truncate">
+                <p className="text-xs text-slate-400 truncate">
                   {data.resultLabels?.length || 0}가지 결과
                 </p>
               </div>
@@ -189,19 +189,19 @@ function CommunityPreview({ onOpenCommunity }: { onOpenCommunity: () => void }) 
             className="w-full p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors text-left group"
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${getPostCategoryStyle(post.category)}`}>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${getPostCategoryStyle(post.category)}`}>
                 {getPostCategoryLabel(post.category)}
               </span>
-              <span className="text-[11px] text-slate-400">{post.author}</span>
+              <span className="text-xs text-slate-400">{post.author}</span>
             </div>
             <h4 className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors truncate">
               {post.title}
             </h4>
             <div className="flex items-center gap-3 mt-2">
-              <span className="flex items-center gap-1 text-[11px] text-slate-400">
+              <span className="flex items-center gap-1 text-xs text-slate-400">
                 <Heart className="w-3 h-3" /> {post.likes}
               </span>
-              <span className="flex items-center gap-1 text-[11px] text-slate-400">
+              <span className="flex items-center gap-1 text-xs text-slate-400">
                 <MessageCircle className="w-3 h-3" /> {post.comments}
               </span>
             </div>
@@ -268,7 +268,7 @@ function RankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
           </div>
           <div>
             <h3 className="text-base font-bold text-orange-700">오늘의 랭킹</h3>
-            <p className="text-[11px] text-orange-500 flex items-center gap-1">
+            <p className="text-xs text-orange-500 flex items-center gap-1">
               <Users className="w-3 h-3" /> {totalParticipants.toLocaleString()}명 참여
             </p>
           </div>
@@ -288,7 +288,7 @@ function RankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
               key={poll.pollId}
               className="flex items-center gap-2.5 p-2.5 bg-white/60 rounded-lg"
             >
-              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black ${
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
                 index === 0 ? 'bg-amber-400 text-white' :
                 index === 1 ? 'bg-slate-300 text-white' :
                 'bg-orange-200 text-orange-700'
@@ -298,7 +298,7 @@ function RankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
               <p className="text-xs text-slate-700 font-medium truncate flex-1">
                 {poll.question}
               </p>
-              <span className="text-[11px] text-slate-400">{poll.totalVotes}표</span>
+              <span className="text-xs text-slate-400">{poll.totalVotes}표</span>
             </div>
           ))
         ) : (
@@ -374,7 +374,7 @@ function DetailTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) =>
           </div>
           <div>
             <h3 className="text-base font-bold text-amber-700">반려동물 세부 추천</h3>
-            <p className="text-[11px] text-amber-500">
+            <p className="text-xs text-amber-500">
               {hasPetMatchResult ? '추천 품종 테스트 보기' : '어떤 품종이 맞을까?'}
             </p>
           </div>
@@ -414,7 +414,7 @@ function DetailTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) =>
                   }`}
                 >
                   {isRecommended && (
-                    <span className="text-[8px] font-bold text-amber-600 bg-amber-200 px-1.5 py-0.5 rounded-full mb-1 inline-block">
+                    <span className="text-xs font-bold text-amber-600 bg-amber-200 px-1.5 py-0.5 rounded-full mb-1 inline-block">
                       추천
                     </span>
                   )}
@@ -423,10 +423,10 @@ function DetailTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) =>
                       <IconComponent mood="happy" className="w-6 h-6" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-bold text-slate-700 truncate">
+                      <p className="text-xs font-bold text-slate-700 truncate">
                         {data.title?.replace(' 추천', '') || config.label}
                       </p>
-                      <p className="text-[8px] text-slate-400">
+                      <p className="text-xs text-slate-400">
                         {data.resultLabels?.length || 0}가지
                       </p>
                     </div>

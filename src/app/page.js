@@ -92,7 +92,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
                                 <MapPin className="w-4 h-4 text-slate-400" />
                                 <div>
-                                    <p className="text-[10px] text-slate-400">원산지</p>
+                                    <p className="text-xs text-slate-400">원산지</p>
                                     <p className="text-xs font-semibold text-slate-700">{detailInfo.origin}</p>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
                                 <Clock className="w-4 h-4 text-slate-400" />
                                 <div>
-                                    <p className="text-[10px] text-slate-400">평균 수명</p>
+                                    <p className="text-xs text-slate-400">평균 수명</p>
                                     <p className="text-xs font-semibold text-slate-700">{detailInfo.lifespan}</p>
                                 </div>
                             </div>
@@ -110,7 +110,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
                                 <Scale className="w-4 h-4 text-slate-400" />
                                 <div>
-                                    <p className="text-[10px] text-slate-400">크기</p>
+                                    <p className="text-xs text-slate-400">크기</p>
                                     <p className="text-xs font-semibold text-slate-700">{detailInfo.size}</p>
                                 </div>
                             </div>
@@ -119,7 +119,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
                                 <Scale className="w-4 h-4 text-slate-400" />
                                 <div>
-                                    <p className="text-[10px] text-slate-400">체중</p>
+                                    <p className="text-xs text-slate-400">체중</p>
                                     <p className="text-xs font-semibold text-slate-700">{detailInfo.weight}</p>
                                 </div>
                             </div>
@@ -134,7 +134,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             </h4>
                             <div className="flex flex-wrap gap-1.5">
                                 {detailInfo.personality.map((trait, idx) => (
-                                    <span key={idx} className="px-2 py-1 bg-pink-50 text-pink-700 text-[11px] font-medium rounded-full">
+                                    <span key={idx} className="px-2 py-1 bg-pink-50 text-pink-700 text-xs font-medium rounded-full">
                                         {trait}
                                     </span>
                                 ))}
@@ -146,24 +146,24 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                     <div className="grid grid-cols-2 gap-2">
                         {detailInfo.goodWith && detailInfo.goodWith.length > 0 && (
                             <div className="p-2.5 bg-green-50/80 rounded-lg">
-                                <h4 className="text-[10px] font-bold text-green-700 mb-1.5 flex items-center gap-1">
+                                <h4 className="text-xs font-bold text-green-700 mb-1.5 flex items-center gap-1">
                                     <Check className="w-3 h-3" /> 잘 맞는 환경
                                 </h4>
                                 <div className="space-y-0.5">
                                     {detailInfo.goodWith.map((item, idx) => (
-                                        <p key={idx} className="text-[11px] text-green-800">{item}</p>
+                                        <p key={idx} className="text-xs text-green-800">{item}</p>
                                     ))}
                                 </div>
                             </div>
                         )}
                         {detailInfo.notGoodWith && detailInfo.notGoodWith.length > 0 && (
                             <div className="p-2.5 bg-rose-50/80 rounded-lg">
-                                <h4 className="text-[10px] font-bold text-rose-700 mb-1.5 flex items-center gap-1">
+                                <h4 className="text-xs font-bold text-rose-700 mb-1.5 flex items-center gap-1">
                                     <AlertTriangle className="w-3 h-3" /> 주의 사항
                                 </h4>
                                 <div className="space-y-0.5">
                                     {detailInfo.notGoodWith.map((item, idx) => (
-                                        <p key={idx} className="text-[11px] text-rose-800">{item}</p>
+                                        <p key={idx} className="text-xs text-rose-800">{item}</p>
                                     ))}
                                 </div>
                             </div>
@@ -178,36 +178,36 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                         <div className="grid grid-cols-2 gap-2">
                             {detailInfo.exerciseNeeds && (
                                 <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                                    <span className="text-xs text-slate-500 flex items-center gap-1">
                                         <Zap className="w-3 h-3" /> 운동량
                                     </span>
-                                    <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.exerciseNeeds)}`}>
+                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.exerciseNeeds)}`}>
                                         {needsLevelLabel(detailInfo.exerciseNeeds)}
                                     </span>
                                 </div>
                             )}
                             {detailInfo.groomingNeeds && (
                                 <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                                    <span className="text-xs text-slate-500 flex items-center gap-1">
                                         <Scissors className="w-3 h-3" /> 미용관리
                                     </span>
-                                    <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.groomingNeeds)}`}>
+                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.groomingNeeds)}`}>
                                         {needsLevelLabel(detailInfo.groomingNeeds)}
                                     </span>
                                 </div>
                             )}
                             {detailInfo.sheddingLevel && (
                                 <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-[11px] text-slate-500">털빠짐</span>
-                                    <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.sheddingLevel)}`}>
+                                    <span className="text-xs text-slate-500">털빠짐</span>
+                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.sheddingLevel)}`}>
                                         {needsLevelLabel(detailInfo.sheddingLevel)}
                                     </span>
                                 </div>
                             )}
                             {detailInfo.trainingDifficulty && (
                                 <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-[11px] text-slate-500">훈련난이도</span>
-                                    <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${difficultyColor(detailInfo.trainingDifficulty)}`}>
+                                    <span className="text-xs text-slate-500">훈련난이도</span>
+                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${difficultyColor(detailInfo.trainingDifficulty)}`}>
                                         {difficultyLabel(detailInfo.trainingDifficulty)}
                                     </span>
                                 </div>
@@ -223,7 +223,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             </h4>
                             <div className="flex flex-wrap gap-1.5">
                                 {detailInfo.healthIssues.map((issue, idx) => (
-                                    <span key={idx} className="px-2 py-1 bg-amber-50 text-amber-700 text-[11px] rounded-full">
+                                    <span key={idx} className="px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-full">
                                         {issue}
                                     </span>
                                 ))}
@@ -240,23 +240,23 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                             <div className="grid grid-cols-2 gap-2">
                                 {detailInfo.initialCost && (
                                     <div className="p-2.5 bg-white/70 rounded-lg">
-                                        <p className="text-[10px] text-slate-400 mb-0.5">초기 비용</p>
+                                        <p className="text-xs text-slate-400 mb-0.5">초기 비용</p>
                                         <p className="text-sm font-bold text-slate-700">
                                             {detailInfo.initialCost.min}~{detailInfo.initialCost.max}만원
                                         </p>
                                         {detailInfo.initialCost.note && (
-                                            <p className="text-[10px] text-slate-400 mt-0.5">{detailInfo.initialCost.note}</p>
+                                            <p className="text-xs text-slate-400 mt-0.5">{detailInfo.initialCost.note}</p>
                                         )}
                                     </div>
                                 )}
                                 {detailInfo.monthlyCost && (
                                     <div className="p-2.5 bg-white/70 rounded-lg">
-                                        <p className="text-[10px] text-slate-400 mb-0.5">월 비용</p>
+                                        <p className="text-xs text-slate-400 mb-0.5">월 비용</p>
                                         <p className="text-sm font-bold text-slate-700">
                                             {detailInfo.monthlyCost.min}~{detailInfo.monthlyCost.max}만원
                                         </p>
                                         {detailInfo.monthlyCost.note && (
-                                            <p className="text-[10px] text-slate-400 mt-0.5">{detailInfo.monthlyCost.note}</p>
+                                            <p className="text-xs text-slate-400 mt-0.5">{detailInfo.monthlyCost.note}</p>
                                         )}
                                     </div>
                                 )}
@@ -274,7 +274,7 @@ const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconCompon
                                 {detailInfo.tips.map((tip, idx) => (
                                     <div key={idx} className="flex items-start gap-2 p-2 bg-yellow-50/80 rounded-lg">
                                         <span className="text-yellow-500 font-bold text-xs mt-0.5">💡</span>
-                                        <p className="text-[11px] text-slate-700 leading-relaxed">{tip}</p>
+                                        <p className="text-xs text-slate-700 leading-relaxed">{tip}</p>
                                     </div>
                                 ))}
                             </div>
@@ -399,7 +399,7 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
                             <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                             {recommendation.label || (recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 추천')}
                         </span>
-                        <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                        <span className="text-xs font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
                             {completedCount}/{completedCount + incompleteCount} 완료
                         </span>
                     </div>
@@ -415,7 +415,7 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
                         )}
                         <div className="flex-1 min-w-0">
                             <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
-                            <p className="text-[10px] text-slate-400 truncate">
+                            <p className="text-xs text-slate-400 truncate">
                                 {recommendation.reason === 'new' ? '아직 안 해본 테스트예요!' : data.subtitle}
                             </p>
                         </div>
@@ -428,7 +428,7 @@ const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
 
             <button
                 onClick={onGoHome}
-                className="w-full mt-2 py-2 text-[10px] font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors"
+                className="w-full mt-2 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors"
             >
                 <HomeIcon className="w-3 h-3" />
                 대시보드로 돌아가기
@@ -1016,7 +1016,7 @@ export default function Home() {
                                                     {/* 상단 라벨 */}
                                                     <div className="flex items-center justify-between mb-3">
                                                         <span className="text-xs font-bold text-slate-400">{currentModeData.title} 결과</span>
-                                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500">
+                                                        <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500">
                                                             MATCH
                                                         </span>
                                                     </div>
@@ -1049,7 +1049,7 @@ export default function Home() {
                                                         <IconComponent mood={finalResult.mood || "happy"} className="w-24 h-24 relative z-10 drop-shadow-xl" />
                                                     </div>
                                                     <div className="flex-1 text-left">
-                                                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold text-white mb-1 bg-indigo-400`}>
+                                                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold text-white mb-1 bg-indigo-400`}>
                                                             {finalResult.mood || 'RARE'} TYPE
                                                         </span>
                                                         <h1 className="text-2xl font-black text-slate-800 leading-tight">
@@ -1104,7 +1104,7 @@ export default function Home() {
                                                             </h3>
                                                             <div className="flex flex-wrap gap-1">
                                                                 {(finalResult.matchPoints || []).map((point, idx) => (
-                                                                    <span key={idx} className="px-2 py-0.5 bg-white text-slate-600 text-[11px] rounded-full border border-slate-200">
+                                                                    <span key={idx} className="px-2 py-0.5 bg-white text-slate-600 text-xs rounded-full border border-slate-200">
                                                                         {point}
                                                                     </span>
                                                                 ))}

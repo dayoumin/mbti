@@ -50,14 +50,14 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
     >
       {/* 순위 배지 */}
       {rank && (
-        <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[11px] font-black rounded-full flex items-center justify-center shadow-sm z-10">
+        <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xs font-black rounded-full flex items-center justify-center shadow-sm z-10">
           {rank}
         </span>
       )}
 
       {/* HOT/NEW 배지 */}
       {badge && !rank && (
-        <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm z-10 ${badge === 'HOT'
+        <span className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm z-10 ${badge === 'HOT'
           ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white'
           : 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white'
           }`}>
@@ -100,7 +100,7 @@ function SectionHeader({ icon, title, subtitle, onMore, moreLabel = '더보기' 
         {icon}
         <div>
           <h3 className="text-sm font-bold text-slate-700">{title}</h3>
-          {subtitle && <p className="text-[11px] text-slate-400">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
         </div>
       </div>
       {onMore && (

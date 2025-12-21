@@ -33,7 +33,7 @@ export default function CommunityBoard({ className = '' }: { className?: string 
 
                 <div className="flex-1 overflow-y-auto p-6">
                     <div className="mb-6">
-                        <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full mb-2 inline-block ${getPostCategoryStyle(selectedPost.category)}`}>
+                        <span className={`px-2 py-0.5 text-xs font-bold rounded-full mb-2 inline-block ${getPostCategoryStyle(selectedPost.category)}`}>
                             {getPostCategoryLabel(selectedPost.category)}
                         </span>
                         <h1 className="text-xl font-black text-slate-800 leading-tight mb-3">
@@ -102,10 +102,10 @@ export default function CommunityBoard({ className = '' }: { className?: string 
                         className="w-full bg-white p-4 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:shadow-md transition-all text-left flex flex-col gap-2 group"
                     >
                         <div className="flex items-center gap-2">
-                            <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${getPostCategoryStyle(post.category)}`}>
+                            <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${getPostCategoryStyle(post.category)}`}>
                                 {getPostCategoryLabel(post.category)}
                             </span>
-                            <span className="text-[11px] text-slate-400">{post.date}</span>
+                            <span className="text-xs text-slate-400">{post.date}</span>
                         </div>
                         <h3 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">
                             {post.title}
@@ -114,13 +114,13 @@ export default function CommunityBoard({ className = '' }: { className?: string 
                             {post.content}
                         </p>
                         <div className="flex items-center gap-3 mt-1">
-                            <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                            <div className="flex items-center gap-1 text-xs text-slate-400">
                                 <Heart className="w-3 h-3" /> {post.likes}
                             </div>
-                            <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                            <div className="flex items-center gap-1 text-xs text-slate-400">
                                 <MessageCircle className="w-3 h-3" /> {post.comments}
                             </div>
-                            <span className="ml-auto text-[11px] text-slate-300 font-medium">조회 {post.viewCount}</span>
+                            <span className="ml-auto text-xs text-slate-300 font-medium">조회 {post.viewCount}</span>
                         </div>
                     </button>
                 ))}

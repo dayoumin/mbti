@@ -47,9 +47,9 @@ export default function VSPollCard({
         </div>
         <div className="flex-1 text-left min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold text-purple-500 block">VS 투표</span>
+            <span className="text-xs font-bold text-purple-500 block">VS 투표</span>
             {(isVoted || voted) && (
-              <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+              <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
                 완료
               </span>
             )}
@@ -71,7 +71,7 @@ export default function VSPollCard({
           <Vote className="w-4 h-4 text-purple-500" />
           <span className="text-xs font-bold text-purple-600">VS 투표</span>
           {(isVoted || voted) && (
-            <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
+            <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">
               완료
             </span>
           )}
@@ -97,7 +97,7 @@ export default function VSPollCard({
         >
           <div className="p-2 text-center relative z-10">
             <span className="text-xl block">{poll.optionA.emoji}</span>
-            <span className="text-[10px] font-bold text-slate-700">{poll.optionA.text}</span>
+            <span className="text-xs font-bold text-slate-700">{poll.optionA.text}</span>
             {voted && <div className="text-sm font-black text-purple-600">{results.a}%</div>}
           </div>
           {voted && (
@@ -110,7 +110,7 @@ export default function VSPollCard({
 
         {/* VS 구분선 */}
         <div className="flex items-center">
-          <span className="text-[10px] font-black text-slate-400">VS</span>
+          <span className="text-xs font-black text-slate-400">VS</span>
         </div>
 
         {/* 옵션 B */}
@@ -125,7 +125,7 @@ export default function VSPollCard({
         >
           <div className="p-2 text-center relative z-10">
             <span className="text-xl block">{poll.optionB.emoji}</span>
-            <span className="text-[10px] font-bold text-slate-700">{poll.optionB.text}</span>
+            <span className="text-xs font-bold text-slate-700">{poll.optionB.text}</span>
             {voted && <div className="text-sm font-black text-pink-600">{results.b}%</div>}
           </div>
           {voted && (
@@ -138,7 +138,7 @@ export default function VSPollCard({
       </div>
 
       {(voted || isVoted) && (
-        <p className="text-center text-[10px] text-slate-400 mt-2">참여 완료!</p>
+        <p className="text-center text-xs text-slate-400 mt-2">참여 완료!</p>
       )}
     </div>
   );

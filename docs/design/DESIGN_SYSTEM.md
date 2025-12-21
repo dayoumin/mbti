@@ -76,15 +76,39 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
 
 ### 2.2 크기 체계
 
-| 용도 | Tailwind | 크기 |
-|------|----------|------|
-| 페이지 타이틀 | `text-3xl` / `text-4xl` | 30-36px |
-| 섹션 타이틀 | `text-2xl` | 24px |
-| 카드 타이틀 | `text-xl` | 20px |
-| 버튼/선택지 | `text-lg` | 18px |
-| 본문 | `text-base` / `text-sm` | 14-16px |
-| 캡션 | `text-xs` | 12px |
-| 힌트/배지 | `text-[10px]` / `text-[11px]` | 10-11px |
+> **원칙: Tailwind 표준 토큰만 사용. `text-[Npx]` 수동 지정 금지.**
+
+| 용도 | Tailwind | 크기 | 비고 |
+|------|----------|------|------|
+| 페이지 타이틀 | `text-3xl` / `text-4xl` | 30-36px | |
+| 섹션 타이틀 | `text-2xl` | 24px | |
+| 카드 타이틀 | `text-xl` | 20px | |
+| 버튼/선택지 | `text-lg` | 18px | |
+| 강조 본문 | `text-base` | 16px | |
+| 본문 | `text-sm` | 14px | 기본 본문 크기 |
+| 캡션/힌트/배지 | `text-xs` | 12px | **최소 크기** |
+
+### 2.2.1 금지 사항
+
+```jsx
+// ❌ 금지 - 수동 크기 지정
+<span className="text-[8px]">너무 작음</span>
+<span className="text-[10px]">비표준</span>
+<span className="text-[11px]">비표준</span>
+
+// ✅ 권장 - Tailwind 표준 토큰
+<span className="text-xs">캡션/배지 (12px)</span>
+<span className="text-sm">본문 (14px)</span>
+```
+
+### 2.2.2 예외 처리
+
+정말 12px보다 작은 크기가 필요한 경우, globals.css에 시맨틱 클래스로 정의:
+
+```css
+/* globals.css */
+.text-micro { font-size: 10px; } /* 극히 제한적 사용 */
+```
 
 ### 2.3 폰트 웨이트
 
@@ -154,15 +178,15 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
 ```jsx
 {/* HOT 배지 */}
 <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-white
-                 text-[8px] font-bold px-1 py-0.5 rounded-full">
+                 text-xs font-bold px-1.5 py-0.5 rounded-full">
 
 {/* NEW 배지 */}
 <span className="bg-gradient-to-r from-emerald-400 to-teal-400 text-white
-                 text-[8px] font-bold px-1 py-0.5 rounded-full">
+                 text-xs font-bold px-1.5 py-0.5 rounded-full">
 
 {/* 완료 배지 */}
 <span className="bg-emerald-100 text-emerald-700
-                 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                 text-xs font-bold px-1.5 py-0.5 rounded-full">
 ```
 
 ### 3.5 프로그레스 바

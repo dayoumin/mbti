@@ -51,7 +51,7 @@ export default function Footer({ className = '', variant = 'default' }: FooterPr
         </div>
 
         {/* 저작권 */}
-        <p className="text-[10px] text-slate-400 text-center mt-4">
+        <p className="text-xs text-slate-400 text-center mt-4">
           © 2025 케미테스트. All rights reserved.
         </p>
       </div>

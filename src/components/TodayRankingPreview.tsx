@@ -78,7 +78,7 @@ export default function TodayRankingPreview({ onClick, className = '' }: TodayRa
           </div>
           <div className="text-left">
             <h3 className="text-base font-black text-orange-700">오늘의 랭킹</h3>
-            <p className="text-[10px] text-orange-500 font-bold flex items-center gap-1">
+            <p className="text-xs text-orange-500 font-bold flex items-center gap-1">
               <Users className="w-2.5 h-2.5" />
               {totalParticipants.toLocaleString()}명 참여 중
             </p>
@@ -89,7 +89,7 @@ export default function TodayRankingPreview({ onClick, className = '' }: TodayRa
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {topPolls.map((poll, index) => (
             <div key={poll.pollId} className={`flex items-center gap-2 p-2 rounded-lg bg-white/50 border border-white/60 ${index >= 1 ? 'hidden md:flex' : ''} ${index >= 2 ? 'hidden lg:flex' : ''}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${index === 0 ? 'bg-amber-400 text-white' :
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${index === 0 ? 'bg-amber-400 text-white' :
                   index === 1 ? 'bg-slate-300 text-white' :
                     'bg-orange-200 text-orange-700'
                 }`}>

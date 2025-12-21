@@ -40,7 +40,7 @@ export default function PollWidget({
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
         <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
-          <span className="text-[10px] font-black text-purple-600">VS</span>
+          <span className="text-xs font-black text-purple-600">VS</span>
         </div>
         <span className="text-xs font-bold text-purple-600">오늘의 투표</span>
         {isVoted && (
@@ -53,7 +53,7 @@ export default function PollWidget({
       {/* 질문 및 투표 옵션: 모바일에서도 가로 배치 시도 */}
       <div className="flex gap-3 items-center">
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] md:text-sm font-black text-slate-800 leading-tight">
+          <p className="text-sm md:text-sm font-black text-slate-800 leading-tight">
             {poll.question}
           </p>
         </div>
@@ -215,7 +215,7 @@ function PollOptionButton({
       {/* 콘텐츠 */}
       <div className="relative z-10 p-3.5 md:p-5 text-center flex flex-col items-center justify-center">
         <span className="text-3xl md:text-4xl block mb-1 md:mb-2 transition-transform group-hover:scale-125 duration-300">{option.emoji}</span>
-        <span className="text-[11px] md:text-xs font-black text-slate-800 block leading-tight mb-1.5 md:mb-2">
+        <span className="text-xs md:text-xs font-black text-slate-800 block leading-tight mb-1.5 md:mb-2">
           {option.text}
         </span>
         {selectedOption && (

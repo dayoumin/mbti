@@ -238,7 +238,7 @@ function RankCard({
                   {myRanking.categoryRanks.slice(0, 3).map((rank) => (
                     <span
                       key={rank.category}
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                      className={`text-xs px-1.5 py-0.5 rounded-full ${
                         rank.rank === 1
                           ? 'bg-amber-100 text-amber-700'
                           : rank.rank <= 3
@@ -376,7 +376,7 @@ function TestRankingDetail({
                   {result.name}
                 </p>
                 {isMyResult && (
-                  <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded">
+                  <span className="px-1.5 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">
                     나
                   </span>
                 )}
@@ -450,7 +450,7 @@ export default function RankingTab({ onClose, onStartTest }: RankingTabProps) {
                 <Trophy className="w-5 h-5 text-amber-500" />
                 랭킹
               </h1>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-xs text-slate-500">
                 {completedCount}/{RANKABLE_TESTS.length} 테스트 완료
               </p>
             </div>

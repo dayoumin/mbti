@@ -440,17 +440,17 @@ const LiveMonitoringSection = () => {
           </div>
           <div className="ml-auto text-right">
             <p className="font-black text-amber-600 text-lg">{stats.totalPoints}P</p>
-            <p className="text-[10px] text-amber-500">총 포인트</p>
+            <p className="text-xs text-amber-500">총 포인트</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-xl font-black text-amber-600">🔥 {stats.currentStreak}</p>
-            <p className="text-[10px] text-slate-500">현재 스트릭</p>
+            <p className="text-xs text-slate-500">현재 스트릭</p>
           </div>
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-xl font-black text-amber-600">🏆 {stats.longestStreak}</p>
-            <p className="text-[10px] text-slate-500">최장 스트릭</p>
+            <p className="text-xs text-slate-500">최장 스트릭</p>
           </div>
         </div>
       </div>
@@ -461,15 +461,15 @@ const LiveMonitoringSection = () => {
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-blue-600">{stats.quizzesAnswered}</p>
-            <p className="text-[10px] text-slate-500">퀴즈 응답</p>
+            <p className="text-xs text-slate-500">퀴즈 응답</p>
           </div>
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-emerald-600">{quizAccuracy}%</p>
-            <p className="text-[10px] text-slate-500">정답률</p>
+            <p className="text-xs text-slate-500">정답률</p>
           </div>
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-purple-600">{stats.pollsVoted}</p>
-            <p className="text-[10px] text-slate-500">투표 참여</p>
+            <p className="text-xs text-slate-500">투표 참여</p>
           </div>
         </div>
       </div>
@@ -494,21 +494,21 @@ const LiveMonitoringSection = () => {
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-emerald-600">{stats.testsCompleted}</p>
-            <p className="text-[10px] text-slate-500">완료</p>
+            <p className="text-xs text-slate-500">완료</p>
           </div>
           <div className="bg-white/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-slate-400">{stats.incompleteTestList.length}</p>
-            <p className="text-[10px] text-slate-500">미완료</p>
+            <p className="text-xs text-slate-500">미완료</p>
           </div>
         </div>
 
         {/* 완료 테스트 목록 */}
         {stats.completedTestList.length > 0 && (
           <div className="pt-2 border-t border-emerald-200">
-            <p className="text-[10px] text-slate-500 mb-1">완료한 테스트:</p>
+            <p className="text-xs text-slate-500 mb-1">완료한 테스트:</p>
             <div className="flex flex-wrap gap-1">
               {stats.completedTestList.map(test => (
-                <span key={test} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium">
+                <span key={test} className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
                   {test}
                 </span>
               ))}
@@ -519,15 +519,15 @@ const LiveMonitoringSection = () => {
         {/* 미완료 테스트 목록 */}
         {stats.incompleteTestList.length > 0 && (
           <div className="pt-2 border-t border-emerald-200 mt-2">
-            <p className="text-[10px] text-slate-500 mb-1">남은 테스트:</p>
+            <p className="text-xs text-slate-500 mb-1">남은 테스트:</p>
             <div className="flex flex-wrap gap-1">
               {stats.incompleteTestList.slice(0, 6).map(test => (
-                <span key={test} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full text-[10px]">
+                <span key={test} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full text-xs">
                   {test}
                 </span>
               ))}
               {stats.incompleteTestList.length > 6 && (
-                <span className="px-2 py-0.5 bg-slate-100 text-slate-400 rounded-full text-[10px]">
+                <span className="px-2 py-0.5 bg-slate-100 text-slate-400 rounded-full text-xs">
                   +{stats.incompleteTestList.length - 6}개
                 </span>
               )}

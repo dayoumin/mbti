@@ -714,7 +714,7 @@ export default function PopularRanking() {
                   }`}>
                     {template.title.split(' ').slice(0, 3).join(' ')}
                   </p>
-                  <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{template.description}</p>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-1">{template.description}</p>
                 </button>
               ))}
             </div>
@@ -741,7 +741,7 @@ export default function PopularRanking() {
                   }`}>
                     {template.title.split(' ').slice(0, 3).join(' ')}
                   </p>
-                  <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{template.description}</p>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-1">{template.description}</p>
                 </button>
               ))}
             </div>

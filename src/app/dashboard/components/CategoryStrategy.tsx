@@ -85,7 +85,7 @@ function CategoryCard({ category }: { category: CategoryDefinition }) {
             <span className="text-lg">{category.emoji}</span>
             <h3 className="font-bold text-slate-800">{category.name}</h3>
             {(category.id === 'relationship' || category.id === 'lifestyle') && (
-              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">
+              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
                 NEW
               </span>
             )}
@@ -149,26 +149,26 @@ function CategoryCard({ category }: { category: CategoryDefinition }) {
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <div className="p-2 bg-pink-50 rounded-lg">
-                <p className="text-[10px] font-bold text-pink-700 mb-1">공유 훅</p>
+                <p className="text-xs font-bold text-pink-700 mb-1">공유 훅</p>
                 <ul className="space-y-0.5">
                   {category.viral.shareHooks.map((hook, idx) => (
-                    <li key={idx} className="text-[11px] text-pink-600">• {hook}</li>
+                    <li key={idx} className="text-xs text-pink-600">• {hook}</li>
                   ))}
                 </ul>
               </div>
               <div className="p-2 bg-amber-50 rounded-lg">
-                <p className="text-[10px] font-bold text-amber-700 mb-1">랭킹 아이디어</p>
+                <p className="text-xs font-bold text-amber-700 mb-1">랭킹 아이디어</p>
                 <ul className="space-y-0.5">
                   {category.viral.rankingIdeas.map((idea, idx) => (
-                    <li key={idx} className="text-[11px] text-amber-600">• {idea}</li>
+                    <li key={idx} className="text-xs text-amber-600">• {idea}</li>
                   ))}
                 </ul>
               </div>
               <div className="p-2 bg-purple-50 rounded-lg">
-                <p className="text-[10px] font-bold text-purple-700 mb-1">토론 주제</p>
+                <p className="text-xs font-bold text-purple-700 mb-1">토론 주제</p>
                 <ul className="space-y-0.5">
                   {category.viral.debateTopics.slice(0, 3).map((topic, idx) => (
-                    <li key={idx} className="text-[11px] text-purple-600">• {topic}</li>
+                    <li key={idx} className="text-xs text-purple-600">• {topic}</li>
                   ))}
                 </ul>
               </div>
@@ -182,26 +182,26 @@ function CategoryCard({ category }: { category: CategoryDefinition }) {
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <div className="p-2 bg-emerald-50 rounded-lg">
-                <p className="text-[10px] font-bold text-emerald-700 mb-1">제품 연계</p>
+                <p className="text-xs font-bold text-emerald-700 mb-1">제품 연계</p>
                 <ul className="space-y-0.5">
                   {category.monetization.productLinks.map((link, idx) => (
-                    <li key={idx} className="text-[11px] text-emerald-600">• {link}</li>
+                    <li key={idx} className="text-xs text-emerald-600">• {link}</li>
                   ))}
                 </ul>
               </div>
               <div className="p-2 bg-blue-50 rounded-lg">
-                <p className="text-[10px] font-bold text-blue-700 mb-1">어필리에이트</p>
+                <p className="text-xs font-bold text-blue-700 mb-1">어필리에이트</p>
                 <ul className="space-y-0.5">
                   {category.monetization.affiliateIdeas.map((idea, idx) => (
-                    <li key={idx} className="text-[11px] text-blue-600">• {idea}</li>
+                    <li key={idx} className="text-xs text-blue-600">• {idea}</li>
                   ))}
                 </ul>
               </div>
               <div className="p-2 bg-indigo-50 rounded-lg">
-                <p className="text-[10px] font-bold text-indigo-700 mb-1">스폰서십</p>
+                <p className="text-xs font-bold text-indigo-700 mb-1">스폰서십</p>
                 <ul className="space-y-0.5">
                   {category.monetization.sponsorshipPotential.map((sponsor, idx) => (
-                    <li key={idx} className="text-[11px] text-indigo-600">• {sponsor}</li>
+                    <li key={idx} className="text-xs text-indigo-600">• {sponsor}</li>
                   ))}
                 </ul>
               </div>
@@ -219,17 +219,17 @@ function TestIdeaCard({ idea }: { idea: TestIdea }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-700">{idea.name}</span>
-          <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${PRIORITY_COLORS[idea.priority]}`}>
+          <span className={`px-1.5 py-0.5 text-xs font-bold rounded ${PRIORITY_COLORS[idea.priority]}`}>
             {idea.priority === 'high' ? '높음' : idea.priority === 'medium' ? '보통' : '낮음'}
           </span>
         </div>
-        <p className="text-[11px] text-slate-500 mt-0.5">{idea.description}</p>
+        <p className="text-xs text-slate-500 mt-0.5">{idea.description}</p>
         {idea.productLink && (
-          <p className="text-[10px] text-emerald-600 mt-1">💰 {idea.productLink}</p>
+          <p className="text-xs text-emerald-600 mt-1">💰 {idea.productLink}</p>
         )}
       </div>
       <div className="flex flex-col items-center gap-0.5">
-        <span className="text-[10px] text-slate-400">바이럴</span>
+        <span className="text-xs text-slate-400">바이럴</span>
         <ViralMeter score={idea.viralPotential} />
       </div>
     </div>
@@ -251,7 +251,7 @@ function RoadmapCard({ phase }: { phase: RoadmapPhase }) {
 
       <div className="space-y-3">
         <div>
-          <p className="text-[10px] font-bold text-slate-600 mb-1">목표</p>
+          <p className="text-xs font-bold text-slate-600 mb-1">목표</p>
           <ul className="space-y-0.5">
             {phase.goals.map((goal, idx) => (
               <li key={idx} className="text-xs text-slate-600 flex items-start gap-1">
@@ -264,15 +264,15 @@ function RoadmapCard({ phase }: { phase: RoadmapPhase }) {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="p-2 bg-emerald-50 rounded-lg">
-            <p className="text-[10px] font-bold text-emerald-700 mb-1">테스트</p>
+            <p className="text-xs font-bold text-emerald-700 mb-1">테스트</p>
             {phase.tests.map((test, idx) => (
-              <p key={idx} className="text-[11px] text-emerald-600">• {test}</p>
+              <p key={idx} className="text-xs text-emerald-600">• {test}</p>
             ))}
           </div>
           <div className="p-2 bg-blue-50 rounded-lg">
-            <p className="text-[10px] font-bold text-blue-700 mb-1">기능</p>
+            <p className="text-xs font-bold text-blue-700 mb-1">기능</p>
             {phase.features.map((feature, idx) => (
-              <p key={idx} className="text-[11px] text-blue-600">• {feature}</p>
+              <p key={idx} className="text-xs text-blue-600">• {feature}</p>
             ))}
           </div>
         </div>
@@ -360,7 +360,7 @@ export default function CategoryStrategy() {
                   <span className="text-xs opacity-75">테스트 아이디어</span>
                 </div>
                 {(cat.id === 'relationship' || cat.id === 'lifestyle') && (
-                  <span className="mt-2 inline-block px-2 py-0.5 bg-white/20 text-[10px] font-bold rounded-full">
+                  <span className="mt-2 inline-block px-2 py-0.5 bg-white/20 text-xs font-bold rounded-full">
                     신규 카테고리
                   </span>
                 )}

@@ -189,12 +189,12 @@ function ConceptTab() {
               style={{ width: card.style.width / 2, height: card.style.height / 3 }}
             >
               <p className="text-xs font-medium text-[var(--db-text)]">{card.title}</p>
-              <p className="text-[10px] text-[var(--db-muted)] mt-1">
+              <p className="text-xs text-[var(--db-muted)] mt-1">
                 {card.style.width}x{card.style.height}
               </p>
               <div className="flex flex-wrap gap-1 mt-2">
                 {card.sections.slice(0, 3).map((s) => (
-                  <span key={s} className="px-1.5 py-0.5 bg-white/10 rounded text-[8px]">
+                  <span key={s} className="px-1.5 py-0.5 bg-white/10 rounded text-xs">
                     {s}
                   </span>
                 ))}
@@ -310,7 +310,7 @@ function VisualizationTab() {
             <div key={lib.name} className="bg-[var(--db-bg)] rounded-lg p-4">
               <p className="font-medium text-[var(--db-text)] text-sm">{lib.name}</p>
               <p className="text-xs text-[var(--db-muted)] mt-1">{lib.reason}</p>
-              <code className="block mt-2 text-[10px] text-[var(--db-muted)] font-mono truncate">
+              <code className="block mt-2 text-xs text-[var(--db-muted)] font-mono truncate">
                 {lib.install}
               </code>
             </div>

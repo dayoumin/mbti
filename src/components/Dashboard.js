@@ -125,7 +125,7 @@ const TypeTab = ({ type, isActive, onClick, count }) => {
         >
             <span>{tabInfo.emoji}</span>
             <span>{tabInfo.label}</span>
-            <span className={`text-[11px] ${
+            <span className={`text-xs ${
                 isEmpty
                     ? 'text-slate-200'
                     : isActive
@@ -146,7 +146,7 @@ const TypeTab = ({ type, isActive, onClick, count }) => {
 const SubjectChip = ({ subject, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${isActive
+        className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${isActive
             ? 'bg-slate-700 text-white'
             : 'bg-white/80 text-slate-500 hover:bg-white hover:text-slate-700 border border-slate-200'
             }`}
@@ -198,12 +198,12 @@ const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusActi
                             {streak.currentStreak}일 연속!
                         </span>
                         {streak.currentStreak >= 7 && (
-                            <span className="text-[11px] bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
+                            <span className="text-xs bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
                                 🔥 불타는 중
                             </span>
                         )}
                     </div>
-                    <p className="text-[11px] text-amber-600">
+                    <p className="text-xs text-amber-600">
                         최장 {streak.longestStreak}일 | {level?.emoji} {level?.name} Lv.{level?.level}
                     </p>
                 </div>
@@ -255,7 +255,7 @@ const TimeBasedCard = ({ action, onAction }) => {
             </div>
             <div className="flex-1 text-left min-w-0">
                 <div className="flex items-center gap-1.5">
-                    <span className={`text-[11px] font-bold ${style.text}`}>{action.icon} {action.label}</span>
+                    <span className={`text-xs font-bold ${style.text}`}>{action.icon} {action.label}</span>
                 </div>
                 <p className="text-xs font-medium text-slate-600 truncate">{action.description}</p>
             </div>
@@ -569,7 +569,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
                                 <span className="text-sm font-bold text-slate-600">
                                     🐾 세부 추천
                                 </span>
-                                <span className="text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                                     {detailTests.length}
                                 </span>
                             </div>

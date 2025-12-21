@@ -36,10 +36,10 @@ export default function FeedTestCard({ testKey, onStart, className = '' }: FeedT
 
                 <div className="flex-1 flex flex-col justify-center min-w-0">
                     <div className="flex items-center gap-1.5 mb-1">
-                        <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full border border-indigo-100/50">
+                        <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full border border-indigo-100/50">
                             {config.testType === 'personality' ? '심리' : '매칭'}
                         </span>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                        <div className="flex items-center gap-1 text-xs text-slate-400">
                             <Users className="w-3 h-3" />
                             1.2k+
                         </div>

@@ -51,7 +51,7 @@ function SidebarTestCard({ testKey, onStart, rank }: { testKey: SubjectKey; onSt
       className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/80 transition-all group text-left relative"
     >
       {rank && (
-        <span className="absolute -top-1 -left-1 w-4 h-4 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center shadow-sm z-10">
+        <span className="absolute -top-1 -left-1 w-4 h-4 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xs font-black rounded-full flex items-center justify-center shadow-sm z-10">
           {rank}
         </span>
       )}
@@ -59,7 +59,7 @@ function SidebarTestCard({ testKey, onStart, rank }: { testKey: SubjectKey; onSt
         <IconComponent mood="happy" className="w-6 h-6" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
+        <p className="text-xs font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
           {data.title || config.label}
         </p>
       </div>
@@ -122,7 +122,7 @@ export default function Sidebar({
             <h1 className="font-black text-lg text-slate-800">
               Chemi <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-pink-500">Test</span>
             </h1>
-            <p className="text-[10px] text-slate-400">오늘은 뭘 알아볼까?</p>
+            <p className="text-xs text-slate-400">오늘은 뭘 알아볼까?</p>
           </div>
         </div>
       </button>
@@ -165,7 +165,7 @@ export default function Sidebar({
           <div className="bg-slate-50/80 rounded-xl p-3">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-[10px] font-semibold text-slate-600">최근 본 테스트</span>
+              <span className="text-xs font-semibold text-slate-600">최근 본 테스트</span>
             </div>
             <div className="space-y-0.5">
               {recentTests.map((test) => (
@@ -184,7 +184,7 @@ export default function Sidebar({
           <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-3">
             <div className="flex items-center gap-2 mb-2">
               <PenSquare className="w-3.5 h-3.5 text-pink-500" />
-              <span className="text-[10px] font-semibold text-pink-700">내가 쓴 글</span>
+              <span className="text-xs font-semibold text-pink-700">내가 쓴 글</span>
             </div>
             <div className="space-y-1.5">
               {myPosts.map((post) => (
@@ -194,18 +194,18 @@ export default function Sidebar({
                   className="w-full p-2 bg-white/60 rounded-lg hover:bg-white transition-colors text-left group"
                 >
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${getPostCategoryStyle(post.category)}`}>
+                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${getPostCategoryStyle(post.category)}`}>
                       {getPostCategoryLabel(post.category)}
                     </span>
                   </div>
-                  <p className="text-[10px] font-medium text-slate-700 truncate group-hover:text-pink-600 transition-colors">
+                  <p className="text-xs font-medium text-slate-700 truncate group-hover:text-pink-600 transition-colors">
                     {post.title}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="flex items-center gap-0.5 text-[10px] text-slate-400">
+                    <span className="flex items-center gap-0.5 text-xs text-slate-400">
                       <Heart className="w-2.5 h-2.5" /> {post.likes}
                     </span>
-                    <span className="flex items-center gap-0.5 text-[10px] text-slate-400">
+                    <span className="flex items-center gap-0.5 text-xs text-slate-400">
                       <MessageCircle className="w-2.5 h-2.5" /> {post.comments}
                     </span>
                   </div>
@@ -219,11 +219,11 @@ export default function Sidebar({
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-1">
             <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
-            <span className="text-[10px] font-semibold text-slate-600">내 활동</span>
+            <span className="text-xs font-semibold text-slate-600">내 활동</span>
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-xl font-black text-indigo-600">{completedCount}</span>
-            <span className="text-[10px] text-slate-500">개 테스트 완료</span>
+            <span className="text-xs text-slate-500">개 테스트 완료</span>
           </div>
         </div>
       </div>

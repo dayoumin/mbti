@@ -45,7 +45,7 @@ export default function BottomNav({ activeTab, onTabChange, className = '' }: Bo
                   }`}
                 />
               </div>
-              <span className={`text-[11px] font-medium ${
+              <span className={`text-xs font-medium ${
                 isActive ? 'font-bold' : ''
               }`}>
                 {label}

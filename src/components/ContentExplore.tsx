@@ -113,11 +113,11 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-center gap-2 mb-3">
         <HelpCircle className="w-4 h-4 text-blue-500" />
-        <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
           {categoryInfo.emoji} {categoryInfo.name}
         </span>
         {isAnswered && (
-          <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full ml-auto flex items-center gap-1">
+          <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full ml-auto flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> 참여완료
           </span>
         )}
@@ -244,11 +244,11 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-center gap-2 mb-3">
         <Vote className="w-4 h-4 text-purple-500" />
-        <span className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">
+        <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">
           {categoryInfo.emoji} {categoryInfo.name}
         </span>
         {(isVoted || voted) && (
-          <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full ml-auto flex items-center gap-1">
+          <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full ml-auto flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> 투표완료
           </span>
         )}
@@ -370,13 +370,13 @@ function TipCard({ tip, onNextAction }: TipCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             {tip.featured && (
-              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">
+              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded">
                 베스트
               </span>
             )}
-            <span className="text-[10px] text-gray-400">{tip.author.name}</span>
+            <span className="text-xs text-gray-400">{tip.author.name}</span>
             {tip.author.badge && (
-              <span className="text-[10px] text-indigo-500">{tip.author.badge}</span>
+              <span className="text-xs text-indigo-500">{tip.author.badge}</span>
             )}
           </div>
           <h3 className="font-bold text-sm text-slate-800 mb-2">{tip.title}</h3>
@@ -392,7 +392,7 @@ function TipCard({ tip, onNextAction }: TipCardProps) {
             </button>
             <div className="flex gap-1 ml-auto">
               {tip.tags.slice(0, 2).map(tag => (
-                <span key={tag} className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-[10px] rounded">
+                <span key={tag} className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">
                   #{tag}
                 </span>
               ))}
@@ -438,20 +438,20 @@ function QnACard({ question, onNextAction }: QnACardProps) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${question.status === 'answered'
+            <span className={`px-1.5 py-0.5 text-xs font-bold rounded ${question.status === 'answered'
               ? 'bg-emerald-100 text-emerald-700'
               : 'bg-blue-100 text-blue-700'
               }`}>
               {question.status === 'answered' ? '답변완료' : '답변대기'}
             </span>
-            <span className="text-[10px] text-gray-400">{question.author.nickname}</span>
+            <span className="text-xs text-gray-400">{question.author.nickname}</span>
             {question.author.resultBadge && (
-              <span className="text-[10px] text-indigo-500">{question.author.resultBadge}</span>
+              <span className="text-xs text-indigo-500">{question.author.resultBadge}</span>
             )}
           </div>
           <h3 className="font-bold text-sm text-slate-800 mb-2">{question.title}</h3>
           <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{question.content}</p>
-          <div className="flex items-center gap-3 mt-3 text-[10px] text-gray-400">
+          <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
             <span>답변 {question.answerCount}</span>
             <span>조회 {formatNumber(question.viewCount)}</span>
             <span>{formatRelativeTime(question.createdAt)}</span>
@@ -499,7 +499,7 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
         <span className="text-lg">⚔️</span>
         <span className="font-bold text-sm text-slate-800">{debate.title}</span>
         {debate.status === 'active' && (
-          <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-[10px] font-bold rounded ml-auto">
+          <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-xs font-bold rounded ml-auto">
             진행중
           </span>
         )}
@@ -557,7 +557,7 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
         </button>
       </div>
 
-      <div className="mt-3 text-center text-[10px] text-gray-400">
+      <div className="mt-3 text-center text-xs text-gray-400">
         {formatNumber(totalVotes)}명 참여
       </div>
 
@@ -865,7 +865,7 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
             </button>
             <div className="flex-1">
               <h1 className="font-black text-slate-800 tracking-tight">{headerInfo.title}</h1>
-              <p className="text-[10px] text-slate-500">{headerInfo.subtitle}</p>
+              <p className="text-xs text-slate-500">{headerInfo.subtitle}</p>
             </div>
           </div>
 

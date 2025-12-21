@@ -286,7 +286,7 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
-              <span className="text-[10px] font-black text-purple-600">VS</span>
+              <span className="text-xs font-black text-purple-600">VS</span>
             </div>
             <span className="text-sm font-bold text-purple-600">인기 투표</span>
             {selectedOption && (
@@ -337,7 +337,7 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
               </div>
               {isWinner('a') && (
                 <div className="absolute top-1 right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                  <span className="text-[10px]">👑</span>
+                  <span className="text-xs">👑</span>
                 </div>
               )}
             </button>
@@ -367,7 +367,7 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
               </div>
               {isWinner('b') && (
                 <div className="absolute top-1 right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                  <span className="text-[10px]">👑</span>
+                  <span className="text-xs">👑</span>
                 </div>
               )}
             </button>

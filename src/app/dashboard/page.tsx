@@ -1274,7 +1274,7 @@ function AppDesignSystem() {
                     className="h-12 rounded-lg border border-slate-200 mb-1.5 transition-transform group-hover:scale-105"
                     style={{ background: color.value }}
                   />
-                  <p className="text-[10px] text-[var(--db-muted)] text-center">
+                  <p className="text-xs text-[var(--db-muted)] text-center">
                     {copiedColor === color.name ? '복사됨!' : color.name}
                   </p>
                 </button>
@@ -1297,7 +1297,7 @@ function AppDesignSystem() {
                       className="h-12 rounded-lg mb-1.5 transition-transform group-hover:scale-105"
                       style={{ background: color.value }}
                     />
-                    <p className="text-[10px] text-[var(--db-muted)] text-center">
+                    <p className="text-xs text-[var(--db-muted)] text-center">
                       {copiedColor === color.name ? '복사됨!' : color.usage}
                     </p>
                   </button>
@@ -1317,7 +1317,7 @@ function AppDesignSystem() {
                       className="h-12 rounded-lg mb-1.5 transition-transform group-hover:scale-105"
                       style={{ background: color.value }}
                     />
-                    <p className="text-[10px] text-[var(--db-muted)] text-center">
+                    <p className="text-xs text-[var(--db-muted)] text-center">
                       {copiedColor === color.name ? '복사됨!' : color.usage}
                     </p>
                   </button>
@@ -1368,8 +1368,8 @@ function AppDesignSystem() {
 
           {/* TraitBar */}
           <div className="mt-4 bg-white rounded-lg border border-slate-200 p-3">
-            <p className="text-[10px] font-medium text-slate-500 mb-2">TraitBar</p>
-            <div className="flex justify-between text-[10px] text-slate-500 mb-1">
+            <p className="text-xs font-medium text-slate-500 mb-2">TraitBar</p>
+            <div className="flex justify-between text-xs text-slate-500 mb-1">
               <span>내향 72%</span>
               <span>외향 28%</span>
             </div>
@@ -1396,7 +1396,7 @@ function AppDesignSystem() {
                     <div className="flex items-center gap-2">
                       <code className="text-xs font-medium text-[var(--db-text)]">{comp.name}</code>
                     </div>
-                    <span className="text-[10px] text-[var(--db-muted)]">{comp.desc}</span>
+                    <span className="text-xs text-[var(--db-muted)]">{comp.desc}</span>
                   </div>
                 ))}
               </div>
@@ -1418,7 +1418,7 @@ function AppDesignSystem() {
                 <code className="text-xs font-medium text-[var(--db-text)]">{svc.name}</code>
                 <span className="text-xs text-[var(--db-muted)]">{svc.desc}</span>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+              <span className={`text-xs px-2 py-0.5 rounded-full ${
                 svc.api === 'Supabase' ? 'bg-emerald-500/10 text-emerald-400' :
                 svc.api === 'Local' ? 'bg-slate-500/10 text-slate-400' :
                 'bg-blue-500/10 text-blue-400'
@@ -1441,7 +1441,7 @@ function AppDesignSystem() {
                 <code className="text-xs font-medium text-[var(--db-brand)]">{ds.name}</code>
                 <span className="text-xs text-[var(--db-muted)]">{ds.desc}</span>
               </div>
-              <code className="text-[10px] text-[var(--db-muted)]">{ds.path}</code>
+              <code className="text-xs text-[var(--db-muted)]">{ds.path}</code>
             </div>
           ))}
         </div>

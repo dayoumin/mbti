@@ -102,7 +102,7 @@ export function CompactProfile({ onViewFull }: CompactProfileProps) {
             style={{ width: `${profile.completionRate}%` }}
           />
         </div>
-        <p className="text-[10px] text-gray-500 mt-1 text-right">{profile.completionRate}% 완성</p>
+        <p className="text-xs text-gray-500 mt-1 text-right">{profile.completionRate}% 완성</p>
       </div>
 
       {/* 미니 요약 */}
@@ -699,7 +699,7 @@ function TabHistory({ onStartTest, onClose }: { onStartTest?: (testKey: string) 
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-gray-800 text-sm truncate">{item.resultName}</p>
                     {item.isDeepMode && (
-                      <span className="px-1.5 py-0.5 bg-violet-100 text-violet-600 text-[10px] font-bold rounded">
+                      <span className="px-1.5 py-0.5 bg-violet-100 text-violet-600 text-xs font-bold rounded">
                         심화
                       </span>
                     )}
@@ -894,7 +894,7 @@ function TabAchieve({ profile }: { profile: MyProfileData }) {
               title={badge.unlocked ? badge.description : badge.requirement}
             >
               <span className={`text-xl ${badge.unlocked ? '' : 'grayscale'}`}>{badge.emoji}</span>
-              <span className="text-[8px] text-center text-gray-600 mt-1 leading-tight">{badge.name}</span>
+              <span className="text-xs text-center text-gray-600 mt-1 leading-tight">{badge.name}</span>
             </div>
           ))}
         </div>
@@ -936,7 +936,7 @@ function TabAchieve({ profile }: { profile: MyProfileData }) {
                         }`}
                       />
                     ))}
-                    <span className="text-[10px] text-gray-400 ml-1">
+                    <span className="text-xs text-gray-400 ml-1">
                       {combo.completedTests.length}/{combo.requiredTests.length}
                     </span>
                   </div>

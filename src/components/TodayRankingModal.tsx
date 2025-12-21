@@ -433,10 +433,10 @@ export default function TodayRankingModal({
                       className="p-3 bg-gray-50 rounded-xl"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] text-gray-400">
+                        <span className="text-xs text-gray-400">
                           익명#{comment.authorId.slice(0, 4)}{comment.isOwner && ' (나)'}
                         </span>
-                        <span className="text-[10px] text-gray-400">
+                        <span className="text-xs text-gray-400">
                           {formatRelativeTime(comment.createdAt)}
                         </span>
                       </div>
@@ -473,7 +473,7 @@ export default function TodayRankingModal({
                   <Send className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[10px] text-gray-400 mt-1 text-right">
+              <p className="text-xs text-gray-400 mt-1 text-right">
                 {commentInput.length}/500
               </p>
             </div>
@@ -551,9 +551,9 @@ export default function TodayRankingModal({
                         {poll.question}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <span className="text-[10px] text-gray-400">{getCategoryName(poll.category)}</span>
+                        <span className="text-xs text-gray-400">{getCategoryName(poll.category)}</span>
                         {poll.topOption && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-full">
+                          <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-full">
                             {poll.topOption.emoji} {poll.topOption.text} {poll.topOption.percentage}%
                           </span>
                         )}
@@ -577,7 +577,7 @@ export default function TodayRankingModal({
                       className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-200 hover:bg-orange-200 text-gray-600 hover:text-orange-600 transition-colors flex-shrink-0"
                     >
                       <MessageCircle className="w-3 h-3" />
-                      <span className="text-[10px] font-medium">{poll.commentCount || 0}</span>
+                      <span className="text-xs font-medium">{poll.commentCount || 0}</span>
                     </button>
                   </div>
                 ))
@@ -614,7 +614,7 @@ export default function TodayRankingModal({
                       <p className="text-sm font-bold text-gray-800 truncate">
                         {result.resultName}
                       </p>
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-xs text-gray-400">
                         {getTestTypeName(result.testType)} 테스트
                       </span>
                     </div>

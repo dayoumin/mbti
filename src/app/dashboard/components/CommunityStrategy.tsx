@@ -86,7 +86,7 @@ export default function CommunityStrategy() {
             {tab.icon}
             {tab.label}
             {'isNew' in tab && tab.isNew && (
-              <span className="px-1.5 py-0.5 text-[10px] rounded bg-pink-500/20 text-pink-400">NEW</span>
+              <span className="px-1.5 py-0.5 text-xs rounded bg-pink-500/20 text-pink-400">NEW</span>
             )}
           </button>
         ))}
@@ -1739,7 +1739,7 @@ function InterestCategoriesSection() {
                     <div>
                       <span className="font-medium text-[var(--db-text)]">{badge.name}</span>
                       <span
-                        className="ml-2 px-1.5 py-0.5 rounded text-[10px] uppercase"
+                        className="ml-2 px-1.5 py-0.5 rounded text-xs uppercase"
                         style={{ background: `${rarityColors[badge.rarity]}30`, color: rarityColors[badge.rarity] }}
                       >
                         {badge.rarity}

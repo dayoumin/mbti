@@ -274,9 +274,9 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
                       {poll.question}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-gray-400">{getCategoryName(poll.category)}</span>
+                      <span className="text-xs text-gray-400">{getCategoryName(poll.category)}</span>
                       {poll.topOption && (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-full">
+                        <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-full">
                           {poll.topOption.emoji} {poll.topOption.text} {poll.topOption.percentage}%
                         </span>
                       )}
@@ -334,7 +334,7 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
                     <p className="text-sm font-bold text-gray-800 truncate">
                       {result.resultName}
                     </p>
-                    <span className="text-[10px] text-gray-400">
+                    <span className="text-xs text-gray-400">
                       {getTestTypeName(result.testType)} 테스트
                     </span>
                   </div>

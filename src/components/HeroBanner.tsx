@@ -62,19 +62,19 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
               <IconComponent mood="happy" className={`w-5 h-5 md:w-8 md:h-8 ${s.iconColor}`} />
             </div>
             {/* 기호 배지: 아이콘 박스 좌측 상단 */}
-            <div className={`absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 rounded-full ${s.iconBg} border border-slate-100 flex items-center justify-center text-[10px] md:text-[11px] shadow-sm z-10`}>
+            <div className={`absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 rounded-full ${s.iconBg} border border-slate-100 flex items-center justify-center text-xs md:text-xs shadow-sm z-10`}>
               {isMatching ? '💫' : '🧠'}
             </div>
           </div>
 
-          <h2 className="flex-1 text-slate-800 font-extrabold text-[15px] md:text-[17px] leading-tight truncate">
+          <h2 className="flex-1 text-slate-800 font-extrabold text-base md:text-lg leading-tight truncate">
             {cleanTitle}
           </h2>
         </div>
 
         {/* 하단: 설명 (전체 너비 활용, PC에서만 노출 또는 매우 작게) */}
         <div className="min-w-0 mt-1.5 md:mt-2">
-          <p className="text-slate-700 text-xs md:text-[13px] font-bold opacity-75 leading-snug line-clamp-1 md:line-clamp-2">
+          <p className="text-slate-700 text-xs md:text-sm font-bold opacity-75 leading-snug line-clamp-1 md:line-clamp-2">
             {data.subtitle || `${data.resultLabels?.length || 0}가지 결과`}
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function HeroBanner({ onStartTest, className = '' }: HeroBannerPr
             >
               <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
             </button>
-            <div className="flex gap-1 px-2.5 py-1 bg-slate-100 rounded-full text-[11px] font-black text-slate-400">
+            <div className="flex gap-1 px-2.5 py-1 bg-slate-100 rounded-full text-xs font-black text-slate-400">
               <span className="text-indigo-600">{currentPage + 1}</span>
               <span>/</span>
               <span>{totalPages}</span>

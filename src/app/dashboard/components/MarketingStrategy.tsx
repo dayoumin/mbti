@@ -67,7 +67,7 @@ export default function MarketingStrategy() {
             {tab.icon}
             {tab.label}
             {'badge' in tab && (
-              <span className="px-1.5 py-0.5 bg-rose-500 text-white text-[10px] font-bold rounded">
+              <span className="px-1.5 py-0.5 bg-rose-500 text-white text-xs font-bold rounded">
                 {tab.badge}
               </span>
             )}

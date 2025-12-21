@@ -83,7 +83,7 @@ export default function QuizWidget({
                 className="w-full text-left px-3 py-2.5 md:px-4 md:py-3 rounded-xl text-xs font-bold bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all hover:shadow-sm active:scale-[0.98]"
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[10px] md:text-[11px] text-slate-400 group-hover:text-blue-500 group-hover:border-blue-300 transition-all flex-shrink-0">
+                  <span className="w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs md:text-xs text-slate-400 group-hover:text-blue-500 group-hover:border-blue-300 transition-all flex-shrink-0">
                     {quiz.options.indexOf(option) + 1}
                   </span>
                   {option.text}

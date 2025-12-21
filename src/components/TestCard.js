@@ -33,7 +33,7 @@ const TestCard = ({ title, subtitle, icon, color, tags, onStart, testType }) => 
                     {tags && tags.length > 0 && (
                         <div className="flex gap-1 flex-wrap justify-end max-w-[50%]">
                             {tags.map((tag, idx) => (
-                                <span key={idx} className="bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md text-[10px] font-bold text-gray-500 border border-gray-100 shadow-sm">
+                                <span key={idx} className="bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-bold text-gray-500 border border-gray-100 shadow-sm">
                                     {tag}
                                 </span>
                             ))}

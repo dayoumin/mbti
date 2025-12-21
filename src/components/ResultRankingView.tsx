@@ -446,7 +446,7 @@ export default function ResultRankingView({
                           {result.name}
                         </span>
                         {isMyResultItem && (
-                          <span className="text-[10px] text-amber-600 font-bold">← 나</span>
+                          <span className="text-xs text-amber-600 font-bold">← 나</span>
                         )}
                       </div>
                     );
@@ -553,7 +553,7 @@ export default function ResultRankingView({
                           {result.name}
                         </p>
                         {isMyResult && (
-                          <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded">
+                          <span className="px-1.5 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">
                             나
                           </span>
                         )}
