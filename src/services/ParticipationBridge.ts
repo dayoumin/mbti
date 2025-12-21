@@ -1,10 +1,10 @@
 // ============================================================================
 // 참여 브릿지 서비스
-// FeedbackService ↔ GamificationService 연결
+// TursoService ↔ GamificationService 연결
 // ============================================================================
 
 import { getGamificationService } from './GamificationService';
-import { feedbackService, type PollResponseData, type QuizResponseData, type PollStats } from './FeedbackService';
+import { tursoService } from './TursoService';
 
 // PollStats 타입 (간단 버전 - Bridge에서 사용)
 interface SimplePollStats {
@@ -60,6 +60,7 @@ class ParticipationBridge {
    * @param optionId 선택한 옵션 ID
    * @param pollStats 현재 투표 통계 (소수 의견 판단용)
    * @param category 투표 카테고리 (선택)
+   * @returns saved가 false면 서버 저장 실패 (오프라인/네트워크 오류)
    */
   async recordPollVote(
     pollId: string,
@@ -75,36 +76,16 @@ class ParticipationBridge {
       isMinority = ratio < 30; // 30% 미만이면 소수 의견
     }
 
-    // 2. FeedbackService에 저장 (PollStats 형식으로 변환)
-    const pollResponse: PollResponseData & { category?: string } = {
-      pollId,
-      optionId,
-      category,
-    };
-
-    // PollStats 변환 (options 배열 형식)
-    let feedbackPollStats: PollStats | undefined;
-    if (pollStats) {
-      const options = Object.entries(pollStats.optionVotes).map(([optId, count]) => ({
-        optionId: optId,
-        count,
-        percentage: pollStats.totalVotes > 0 ? (count / pollStats.totalVotes) * 100 : 0,
-      }));
-      feedbackPollStats = {
-        pollId,
-        totalVotes: pollStats.totalVotes,
-        options,
-      };
-    }
-
-    const result = await feedbackService.savePollResponseWithAnalysis(pollResponse, feedbackPollStats);
+    // 2. TursoService에 저장
+    const result = await tursoService.savePollResponse(pollId, optionId);
     const saved = result.success;
 
-    // 3. GamificationService에 기록
+    // 3. GamificationService에 기록 (저장 성공 시에만)
+    // 저장 실패 시 게이미피케이션도 적용하지 않음 (상태 동기화)
     const gamificationService = getGamificationService();
     let gamification = { points: 0, newBadges: [] as string[] };
 
-    if (gamificationService) {
+    if (saved && gamificationService) {
       gamification = gamificationService.recordPollVote({
         category,
         isMinority,
@@ -125,9 +106,11 @@ class ParticipationBridge {
   /**
    * 퀴즈 답변 처리 (저장 + 게이미피케이션)
    * @param quizId 퀴즈 ID
+   * @param questionIndex 문제 번호 (0부터 시작)
    * @param selectedAnswer 선택한 답변
    * @param isCorrect 정답 여부
    * @param category 퀴즈 카테고리 (선택)
+   * @returns saved가 false면 서버 저장 실패 (오프라인/네트워크 오류)
    */
   async recordQuizAnswer(
     quizId: string,
@@ -136,23 +119,16 @@ class ParticipationBridge {
     isCorrect: boolean,
     category?: string
   ): Promise<QuizAnswerResult> {
-    // 1. FeedbackService에 저장
-    const quizResponse: QuizResponseData & { category?: string } = {
-      quizId,
-      questionIndex,
-      selectedOption: selectedAnswer,
-      isCorrect,
-      category,
-    };
-
-    const result = await feedbackService.saveQuizResponseWithCategory(quizResponse);
+    // 1. TursoService에 저장
+    const result = await tursoService.saveQuizResponse(quizId, selectedAnswer, isCorrect, questionIndex);
     const saved = result.success;
 
-    // 2. GamificationService에 기록
+    // 2. GamificationService에 기록 (저장 성공 시에만)
+    // 저장 실패 시 게이미피케이션도 적용하지 않음 (상태 동기화)
     const gamificationService = getGamificationService();
     let gamification = { points: 0, newBadges: [] as string[] };
 
-    if (gamificationService) {
+    if (saved && gamificationService) {
       gamification = gamificationService.recordQuizAnswer(isCorrect, category);
     }
 
@@ -169,19 +145,72 @@ class ParticipationBridge {
 
   /**
    * 사용자 참여 요약 정보 조회
+   * GamificationService에서 통계를 가져옴
    */
   async getParticipationSummary(): Promise<ParticipationSummary> {
     const gamificationService = getGamificationService();
 
-    // 투표 분석
-    const pollAnalysis = await feedbackService.getUserPollAnalysis();
+    // 기본값
+    let polls = {
+      total: 0,
+      minorityCount: 0,
+      minorityRatio: 0,
+      topCategories: [] as Array<{ category: string; count: number }>,
+    };
 
-    // 퀴즈 분석
-    const quizAnalysis = await feedbackService.getUserQuizAnalysis();
+    let quizzes = {
+      total: 0,
+      correct: 0,
+      correctRate: 0,
+      bestCategory: null as string | null,
+    };
 
-    // 배지 정보
     let badges = { total: 0, recent: [] as string[] };
+
     if (gamificationService) {
+      // GamificationService에서 통계 가져오기
+      const stats = gamificationService.getStats();
+      const minorityRatio = gamificationService.getMinorityVoteRatio();
+      const pollsByCategory = gamificationService.getPollsByCategory();
+
+      // 투표 분석
+      const topCategories = Object.entries(pollsByCategory)
+        .map(([category, count]) => ({ category, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 3);
+
+      polls = {
+        total: stats.pollsVoted,
+        minorityCount: stats.minorityVotes || 0,
+        minorityRatio,
+        topCategories,
+      };
+
+      // 퀴즈 분석 - 최고 정답률 카테고리 계산
+      const quizzesByCategory = gamificationService.getQuizzesByCategory();
+      const categoryEntries = Object.entries(quizzesByCategory);
+      let bestCategory: string | null = null;
+
+      if (categoryEntries.length > 0) {
+        const MIN_QUIZZES_FOR_BEST = 5; // 최소 5문제 이상 풀어야 유효
+        const sorted = categoryEntries
+          .filter(([, catStats]) => catStats.answered >= MIN_QUIZZES_FOR_BEST)
+          .sort((a, b) => {
+            const rateA = a[1].correct / a[1].answered;
+            const rateB = b[1].correct / b[1].answered;
+            return rateB - rateA;
+          });
+        bestCategory = sorted[0]?.[0] || null;
+      }
+
+      quizzes = {
+        total: stats.quizzesAnswered,
+        correct: stats.quizzesCorrect,
+        correctRate: stats.quizzesAnswered > 0 ? (stats.quizzesCorrect / stats.quizzesAnswered) * 100 : 0,
+        bestCategory,
+      };
+
+      // 배지 정보
       const allBadges = gamificationService.getBadges();
       badges = {
         total: allBadges.length,
@@ -192,27 +221,7 @@ class ParticipationBridge {
       };
     }
 
-    // 상위 카테고리 변환
-    const topCategories = Object.entries(pollAnalysis.categoryBreakdown)
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 3);
-
-    return {
-      polls: {
-        total: pollAnalysis.totalPolls,
-        minorityCount: pollAnalysis.minorityVotes,
-        minorityRatio: pollAnalysis.minorityRatio,
-        topCategories,
-      },
-      quizzes: {
-        total: quizAnalysis.totalAnswered,
-        correct: quizAnalysis.correctCount,
-        correctRate: quizAnalysis.correctRate,
-        bestCategory: quizAnalysis.bestCategory,
-      },
-      badges,
-    };
+    return { polls, quizzes, badges };
   }
 
   // ============================================================================

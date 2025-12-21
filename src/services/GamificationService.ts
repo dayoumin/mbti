@@ -412,6 +412,8 @@ class GamificationService {
     // 스트릭 업데이트
     if (progress.lastActiveDate === today) {
       // 오늘 이미 활동함 - 스트릭 유지
+    } else if (progress.lastActiveDate && progress.lastActiveDate > today) {
+      // 미래 날짜인 경우 무시 (기기 시간 변경/타임존 이동 대응)
     } else {
       const yesterdayStr = this.getYesterday();
 
@@ -447,12 +449,22 @@ class GamificationService {
     return { ...this.stats.pollsByCategory };
   }
 
+  // 카테고리별 퀴즈 현황 조회
+  getQuizzesByCategory(): Record<string, { answered: number; correct: number }> {
+    return { ...this.stats.quizzesByCategory };
+  }
+
   // 방문 기록
   recordVisit(): { points: number; streakUpdated: boolean; newBadges: string[] } {
     const today = this.getToday();
     const lastActivity = this.stats.streak.lastActivityDate;
 
     if (lastActivity === today) {
+      return { points: 0, streakUpdated: false, newBadges: [] };
+    }
+
+    // 미래 날짜인 경우 무시 (기기 시간 변경/타임존 이동 대응)
+    if (lastActivity && lastActivity > today) {
       return { points: 0, streakUpdated: false, newBadges: [] };
     }
 
@@ -650,6 +662,11 @@ class GamificationService {
       return; // 오늘 이미 활동함
     }
 
+    // 미래 날짜인 경우 무시 (기기 시간 변경/타임존 이동 대응)
+    if (lastActivityDate && lastActivityDate > today) {
+      return;
+    }
+
     const yesterdayStr = this.getYesterday();
 
     if (lastActivityDate === yesterdayStr) {
@@ -821,11 +838,14 @@ class GamificationService {
       }
     }
 
-    // 기본 테스트 완료 체크
-    if (req.test && progress.testsCompleted.length === 0) return false;
+    // 기본 테스트 완료 체크 - 'main' 테스트 필수
+    if (req.test && !progress.testsCompleted.includes('main')) return false;
 
-    // 세부 테스트 체크 (silver 이상)
-    if (req.detailTest && progress.testsCompleted.length < 2) return false;
+    // 세부 테스트 체크 (silver 이상) - 'main' 외에 추가 테스트 1개 이상
+    if (req.detailTest) {
+      const detailTests = progress.testsCompleted.filter(t => t !== 'main');
+      if (detailTests.length < 1) return false;
+    }
 
     // 퀴즈 정답 수 체크
     if (req.quizCorrect && progress.quizCorrect < req.quizCorrect) return false;
