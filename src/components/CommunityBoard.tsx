@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { MessageCircle, Heart, Share2, Search, Filter, ChevronRight, Flame, TrendingUp, Hash, Award, Sparkles, PenSquare, ArrowUp, ArrowDown } from 'lucide-react';
 import CommentSystem from './CommentSystem';
 import { MOCK_COMMUNITY_POSTS, POST_CATEGORY_LABELS, getPostCategoryLabel, getPostCategoryStyle, type PostCategory } from '@/data/content/community';
@@ -56,10 +56,18 @@ const ACTIVE_USERS = [
 interface CommunitySidebarProps {
   posts: typeof MOCK_COMMUNITY_POSTS;
   onSelectPost: (id: string) => void;
+  onCategoryChange: (category: CategoryKey) => void;
 }
 
-function CommunitySidebar({ posts, onSelectPost }: CommunitySidebarProps) {
+function CommunitySidebar({ posts, onSelectPost, onCategoryChange }: CommunitySidebarProps) {
   const todayTopic = useTodayTopic();
+
+  // 태그 → 카테고리 매핑 (POST_CATEGORY_LABELS에서 동적 생성)
+  const tagToCategoryMap = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(POST_CATEGORY_LABELS).map(([key, label]) => [`#${label.replace('/', '')}`, key])
+    ) as Record<string, PostCategory>;
+  }, []);
 
   // HOT 게시물 (좋아요 순 TOP 3)
   // 참고: 현재 Mock 데이터(~5개)에서는 full sort가 충분함
@@ -182,6 +190,10 @@ function CommunitySidebar({ posts, onSelectPost }: CommunitySidebarProps) {
             {popularTags.map(({ tag, emoji, count }) => (
               <button
                 key={tag}
+                onClick={() => {
+                  const category = tagToCategoryMap[tag];
+                  if (category) onCategoryChange(category);
+                }}
                 className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 rounded-full text-xs font-medium transition-colors"
               >
                 <span>{emoji}</span>
@@ -236,9 +248,10 @@ interface PostDetailSidebarProps {
   onSelectPost: (id: string) => void;
   onBack: () => void;
   onStartTest?: (testKey: string) => void;
+  onShowToast?: (message: string) => void;
 }
 
-function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStartTest }: PostDetailSidebarProps) {
+function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStartTest, onShowToast }: PostDetailSidebarProps) {
   // 같은 카테고리의 다른 글
   const relatedPosts = useMemo(() => {
     return allPosts
@@ -291,10 +304,16 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-colors">
+            <button
+              onClick={() => onShowToast?.('팔로우 기능은 준비 중이에요!')}
+              className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-colors"
+            >
               팔로우
             </button>
-            <button className="flex-1 py-2 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-xs font-bold text-indigo-600 transition-colors">
+            <button
+              onClick={() => onShowToast?.('다른 글 보기 기능은 준비 중이에요!')}
+              className="flex-1 py-2 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-xs font-bold text-indigo-600 transition-colors"
+            >
               다른 글 보기
             </button>
           </div>
@@ -578,19 +597,77 @@ interface CommunityBoardProps {
   onStartTest?: (testKey: string) => void;
 }
 
+// 검색 debounce 훅
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export default function CommunityBoard({ className = '', onStartTest }: CommunityBoardProps) {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('all');
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showToast, setShowToast] = useState<string | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const filteredPosts = activeCategory === 'all'
-    ? MOCK_COMMUNITY_POSTS
-    : MOCK_COMMUNITY_POSTS.filter(p => p.category === activeCategory);
+  // 검색어 debounce (300ms)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // 토스트 표시 함수
+  const showToastMessage = (message: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setShowToast(message);
+    toastTimerRef.current = setTimeout(() => {
+      setShowToast(null);
+      toastTimerRef.current = null;
+    }, 2000);
+  };
+
+  // 토스트 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  // 검색 + 카테고리 필터링
+  const filteredPosts = useMemo(() => {
+    let posts = activeCategory === 'all'
+      ? MOCK_COMMUNITY_POSTS
+      : MOCK_COMMUNITY_POSTS.filter(p => p.category === activeCategory);
+
+    if (debouncedSearchQuery.trim()) {
+      const query = debouncedSearchQuery.toLowerCase();
+      posts = posts.filter(p =>
+        p.title.toLowerCase().includes(query) ||
+        p.content.toLowerCase().includes(query)
+      );
+    }
+
+    return posts;
+  }, [activeCategory, debouncedSearchQuery]);
 
   const selectedPost = MOCK_COMMUNITY_POSTS.find(p => p.id === selectedPostId);
 
   if (selectedPostId && selectedPost) {
     return (
       <div className={`flex flex-col h-full bg-slate-50 animate-fade-in ${className}`}>
+        {/* 토스트 알림 */}
+        {showToast && (
+          <div
+            role="status"
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-slate-800 text-white text-sm font-medium rounded-full shadow-lg animate-fade-in"
+          >
+            {showToast}
+          </div>
+        )}
+
         {/* Post Detail Header */}
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between">
           <button onClick={() => setSelectedPostId(null)} className="text-slate-500 font-bold flex items-center gap-1">
@@ -604,7 +681,7 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
 
         {/* 2단 레이아웃: 본문 + 사이드바 */}
         <div className="flex-1 overflow-y-auto">
-          <div className="flex justify-center p-4 xl:p-6">
+          <div className="flex justify-center p-4 pb-24 xl:p-6 xl:pb-6">
             <div className="flex gap-6 w-full max-w-[1000px]">
               {/* 메인 콘텐츠 */}
               <article className="flex-1 min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
@@ -652,6 +729,7 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
                 onSelectPost={setSelectedPostId}
                 onBack={() => setSelectedPostId(null)}
                 onStartTest={onStartTest}
+                onShowToast={showToastMessage}
               />
             </div>
           </div>
@@ -671,6 +749,8 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
             <input
               type="text"
               placeholder="검색어를 입력하세요"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-slate-50 border-none rounded-full py-2 pl-9 pr-4 text-xs w-48 focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
@@ -725,13 +805,27 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
               {filteredPosts.length === 0 && (
                 <div className="py-20 text-center text-slate-400 flex flex-col items-center gap-3 bg-white rounded-2xl">
                   <Filter className="w-8 h-8 opacity-20" />
-                  <p className="text-sm font-medium">게시글이 없습니다</p>
+                  <p className="text-sm font-medium">
+                    {debouncedSearchQuery.trim() ? '검색 결과가 없습니다' : '게시글이 없습니다'}
+                  </p>
+                  {debouncedSearchQuery.trim() && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="text-xs text-indigo-500 hover:text-indigo-600 font-medium"
+                    >
+                      검색어 지우기
+                    </button>
+                  )}
                 </div>
               )}
             </div>
 
             {/* 우측 사이드바 - PC에서만 표시 */}
-            <CommunitySidebar posts={MOCK_COMMUNITY_POSTS} onSelectPost={setSelectedPostId} />
+            <CommunitySidebar
+              posts={MOCK_COMMUNITY_POSTS}
+              onSelectPost={setSelectedPostId}
+              onCategoryChange={setActiveCategory}
+            />
           </div>
         </div>
       </div>
