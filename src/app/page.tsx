@@ -301,7 +301,7 @@ export default function Home() {
             )}
 
             {activeModal === 'community' && (
-                <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-64 lg:right-0">
+                <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-60 lg:right-0">
                     <CommunityBoard className="h-full" />
                 </div>
             )}
@@ -363,38 +363,38 @@ export default function Home() {
                 />
             )}
 
-            {/* 메인 콘텐츠 영역 */}
-            <main className="flex-1 min-h-screen flex p-4 pb-20 lg:pb-4">
+            {/* 우측 사이드바 - fixed로 화면 고정 */}
+            {view === 'dashboard' && (
+                <RightSidebar
+                    onOpenCommunity={() => {
+                        openModal('community');
+                        setActiveNavTab('talk');
+                    }}
+                    onOpenRanking={() => {
+                        openModal('ranking');
+                        setActiveNavTab('ranking');
+                    }}
+                    onStartTest={(testKey: string) => {
+                        setActiveNavTab('home');
+                        handleStartTest(testKey as SubjectKey);
+                    }}
+                />
+            )}
+
+            {/* 메인 콘텐츠 영역 - 좌우 사이드바가 fixed이므로 마진 추가 (테스트 뷰에서는 우측 마진 제외) */}
+            <main className={`flex-1 min-h-screen flex p-4 pb-20 lg:pb-4 lg:ml-60 ${view === 'dashboard' ? 'xl:mr-80' : ''}`}>
                 {view === 'dashboard' ? (
                     <div className="flex-1 flex justify-center">
-                        <div className="flex gap-6 w-full max-w-[1400px]">
-                            <div className="flex-1 min-w-0">
-                                <Dashboard
-                                    onStartTest={(testKey: string) => {
-                                        setActiveNavTab('home');
-                                        handleStartTest(testKey as SubjectKey);
-                                    }}
-                                    onContentExplore={() => {
-                                        openModal('contentExplore');
-                                        setActiveNavTab('explore');
-                                    }}
-                                />
-                            </div>
-                            <RightSidebar
-                                onOpenCommunity={() => {
-                                    openModal('community');
-                                    setActiveNavTab('talk');
-                                }}
-                                onOpenRanking={() => {
-                                    openModal('ranking');
-                                    setActiveNavTab('ranking');
-                                }}
-                                onStartTest={(testKey: string) => {
-                                    setActiveNavTab('home');
-                                    handleStartTest(testKey as SubjectKey);
-                                }}
-                            />
-                        </div>
+                        <Dashboard
+                            onStartTest={(testKey: string) => {
+                                setActiveNavTab('home');
+                                handleStartTest(testKey as SubjectKey);
+                            }}
+                            onContentExplore={() => {
+                                openModal('contentExplore');
+                                setActiveNavTab('explore');
+                            }}
+                        />
                     </div>
                 ) : (
                     <div className="glass-card rounded-[2.5rem] overflow-hidden flex flex-col relative transition-all duration-500 w-full h-full max-w-md min-h-[750px] shadow-2xl border border-white/50">

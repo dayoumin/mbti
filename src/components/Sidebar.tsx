@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle } from 'lucide-react';
+import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, ChevronRight } from 'lucide-react';
 import { NavTab, NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
-import { SUBJECT_CONFIG } from '../data/config';
+import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
+import { POPULAR_TESTS } from '../data/recommendationPolicy';
 import type { SubjectKey } from '../data/types';
 import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
 
@@ -76,11 +77,14 @@ export default function Sidebar({
   const [recentTests, setRecentTests] = useState<RecentTest[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
   const [myPosts, setMyPosts] = useState<MyPost[]>([]);
+  const [recommendedTests, setRecommendedTests] = useState<SubjectKey[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const results = await resultService.getMyResults();
+        const completedKeys = [...new Set(results.map(r => r.testType))] as SubjectKey[];
+
         // 최근 2개만 (사이드바 표시용)
         setRecentTests(results.slice(0, 2).map(r => ({
           testType: r.testType,
@@ -89,6 +93,13 @@ export default function Sidebar({
           createdAt: r.createdAt,
         })));
         setCompletedCount(results.length);
+
+        // 추천 테스트: 완료하지 않은 인기 테스트 우선
+        const notCompletedPopular = POPULAR_TESTS.filter(key => !completedKeys.includes(key));
+        const notCompletedOther = MAIN_TEST_KEYS.filter(key =>
+          !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
+        );
+        setRecommendedTests([...notCompletedPopular, ...notCompletedOther].slice(0, 4));
 
         // TODO: 실제 API 연동 시 교체
         // 현재는 localStorage에서 내가 쓴 글 가져오기 (Mock)
@@ -105,7 +116,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`hidden lg:flex flex-col w-60 h-screen bg-white/80 backdrop-blur-xl border-r border-slate-200/50 ${className}`}
+      className={`hidden lg:flex flex-col w-60 h-screen fixed left-0 top-0 bg-white/80 backdrop-blur-xl border-r border-slate-200/50 z-40 ${className}`}
       role="navigation"
       aria-label="사이드 네비게이션"
     >
@@ -160,6 +171,55 @@ export default function Sidebar({
 
       {/* 하단 위젯 영역 - 스크롤 가능 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
+        {/* 추천 테스트 (개인화) */}
+        {recommendedTests.length > 0 && (
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+                <span className="text-xs font-bold text-indigo-700">추천 테스트</span>
+              </div>
+              <span className="text-xs text-indigo-400">안 해본 테스트</span>
+            </div>
+            <div className="space-y-1">
+              {recommendedTests.map((key, index) => {
+                const config = SUBJECT_CONFIG[key];
+                const data = CHEMI_DATA[key];
+                if (!config || !data) return null;
+                const IconComponent = getIconComponent(config.icon);
+                const isPopular = POPULAR_TESTS.includes(key);
+
+                return (
+                  <button
+                    key={key}
+                    onClick={() => onStartTest?.(key)}
+                    className="w-full flex items-center gap-2 p-2 bg-white/70 rounded-lg hover:bg-white transition-colors group text-left"
+                  >
+                    {isPopular ? (
+                      <span className="w-5 h-5 bg-gradient-to-br from-rose-500 to-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                        🔥
+                      </span>
+                    ) : (
+                      <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                        {index + 1}
+                      </span>
+                    )}
+                    <div className="w-7 h-7 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                      <IconComponent mood="happy" className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
+                        {data.title || config.label}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-400 transition-colors flex-shrink-0" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* 최근 본 테스트 */}
         {recentTests.length > 0 && (
           <div className="bg-slate-50/80 rounded-xl p-3">

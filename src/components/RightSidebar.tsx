@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   MessageSquare, MessageCircle, Heart, ChevronRight, ChevronDown,
-  Flame, Users, Trophy, Sparkles, PawPrint, TrendingUp
+  Flame, Users, Trophy, Sparkles, PawPrint, Crown, Medal, BarChart2
 } from 'lucide-react';
 import { getIconComponent } from '@/utils';
 import { feedbackService } from '@/services/FeedbackService';
 import { resultService } from '@/services/ResultService';
 import { VS_POLLS } from '@/data/content/polls';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
-import { POPULAR_TESTS } from '@/data/recommendationPolicy';
 import { CHEMI_DATA } from '@/data/index';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
 import { MOCK_COMMUNITY_PREVIEW, getPostCategoryLabel, getPostCategoryStyle } from '@/data/content/community';
@@ -31,130 +30,6 @@ interface TopPollItem {
   pollId: string;
   question: string;
   totalVotes: number;
-}
-
-// ============================================================================
-// 지금 뜨는 테스트 섹션 (PC용 - 모바일에서는 Dashboard에서 표시)
-// ============================================================================
-
-function TrendingTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) => void }) {
-  // 인기 테스트 + 추천 테스트 조합
-  const [recommendedTests, setRecommendedTests] = useState<SubjectKey[]>([]);
-
-  useEffect(() => {
-    const loadRecommended = async () => {
-      const results = await resultService.getMyResults();
-      const completedKeys = [...new Set(results.map(r => r.testType))] as SubjectKey[];
-
-      // 완료하지 않은 인기 테스트 우선
-      const notCompletedPopular = POPULAR_TESTS.filter(key => !completedKeys.includes(key));
-      // 완료하지 않은 다른 테스트
-      const notCompletedOther = MAIN_TEST_KEYS.filter(key =>
-        !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
-      );
-
-      // 인기 테스트 먼저, 그 다음 추천
-      setRecommendedTests([...notCompletedPopular, ...notCompletedOther].slice(0, 4));
-    };
-    loadRecommended();
-  }, []);
-
-  if (recommendedTests.length === 0) {
-    // 모든 테스트 완료한 경우 인기 테스트 표시
-    return (
-      <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="px-4 pt-4 pb-3 flex items-center gap-2">
-          <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-indigo-600" />
-          </div>
-          <h3 className="text-base font-bold text-slate-800">지금 뜨는 테스트</h3>
-        </div>
-        <div className="px-3 pb-3 space-y-2">
-          {POPULAR_TESTS.slice(0, 4).map((key, index) => {
-            const config = SUBJECT_CONFIG[key];
-            const data = CHEMI_DATA[key];
-            if (!config || !data) return null;
-            const IconComponent = getIconComponent(config.icon);
-
-            return (
-              <button
-                key={key}
-                onClick={() => onStartTest(key)}
-                className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
-              >
-                <span className="w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xs font-black rounded-full flex items-center justify-center shadow-sm">
-                  {index + 1}
-                </span>
-                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <IconComponent mood="happy" className="w-7 h-7" />
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
-                    {data.title || config.label}
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
-              </button>
-            );
-          })}
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-      <div className="px-4 pt-4 pb-3 flex items-center gap-2">
-        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-white" />
-        </div>
-        <div>
-          <h3 className="text-base font-bold text-slate-800">추천 테스트</h3>
-          <p className="text-xs text-slate-400">아직 안 해본 테스트</p>
-        </div>
-      </div>
-      <div className="px-3 pb-3 space-y-2">
-        {recommendedTests.map((key, index) => {
-          const config = SUBJECT_CONFIG[key];
-          const data = CHEMI_DATA[key];
-          if (!config || !data) return null;
-          const IconComponent = getIconComponent(config.icon);
-          const isPopular = POPULAR_TESTS.includes(key);
-
-          return (
-            <button
-              key={key}
-              onClick={() => onStartTest(key)}
-              className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
-            >
-              {isPopular && (
-                <span className="w-5 h-5 bg-gradient-to-br from-rose-500 to-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  🔥
-                </span>
-              )}
-              {!isPopular && (
-                <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full flex items-center justify-center">
-                  {index + 1}
-                </span>
-              )}
-              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconComponent mood="happy" className="w-7 h-7" />
-              </div>
-              <div className="flex-1 text-left min-w-0">
-                <p className="text-sm font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
-                  {data.title || config.label}
-                </p>
-                <p className="text-xs text-slate-400 truncate">
-                  {data.resultLabels?.length || 0}가지 결과
-                </p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
-            </button>
-          );
-        })}
-      </div>
-    </section>
-  );
 }
 
 // ============================================================================
@@ -319,6 +194,145 @@ function RankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
 }
 
 // ============================================================================
+// 테스트 결과 랭킹 미니 섹션 (자동 집계)
+// ============================================================================
+
+// 랭킹 가능한 매칭 테스트 (결과가 다양한 것들)
+const RANKABLE_MATCHING_TESTS: SubjectKey[] = MAIN_TEST_KEYS.filter(key => {
+  const config = SUBJECT_CONFIG[key];
+  return config.testType === 'matching' || ['human', 'cat', 'dog'].includes(key);
+});
+
+interface RankingResultItem {
+  resultName: string;
+  resultEmoji: string;
+  count: number;
+  percentage: number;
+}
+
+function TestResultRankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [rankings, setRankings] = useState<RankingResultItem[]>([]);
+  const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const currentTest = RANKABLE_MATCHING_TESTS[currentTestIndex];
+  const testConfig = SUBJECT_CONFIG[currentTest];
+
+  // 다음 테스트로 순환
+  const nextTest = useCallback(() => {
+    setCurrentTestIndex(prev => (prev + 1) % RANKABLE_MATCHING_TESTS.length);
+  }, []);
+
+  // 랭킹 로드
+  const loadRanking = useCallback(async () => {
+    if (!currentTest) return;
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/ranking?type=results&testType=${currentTest}&limit=3`);
+      if (res.ok) {
+        const data = await res.json();
+        setRankings(data.rankings || []);
+        setTotal(data.total || 0);
+      }
+    } catch (error) {
+      console.error('[TestResultRankingMini] Load error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentTest]);
+
+  useEffect(() => {
+    loadRanking();
+  }, [loadRanking]);
+
+  // 5초마다 자동 순환
+  useEffect(() => {
+    const interval = setInterval(nextTest, 8000);
+    return () => clearInterval(interval);
+  }, [nextTest]);
+
+  const getRankBadge = (rank: number) => {
+    if (rank === 1) return <Crown className="w-4 h-4 text-yellow-500" />;
+    if (rank === 2) return <Medal className="w-4 h-4 text-slate-400" />;
+    if (rank === 3) return <Medal className="w-4 h-4 text-amber-600" />;
+    return null;
+  };
+
+  if (!testConfig) return null;
+
+  return (
+    <section className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border border-purple-100 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-lg flex items-center justify-center shadow-sm">
+            <BarChart2 className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-purple-700">테스트 결과 랭킹</h3>
+            <p className="text-xs text-purple-500 flex items-center gap-1">
+              <span>{testConfig.emoji}</span> {testConfig.label}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={onOpenRanking}
+          className="text-xs font-bold text-purple-400 hover:text-purple-600 flex items-center gap-0.5 transition-colors"
+        >
+          더보기 <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {isLoading ? (
+        <div className="animate-pulse space-y-2">
+          <div className="h-10 bg-white/50 rounded-lg" />
+          <div className="h-10 bg-white/50 rounded-lg" />
+          <div className="h-10 bg-white/50 rounded-lg" />
+        </div>
+      ) : rankings.length > 0 ? (
+        <div className="space-y-2">
+          {rankings.map((item, index) => (
+            <div
+              key={`${currentTest}-${item.resultName}`}
+              className="flex items-center gap-2 p-2.5 bg-white/70 rounded-lg"
+            >
+              <span className="w-6 flex justify-center">{getRankBadge(index + 1)}</span>
+              <span className="text-lg">{item.resultEmoji}</span>
+              <span className="flex-1 text-xs font-bold text-slate-700 truncate">{item.resultName}</span>
+              <span className="text-xs font-bold text-purple-600">{item.percentage}%</span>
+            </div>
+          ))}
+          <p className="text-xs text-purple-400 text-center mt-2">
+            {total.toLocaleString()}명 참여
+          </p>
+        </div>
+      ) : (
+        <div className="py-4 text-center text-xs text-purple-400">
+          아직 결과 데이터가 없어요
+        </div>
+      )}
+
+      {/* 테스트 인디케이터 */}
+      <div className="flex justify-center gap-1 mt-3">
+        {RANKABLE_MATCHING_TESTS.slice(0, 5).map((key, idx) => (
+          <button
+            key={key}
+            onClick={() => setCurrentTestIndex(idx)}
+            className={`w-1.5 h-1.5 rounded-full transition-colors ${
+              idx === currentTestIndex ? 'bg-purple-500' : 'bg-purple-200'
+            }`}
+            aria-label={SUBJECT_CONFIG[key]?.label || key}
+          />
+        ))}
+        {RANKABLE_MATCHING_TESTS.length > 5 && (
+          <span className="text-xs text-purple-300 ml-1">+{RANKABLE_MATCHING_TESTS.length - 5}</span>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
 // 세부 반려동물 테스트 섹션
 // ============================================================================
 
@@ -453,19 +467,19 @@ export default function RightSidebar({
 }: RightSidebarProps) {
   return (
     <aside
-      className={`hidden xl:block w-80 flex-shrink-0 ${className}`}
+      className={`hidden xl:flex flex-col w-80 h-screen fixed right-0 top-0 p-4 z-40 ${className}`}
       role="complementary"
       aria-label="사이드 정보"
     >
-      <div className="sticky top-4 space-y-4 max-h-[calc(100vh-2rem)] overflow-y-auto no-scrollbar">
-        {/* 추천 테스트 - PC에서 Dashboard의 RecommendedSection 역할 */}
-        <TrendingTestsSection onStartTest={onStartTest} />
+      <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar">
+        {/* 테스트 결과 랭킹 (자동 집계) - 맨 위 */}
+        <TestResultRankingMini onOpenRanking={onOpenRanking} />
+
+        {/* VS 투표 랭킹 */}
+        <RankingMini onOpenRanking={onOpenRanking} />
 
         {/* 커뮤니티 미리보기 */}
         <CommunityPreview onOpenCommunity={onOpenCommunity} />
-
-        {/* 오늘의 랭킹 */}
-        <RankingMini onOpenRanking={onOpenRanking} />
 
         {/* 세부 반려동물 테스트 */}
         <DetailTestsSection onStartTest={onStartTest} />
