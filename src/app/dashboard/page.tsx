@@ -80,6 +80,7 @@ import CategoryStrategy from './components/CategoryStrategy';
 import UserStrategy from './components/UserStrategy';
 import BadgeSystem from './components/BadgeSystem';
 import CareSystem from './components/CareSystem';
+import DemographicsDashboard from './components/DemographicsDashboard';
 
 // ============================================================================
 // Types
@@ -162,6 +163,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         tabs: [
           { key: 'analytics', label: '분석/추적', icon: <BarChart3 className="w-4 h-4" /> },
           { key: 'conversion', label: '전환 분석', icon: <TrendingUp className="w-4 h-4" /> },
+          { key: 'demographics', label: '인구통계', icon: <User className="w-4 h-4" /> },
         ],
       },
     ],
@@ -489,6 +491,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'fairness' && <FairnessSystem />}
           {activeCategory === 'planning' && activeSubTab === 'analytics' && <AnalyticsSystem />}
           {activeCategory === 'planning' && activeSubTab === 'conversion' && <ConversionAnalysis />}
+          {activeCategory === 'planning' && activeSubTab === 'demographics' && <DemographicsDashboard />}
           {activeCategory === 'planning' && activeSubTab === 'care' && <CareSystem />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
