@@ -63,6 +63,12 @@ describe('getExpertSubjectFromKey', () => {
     assert(getExpertSubjectFromKey('idealType') === null, 'idealType → null');
     assert(getExpertSubjectFromKey('conflictStyle') === null, 'conflictStyle → null');
   });
+
+  test('이색 반려동물 카테고리 (퀴즈/투표용)', () => {
+    assert(getExpertSubjectFromKey('fish') === 'fish', 'fish → fish');
+    assert(getExpertSubjectFromKey('bird') === 'bird', 'bird → bird');
+    assert(getExpertSubjectFromKey('reptile') === 'reptile', 'reptile → reptile');
+  });
 });
 
 describe('recordTestComplete - Expert 진행도 자동 업데이트', () => {
