@@ -85,12 +85,18 @@ import UserStrategy from './components/UserStrategy';
 
 type SidebarCategory = 'overview' | 'tests' | 'planning' | 'devtools' | 'reference';
 
+interface SubTabGroup {
+  groupLabel: string;
+  tabs: { key: string; label: string; icon?: React.ReactNode }[];
+}
+
 interface SidebarItem {
   key: SidebarCategory;
   label: string;
   icon: React.ReactNode;
   badge?: string;
-  subTabs: { key: string; label: string; icon?: React.ReactNode }[];
+  subTabs?: { key: string; label: string; icon?: React.ReactNode }[];
+  subTabGroups?: SubTabGroup[];
 }
 
 // ============================================================================
@@ -125,20 +131,35 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     key: 'planning',
     label: '기획',
     icon: <Target className="w-5 h-5" />,
-    subTabs: [
-      { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
-      { key: 'category', label: '카테고리 전략', icon: <Layers className="w-4 h-4" /> },
-      { key: 'userStrategy', label: '사용자 전략', icon: <User className="w-4 h-4" /> },
-      { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
-      { key: 'community', label: '커뮤니티 전략', icon: <MessageCircle className="w-4 h-4" /> },
-      { key: 'profile', label: '프로필 시스템', icon: <User className="w-4 h-4" /> },
-      { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
-      { key: 'viral', label: '바이럴 콘텐츠', icon: <Sparkles className="w-4 h-4" /> },
-      { key: 'retention', label: '체류 유도', icon: <RefreshCw className="w-4 h-4" /> },
-      { key: 'share', label: '공유 전략', icon: <Share2 className="w-4 h-4" /> },
-      { key: 'fairness', label: '공정성 시스템', icon: <Activity className="w-4 h-4" /> },
-      { key: 'analytics', label: '분석/추적', icon: <BarChart3 className="w-4 h-4" /> },
-      { key: 'conversion', label: '전환 분석', icon: <TrendingUp className="w-4 h-4" /> },
+    subTabGroups: [
+      {
+        groupLabel: '전략',
+        tabs: [
+          { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
+          { key: 'category', label: '카테고리', icon: <Layers className="w-4 h-4" /> },
+          { key: 'userStrategy', label: '사용자', icon: <User className="w-4 h-4" /> },
+          { key: 'viral', label: '바이럴', icon: <Sparkles className="w-4 h-4" /> },
+          { key: 'share', label: '공유', icon: <Share2 className="w-4 h-4" /> },
+          { key: 'retention', label: '체류 유도', icon: <RefreshCw className="w-4 h-4" /> },
+        ],
+      },
+      {
+        groupLabel: '기능',
+        tabs: [
+          { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
+          { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
+          { key: 'profile', label: '프로필', icon: <User className="w-4 h-4" /> },
+          { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
+          { key: 'fairness', label: '공정성', icon: <Activity className="w-4 h-4" /> },
+        ],
+      },
+      {
+        groupLabel: '분석',
+        tabs: [
+          { key: 'analytics', label: '분석/추적', icon: <BarChart3 className="w-4 h-4" /> },
+          { key: 'conversion', label: '전환 분석', icon: <TrendingUp className="w-4 h-4" /> },
+        ],
+      },
     ],
   },
   {
@@ -203,13 +224,48 @@ export default function DashboardPage() {
   const [selectedTest, setSelectedTest] = useState<SubjectKey>('human');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
+  const [expandedCategory, setExpandedCategory] = useState<SidebarCategory | null>('overview');
+  const [activeGroup, setActiveGroup] = useState<string>('전략');
+
   const currentSidebarItem = SIDEBAR_ITEMS.find((item) => item.key === activeCategory);
+
+  // subTabGroups가 있으면 모든 탭을 flat하게 가져오기
+  const getAllTabs = (item: SidebarItem) => {
+    if (item.subTabs) return item.subTabs;
+    if (item.subTabGroups) {
+      return item.subTabGroups.flatMap(g => g.tabs);
+    }
+    return [];
+  };
+
+  // 현재 그룹의 탭들 가져오기
+  const getCurrentGroupTabs = () => {
+    if (!currentSidebarItem?.subTabGroups) return currentSidebarItem?.subTabs || [];
+    const group = currentSidebarItem.subTabGroups.find(g => g.groupLabel === activeGroup);
+    return group?.tabs || [];
+  };
 
   const handleCategoryChange = (category: SidebarCategory) => {
     setActiveCategory(category);
+    setExpandedCategory(expandedCategory === category ? null : category);
     const item = SIDEBAR_ITEMS.find((i) => i.key === category);
-    if (item && item.subTabs.length > 0) {
-      setActiveSubTab(item.subTabs[0].key);
+    if (item) {
+      const allTabs = getAllTabs(item);
+      if (allTabs.length > 0) {
+        setActiveSubTab(allTabs[0].key);
+      }
+      // 그룹이 있으면 첫 번째 그룹 선택
+      if (item.subTabGroups && item.subTabGroups.length > 0) {
+        setActiveGroup(item.subTabGroups[0].groupLabel);
+      }
+    }
+  };
+
+  const handleGroupChange = (groupLabel: string) => {
+    setActiveGroup(groupLabel);
+    const group = currentSidebarItem?.subTabGroups?.find(g => g.groupLabel === groupLabel);
+    if (group && group.tabs.length > 0) {
+      setActiveSubTab(group.tabs[0].key);
     }
   };
 
@@ -243,35 +299,82 @@ export default function DashboardPage() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-2 space-y-1.5 overflow-y-auto">
-          {SIDEBAR_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => handleCategoryChange(item.key)}
-              className={`db-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium ${
-                activeCategory === item.key ? 'active' : ''
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={activeCategory === item.key ? 'text-[var(--db-brand)]' : 'text-[var(--db-muted)]'}>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {item.badge && (
-                  <span className="db-chip">
-                    {item.badge}
-                  </span>
-                )}
-                <ChevronRight
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    activeCategory === item.key ? 'rotate-90 text-[var(--db-brand)]' : 'text-[var(--db-muted)]'
+        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+          {SIDEBAR_ITEMS.map((item) => {
+            const isExpanded = expandedCategory === item.key;
+            const isActive = activeCategory === item.key;
+            const hasSubGroups = item.subTabGroups && item.subTabGroups.length > 0;
+
+            return (
+              <div key={item.key}>
+                <button
+                  onClick={() => handleCategoryChange(item.key)}
+                  className={`db-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium ${
+                    isActive ? 'active' : ''
                   }`}
-                />
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={isActive ? 'text-[var(--db-brand)]' : 'text-[var(--db-muted)]'}>
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {item.badge && (
+                      <span className="db-chip">
+                        {item.badge}
+                      </span>
+                    )}
+                    <ChevronRight
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isExpanded ? 'rotate-90 text-[var(--db-brand)]' : 'text-[var(--db-muted)]'
+                      }`}
+                    />
+                  </div>
+                </button>
+
+                {/* 하위 메뉴 (그룹이 있는 경우) */}
+                {isExpanded && hasSubGroups && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-[var(--db-border)] pl-3">
+                    {item.subTabGroups!.map((group) => (
+                      <button
+                        key={group.groupLabel}
+                        onClick={() => handleGroupChange(group.groupLabel)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                          activeGroup === group.groupLabel && isActive
+                            ? 'bg-[var(--db-brand)]/10 text-[var(--db-brand)]'
+                            : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[var(--db-panel)]'
+                        }`}
+                      >
+                        {group.groupLabel}
+                        <span className="ml-2 text-[10px] opacity-60">({group.tabs.length})</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* 하위 메뉴 (일반 subTabs인 경우) */}
+                {isExpanded && !hasSubGroups && item.subTabs && item.subTabs.length > 0 && (
+                  <div className="ml-4 mt-1 space-y-0.5 border-l border-[var(--db-border)] pl-3">
+                    {item.subTabs.map((tab) => (
+                      <button
+                        key={tab.key}
+                        onClick={() => setActiveSubTab(tab.key)}
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors flex items-center gap-2 ${
+                          activeSubTab === tab.key && isActive
+                            ? 'bg-[var(--db-brand)]/10 text-[var(--db-brand)]'
+                            : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[var(--db-panel)]'
+                        }`}
+                      >
+                        {tab.icon}
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            </button>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Footer */}
@@ -287,26 +390,49 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="sticky top-0 z-40 h-14 db-header">
           <div className="h-full px-6 flex items-center gap-6">
-            {/* Sub Tabs */}
-            <div className="db-tabs flex items-center gap-2 px-3 py-2 rounded-xl">
-              {currentSidebarItem?.subTabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveSubTab(tab.key)}
-                  className={`db-tab flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium ${
-                    activeSubTab === tab.key ? 'active' : ''
-                  }`}
-                >
-                  {tab.icon}
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            {/* 그룹 선택이 있는 경우: 그룹 라벨 표시 + 현재 그룹 탭들 */}
+            {currentSidebarItem?.subTabGroups ? (
+              <>
+                <span className="text-sm font-medium text-[var(--db-brand)]">
+                  {activeGroup}
+                </span>
+                <div className="db-tabs flex items-center gap-1.5 px-2 py-1.5 rounded-xl">
+                  {getCurrentGroupTabs().map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setActiveSubTab(tab.key)}
+                      className={`db-tab flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
+                        activeSubTab === tab.key ? 'active' : ''
+                      }`}
+                    >
+                      {tab.icon}
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              /* 일반 subTabs인 경우 */
+              <div className="db-tabs flex items-center gap-2 px-3 py-2 rounded-xl">
+                {currentSidebarItem?.subTabs?.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveSubTab(tab.key)}
+                    className={`db-tab flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium ${
+                      activeSubTab === tab.key ? 'active' : ''
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Right side: Update date + Theme Toggle */}
             <div className="ml-auto flex items-center gap-4">
               <span className="text-xs text-[var(--db-muted)]">
-                업데이트: 2025.12.15
+                업데이트: 2025.12.21
               </span>
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -324,7 +450,7 @@ export default function DashboardPage() {
         </header>
 
         {/* Content Area */}
-        <div className="p-6">
+        <div className="p-6 pt-8">
           {activeCategory === 'overview' && activeSubTab === 'summary' && <OverviewSummary />}
           {activeCategory === 'overview' && activeSubTab === 'recent' && <RecentActivity />}
           {activeCategory === 'tests' && activeSubTab === 'list' && (
