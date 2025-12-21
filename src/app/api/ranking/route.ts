@@ -3,74 +3,175 @@
  *
  * GET /api/ranking?type=results - 테스트 결과 랭킹 조회
  * GET /api/ranking?type=results&testType=human - 특정 테스트의 결과 랭킹
+ * GET /api/ranking?type=results&testType=coffee&ageGroup=20s - 연령대별 랭킹
+ * GET /api/ranking?type=by-age&testType=coffee - 연령대별 TOP 3 비교
  *
  * 반환 형식:
  * {
- *   rankings: [{ resultName, resultEmoji, testType, count }],
- *   total: number
+ *   rankings: [{ resultName, resultEmoji, testType, count, percentage }],
+ *   total: number,
+ *   ageGroup?: string
  * }
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/turso';
 
+const VALID_AGE_GROUPS = ['10s', '20s', '30s', '40s+'] as const;
+
 export async function GET(request: NextRequest) {
   try {
     const type = request.nextUrl.searchParams.get('type') || 'results';
     const testType = request.nextUrl.searchParams.get('testType');
+    const ageGroup = request.nextUrl.searchParams.get('ageGroup');
     const limit = Math.min(parseInt(request.nextUrl.searchParams.get('limit') || '10'), 50);
 
+    // 연령대별 TOP 비교 (모든 연령대의 TOP N 반환)
+    if (type === 'by-age') {
+      if (!testType) {
+        return NextResponse.json({ error: 'testType required for by-age' }, { status: 400 });
+      }
+
+      const ageStats: Record<string, Array<{ resultName: string; count: number; percentage: number }>> = {};
+
+      for (const age of VALID_AGE_GROUPS) {
+        const result = await query(`
+          SELECT
+            tr.result_name,
+            COUNT(*) as count
+          FROM test_results tr
+          INNER JOIN user_demographics ud ON tr.device_id = ud.device_id
+          WHERE tr.test_type = ? AND ud.age_group = ?
+          GROUP BY tr.result_name
+          ORDER BY count DESC
+          LIMIT 5
+        `, [testType, age]);
+
+        // 해당 연령대 총 투표수
+        const totalResult = await query(`
+          SELECT COUNT(*) as total
+          FROM test_results tr
+          INNER JOIN user_demographics ud ON tr.device_id = ud.device_id
+          WHERE tr.test_type = ? AND ud.age_group = ?
+        `, [testType, age]);
+
+        const total = (totalResult.rows[0]?.total as number) || 0;
+
+        ageStats[age] = result.rows.map(row => ({
+          resultName: row.result_name as string,
+          count: row.count as number,
+          percentage: total > 0 ? Math.round(((row.count as number) / total) * 100) : 0,
+        }));
+      }
+
+      return NextResponse.json({
+        testType,
+        ageStats,
+      });
+    }
+
     if (type === 'results') {
-      // 테스트 결과별 집계
       let sql: string;
       let args: unknown[] = [];
+      let totalSql: string;
+      let totalArgs: unknown[] = [];
 
-      if (testType) {
-        sql = `
-          SELECT
-            result_name,
-            test_type,
-            COUNT(*) as count
-          FROM test_results
-          WHERE test_type = ?
-          GROUP BY result_name, test_type
-          ORDER BY count DESC
-          LIMIT ?
-        `;
-        args = [testType, limit];
+      // 연령대 필터가 있는 경우
+      if (ageGroup && VALID_AGE_GROUPS.includes(ageGroup as typeof VALID_AGE_GROUPS[number])) {
+        if (testType) {
+          sql = `
+            SELECT
+              tr.result_name,
+              tr.test_type,
+              COUNT(*) as count
+            FROM test_results tr
+            INNER JOIN user_demographics ud ON tr.device_id = ud.device_id
+            WHERE tr.test_type = ? AND ud.age_group = ?
+            GROUP BY tr.result_name, tr.test_type
+            ORDER BY count DESC
+            LIMIT ?
+          `;
+          args = [testType, ageGroup, limit];
+          totalSql = `
+            SELECT COUNT(*) as total
+            FROM test_results tr
+            INNER JOIN user_demographics ud ON tr.device_id = ud.device_id
+            WHERE tr.test_type = ? AND ud.age_group = ?
+          `;
+          totalArgs = [testType, ageGroup];
+        } else {
+          sql = `
+            SELECT
+              tr.result_name,
+              tr.test_type,
+              COUNT(*) as count
+            FROM test_results tr
+            INNER JOIN user_demographics ud ON tr.device_id = ud.device_id
+            WHERE ud.age_group = ?
+            GROUP BY tr.result_name, tr.test_type
+            ORDER BY count DESC
+            LIMIT ?
+          `;
+          args = [ageGroup, limit];
+          totalSql = `
+            SELECT COUNT(*) as total
+            FROM test_results tr
+            INNER JOIN user_demographics ud ON tr.device_id = ud.device_id
+            WHERE ud.age_group = ?
+          `;
+          totalArgs = [ageGroup];
+        }
       } else {
-        sql = `
-          SELECT
-            result_name,
-            test_type,
-            COUNT(*) as count
-          FROM test_results
-          GROUP BY result_name, test_type
-          ORDER BY count DESC
-          LIMIT ?
-        `;
-        args = [limit];
+        // 기존 로직 (연령대 필터 없음)
+        if (testType) {
+          sql = `
+            SELECT
+              result_name,
+              test_type,
+              COUNT(*) as count
+            FROM test_results
+            WHERE test_type = ?
+            GROUP BY result_name, test_type
+            ORDER BY count DESC
+            LIMIT ?
+          `;
+          args = [testType, limit];
+          totalSql = `SELECT COUNT(*) as total FROM test_results WHERE test_type = ?`;
+          totalArgs = [testType];
+        } else {
+          sql = `
+            SELECT
+              result_name,
+              test_type,
+              COUNT(*) as count
+            FROM test_results
+            GROUP BY result_name, test_type
+            ORDER BY count DESC
+            LIMIT ?
+          `;
+          args = [limit];
+          totalSql = `SELECT COUNT(*) as total FROM test_results`;
+          totalArgs = [];
+        }
       }
 
       const result = await query(sql, args);
-
-      // 총 결과 수
-      const countSql = testType
-        ? `SELECT COUNT(DISTINCT result_name) as total FROM test_results WHERE test_type = ?`
-        : `SELECT COUNT(DISTINCT result_name || '_' || test_type) as total FROM test_results`;
-      const countResult = await query(countSql, testType ? [testType] : []);
+      const countResult = await query(totalSql, totalArgs);
+      const total = (countResult.rows[0]?.total as number) || 0;
 
       const rankings = result.rows.map(row => ({
         resultName: row.result_name as string,
         testType: row.test_type as string,
         count: row.count as number,
-        // 이모지는 별도로 가져와야 함 (데이터 파일에서)
+        percentage: total > 0 ? Math.round(((row.count as number) / total) * 100) : 0,
         resultEmoji: getResultEmoji(row.test_type as string, row.result_name as string),
       }));
 
       return NextResponse.json({
         rankings,
-        total: (countResult.rows[0]?.total as number) || 0,
+        total,
+        ageGroup: ageGroup || 'all',
+        testType: testType || 'all',
       });
     }
 

@@ -9,3 +9,5 @@ export type { PollWidgetProps } from './PollWidget';
 
 export { default as ContentWidgetContainer } from './ContentWidgetContainer';
 export type { ContentWidgetContainerProps } from './ContentWidgetContainer';
+
+export { default as TestResultRanking } from './TestResultRanking';

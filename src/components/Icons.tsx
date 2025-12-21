@@ -393,6 +393,72 @@ export const CoffeeIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4
   </svg>
 );
 
+// 셰프 모자 아이콘 (food 테스트용)
+export const ChefHatIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 접시 배경 */}
+    <ellipse cx="50" cy="70" rx="35" ry="12" fill="#FED7AA" />
+    <ellipse cx="50" cy="68" rx="32" ry="10" fill="#FFEDD5" />
+
+    {/* 셰프 모자 */}
+    <path d="M25 40 Q25 20 50 20 Q75 20 75 40 L75 50 L25 50 Z" fill="white" stroke="#E5E5E5" strokeWidth="1.5" />
+    <ellipse cx="35" cy="25" rx="10" ry="8" fill="white" />
+    <ellipse cx="50" cy="22" rx="10" ry="8" fill="white" />
+    <ellipse cx="65" cy="25" rx="10" ry="8" fill="white" />
+    <rect x="25" y="48" width="50" height="8" fill="white" stroke="#E5E5E5" strokeWidth="1.5" rx="2" />
+
+    {/* 음식 (상태별 다른 음식) */}
+    {mood === 'happy' && (
+      <>
+        {/* 밥그릇 */}
+        <ellipse cx="50" cy="68" rx="18" ry="8" fill="#FEF3C7" />
+        <path d="M32 68 Q32 80 50 80 Q68 80 68 68" fill="#FEF3C7" stroke="#F59E0B" strokeWidth="1" />
+        <ellipse cx="50" cy="68" rx="15" ry="6" fill="white" />
+        {/* 밥알 */}
+        <ellipse cx="45" cy="66" rx="3" ry="2" fill="#FEFCE8" stroke="#FDE68A" />
+        <ellipse cx="55" cy="67" rx="3" ry="2" fill="#FEFCE8" stroke="#FDE68A" />
+        <ellipse cx="50" cy="64" rx="3" ry="2" fill="#FEFCE8" stroke="#FDE68A" />
+      </>
+    )}
+    {mood === 'cool' && (
+      <>
+        {/* 초밥 */}
+        <rect x="38" y="62" width="24" height="12" rx="6" fill="#FED7AA" />
+        <ellipse cx="50" cy="60" rx="10" ry="5" fill="#FB923C" />
+        <path d="M42 58 L58 58" stroke="white" strokeWidth="1" strokeDasharray="2,2" />
+      </>
+    )}
+    {mood === 'excited' && (
+      <>
+        {/* 떡볶이 */}
+        <ellipse cx="50" cy="68" rx="18" ry="8" fill="#DC2626" />
+        <path d="M40 65 Q42 62 44 65" stroke="#FCA5A5" strokeWidth="2" fill="none" />
+        <path d="M48 64 Q50 61 52 64" stroke="#FCA5A5" strokeWidth="2" fill="none" />
+        <path d="M56 65 Q58 62 60 65" stroke="#FCA5A5" strokeWidth="2" fill="none" />
+        {/* 파 */}
+        <ellipse cx="45" cy="66" rx="2" ry="1" fill="#22C55E" />
+        <ellipse cx="55" cy="67" rx="2" ry="1" fill="#22C55E" />
+      </>
+    )}
+    {(mood === 'sad' || !['happy', 'cool', 'excited'].includes(mood || '')) && (
+      <>
+        {/* 국밥 */}
+        <ellipse cx="50" cy="68" rx="18" ry="8" fill="#FDE68A" />
+        <path d="M32 68 Q32 80 50 80 Q68 80 68 68" fill="#FEF3C7" stroke="#F59E0B" strokeWidth="1" />
+        {/* 김치 고명 */}
+        <ellipse cx="45" cy="66" rx="4" ry="2" fill="#EF4444" />
+        <ellipse cx="55" cy="65" rx="3" ry="2" fill="#22C55E" />
+        {/* 파 */}
+        <path d="M48 64 L52 67" stroke="#22C55E" strokeWidth="1.5" />
+      </>
+    )}
+
+    {/* 반짝이 */}
+    <circle cx="30" cy="35" r="2" fill="#FCD34D" />
+    <circle cx="70" cy="38" r="1.5" fill="#FCD34D" />
+  </svg>
+);
+
 // 아이콘 맵핑 (동적 렌더링용)
 export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   HumanIcon,
@@ -404,6 +470,7 @@ export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   PlantIcon,
   PetMatchIcon,
   CoffeeIcon,
+  ChefHatIcon,
 };
 
 export const getIcon = (iconName: string): React.ComponentType<IconProps> => {

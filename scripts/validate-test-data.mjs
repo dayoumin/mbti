@@ -30,7 +30,7 @@ const projectRoot = join(__dirname, '..');
 const SUBJECTS = [
   'human', 'cat', 'dog', 'rabbit', 'hamster',
   'idealType', 'plant', 'petMatch', 'coffee', 'tea', 'conflictStyle',
-  'fruit', 'alcohol', 'bread', 'perfume', 'aroma',
+  'fruit', 'alcohol', 'bread', 'perfume', 'aroma', 'food',
   // petMatch 세부 테스트
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
@@ -61,7 +61,7 @@ const DETAIL_INFO_REQUIRED_TESTS = [
 // matching 테스트 (matchPoints 필수)
 const MATCHING_TESTS = [
   'idealType', 'plant', 'petMatch', 'coffee', 'tea',
-  'fruit', 'alcohol', 'bread', 'perfume', 'aroma',
+  'fruit', 'alcohol', 'bread', 'perfume', 'aroma', 'food',
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
 

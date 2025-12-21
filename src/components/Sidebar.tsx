@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, ChevronRight } from 'lucide-react';
-import { NavTab, NAV_ITEMS } from './nav/types';
+import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, ChevronRight, User } from 'lucide-react';
+import { NavTab, SIDEBAR_NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
-import { POPULAR_TESTS } from '../data/recommendationPolicy';
 import type { SubjectKey } from '../data/types';
 import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
+import MyRankingMini from './MyRankingMini';
 
 // 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
 export type SidebarTab = NavTab;
@@ -34,11 +34,12 @@ interface SidebarProps {
   activeTab: SidebarTab;
   onTabChange: (tab: SidebarTab) => void;
   onStartTest?: (testKey: string) => void;
+  onOpenRanking?: () => void;
   className?: string;
 }
 
 // 작은 테스트 카드 (사이드바용)
-function SidebarTestCard({ testKey, onStart, rank }: { testKey: SubjectKey; onStart: (key: string) => void; rank?: number }) {
+function SidebarTestCard({ testKey, onStart }: { testKey: SubjectKey; onStart: (key: string) => void }) {
   const config = SUBJECT_CONFIG[testKey];
   const data = CHEMI_DATA[testKey as keyof typeof CHEMI_DATA];
 
@@ -49,13 +50,8 @@ function SidebarTestCard({ testKey, onStart, rank }: { testKey: SubjectKey; onSt
   return (
     <button
       onClick={() => onStart(testKey)}
-      className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/80 transition-all group text-left relative"
+      className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/80 transition-all group text-left"
     >
-      {rank && (
-        <span className="absolute -top-1 -left-1 w-4 h-4 bg-gradient-to-br from-amber-400 to-orange-500 text-white text-xs font-black rounded-full flex items-center justify-center shadow-sm z-10">
-          {rank}
-        </span>
-      )}
       <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
         <IconComponent mood="happy" className="w-6 h-6" />
       </div>
@@ -72,6 +68,7 @@ export default function Sidebar({
   activeTab,
   onTabChange,
   onStartTest,
+  onOpenRanking,
   className = ''
 }: SidebarProps) {
   const [recentTests, setRecentTests] = useState<RecentTest[]>([]);
@@ -94,12 +91,9 @@ export default function Sidebar({
         })));
         setCompletedCount(results.length);
 
-        // 추천 테스트: 완료하지 않은 인기 테스트 우선
-        const notCompletedPopular = POPULAR_TESTS.filter(key => !completedKeys.includes(key));
-        const notCompletedOther = MAIN_TEST_KEYS.filter(key =>
-          !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
-        );
-        setRecommendedTests([...notCompletedPopular, ...notCompletedOther].slice(0, 4));
+        // 추천 테스트: 완료하지 않은 테스트
+        const notCompleted = MAIN_TEST_KEYS.filter(key => !completedKeys.includes(key));
+        setRecommendedTests(notCompleted.slice(0, 3));
 
         // TODO: 실제 API 연동 시 교체
         // 현재는 localStorage에서 내가 쓴 글 가져오기 (Mock)
@@ -141,7 +135,7 @@ export default function Sidebar({
       {/* 네비게이션 */}
       <nav className="p-4 pb-2">
         <ul className="space-y-1">
-          {NAV_ITEMS.map(({ key, label, icon: Icon }) => {
+          {SIDEBAR_NAV_ITEMS.map(({ key, label, icon: Icon }) => {
             const isActive = activeTab === key;
 
             return (
@@ -187,7 +181,6 @@ export default function Sidebar({
                 const data = CHEMI_DATA[key];
                 if (!config || !data) return null;
                 const IconComponent = getIconComponent(config.icon);
-                const isPopular = POPULAR_TESTS.includes(key);
 
                 return (
                   <button
@@ -195,15 +188,9 @@ export default function Sidebar({
                     onClick={() => onStartTest?.(key)}
                     className="w-full flex items-center gap-2 p-2 bg-white/70 rounded-lg hover:bg-white transition-colors group text-left"
                   >
-                    {isPopular ? (
-                      <span className="w-5 h-5 bg-gradient-to-br from-rose-500 to-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
-                        🔥
-                      </span>
-                    ) : (
-                      <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
-                        {index + 1}
-                      </span>
-                    )}
+                    <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                      {index + 1}
+                    </span>
                     <div className="w-7 h-7 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
                       <IconComponent mood="happy" className="w-5 h-5" />
                     </div>
@@ -238,6 +225,9 @@ export default function Sidebar({
             </div>
           </div>
         )}
+
+        {/* 내 결과 순위 */}
+        <MyRankingMini onOpenRanking={onOpenRanking} />
 
         {/* 내가 쓴 글 */}
         {myPosts.length > 0 && (
@@ -288,6 +278,23 @@ export default function Sidebar({
         </div>
       </div>
 
+      {/* 하단 프로필 버튼 */}
+      <div className="p-4 border-t border-slate-100">
+        <button
+          onClick={() => onTabChange('profile')}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
+            activeTab === 'profile'
+              ? 'bg-indigo-50 text-indigo-600 font-bold'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+          }`}
+        >
+          <User className={`w-5 h-5 ${activeTab === 'profile' ? 'stroke-[2.5px]' : 'stroke-[1.5px]'}`} />
+          <span className="text-sm">프로필</span>
+          {activeTab === 'profile' && (
+            <div className="ml-auto w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+          )}
+        </button>
+      </div>
     </aside>
   );
 }

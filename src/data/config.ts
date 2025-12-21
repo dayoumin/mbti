@@ -184,6 +184,20 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         resultFormat: "matching",
         deepButtonText: "아로마 취향"
     },
+    food: {
+        testType: "matching",
+        icon: "ChefHatIcon",
+        emoji: "🍕",
+        label: "음식",
+        intro: ["나와 닮은 소울 푸드는?", "오늘 뭐 먹지?", "내 성향과 맞는 음식 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "음식 취향",
+        matchPointsTitle: "🍴 이런 분에게 추천해요",
+        tabLabels: { interpretation: "🍱 소개", guide: "👨‍🍳 즐기는 법" },
+        tabActiveColor: "bg-orange-100 border-orange-400",
+        checkColor: "text-orange-600",
+        analysisButtonText: "🍴 상세 입맛 분석 보기"
+    },
     // 세부 테스트
     dogBreed: {
         testType: "matching",

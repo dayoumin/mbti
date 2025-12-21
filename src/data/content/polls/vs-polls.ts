@@ -6,6 +6,50 @@ import type { VSPoll } from '../types';
 
 export const VS_POLLS: VSPoll[] = [
   // ==========================================================================
+  // 난제/바이럴 (Controversial/Viral) - 상단 배치하여 참여 유도
+  // ==========================================================================
+  {
+    id: 'vs-viral-001',
+    category: 'lifestyle',
+    question: '민초 vs 반민초',
+    optionA: { id: 'a', text: '민초는 사랑입니다', emoji: '🌿🍫' },
+    optionB: { id: 'b', text: '민초는 치약 맛일 뿐', emoji: '🪥' },
+    tags: ['음식', '취향'],
+  },
+  {
+    id: 'vs-viral-002',
+    category: 'lifestyle',
+    question: '탕수육 먹는 법?',
+    optionA: { id: 'a', text: '부먹 (촉촉함)', emoji: '☔' },
+    optionB: { id: 'b', text: '찍먹 (바삭함)', emoji: '✨' },
+    tags: ['음식', '탕수육'],
+  },
+  {
+    id: 'vs-viral-003',
+    category: 'lifestyle',
+    question: '하와이안 피자(파인애플)',
+    optionA: { id: 'a', text: '극호! 단짠의 완성', emoji: '🍍🍕' },
+    optionB: { id: 'b', text: '불호! 과일은 후식으로', emoji: '🚫' },
+    tags: ['음식', '피자'],
+  },
+  {
+    id: 'vs-viral-004',
+    category: 'love',
+    question: '내 애인의 깻잎 논쟁',
+    optionA: { id: 'a', text: '친구가 못 떼면 떼줄 수 있지', emoji: '🍃' },
+    optionB: { id: 'b', text: '안 돼! 젓가락질은 금지', emoji: '❌' },
+    tags: ['연애', '논쟁'],
+  },
+  {
+    id: 'vs-viral-005',
+    category: 'love',
+    question: '애인의 남사친/여사친과 단둘이 술?',
+    optionA: { id: 'a', text: '믿으니까 상관 없음', emoji: '🤝' },
+    optionB: { id: 'b', text: '절대 안 됨', emoji: '🛑' },
+    tags: ['연애', '질투'],
+  },
+
+  // ==========================================================================
   // 고양이
   // ==========================================================================
   {

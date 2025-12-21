@@ -17,6 +17,7 @@ import { alcoholData } from './subjects/alcohol';
 import { breadData } from './subjects/bread';
 import { perfumeData } from './subjects/perfume';
 import { aromaData } from './subjects/aroma';
+import { foodData } from './subjects/food';
 // 세부 테스트
 import { dogBreedData } from './subjects/dogBreed';
 import { catBreedData } from './subjects/catBreed';
@@ -42,6 +43,7 @@ export const CHEMI_DATA = {
     bread: breadData,
     perfume: perfumeData,
     aroma: aromaData,
+    food: foodData,
     // 세부 테스트
     dogBreed: dogBreedData,
     catBreed: catBreedData,
@@ -65,6 +67,6 @@ export const plantData = PLANT_DATA;
 export const petMatchData = PETMATCH_DATA;
 export const coffeeData = COFFEE_DATA;
 // 신규 테스트 re-export (이미 camelCase로 import됨)
-export { teaData, conflictStyleData, fruitData, alcoholData, breadData, perfumeData, aromaData };
+export { teaData, conflictStyleData, fruitData, alcoholData, breadData, perfumeData, aromaData, foodData };
 // 세부 테스트 re-export
 export { dogBreedData, catBreedData, smallPetData, fishTypeData, birdTypeData, reptileTypeData };

@@ -84,6 +84,7 @@ const TEST_SUBJECT_MAP = {
     alcohol: 'drink',      // 술 매칭
     bread: 'food',         // 빵 매칭
     fruit: 'food',         // 과일 매칭
+    food: 'food',          // 소울푸드 매칭
     plant: 'product',      // 식물 매칭 (제품 연계)
     petMatch: 'product',   // 반려동물 매칭 (제품 연계)
     perfume: 'product',    // 향수 매칭 (제품 연계)
@@ -127,6 +128,7 @@ const getTestType = (test: { key: string; testType?: string }) => {
 // HOT: 인기, NEW: 신규, UPDATE: 업데이트됨
 const TEST_BADGES = {
     human: 'HOT', // 인기
+    food: 'NEW', // 음식 매칭 추가
     fruit: 'NEW', // 신규
     tea: 'UPDATE', // 업데이트됨
 };
@@ -141,23 +143,21 @@ const TypeTab = ({ type, isActive, onClick, count }: { type: keyof typeof TEST_T
         <button
             onClick={isEmpty ? undefined : onClick}
             disabled={isEmpty}
-            className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${
-                isEmpty
+            className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${isEmpty
                     ? 'text-slate-200 cursor-not-allowed'
                     : isActive
                         ? 'text-indigo-600'
                         : 'text-slate-400 hover:text-slate-600'
-            }`}
+                }`}
         >
             <span>{tabInfo.emoji}</span>
             <span>{tabInfo.label}</span>
-            <span className={`text-xs ${
-                isEmpty
+            <span className={`text-xs ${isEmpty
                     ? 'text-slate-200'
                     : isActive
                         ? 'text-indigo-400'
                         : 'text-slate-300'
-            }`}>
+                }`}>
                 {count}
             </span>
             {/* Underline indicator */}

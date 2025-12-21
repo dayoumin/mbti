@@ -57,8 +57,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className="antialiased bg-gray-50 min-h-screen">
+    <html lang="ko" suppressHydrationWarning>
+      <body className="antialiased bg-gray-50 min-h-screen" suppressHydrationWarning>
         <SessionProvider>
           <ToastProvider>
             <UTMInitializer />
