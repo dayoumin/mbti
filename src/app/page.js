@@ -15,6 +15,7 @@ import ContentExplore from '../components/ContentExplore';
 import ResultFeedback from '../components/ResultFeedback';
 import FeedbackComments from '../components/FeedbackComments';
 import FunFactsCard from '../components/FunFactsCard';
+import BonusInsightCard from '../components/BonusInsightCard';
 import BottomNav from '../components/BottomNav';
 import Sidebar from '../components/Sidebar';
 import RightSidebar from '../components/RightSidebar';
@@ -24,6 +25,7 @@ import FriendCompare from '../components/FriendCompare';
 import BadgeNotification from '../components/BadgeNotification';
 import { getGamificationService } from '../services/GamificationService';
 import CommunityBoard from '../components/CommunityBoard';
+import { CareHome } from '../components/care';
 import BreedDetailCard from '../components/BreedDetailCard';
 import NextTestRecommendation from '../components/NextTestRecommendation';
 import ContentActions from '../components/ContentActions';
@@ -60,6 +62,7 @@ export default function Home() {
     const [badgeQueue, setBadgeQueue] = useState([]); // 배지 알림 큐 (여러 배지 순차 표시)
     const [showFriendCompare, setShowFriendCompare] = useState(false); // 친구 비교 모달
     const [showCommunity, setShowCommunity] = useState(false); // 커뮤니티 게시판
+    const [showCare, setShowCare] = useState(false); // 케어 탭
 
     // Ensure mode is valid - use useMemo to derive safe mode
     const safeMode = CHEMI_DATA[mode] ? mode : 'human';
@@ -130,35 +133,24 @@ export default function Home() {
     // 하단 내비게이션 탭 변경 핸들러
     const handleNavTabChange = (tab) => {
         setActiveNavTab(tab);
-        if (tab === 'home') {
-            setView('dashboard');
-            setShowProfile(false);
-            setShowContentExplore(false);
-            setShowRanking(false);
-            setShowCommunity(false);
-        } else if (tab === 'explore') {
-            setView('dashboard');
+        // 모든 상태 초기화
+        setShowProfile(false);
+        setShowContentExplore(false);
+        setShowRanking(false);
+        setShowCommunity(false);
+        setShowCare(false);
+        setView('dashboard');
+
+        if (tab === 'explore') {
             setShowContentExplore(true);
-            setShowProfile(false);
-            setShowRanking(false);
-            setShowCommunity(false);
         } else if (tab === 'talk') {
-            setView('dashboard');
             setShowCommunity(true);
-            setShowProfile(false);
-            setShowContentExplore(false);
-            setShowRanking(false);
         } else if (tab === 'ranking') {
-            setView('dashboard');
             setShowRanking(true);
-            setShowProfile(false);
-            setShowContentExplore(false);
-            setShowCommunity(false);
+        } else if (tab === 'care') {
+            setShowCare(true);
         } else if (tab === 'profile') {
-            setView('dashboard');
             setShowProfile(true);
-            setShowContentExplore(false);
-            setShowRanking(false);
         }
     };
 
@@ -275,6 +267,14 @@ export default function Home() {
             {showCommunity && (
                 <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-64 lg:right-0">
                     <CommunityBoard className="h-full" />
+                </div>
+            )}
+
+            {showCare && (
+                <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-64 lg:right-0 overflow-y-auto">
+                    <div className="max-w-2xl mx-auto p-4 pb-24">
+                        <CareHome />
+                    </div>
                 </div>
             )}
 
@@ -748,6 +748,13 @@ export default function Home() {
                                                         />
                                                     )}
 
+                                                    {/* 보너스 인사이트 - 연령대 비교 */}
+                                                    <BonusInsightCard
+                                                        testType={safeMode}
+                                                        resultName={finalResult.name}
+                                                        resultEmoji={finalResult.emoji}
+                                                    />
+
                                                     {/* 품종/종류 상세 정보 - 세부 테스트 결과에서만 표시 */}
                                                     {finalResult.detailInfo && (() => {
                                                         // 테스트 타입별 제목과 아이콘 설정
@@ -789,16 +796,25 @@ export default function Home() {
                                                     )}
                                                 </>
                                             ) : (
-                                                <div className="bg-white/60 rounded-xl p-4 border border-white/50 space-y-3">
-                                                    <div>
-                                                        <h3 className="font-bold text-slate-800 mb-1 text-sm">💡 상세 분석</h3>
-                                                        <p className="text-slate-600 text-sm leading-relaxed">{finalResult.interpretation}</p>
+                                                <>
+                                                    <div className="bg-white/60 rounded-xl p-4 border border-white/50 space-y-3">
+                                                        <div>
+                                                            <h3 className="font-bold text-slate-800 mb-1 text-sm">💡 상세 분석</h3>
+                                                            <p className="text-slate-600 text-sm leading-relaxed">{finalResult.interpretation}</p>
+                                                        </div>
+                                                        <div className="border-t border-slate-100 pt-3">
+                                                            <h3 className="font-bold text-slate-800 mb-1 text-sm">🍀 팁</h3>
+                                                            <p className="text-slate-600 text-sm leading-relaxed">{finalResult.guide}</p>
+                                                        </div>
                                                     </div>
-                                                    <div className="border-t border-slate-100 pt-3">
-                                                        <h3 className="font-bold text-slate-800 mb-1 text-sm">🍀 팁</h3>
-                                                        <p className="text-slate-600 text-sm leading-relaxed">{finalResult.guide}</p>
-                                                    </div>
-                                                </div>
+
+                                                    {/* 보너스 인사이트 - 연령대 비교 */}
+                                                    <BonusInsightCard
+                                                        testType={safeMode}
+                                                        resultName={finalResult.name}
+                                                        resultEmoji={finalResult.emoji}
+                                                    />
+                                                </>
                                             )}
                                         </div>
 

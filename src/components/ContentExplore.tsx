@@ -798,6 +798,7 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
     return [...MAIN_TEST_KEYS, ...DETAIL_TEST_KEYS].map(key => {
       const config = SUBJECT_CONFIG[key as keyof typeof SUBJECT_CONFIG];
       const data = CHEMI_DATA[key as keyof typeof CHEMI_DATA];
+      if (!config) return null; // 테스트가 없는 카테고리 건너뛰기
 
       return {
         key,
@@ -805,7 +806,7 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
         title: data?.title || config.label,
         subtitle: data?.subtitle || config.intro?.[0] || '',
       };
-    }).filter(t => t.label);
+    }).filter((t): t is NonNullable<typeof t> => t !== null && !!t.label);
   }, []);
 
   const filteredTests = useMemo(() => {

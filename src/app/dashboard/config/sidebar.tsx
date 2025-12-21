@@ -48,6 +48,7 @@ import {
   Leaf,
   TrendingUp,
   Users,
+  PawPrint,
 } from 'lucide-react';
 import { SubjectKey } from '@/data/types';
 import { CHEMI_DATA } from '@/data';
@@ -118,6 +119,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'fairness', label: '공정성 시스템', icon: <Activity className="w-4 h-4" /> },
       { key: 'analytics', label: '분석/추적', icon: <BarChart3 className="w-4 h-4" /> },
       { key: 'conversion', label: '전환 분석', icon: <TrendingUp className="w-4 h-4" /> },
+      { key: 'care', label: '케어 시스템', icon: <PawPrint className="w-4 h-4" /> },
     ],
   },
   {
@@ -146,7 +148,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
 // Test Icon Mapping
 // ============================================================================
 
-export const TEST_ICONS: Record<SubjectKey, React.ReactNode> = {
+export const TEST_ICONS: Partial<Record<SubjectKey, React.ReactNode>> = {
   human: <Brain className="w-5 h-5" />,
   cat: <Cat className="w-5 h-5" />,
   dog: <Dog className="w-5 h-5" />,

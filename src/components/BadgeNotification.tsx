@@ -45,6 +45,7 @@ export default function BadgeNotification({
 
   const rarityColors = {
     common: 'from-gray-400 to-gray-500',
+    uncommon: 'from-green-400 to-green-600',
     rare: 'from-blue-400 to-blue-600',
     epic: 'from-purple-400 to-purple-600',
     legendary: 'from-yellow-400 to-orange-500',
@@ -52,6 +53,7 @@ export default function BadgeNotification({
 
   const rarityLabels = {
     common: '일반',
+    uncommon: '고급',
     rare: '레어',
     epic: '에픽',
     legendary: '전설',

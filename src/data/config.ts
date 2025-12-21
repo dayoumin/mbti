@@ -28,7 +28,8 @@ export const TEST_TYPES: Record<string, TestType> = {
   }
 };
 
-export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
+// 모든 SubjectKey가 테스트를 가지는 것은 아님 (fish, bird, reptile은 퀴즈/투표 카테고리용)
+export const SUBJECT_CONFIG: Partial<Record<SubjectKey, SubjectConfig>> = {
   human: {
     testType: "personality",
     icon: "HumanIcon",
@@ -312,11 +313,13 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
 
 // 랭킹 지원 테스트 목록 (SUBJECT_CONFIG에서 emoji/name 참조)
 export const RANKABLE_TESTS: { key: SubjectKey; emoji: string; name: string }[] =
-  RANKABLE_TEST_KEY_LIST.map(key => ({
-    key,
-    emoji: SUBJECT_CONFIG[key].emoji,
-    name: SUBJECT_CONFIG[key].label,
-  }));
+  RANKABLE_TEST_KEY_LIST
+    .filter(key => SUBJECT_CONFIG[key]) // config가 있는 것만
+    .map(key => ({
+      key,
+      emoji: SUBJECT_CONFIG[key]!.emoji,
+      name: SUBJECT_CONFIG[key]!.label,
+    }));
 
 // 랭킹 지원 테스트 키만 (SubjectKey 배열)
 export const RANKABLE_TEST_KEYS: SubjectKey[] = RANKABLE_TEST_KEY_LIST;

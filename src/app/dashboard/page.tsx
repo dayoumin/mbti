@@ -192,7 +192,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 // Test Icon Mapping
 // ============================================================================
 
-const TEST_ICONS: Record<SubjectKey, React.ReactNode> = {
+const TEST_ICONS: Partial<Record<SubjectKey, React.ReactNode>> = {
   human: <Brain className="w-5 h-5" />,
   cat: <Cat className="w-5 h-5" />,
   dog: <Dog className="w-5 h-5" />,
@@ -668,6 +668,7 @@ function getTestsByType(): Record<string, SubjectKey[]> {
   const grouped: Record<string, SubjectKey[]> = {};
   (Object.keys(CHEMI_DATA) as SubjectKey[]).forEach((key) => {
     const config = SUBJECT_CONFIG[key];
+    if (!config) return; // 테스트가 없는 카테고리 건너뛰기
     const type = config.testType;
     if (!grouped[type]) grouped[type] = [];
     grouped[type].push(key);

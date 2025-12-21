@@ -162,6 +162,8 @@ export type SubjectKey =
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 
+// Note: 퀴즈/투표 카테고리는 src/data/content/types.ts의 ContentCategory 사용
+
 export interface ChemiData {
   [key: string]: SubjectData;
 }

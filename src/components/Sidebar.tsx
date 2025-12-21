@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle } from 'lucide-react';
+import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, Settings, ChevronRight } from 'lucide-react';
 import { NavTab, NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
@@ -9,6 +9,9 @@ import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG } from '../data/config';
 import type { SubjectKey } from '../data/types';
 import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
+import { useProfile } from '@/hooks/useProfile';
+import { profileService } from '@/services/ProfileService';
+import { useSession } from 'next-auth/react';
 
 // 타입 재export (기존 import 호환성 유지 - SidebarTab은 NavTab과 동일)
 export type SidebarTab = NavTab;
@@ -227,6 +230,120 @@ export default function Sidebar({
           </div>
         </div>
       </div>
+
+      {/* 하단 프로필 영역 (Discord/Slack 스타일) */}
+      <SidebarProfile onTabChange={onTabChange} />
     </aside>
+  );
+}
+
+// ============================================================================
+// 하단 프로필 컴포넌트 (Discord/Slack 스타일)
+// ============================================================================
+
+function SidebarProfile({ onTabChange }: { onTabChange: (tab: NavTab) => void }) {
+  const { profile, loading } = useProfile();
+  const { data: session } = useSession();
+
+  if (loading) {
+    return (
+      <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+        <div className="flex items-center gap-3 animate-pulse">
+          <div className="w-10 h-10 bg-slate-200 rounded-full" />
+          <div className="flex-1">
+            <div className="h-3 bg-slate-200 rounded w-20 mb-1" />
+            <div className="h-2 bg-slate-200 rounded w-14" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const completionRate = profile?.completionRate || 0;
+  const { level, title } = profileService.getProfileLevel(completionRate);
+  const isLoggedIn = !!session;
+
+  // 레벨별 색상
+  const levelColors: Record<number, string> = {
+    1: 'from-slate-400 to-slate-500',
+    2: 'from-amber-400 to-orange-500',
+    3: 'from-sky-400 to-blue-500',
+    4: 'from-emerald-400 to-teal-500',
+    5: 'from-amber-300 to-yellow-500',
+  };
+
+  return (
+    <div className="border-t border-slate-100 bg-slate-50/80 shrink-0">
+      {/* 메인 프로필 버튼 */}
+      <button
+        onClick={() => onTabChange('profile')}
+        className="w-full p-3 flex items-center gap-3 hover:bg-white/80 transition-all group"
+      >
+        {/* 아바타 */}
+        <div className="relative">
+          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${levelColors[level] || levelColors[1]} flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-105 transition-transform`}>
+            {isLoggedIn && session.user?.image ? (
+              <img
+                src={session.user.image}
+                alt="프로필"
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <span>Lv.{level}</span>
+            )}
+          </div>
+          {/* 완성도 링 */}
+          <svg className="absolute -inset-0.5 w-11 h-11 -rotate-90">
+            <circle
+              cx="22"
+              cy="22"
+              r="20"
+              fill="none"
+              stroke="rgba(255,255,255,0.3)"
+              strokeWidth="2"
+            />
+            <circle
+              cx="22"
+              cy="22"
+              r="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeDasharray={`${(completionRate / 100) * 125.6} 125.6`}
+              className="text-white/80"
+            />
+          </svg>
+        </div>
+
+        {/* 정보 */}
+        <div className="flex-1 text-left min-w-0">
+          <p className="text-sm font-bold text-slate-700 truncate group-hover:text-indigo-600 transition-colors">
+            {isLoggedIn ? (session.user?.name || '사용자') : title}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-slate-500">{completionRate}% 완성</span>
+            {!isLoggedIn && completionRate > 0 && (
+              <span className="text-xs text-amber-600">• 로그인 권장</span>
+            )}
+          </div>
+        </div>
+
+        {/* 화살표 */}
+        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+      </button>
+
+      {/* 설정 버튼 (로그인 시만) */}
+      {isLoggedIn && (
+        <div className="px-3 pb-3 -mt-1">
+          <button
+            onClick={() => {/* TODO: 설정 페이지 */}}
+            className="w-full py-2 px-3 rounded-lg bg-white/60 hover:bg-white text-xs text-slate-500 hover:text-slate-700 font-medium flex items-center justify-center gap-1.5 transition-all"
+          >
+            <Settings className="w-3.5 h-3.5" />
+            설정
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
