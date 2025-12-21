@@ -1,6 +1,8 @@
 // Subject 설정 - 새 테스트 추가시 여기에만 추가하면 됨
 // 생성일: 2025-12-11
 
+import type { SubjectConfig, SubjectKey } from './types';
+
 // 테스트 타입 정의
 export const TEST_TYPES = {
     personality: {
@@ -17,7 +19,7 @@ export const TEST_TYPES = {
     }
 };
 
-export const SUBJECT_CONFIG = {
+export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     human: {
         testType: "personality",
         icon: "HumanIcon",
@@ -217,8 +219,14 @@ export const SUBJECT_CONFIG = {
     }
 };
 
+// 세부 테스트 키 목록 (반려동물 품종 등)
+export const DETAIL_TEST_KEYS: SubjectKey[] = [
+    'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
+];
+
 // 메인 테스트 키 목록 (세부 테스트 제외)
-export const MAIN_TEST_KEYS = Object.keys(SUBJECT_CONFIG) as Array<keyof typeof SUBJECT_CONFIG>;
+export const MAIN_TEST_KEYS = (Object.keys(SUBJECT_CONFIG) as SubjectKey[])
+    .filter(key => !DETAIL_TEST_KEYS.includes(key));
 
 // 랭킹 가능한 테스트 목록 (성격 테스트만)
 export const RANKABLE_TESTS: Array<{ key: keyof typeof SUBJECT_CONFIG; emoji: string; name: string }> = [

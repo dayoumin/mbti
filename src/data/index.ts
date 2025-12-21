@@ -52,7 +52,7 @@ export const CHEMI_DATA = {
 };
 
 // config.ts에서 re-export
-export { SUBJECT_CONFIG, MAIN_TEST_KEYS, RANKABLE_TESTS, RANKABLE_TEST_KEYS, TEST_TYPES } from './config';
+export { SUBJECT_CONFIG, MAIN_TEST_KEYS, DETAIL_TEST_KEYS, RANKABLE_TESTS, RANKABLE_TEST_KEYS, TEST_TYPES } from './config';
 
 // camelCase alias exports (하위 호환성)
 export const humanData = HUMAN_DATA;

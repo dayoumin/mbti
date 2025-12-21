@@ -9,9 +9,8 @@
  */
 
 import { resultService } from './ResultService';
-import { CHEMI_DATA, SUBJECT_CONFIG } from '@/data';
+import { CHEMI_DATA, SUBJECT_CONFIG, DETAIL_TEST_KEYS } from '@/data';
 import type { SubjectKey } from '@/data/types';
-import { DETAIL_TEST_KEYS } from '@/config/testKeys';
 import { RECOMMENDATION_ORDER } from '@/data/recommendationPolicy';
 
 // ========== 타입 정의 ==========
@@ -34,7 +33,7 @@ export interface PetChemiScore {
 export interface NextRecommendation {
   testKey: string;
   testLabel: string;
-  testEmoji: string;
+  testEmoji?: string;  // SUBJECT_CONFIG.emoji가 없을 수 있음
   reason: string;
   reward: string;  // "라이프스타일 뱃지 획득!" 등
 }
@@ -390,7 +389,7 @@ class ProfileServiceClass {
       return {
         testKey: key,
         testLabel: config.label,
-        testEmoji: ('emoji' in config && typeof config.emoji === 'string') ? config.emoji : '',
+        testEmoji: config.emoji || '',
         reason: rec.reason,
         reward: rec.reward,
       };
