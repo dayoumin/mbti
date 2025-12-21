@@ -62,7 +62,7 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
               <IconComponent mood="happy" className={`w-5 h-5 md:w-8 md:h-8 ${s.iconColor}`} />
             </div>
             {/* 기호 배지: 아이콘 박스 좌측 상단 */}
-            <div className={`absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 rounded-full ${s.iconBg} border border-slate-100 flex items-center justify-center text-xs md:text-xs shadow-sm z-10`}>
+            <div className={`absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 rounded-full ${s.iconBg} border border-slate-100 flex items-center justify-center text-xs shadow-sm z-10`}>
               {isMatching ? '💫' : '🧠'}
             </div>
           </div>
