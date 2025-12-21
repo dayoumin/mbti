@@ -155,6 +155,43 @@ const SEED_DATA: Partial<Record<string, Partial<AgeDistribution>>> = {
 
 const DEMOGRAPHIC_KEY = 'chemi_demographic';
 
+// ========== 타입 가드 ==========
+
+const VALID_AGE_GROUPS: AgeGroup[] = ['10s', '20s', '30s', '40s+'];
+const VALID_GENDERS: Gender[] = ['male', 'female', 'other'];
+
+function isValidAgeGroup(value: unknown): value is AgeGroup {
+  return typeof value === 'string' && VALID_AGE_GROUPS.includes(value as AgeGroup);
+}
+
+function isValidGender(value: unknown): value is Gender {
+  return typeof value === 'string' && VALID_GENDERS.includes(value as Gender);
+}
+
+function validateDemographicData(data: unknown): DemographicData | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const obj = data as Record<string, unknown>;
+  const result: DemographicData = {};
+
+  // 유효한 필드만 추출
+  if (isValidAgeGroup(obj.ageGroup)) {
+    result.ageGroup = obj.ageGroup;
+  }
+  if (isValidGender(obj.gender)) {
+    result.gender = obj.gender;
+  }
+  if (typeof obj.collectedAt === 'string') {
+    result.collectedAt = obj.collectedAt;
+  }
+  if (obj.source === 'bonus_question' || obj.source === 'profile' || obj.source === 'inferred') {
+    result.source = obj.source;
+  }
+
+  // 최소한 하나의 유효한 필드가 있어야 함
+  return Object.keys(result).length > 0 ? result : null;
+}
+
 // ========== DemographicService Class ==========
 
 class DemographicServiceClass {
@@ -181,20 +218,29 @@ class DemographicServiceClass {
     }
   }
 
-  // 서버에 인구통계 저장 (비동기, 실패해도 무시)
+  // 서버에 인구통계 저장 (비동기, 실패 시 경고 로그)
   private async syncToServer(data: DemographicData): Promise<void> {
     try {
-      await fetch('/api/demographic', {
+      const deviceId = getDeviceId();
+      const response = await fetch('/api/demographic', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-device-id': deviceId,
+        },
         body: JSON.stringify({
           ageGroup: data.ageGroup,
           gender: data.gender,
           source: data.source,
         }),
       });
-    } catch {
-      // 서버 저장 실패해도 로컬은 저장됨, 무시
+
+      if (!response.ok) {
+        console.warn(`Demographic sync failed: ${response.status} ${response.statusText}`);
+      }
+    } catch (e) {
+      // 네트워크 오류 등 - 로컬은 저장됨
+      console.warn('Demographic sync error:', e instanceof Error ? e.message : 'Unknown error');
     }
   }
 
@@ -205,7 +251,9 @@ class DemographicServiceClass {
     try {
       const stored = localStorage.getItem(DEMOGRAPHIC_KEY);
       if (!stored) return null;
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // 유효성 검증 후 반환 (손상된 데이터 필터링)
+      return validateDemographicData(parsed);
     } catch {
       // localStorage 접근 실패 또는 JSON 파싱 실패
       return null;
@@ -244,18 +292,11 @@ class DemographicServiceClass {
     const ageSeed = testSeed?.[ageGroup];
     const genderSeed = ageSeed?.[gender];
 
-    let percentile: number;
-    let isRare = false;
+    const percentile = genderSeed && resultSlug in genderSeed
+      ? genderSeed[resultSlug]  // 시드 데이터가 있으면 사용
+      : this.getConsistentPercentile(testType, resultSlug, ageGroup, gender);  // 해시 폴백
 
-    if (genderSeed && resultSlug in genderSeed) {
-      // 시드 데이터가 있으면 사용 (0% 값도 처리)
-      percentile = genderSeed[resultSlug];
-    } else {
-      // 시드 데이터 없으면 슬러그 해시 기반으로 일관된 값 생성
-      percentile = this.getConsistentPercentile(testType, resultSlug, ageGroup, gender);
-    }
-    // 희귀 판정 기준 통일: 20% 이하면 희귀
-    isRare = percentile <= 20;
+    const isRare = percentile <= 20;  // 희귀 판정: 20% 이하
 
     // 인사이트 메시지 생성
     // 'other' 선택 시 성별 없이 연령대만 표시
@@ -312,10 +353,7 @@ class DemographicServiceClass {
 
     const { ageGroup, gender } = demographic;
 
-    // 연령대 + 성별 조합별 추천 카테고리
-    const recommendations = this.getCategoryRecommendations(ageGroup, gender);
-
-    return recommendations;
+    return this.getCategoryRecommendations(ageGroup, gender);
   }
 
   /**
@@ -360,6 +398,54 @@ class DemographicServiceClass {
     }
 
     return ageBasedCategories[ageGroup];
+  }
+
+  // ========== 연령 제한 카테고리 ==========
+
+  // 연령 제한이 필요한 카테고리 (법적/윤리적 이유)
+  private readonly AGE_RESTRICTED_CATEGORIES: Partial<Record<ContentCategory, AgeGroup[]>> = {
+    // 술: 20대 이상만
+    // 'alcohol': ['20s', '30s', '40s+'],
+  };
+
+  // 10대에게 부적절한 카테고리 (술 등)
+  private readonly ADULT_ONLY_CATEGORIES: ContentCategory[] = [
+    // 현재 alcohol 테스트가 있으면 여기에 추가
+  ];
+
+  /**
+   * 카테고리가 현재 사용자 연령에 적합한지 확인
+   */
+  isCategoryAllowedForAge(category: ContentCategory): boolean {
+    const demographic = this.getDemographic();
+
+    // 인구통계 없으면 안전하게 성인 콘텐츠 제외
+    if (!demographic?.ageGroup) {
+      return !this.ADULT_ONLY_CATEGORIES.includes(category);
+    }
+
+    const { ageGroup } = demographic;
+
+    // 10대면 성인 전용 콘텐츠 제외
+    if (ageGroup === '10s' && this.ADULT_ONLY_CATEGORIES.includes(category)) {
+      return false;
+    }
+
+    // 연령 제한 체크
+    const allowedAges = this.AGE_RESTRICTED_CATEGORIES[category];
+    if (allowedAges && !allowedAges.includes(ageGroup)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * 추천 카테고리에서 연령 제한 카테고리 필터링
+   */
+  getFilteredRecommendedCategories(): ContentCategory[] {
+    const recommendations = this.getRecommendedCategories();
+    return recommendations.filter(cat => this.isCategoryAllowedForAge(cat));
   }
 
   /**

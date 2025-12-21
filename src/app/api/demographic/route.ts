@@ -9,6 +9,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getTursoClient } from '@/lib/turso';
 import { cookies } from 'next/headers';
 
+// 유효한 값 화이트리스트
+const VALID_AGE_GROUPS = ['10s', '20s', '30s', '40s+'] as const;
+const VALID_GENDERS = ['male', 'female', 'other'] as const;
+
+type AgeGroup = typeof VALID_AGE_GROUPS[number];
+type Gender = typeof VALID_GENDERS[number];
+
+function isValidAgeGroup(value: unknown): value is AgeGroup {
+  return typeof value === 'string' && VALID_AGE_GROUPS.includes(value as AgeGroup);
+}
+
+function isValidGender(value: unknown): value is Gender {
+  return typeof value === 'string' && VALID_GENDERS.includes(value as Gender);
+}
+
 // device_id 가져오기 (쿠키 또는 헤더)
 async function getDeviceId(request: NextRequest): Promise<string | null> {
   // 1. 쿠키에서 확인
@@ -34,8 +49,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { ageGroup, gender, source = 'bonus_question' } = body;
 
-    if (!ageGroup || !gender) {
-      return NextResponse.json({ error: 'ageGroup and gender required' }, { status: 400 });
+    // 화이트리스트 검증
+    if (!isValidAgeGroup(ageGroup)) {
+      return NextResponse.json({ error: 'Invalid ageGroup. Must be one of: 10s, 20s, 30s, 40s+' }, { status: 400 });
+    }
+    if (!isValidGender(gender)) {
+      return NextResponse.json({ error: 'Invalid gender. Must be one of: male, female, other' }, { status: 400 });
     }
 
     const client = getTursoClient();

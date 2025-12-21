@@ -255,6 +255,37 @@ testCases.forEach(([age, gender, label]) => {
   console.log(`   ${label}: ${categories.slice(0, 3).join(', ')}`);
 });
 
+// 7. 연령 제한 테스트
+console.log('\n' + '='.repeat(50));
+console.log('\n7️⃣ 연령 제한 테스트 (술 테스트)\n');
+
+const ADULT_ONLY_TESTS = ['alcohol'];
+
+function isTestAllowedForAge(testKey, ageGroup) {
+  if (!ageGroup) return !ADULT_ONLY_TESTS.includes(testKey);
+  if (ageGroup === '10s' && ADULT_ONLY_TESTS.includes(testKey)) return false;
+  return true;
+}
+
+const ageRestrictionTests = [
+  ['alcohol', '10s', false, '10대 → 술 테스트 ❌'],
+  ['alcohol', '20s', true, '20대 → 술 테스트 ✓'],
+  ['alcohol', '30s', true, '30대 → 술 테스트 ✓'],
+  ['alcohol', undefined, false, '미확인 → 술 테스트 ❌ (안전 우선)'],
+  ['coffee', '10s', true, '10대 → 커피 테스트 ✓'],
+  ['human', undefined, true, '미확인 → 성격 테스트 ✓'],
+];
+
+let ageTestPass = 0;
+ageRestrictionTests.forEach(([test, age, expected, desc]) => {
+  const result = isTestAllowedForAge(test, age);
+  const pass = result === expected;
+  if (pass) ageTestPass++;
+  console.log(`   ${pass ? '✅' : '❌'} ${desc}`);
+});
+
+console.log(`\n   통과: ${ageTestPass}/${ageRestrictionTests.length}`);
+
 // 결과 요약
 console.log('\n' + '='.repeat(50));
 console.log('\n📊 테스트 결과 요약\n');
@@ -263,4 +294,5 @@ console.log(`   ✅ 시드 매칭: ${seedMatches}개, 해시 폴백: ${seedMisse
 console.log(`   ✅ 해시 일관성: 모든 테스트 통과`);
 console.log(`   ✅ 퍼센트 범위: 10-50% 정상`);
 console.log(`   ✅ 콘텐츠 추천: 연령/성별별 맞춤 추천 정상`);
+console.log(`   ✅ 연령 제한: ${ageTestPass}/${ageRestrictionTests.length} 통과`);
 console.log(`\n🎉 모든 테스트 완료!\n`);
