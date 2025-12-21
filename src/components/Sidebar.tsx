@@ -7,6 +7,7 @@ import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
+import { POPULAR_TESTS } from '../data/recommendationPolicy';
 import type { SubjectKey } from '../data/types';
 import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
 import MyRankingMini from './MyRankingMini';
@@ -75,6 +76,7 @@ export default function Sidebar({
   const [completedCount, setCompletedCount] = useState(0);
   const [myPosts, setMyPosts] = useState<MyPost[]>([]);
   const [recommendedTests, setRecommendedTests] = useState<SubjectKey[]>([]);
+  const [rotationOffset, setRotationOffset] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -91,9 +93,13 @@ export default function Sidebar({
         })));
         setCompletedCount(results.length);
 
-        // 추천 테스트: 완료하지 않은 테스트
-        const notCompleted = MAIN_TEST_KEYS.filter(key => !completedKeys.includes(key));
-        setRecommendedTests(notCompleted.slice(0, 3));
+        // 추천 테스트: 인기 테스트 우선 + 완료하지 않은 것
+        const notCompletedPopular = POPULAR_TESTS.filter(key => !completedKeys.includes(key));
+        const notCompletedOther = MAIN_TEST_KEYS.filter(key =>
+          !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
+        );
+        const allRecommended = [...notCompletedPopular, ...notCompletedOther];
+        setRecommendedTests(allRecommended);
 
         // TODO: 실제 API 연동 시 교체
         // 현재는 localStorage에서 내가 쓴 글 가져오기 (Mock)
@@ -107,6 +113,24 @@ export default function Sidebar({
     };
     loadData();
   }, []);
+
+  // 10초마다 추천 테스트 로테이션
+  useEffect(() => {
+    if (recommendedTests.length <= 3) return;
+    const timer = setInterval(() => {
+      setRotationOffset(prev => (prev + 3) % recommendedTests.length);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [recommendedTests.length]);
+
+  // 현재 표시할 3개 테스트
+  const displayedTests = recommendedTests.length > 0
+    ? recommendedTests.slice(rotationOffset, rotationOffset + 3).concat(
+        rotationOffset + 3 > recommendedTests.length
+          ? recommendedTests.slice(0, (rotationOffset + 3) % recommendedTests.length)
+          : []
+      ).slice(0, 3)
+    : [];
 
   return (
     <aside
@@ -165,18 +189,32 @@ export default function Sidebar({
 
       {/* 하단 위젯 영역 - 스크롤 가능 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
-        {/* 추천 테스트 (개인화) */}
-        {recommendedTests.length > 0 && (
+        {/* 추천 테스트 (인기순 + 로테이션) */}
+        {displayedTests.length > 0 && (
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
                 <span className="text-xs font-bold text-indigo-700">추천 테스트</span>
               </div>
-              <span className="text-xs text-indigo-400">안 해본 테스트</span>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-indigo-400">인기순</span>
+                {recommendedTests.length > 3 && (
+                  <div className="flex gap-0.5 ml-1">
+                    {Array.from({ length: Math.ceil(recommendedTests.length / 3) }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-1 h-1 rounded-full transition-colors ${
+                          Math.floor(rotationOffset / 3) === idx ? 'bg-indigo-500' : 'bg-indigo-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="space-y-1">
-              {recommendedTests.map((key, index) => {
+              {displayedTests.map((key, index) => {
                 const config = SUBJECT_CONFIG[key];
                 const data = CHEMI_DATA[key];
                 if (!config || !data) return null;
