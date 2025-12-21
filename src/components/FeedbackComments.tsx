@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp } from 'lucide-react';
-import { feedbackService, FeedbackComment } from '../services/FeedbackService';
+import { tursoService, type FeedbackComment } from '../services/TursoService';
 import { formatRelativeTime } from '@/utils/format';
 
 interface FeedbackCommentsProps {
@@ -21,7 +21,7 @@ export default function FeedbackComments({ testType, resultName, maxDisplay = 5 
 
     async function loadComments() {
       setIsLoading(true);
-      const data = await feedbackService.getComments(testType, resultName, 20);
+      const data = await tursoService.getComments(testType, resultName, 20);
       if (!cancelled) {
         setComments(data);
         setIsLoading(false);

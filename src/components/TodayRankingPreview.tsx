@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronRight, Flame, Users } from 'lucide-react';
-import { feedbackService } from '@/services/FeedbackService';
+import { tursoService } from '@/services/TursoService';
 import { VS_POLLS } from '@/data/content/polls';
 
 interface TopPollItem {
@@ -26,7 +26,7 @@ export default function TodayRankingPreview({ onClick, className = '' }: TodayRa
       try {
         const pollStats = await Promise.all(
           VS_POLLS.map(async (poll) => {
-            const stats = await feedbackService.getPollStats(poll.id);
+            const stats = await tursoService.getPollStats(poll.id);
             return {
               pollId: poll.id,
               question: poll.question,

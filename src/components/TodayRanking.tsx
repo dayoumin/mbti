@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Trophy, TrendingUp, Users, ChevronRight, Flame, Star, BarChart3 } from 'lucide-react';
-import { feedbackService } from '@/services/FeedbackService';
+import { tursoService } from '@/services/TursoService';
 import { VS_POLLS } from '@/data/content/polls';
 
 // ============================================================================
@@ -53,7 +53,7 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
         // 투표 랭킹 로드
         const pollStats = await Promise.all(
           VS_POLLS.map(async (poll) => {
-            const stats = await feedbackService.getPollStats(poll.id);
+            const stats = await tursoService.getPollStats(poll.id);
             const topOption = stats.options.length > 0
               ? stats.options.reduce((a, b) => a.count > b.count ? a : b)
               : null;

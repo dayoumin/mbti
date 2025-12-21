@@ -6,7 +6,7 @@ import {
   Flame, Users, Trophy, Sparkles, PawPrint, Crown, Medal, BarChart2
 } from 'lucide-react';
 import { getIconComponent } from '@/utils';
-import { feedbackService } from '@/services/FeedbackService';
+import { tursoService } from '@/services/TursoService';
 import { resultService } from '@/services/ResultService';
 import { VS_POLLS } from '@/data/content/polls';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
@@ -101,7 +101,7 @@ function RankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
       try {
         const pollStats = await Promise.all(
           VS_POLLS.slice(0, 5).map(async (poll) => {
-            const stats = await feedbackService.getPollStats(poll.id);
+            const stats = await tursoService.getPollStats(poll.id);
             return {
               pollId: poll.id,
               question: poll.question,

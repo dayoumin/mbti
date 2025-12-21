@@ -267,7 +267,7 @@ function OverviewTab() {
             { source: 'ResultService', data: ['completedTests', 'incompleteTests'] },
             { source: 'ProfileService', data: ['personality.traits (5개 차원)', 'petChemi.scores'] },
             { source: 'GamificationService', data: ['testsByType', 'quizzesByCategory', 'pollsByCategory', 'currentStreak', 'dailyActivities'] },
-            { source: 'FeedbackService', data: ['minorityVotes', 'bestCategory'] },
+            { source: 'ParticipationBridge', data: ['minorityVotes', 'bestCategory'] },
             { source: 'NextActionService', data: ['TEST_TO_CONTENT 그래프'] },
           ].map((item) => (
             <div key={item.source} className="p-3 rounded-lg bg-[var(--db-panel)] border border-[var(--db-border)]">

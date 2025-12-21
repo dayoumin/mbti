@@ -1364,7 +1364,8 @@ function AppDesignSystem() {
   const services = [
     { name: 'ResultService', desc: '결과 저장/조회', api: 'Supabase' },
     { name: 'RankingService', desc: '랭킹 투표/통계', api: 'Supabase' },
-    { name: 'FeedbackService', desc: '피드백/퀴즈/투표', api: 'Supabase' },
+    { name: 'TursoService', desc: '피드백/퀴즈/투표', api: 'Turso' },
+    { name: 'ParticipationBridge', desc: 'Turso+Gamification 통합', api: 'Turso+Local' },
     { name: 'GamificationService', desc: '배지/레벨/포인트', api: 'Local' },
     { name: 'NextActionService', desc: '다음 행동 추천', api: 'Local' },
     { name: 'AuthService', desc: '소셜 로그인', api: 'NextAuth' },
@@ -3177,7 +3178,7 @@ const TROUBLESHOOTING_ISSUES: TroubleshootingIssue[] = [
     date: '2024-12',
     title: 'Turbopack에서 NEXT_PUBLIC_* 환경변수 빈 문자열 문제',
     symptoms: [
-      'FeedbackService에서 Supabase 연결 실패',
+      'Supabase 서비스에서 연결 실패 (레거시 이슈)',
       '브라우저 콘솔에서 process.env.NEXT_PUBLIC_* 값이 빈 문자열',
       '서버 측에서는 .env.local 인식하지만 클라이언트 번들에서 값이 ""',
     ],
@@ -3801,7 +3802,7 @@ function FeedbackAnalysis() {
           <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.2)' }}>
             <div className="flex items-center gap-3">
               <Code2 className="w-4 h-4 text-[var(--db-brand)]" />
-              <span className="text-sm text-[var(--db-text)]">FeedbackService.ts</span>
+              <span className="text-sm text-[var(--db-text)]">TursoService.ts</span>
             </div>
             <span className="text-xs text-[var(--db-muted)]">src/services/</span>
           </div>

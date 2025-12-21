@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Send, CheckCircle } from 'lucide-react';
-import { feedbackService } from '../services/FeedbackService';
+import { tursoService } from '../services/TursoService';
 
 interface ResultFeedbackProps {
   testType: string;
@@ -36,14 +36,9 @@ export default function ResultFeedback({ testType, resultName }: ResultFeedbackP
 
     setIsSubmitting(true);
     try {
-      const result = await feedbackService.saveFeedback({
-        testType,
-        resultName,
-        isAccurate,
-        comment: commentText || undefined,
-      });
+      const result = await tursoService.saveFeedback(testType, resultName, isAccurate, commentText || undefined);
       if (!result.success) {
-        setErrorMessage(result.error || '피드백 저장에 실패했어요. 잠시 후 다시 시도해주세요.');
+        setErrorMessage('피드백 저장에 실패했어요. 잠시 후 다시 시도해주세요.');
         return false;
       }
       setSubmitted(true);

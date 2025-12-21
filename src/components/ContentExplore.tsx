@@ -846,8 +846,7 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
 
   // 퀴즈 정답 처리
   // ContentParticipationService: UI 상태 (참여 여부 표시용)
-  // ParticipationBridge: 게이미피케이션 연동 (배지/포인트)
-  // 둘은 역할이 다르므로 각각 호출 (FeedbackService 중복 저장은 Bridge에서 처리)
+  // ParticipationBridge: TursoService + GamificationService 통합 (DB 저장 + 배지/포인트)
   const handleQuizAnswer = async (quizId: string, optionId: string, isCorrect: boolean) => {
     // UI 상태 업데이트 (로컬 참여 기록)
     contentParticipationService.recordQuizAnswer(quizId, optionId, isCorrect);
