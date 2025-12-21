@@ -7,7 +7,8 @@ import { resultService } from '../services/ResultService';
 import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
-import { POPULAR_TESTS } from '../data/recommendationPolicy';
+import { POPULAR_TESTS, filterTestsByAge } from '../data/recommendationPolicy';
+import { demographicService } from '../services/DemographicService';
 import type { SubjectKey } from '../data/types';
 import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
 import MyRankingMini from './MyRankingMini';
@@ -77,6 +78,7 @@ export default function Sidebar({
   const [myPosts, setMyPosts] = useState<MyPost[]>([]);
   const [recommendedTests, setRecommendedTests] = useState<SubjectKey[]>([]);
   const [rotationOffset, setRotationOffset] = useState(0);
+  const [recommendLabel, setRecommendLabel] = useState<string | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -93,13 +95,56 @@ export default function Sidebar({
         })));
         setCompletedCount(results.length);
 
-        // 추천 테스트: 인기 테스트 우선 + 완료하지 않은 것
-        const notCompletedPopular = POPULAR_TESTS.filter(key => !completedKeys.includes(key));
-        const notCompletedOther = MAIN_TEST_KEYS.filter(key =>
-          !completedKeys.includes(key) && !POPULAR_TESTS.includes(key)
-        );
-        const allRecommended = [...notCompletedPopular, ...notCompletedOther];
-        setRecommendedTests(allRecommended);
+        // 추천 테스트: 실제 참여 데이터 기반 인기순
+        const demographic = demographicService.getDemographic();
+        const ageGroup = demographic?.ageGroup;
+        const gender = demographic?.gender;
+
+        // 1. 연령 제한 필터링 (예: alcohol은 20대 이상만)
+        const ageFilteredTests = filterTestsByAge(MAIN_TEST_KEYS, ageGroup);
+
+        // 2. 완료하지 않은 테스트만
+        const notCompleted = ageFilteredTests.filter(key => !completedKeys.includes(key));
+
+        // 3. 실제 참여 데이터 기반 인기순 가져오기
+        let popularTestOrder: string[] = [];
+        let label = '인기순';
+
+        try {
+          // 연령/성별 정보가 있으면 해당 그룹의 인기순, 없으면 전체 인기순
+          const params = new URLSearchParams({ type: 'popular-tests', limit: '20' });
+          if (ageGroup) params.set('ageGroup', ageGroup);
+          if (gender && gender !== 'other') params.set('gender', gender);
+
+          const res = await fetch(`/api/ranking?${params.toString()}`);
+          if (res.ok) {
+            const data = await res.json();
+            popularTestOrder = (data.popularTests || []).map((t: { testType: string }) => t.testType);
+
+            // 맞춤 라벨 설정
+            if (ageGroup || gender) {
+              label = demographicService.getRecommendationLabel() || '인기순';
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to fetch popular tests:', e);
+        }
+
+        // 4. 인기순으로 정렬 (API 데이터 우선, 없으면 POPULAR_TESTS 폴백)
+        const popularityOrder = popularTestOrder.length > 0 ? popularTestOrder : POPULAR_TESTS;
+        const sortedRecommended = notCompleted.sort((a, b) => {
+          const aIdx = popularityOrder.indexOf(a);
+          const bIdx = popularityOrder.indexOf(b);
+          // 인기 목록에 없으면 맨 뒤로
+          const aPriority = aIdx >= 0 ? aIdx : 1000;
+          const bPriority = bIdx >= 0 ? bIdx : 1000;
+          return aPriority - bPriority;
+        });
+
+        setRecommendedTests(sortedRecommended);
+        setRecommendLabel(label);
+        // 추천 목록이 변경되면 rotationOffset 리셋
+        setRotationOffset(0);
 
         // TODO: 실제 API 연동 시 교체
         // 현재는 localStorage에서 내가 쓴 글 가져오기 (Mock)
@@ -198,7 +243,7 @@ export default function Sidebar({
                 <span className="text-xs font-bold text-indigo-700">추천 테스트</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-xs text-indigo-400">인기순</span>
+                <span className="text-xs text-indigo-400">{recommendLabel || '인기순'}</span>
                 {recommendedTests.length > 3 && (
                   <div className="flex gap-0.5 ml-1">
                     {Array.from({ length: Math.ceil(recommendedTests.length / 3) }).map((_, idx) => (

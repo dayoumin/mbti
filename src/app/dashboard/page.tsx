@@ -82,6 +82,7 @@ import BadgeSystem from './components/BadgeSystem';
 import CareSystem from './components/CareSystem';
 import DemographicsDashboard from './components/DemographicsDashboard';
 import BusinessStrategy from './components/BusinessStrategy';
+import OperationsSystem from './components/OperationsSystem';
 
 // ============================================================================
 // Types
@@ -157,6 +158,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
           { key: 'care', label: '케어 시스템', icon: <Heart className="w-4 h-4" /> },
           { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
           { key: 'fairness', label: '공정성', icon: <Activity className="w-4 h-4" /> },
+          { key: 'operations', label: '운영', icon: <Settings className="w-4 h-4" /> },
         ],
       },
       {
@@ -496,6 +498,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'retention' && <RetentionSystem />}
           {activeCategory === 'planning' && activeSubTab === 'share' && <ShareStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'fairness' && <FairnessSystem />}
+          {activeCategory === 'planning' && activeSubTab === 'operations' && <OperationsSystem />}
           {activeCategory === 'planning' && activeSubTab === 'analytics' && <AnalyticsSystem />}
           {activeCategory === 'planning' && activeSubTab === 'conversion' && <ConversionAnalysis />}
           {activeCategory === 'planning' && activeSubTab === 'demographics' && <DemographicsDashboard />}

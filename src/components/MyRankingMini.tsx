@@ -15,6 +15,7 @@ interface MyResult {
   testType: SubjectKey;
   resultName: string;
   resultEmoji: string;
+  createdAt: string;
 }
 
 interface CategoryRank {
@@ -160,11 +161,14 @@ function calculateCategoryRanks(testType: SubjectKey, resultName: string): Categ
       .map(result => ({ result, score: category.getScore(result) }))
       .sort((a, b) => b.score - a.score);
 
-    const myRank = rankedResults.findIndex(r => r.result.name === resultName) + 1;
+    const foundIndex = rankedResults.findIndex(r => r.result.name === resultName);
+    // 결과를 찾지 못한 경우 해당 카테고리 스킵
+    if (foundIndex === -1) return;
+
     ranks.push({
       category: category.name,
       emoji: category.emoji,
-      rank: myRank,
+      rank: foundIndex + 1,
       total: data.resultLabels.length,
     });
   });
@@ -198,12 +202,18 @@ export default function MyRankingMini({ onOpenRanking, className = '' }: MyRanki
             testType: r.testType as SubjectKey,
             resultName: r.resultKey,  // resultKey가 실제 결과 이름
             resultEmoji: r.resultEmoji,
+            createdAt: r.createdAt,
           }));
 
-        // 중복 제거 (같은 테스트의 최신 결과만)
+        // 중복 제거 (같은 테스트의 최신 결과만 유지)
         const unique = filtered.reduce((acc, curr) => {
-          if (!acc.find(r => r.testType === curr.testType)) {
+          const existing = acc.find(r => r.testType === curr.testType);
+          if (!existing) {
             acc.push(curr);
+          } else if (new Date(curr.createdAt) > new Date(existing.createdAt)) {
+            // 더 최신 결과로 교체
+            const idx = acc.indexOf(existing);
+            acc[idx] = curr;
           }
           return acc;
         }, [] as MyResult[]);
