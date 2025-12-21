@@ -13,7 +13,15 @@ import {
   Sparkles,
   ChevronRight,
   BarChart3,
+  Vote,
+  HelpCircle,
+  Flame,
+  MessageCircle,
+  Heart,
 } from 'lucide-react';
+import { VS_POLLS } from '@/data/content/polls';
+import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
+import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
 
 // ============================================================================
 // 타입 정의
@@ -22,6 +30,7 @@ import {
 interface RankingTabProps {
   onClose: () => void;
   onStartTest?: (testKey: SubjectKey) => void;
+  onNavigate?: (target: 'poll' | 'quiz' | 'community') => void;
 }
 
 interface UserRanking {
@@ -267,11 +276,13 @@ function TestRankingDetail({
   myResultName,
   onBack,
   onStartTest,
+  showBackButton = true,
 }: {
   testType: SubjectKey;
   myResultName: string | null;
   onBack: () => void;
   onStartTest?: (testKey: SubjectKey) => void;
+  showBackButton?: boolean;
 }) {
   const data = CHEMI_DATA[testType] as SubjectData | undefined;
   const categories = RANKING_CATEGORIES[testType] || [];
@@ -300,13 +311,15 @@ function TestRankingDetail({
 
   return (
     <div className="space-y-4">
-      {/* 뒤로가기 */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800"
-      >
-        <ChevronLeft className="w-4 h-4" /> 랭킹 목록으로
-      </button>
+      {/* 뒤로가기 - 모바일에서만 표시 */}
+      {showBackButton && (
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800"
+        >
+          <ChevronLeft className="w-4 h-4" /> 랭킹 목록으로
+        </button>
+      )}
 
       {/* 테스트 정보 */}
       <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-4 text-white">
@@ -400,7 +413,223 @@ function TestRankingDetail({
   );
 }
 
-export default function RankingTab({ onClose, onStartTest }: RankingTabProps) {
+// ============================================================================
+// 좌측 사이드바 (테스트 목록) - PC용
+// ============================================================================
+function RankingSidebar({
+  myResults,
+  selectedTest,
+  onSelectTest,
+  completedCount,
+}: {
+  myResults: Record<SubjectKey, { resultName: string; resultEmoji: string } | null>;
+  selectedTest: SubjectKey | null;
+  onSelectTest: (key: SubjectKey) => void;
+  completedCount: number;
+}) {
+  return (
+    <aside className="w-72 flex-shrink-0 space-y-4">
+      {/* 통계 요약 */}
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-white">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <BarChart3 className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="font-bold">내 랭킹 현황</h2>
+            <p className="text-white/80 text-xs">테스트별 결과 순위</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-white/20 rounded-xl p-3 text-center">
+            <p className="text-2xl font-black">{completedCount}</p>
+            <p className="text-xs text-white/80">완료한 테스트</p>
+          </div>
+          <div className="bg-white/20 rounded-xl p-3 text-center">
+            <p className="text-2xl font-black">{RANKABLE_TESTS.length - completedCount}</p>
+            <p className="text-xs text-white/80">남은 테스트</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 테스트별 랭킹 카드 */}
+      <div>
+        <h3 className="font-bold text-slate-700 mb-3 flex items-center gap-2">
+          <Medal className="w-4 h-4 text-amber-500" />
+          테스트별 랭킹
+        </h3>
+        <div className="space-y-2">
+          {RANKABLE_TESTS.map(test => {
+            const isSelected = selectedTest === test.key;
+            const data = CHEMI_DATA[test.key] as SubjectData | undefined;
+            const myResult = myResults[test.key];
+
+            return (
+              <button
+                key={test.key}
+                onClick={() => onSelectTest(test.key)}
+                className={`w-full p-3 rounded-xl text-left transition-all ${
+                  isSelected
+                    ? 'bg-indigo-100 border-2 border-indigo-400 shadow-md'
+                    : 'bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-sm'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{test.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`font-bold text-sm truncate ${isSelected ? 'text-indigo-700' : 'text-slate-800'}`}>
+                      {data?.title.replace(' 테스트', '').replace(' 매칭', '')} 랭킹
+                    </p>
+                    {myResult ? (
+                      <p className="text-xs text-emerald-600 flex items-center gap-1 truncate">
+                        <Star className="w-3 h-3 fill-emerald-500 flex-shrink-0" />
+                        {myResult.resultEmoji} {myResult.resultName}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-400">테스트 후 확인</p>
+                    )}
+                  </div>
+                  {isSelected && (
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 전체 랭킹 설명 */}
+      <div className="bg-indigo-50 rounded-2xl p-4 border border-indigo-100">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
+            <Sparkles className="w-5 h-5 text-indigo-500" />
+          </div>
+          <div>
+            <h4 className="font-bold text-indigo-800 mb-1">랭킹이란?</h4>
+            <p className="text-xs text-indigo-600 leading-relaxed">
+              각 테스트 결과를 다양한 기준으로 순위를 매깁니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================================
+// 우측 사이드바 (크로스 프로모션) - PC용
+// ============================================================================
+function RankingDiscoverySidebar({ onNavigate }: { onNavigate?: (target: string) => void }) {
+  // 인기 투표 TOP 3
+  const topPolls = VS_POLLS.slice(0, 3);
+
+  // 오늘의 퀴즈 (랜덤 3개)
+  const todayQuizzes = ALL_KNOWLEDGE_QUIZZES.slice(0, 3);
+
+  // HOT 커뮤니티 글
+  const hotPosts = [...MOCK_COMMUNITY_POSTS].sort((a, b) => b.likes - a.likes).slice(0, 3);
+
+  return (
+    <aside className="hidden xl:block w-72 flex-shrink-0">
+      <div className="sticky top-4 space-y-4">
+        {/* 인기 투표 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Vote className="w-4 h-4 text-purple-600" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800">인기 투표</h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {topPolls.map((poll) => (
+              <button
+                key={poll.id}
+                onClick={() => onNavigate?.('poll')}
+                className="w-full p-2.5 bg-slate-50 rounded-xl hover:bg-purple-50 transition-colors text-left group"
+              >
+                <p className="text-xs font-bold text-slate-700 truncate group-hover:text-purple-600">
+                  {poll.question}
+                </p>
+                <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                  <span>{poll.optionA.emoji} vs {poll.optionB.emoji}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* 오늘의 퀴즈 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <HelpCircle className="w-4 h-4 text-blue-600" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800">오늘의 퀴즈</h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {todayQuizzes.map((quiz) => (
+              <button
+                key={quiz.id}
+                onClick={() => onNavigate?.('quiz')}
+                className="w-full p-2.5 bg-slate-50 rounded-xl hover:bg-blue-50 transition-colors text-left group"
+              >
+                <p className="text-xs font-bold text-slate-700 line-clamp-2 group-hover:text-blue-600">
+                  {quiz.question}
+                </p>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* HOT 커뮤니티 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-orange-500 rounded-lg flex items-center justify-center">
+              <Flame className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800">HOT 게시물</h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {hotPosts.map((post, index) => (
+              <button
+                key={post.id}
+                onClick={() => onNavigate?.('community')}
+                className="w-full flex items-start gap-2 p-2.5 bg-slate-50 rounded-xl hover:bg-rose-50 transition-colors text-left group"
+              >
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
+                  index === 0 ? 'bg-amber-400 text-white' :
+                  index === 1 ? 'bg-slate-300 text-white' :
+                  'bg-orange-200 text-orange-700'
+                }`}>
+                  {index + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-slate-700 truncate group-hover:text-rose-600">
+                    {post.title}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                    <span className="flex items-center gap-0.5">
+                      <Heart className="w-3 h-3" /> {post.likes}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <MessageCircle className="w-3 h-3" /> {post.comments}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================================
+// 메인 컴포넌트
+// ============================================================================
+export default function RankingTab({ onClose, onStartTest, onNavigate }: RankingTabProps) {
   const [selectedTest, setSelectedTest] = useState<SubjectKey | null>(null);
   const [myResults, setMyResults] = useState<Record<SubjectKey, { resultName: string; resultEmoji: string } | null>>({} as Record<SubjectKey, { resultName: string; resultEmoji: string } | null>);
 
@@ -433,11 +662,19 @@ export default function RankingTab({ onClose, onStartTest }: RankingTabProps) {
 
   const completedCount = Object.values(myResults).filter(Boolean).length;
 
+  // PC에서 첫 번째 테스트 자동 선택
+  useEffect(() => {
+    if (!selectedTest && RANKABLE_TESTS.length > 0) {
+      const firstCompleted = RANKABLE_TESTS.find(t => myResults[t.key]);
+      setSelectedTest(firstCompleted?.key || RANKABLE_TESTS[0].key);
+    }
+  }, [myResults, selectedTest]);
+
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-slate-100 to-slate-200 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-slate-100 to-slate-200 lg:left-60">
       {/* 헤더 */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10">
-        <div className="max-w-lg mx-auto px-4 py-3">
+        <div className="px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
@@ -459,8 +696,34 @@ export default function RankingTab({ onClose, onStartTest }: RankingTabProps) {
       </div>
 
       {/* 콘텐츠 */}
-      <div className="overflow-y-auto h-[calc(100vh-70px)] pb-20">
-        <div className="max-w-lg mx-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto pb-24 lg:pb-6">
+        {/* PC 레이아웃 - lg 이상에서만 표시 */}
+        <div className="hidden lg:flex gap-6 px-6 py-6 max-w-7xl mx-auto">
+          <RankingSidebar
+            myResults={myResults}
+            selectedTest={selectedTest}
+            onSelectTest={setSelectedTest}
+            completedCount={completedCount}
+          />
+          <div className="flex-1 min-w-0">
+            {selectedTest && (
+              <TestRankingDetail
+                testType={selectedTest}
+                myResultName={myResults[selectedTest]?.resultName || null}
+                onBack={() => setSelectedTest(null)}
+                onStartTest={onStartTest}
+                showBackButton={false}
+              />
+            )}
+          </div>
+          <RankingDiscoverySidebar onNavigate={(target) => {
+            onClose();
+            onNavigate?.(target as 'poll' | 'quiz' | 'community');
+          }} />
+        </div>
+
+        {/* 모바일 레이아웃 */}
+        <div className="lg:hidden px-4 py-4">
           {selectedTest ? (
             <TestRankingDetail
               testType={selectedTest}

@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
+import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp, TrendingUp, Trophy, Flame, Heart } from 'lucide-react';
+import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
+import { RANKABLE_TESTS } from '@/data/config';
+import { getIconComponent } from '@/utils';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls';
 import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
@@ -66,6 +69,7 @@ interface ContentExploreProps {
   onClose: () => void;
   initialTab?: 'test' | 'quiz' | 'poll' | 'community';
   onStartTest?: (testKey: string) => void;
+  onNavigate?: (target: 'ranking' | 'community') => void;
 }
 
 type TabType = 'test' | 'quiz' | 'poll' | 'community';
@@ -656,10 +660,125 @@ function CommunityContent({ onNextAction }: CommunityContentProps) {
 }
 
 // ============================================================================
+// 우측 사이드바 (크로스 프로모션) - PC용
+// ============================================================================
+function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (target: string) => void; onStartTest?: (key: string) => void }) {
+  // HOT 커뮤니티 글
+  const hotPosts = [...MOCK_COMMUNITY_POSTS].sort((a, b) => b.likes - a.likes).slice(0, 3);
+
+  // 추천 테스트 (랭킹 가능한 테스트)
+  const recommendedTests = RANKABLE_TESTS.slice(0, 3);
+
+  return (
+    <aside className="hidden xl:block w-72 flex-shrink-0">
+      <div className="sticky top-4 space-y-4">
+        {/* 랭킹 바로가기 */}
+        <section className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-4 text-white">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+              <Trophy className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold">랭킹 보기</h3>
+              <p className="text-white/80 text-xs">테스트 결과 순위 확인</p>
+            </div>
+          </div>
+          <button
+            onClick={() => onNavigate?.('ranking')}
+            className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-bold transition-colors"
+          >
+            전체 랭킹 보기 →
+          </button>
+        </section>
+
+        {/* HOT 커뮤니티 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-orange-500 rounded-lg flex items-center justify-center">
+              <Flame className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800">HOT 게시물</h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {hotPosts.map((post, index) => (
+              <button
+                key={post.id}
+                onClick={() => onNavigate?.('community')}
+                className="w-full flex items-start gap-2 p-2.5 bg-slate-50 rounded-xl hover:bg-rose-50 transition-colors text-left group"
+              >
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
+                  index === 0 ? 'bg-amber-400 text-white' :
+                  index === 1 ? 'bg-slate-300 text-white' :
+                  'bg-orange-200 text-orange-700'
+                }`}>
+                  {index + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-slate-700 truncate group-hover:text-rose-600">
+                    {post.title}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                    <span className="flex items-center gap-0.5">
+                      <Heart className="w-3 h-3" /> {post.likes}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <MessageCircle className="w-3 h-3" /> {post.comments}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* 추천 테스트 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-4 pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800">추천 테스트</h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {recommendedTests.map((test) => {
+              const config = SUBJECT_CONFIG[test.key as keyof typeof SUBJECT_CONFIG];
+              const data = CHEMI_DATA[test.key as keyof typeof CHEMI_DATA];
+              if (!config || !data) return null;
+              const IconComponent = getIconComponent(config.icon);
+
+              return (
+                <button
+                  key={test.key}
+                  onClick={() => onStartTest?.(test.key)}
+                  className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
+                >
+                  <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <IconComponent mood="happy" className="w-7 h-7" />
+                  </div>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-xs font-bold text-slate-700 truncate group-hover:text-indigo-600">
+                      {data.title}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {data.resultLabels?.length || 0}가지 결과
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400" />
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================================
 // 메인 컴포넌트
 // ============================================================================
 
-export default function ContentExplore({ onClose, initialTab = 'test', onStartTest }: ContentExploreProps) {
+export default function ContentExplore({ onClose, initialTab = 'test', onStartTest, onNavigate }: ContentExploreProps) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -852,10 +971,10 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
   const headerInfo = getHeaderInfo();
 
   return (
-    <div className="fixed inset-0 bg-white z-[60] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 bg-white flex flex-col lg:left-60">
       {/* 헤더 */}
       <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10">
-        <div className="max-w-lg mx-auto px-4 py-3">
+        <div className="max-w-2xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
@@ -971,8 +1090,10 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
       </div>
 
       {/* 콘텐츠 */}
-      <div className="flex-1 overflow-y-auto pb-32">
-        <div className="max-w-lg mx-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto pb-24 lg:pb-6">
+        <div className="max-w-6xl mx-auto px-4 py-4 xl:flex xl:gap-6">
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 min-w-0 max-w-2xl mx-auto xl:mx-0">
           {activeTab === 'test' && (
             filteredTests.length > 0 ? (
               <div className="grid grid-cols-3 gap-3">
@@ -1059,6 +1180,21 @@ export default function ContentExplore({ onClose, initialTab = 'test', onStartTe
               <CommunityContent onNextAction={handleNextAction} />
             )}
           </div>
+        </div>
+
+        {/* 우측 사이드바 - PC용 */}
+        <ContentDiscoverySidebar
+          onNavigate={(target) => {
+            if (target === 'ranking' || target === 'community') {
+              onClose();
+              onNavigate?.(target);
+            }
+          }}
+          onStartTest={(key) => {
+            onClose();
+            onStartTest?.(key);
+          }}
+        />
         </div>
       </div>
     </div>

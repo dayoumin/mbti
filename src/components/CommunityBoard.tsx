@@ -681,7 +681,7 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
 
         {/* 2단 레이아웃: 본문 + 사이드바 */}
         <div className="flex-1 overflow-y-auto">
-          <div className="flex justify-center p-4 pb-24 xl:p-6 xl:pb-6">
+          <div className="flex justify-center p-4 pb-24 lg:p-6 lg:pb-6">
             <div className="flex gap-6 w-full max-w-[1000px]">
               {/* 메인 콘텐츠 */}
               <article className="flex-1 min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
@@ -786,7 +786,7 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
 
       {/* 2단 레이아웃: 메인 콘텐츠 + 우측 사이드바 */}
       <div className="flex-1 overflow-y-auto">
-        <div className="flex justify-center p-4 pb-24 xl:pb-4">
+        <div className="flex justify-center p-4 pb-24 lg:p-6 lg:pb-6">
           <div className="flex gap-6 w-full max-w-[1200px]">
             {/* 메인 콘텐츠 영역 */}
             <div className="flex-1 min-w-0 space-y-3">
@@ -833,10 +833,10 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
       {/* Write Button - 모바일: FAB, PC: 텍스트 포함 버튼 */}
       <button
         aria-label="글쓰기"
-        className="fixed bottom-24 right-6 xl:bottom-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-20 w-14 h-14 rounded-full xl:w-auto xl:h-auto xl:px-5 xl:py-3 xl:rounded-xl xl:gap-2"
+        className="fixed bottom-24 right-6 lg:bottom-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-20 w-14 h-14 rounded-full lg:w-auto lg:h-auto lg:px-5 lg:py-3 lg:rounded-xl lg:gap-2"
       >
         <PenSquare className="w-5 h-5" />
-        <span className="hidden xl:inline text-sm font-bold">글쓰기</span>
+        <span className="hidden lg:inline text-sm font-bold">글쓰기</span>
       </button>
     </div>
   );

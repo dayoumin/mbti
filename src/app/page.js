@@ -259,6 +259,16 @@ export default function Home() {
                         setActiveNavTab('home');
                         handleStartTest(testKey);
                     }}
+                    onNavigate={(target) => {
+                        setShowContentExplore(false);
+                        if (target === 'ranking') {
+                            setShowRanking(true);
+                            setActiveNavTab('ranking');
+                        } else if (target === 'community') {
+                            setShowCommunity(true);
+                            setActiveNavTab('talk');
+                        }
+                    }}
                 />
             )}
 
@@ -278,6 +288,16 @@ export default function Home() {
                         setShowRanking(false);
                         setActiveNavTab('home');
                         handleStartTest(testKey || mode);
+                    }}
+                    onNavigate={(target) => {
+                        setShowRanking(false);
+                        if (target === 'poll' || target === 'quiz') {
+                            setShowContentExplore(true);
+                            setActiveNavTab('explore');
+                        } else if (target === 'community') {
+                            setShowCommunity(true);
+                            setActiveNavTab('talk');
+                        }
                     }}
                 />
             )}
