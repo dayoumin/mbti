@@ -2,16 +2,89 @@
 // 게이미피케이션 서비스
 // ============================================================================
 
-import type { UserGameStats, StreakInfo, DailyActivity } from '../data/gamification/types';
+import type { UserGameStats, StreakInfo, DailyActivity, ExpertSubject, ExpertTrackProgress, CommunityStats, DuelStats, Badge, BadgeTier } from '../data/gamification/types';
 import type { SubjectKey } from '../data/types';
 import { BADGES, getBadgeById } from '../data/gamification/badges';
 import { getLevelByPoints, getPointsToNextLevel, DAILY_MISSIONS } from '../data/gamification/levels';
-import { MAIN_TEST_KEYS } from '../data/config';
+
+// SubjectKey 또는 category에서 ExpertSubject 추출 (전문가 트랙 대상)
+// 퀴즈/투표의 category는 SubjectKey에 없는 값('fish' 등)도 포함할 수 있음
+const EXPERT_SUBJECT_MAP: Record<string, ExpertSubject> = {
+  // 기본 테스트 (SubjectKey)
+  cat: 'cat',
+  dog: 'dog',
+  rabbit: 'rabbit',
+  hamster: 'hamster',
+  plant: 'plant',
+  coffee: 'coffee',
+  // 이색 반려동물 (퀴즈/투표 category용 - SubjectKey에 없음)
+  fish: 'fish',
+  bird: 'bird',
+  reptile: 'reptile',
+  // 세부 테스트 → 상위 카테고리 매핑
+  catBreed: 'cat',
+  dogBreed: 'dog',
+  smallPet: 'hamster',
+  fishType: 'fish',
+  birdType: 'bird',
+  reptileType: 'reptile',
+};
+
+export function getExpertSubjectFromKey(key: SubjectKey | string): ExpertSubject | null {
+  return EXPERT_SUBJECT_MAP[key as SubjectKey] || null;
+}
 
 const STORAGE_KEY = 'chemi_game_stats';
 
+// 기본 전문가 트랙 진행도 생성
+function createDefaultExpertProgress(): ExpertTrackProgress {
+  return {
+    currentTier: null,
+    testsCompleted: [],
+    quizCorrect: 0,
+    quizTotal: 0,
+    pollVotes: 0,
+    streakDays: 0,
+    lastActiveDate: '',
+  };
+}
+
+// 기본 커뮤니티 통계 생성
+function createDefaultCommunityStats(): CommunityStats {
+  return {
+    answersWritten: 0,
+    answersAdopted: 0,
+    likesReceived: 0,
+    likesGiven: 0,
+    postsWritten: 0,
+    commentsWritten: 0,
+    thanksReceived: 0,
+  };
+}
+
+// 기본 대결 통계 생성
+function createDefaultDuelStats(): DuelStats {
+  return {
+    duelsPlayed: 0,
+    wins: 0,
+    losses: 0,
+    currentWinStreak: 0,
+    longestWinStreak: 0,
+    comebacks: 0,
+    perfectWins: 0,
+    totalResponseTime: 0,
+    totalQuestions: 0,
+  };
+}
+
 // 기본 통계 생성 함수 (매번 새 객체 반환)
 function createDefaultStats(): UserGameStats {
+  const expertSubjects: ExpertSubject[] = ['cat', 'dog', 'rabbit', 'hamster', 'fish', 'bird', 'reptile', 'coffee', 'plant'];
+  const expertProgress = expertSubjects.reduce((acc, subject) => {
+    acc[subject] = createDefaultExpertProgress();
+    return acc;
+  }, {} as Record<ExpertSubject, ExpertTrackProgress>);
+
   return {
     testsCompleted: 0,
     testsByType: {},
@@ -31,6 +104,9 @@ function createDefaultStats(): UserGameStats {
     badges: [],
     totalPoints: 0,
     dailyActivities: [],
+    expertProgress,
+    community: createDefaultCommunityStats(),
+    duel: createDefaultDuelStats(),
   };
 }
 
@@ -51,11 +127,54 @@ class GamificationService {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        this.stats = { ...createDefaultStats(), ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        const defaults = createDefaultStats();
+
+        // 깊은 병합: 중첩 객체 필드들을 개별적으로 병합
+        this.stats = {
+          ...defaults,
+          ...parsed,
+          // streak 깊은 병합 (undefined 방지)
+          streak: {
+            ...defaults.streak,
+            ...(parsed.streak || {}),
+          },
+          // expertProgress 깊은 병합
+          expertProgress: this.mergeExpertProgress(defaults.expertProgress, parsed.expertProgress),
+          // community 깊은 병합
+          community: {
+            ...defaults.community,
+            ...(parsed.community || {}),
+          },
+          // duel 깊은 병합
+          duel: {
+            ...defaults.duel,
+            ...(parsed.duel || {}),
+          },
+        };
       }
     } catch (e) {
       console.error('Failed to load game stats:', e);
     }
+  }
+
+  // expertProgress 깊은 병합 헬퍼
+  private mergeExpertProgress(
+    defaults: Record<ExpertSubject, ExpertTrackProgress>,
+    saved?: Record<string, Partial<ExpertTrackProgress>>
+  ): Record<ExpertSubject, ExpertTrackProgress> {
+    if (!saved) return defaults;
+
+    const result = { ...defaults };
+    for (const key of Object.keys(defaults) as ExpertSubject[]) {
+      if (saved[key]) {
+        result[key] = {
+          ...defaults[key],
+          ...saved[key],
+        };
+      }
+    }
+    return result;
   }
 
   private save(): void {
@@ -149,10 +268,18 @@ class GamificationService {
   // 활동 기록
   // ============================================================================
 
-  // 테스트 완료
-  recordTestComplete(testType: SubjectKey | string): { points: number; newBadges: string[] } {
+  // 테스트 완료 (subject: 전문가 트랙 대상 키)
+  recordTestComplete(testType: SubjectKey | string, options?: { subject?: ExpertSubject; testId?: string }): { points: number; newBadges: string[] } {
     this.stats.testsCompleted++;
     this.stats.testsByType[testType] = (this.stats.testsByType[testType] || 0) + 1;
+
+    // 전문가 트랙 진행도 업데이트 (subject 자동 추출)
+    const expertSubject = options?.subject || getExpertSubjectFromKey(testType);
+    if (expertSubject) {
+      // testId: 세부 테스트인 경우 testType 사용, 아니면 'main'
+      const testId = options?.testId || (testType !== expertSubject ? testType : 'main');
+      this.updateExpertProgress(expertSubject, 'test', testId);
+    }
 
     // 오늘 활동 업데이트
     const todayActivity = this.getOrCreateTodayActivity();
@@ -161,15 +288,15 @@ class GamificationService {
     const points = 20; // 테스트 완료 포인트
     this.stats.totalPoints += points;
 
-    const newBadges = this.checkBadges();
     this.updateStreak();
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
     this.save();
 
     return { points, newBadges };
   }
 
-  // 퀴즈 정답
-  recordQuizAnswer(isCorrect: boolean, category?: string): { points: number; newBadges: string[] } {
+  // 퀴즈 정답 (subject: 전문가 트랙 대상 키, category에서 자동 추출 가능)
+  recordQuizAnswer(isCorrect: boolean, category?: string, subject?: ExpertSubject): { points: number; newBadges: string[] } {
     this.stats.quizzesAnswered++;
     if (isCorrect) {
       this.stats.quizzesCorrect++;
@@ -189,6 +316,12 @@ class GamificationService {
       }
     }
 
+    // 전문가 트랙 진행도 업데이트 (subject 자동 추출)
+    const expertSubject = subject || (category ? getExpertSubjectFromKey(category) : null);
+    if (expertSubject) {
+      this.updateExpertProgress(expertSubject, 'quiz', undefined, isCorrect);
+    }
+
     // 오늘 활동 업데이트
     const todayActivity = this.getOrCreateTodayActivity();
     todayActivity.quizzesAnswered++;
@@ -199,15 +332,15 @@ class GamificationService {
     const points = isCorrect ? 10 : 2; // 정답 10점, 오답 2점
     this.stats.totalPoints += points;
 
-    const newBadges = this.checkBadges();
     this.updateStreak();
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
     this.save();
 
     return { points, newBadges };
   }
 
-  // 투표 참여
-  recordPollVote(options?: { category?: string; isMinority?: boolean }): { points: number; newBadges: string[] } {
+  // 투표 참여 (subject: 전문가 트랙 대상 키, category에서 자동 추출 가능)
+  recordPollVote(options?: { category?: string; isMinority?: boolean; subject?: ExpertSubject }): { points: number; newBadges: string[] } {
     this.stats.pollsVoted++;
 
     // 카테고리별 추적
@@ -221,6 +354,12 @@ class GamificationService {
       this.stats.minorityVotes = (this.stats.minorityVotes || 0) + 1;
     }
 
+    // 전문가 트랙 진행도 업데이트 (subject 자동 추출)
+    const expertSubject = options?.subject || (options?.category ? getExpertSubjectFromKey(options.category) : null);
+    if (expertSubject) {
+      this.updateExpertProgress(expertSubject, 'poll');
+    }
+
     // 오늘 활동 업데이트
     const todayActivity = this.getOrCreateTodayActivity();
     todayActivity.pollsVoted++;
@@ -228,11 +367,72 @@ class GamificationService {
     const points = 5; // 투표 포인트
     this.stats.totalPoints += points;
 
-    const newBadges = this.checkBadges();
     this.updateStreak();
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
     this.save();
 
     return { points, newBadges };
+  }
+
+  // ============================================================================
+  // 전문가 트랙 진행도 업데이트
+  // ============================================================================
+
+  private updateExpertProgress(
+    subject: ExpertSubject,
+    activityType: 'test' | 'quiz' | 'poll',
+    testId?: string,
+    isCorrect?: boolean
+  ): void {
+    const progress = this.stats.expertProgress[subject];
+    if (!progress) return;
+
+    const today = this.getToday();
+
+    switch (activityType) {
+      case 'test':
+        if (testId && !progress.testsCompleted.includes(testId)) {
+          progress.testsCompleted.push(testId);
+        }
+        break;
+
+      case 'quiz':
+        progress.quizTotal++;
+        if (isCorrect) {
+          progress.quizCorrect++;
+        }
+        break;
+
+      case 'poll':
+        progress.pollVotes++;
+        break;
+    }
+
+    // 스트릭 업데이트
+    if (progress.lastActiveDate === today) {
+      // 오늘 이미 활동함 - 스트릭 유지
+    } else {
+      const yesterdayStr = this.getYesterday();
+
+      if (progress.lastActiveDate === yesterdayStr) {
+        progress.streakDays++;
+      } else if (!progress.lastActiveDate) {
+        progress.streakDays = 1;
+      } else {
+        progress.streakDays = 1; // 스트릭 끊김
+      }
+      progress.lastActiveDate = today;
+    }
+  }
+
+  // 전문가 트랙 진행도 조회
+  getExpertProgress(subject: ExpertSubject): ExpertTrackProgress | null {
+    return this.stats.expertProgress[subject] || null;
+  }
+
+  // 모든 전문가 트랙 진행도 조회
+  getAllExpertProgress(): Record<ExpertSubject, ExpertTrackProgress> {
+    return { ...this.stats.expertProgress };
   }
 
   // 소수 의견 비율 조회
@@ -247,21 +447,176 @@ class GamificationService {
   }
 
   // 방문 기록
-  recordVisit(): { points: number; streakUpdated: boolean } {
+  recordVisit(): { points: number; streakUpdated: boolean; newBadges: string[] } {
     const today = this.getToday();
     const lastActivity = this.stats.streak.lastActivityDate;
 
     if (lastActivity === today) {
-      return { points: 0, streakUpdated: false };
+      return { points: 0, streakUpdated: false, newBadges: [] };
     }
 
     const points = 5; // 일일 방문 포인트
     this.stats.totalPoints += points;
 
     this.updateStreak();
+    const newBadges = this.checkBadges(); // 스트릭 배지 체크 추가
     this.save();
 
-    return { points, streakUpdated: true };
+    return { points, streakUpdated: true, newBadges };
+  }
+
+  // ============================================================================
+  // 커뮤니티 활동 기록
+  // ============================================================================
+
+  // 답변 작성
+  recordAnswerWrite(): { points: number; newBadges: string[] } {
+    this.stats.community.answersWritten++;
+
+    const points = 10;
+    this.stats.totalPoints += points;
+
+    this.updateStreak(); // 커뮤니티 활동도 스트릭에 반영
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
+    this.save();
+
+    return { points, newBadges };
+  }
+
+  // 답변 채택됨
+  recordAnswerAdopted(): { points: number; newBadges: string[] } {
+    this.stats.community.answersAdopted++;
+
+    const points = 50; // 채택은 높은 점수
+    this.stats.totalPoints += points;
+
+    const newBadges = this.checkBadges();
+    // 채택은 수동적 이벤트라 스트릭에 미반영
+    this.save();
+
+    return { points, newBadges };
+  }
+
+  // 좋아요 받음
+  recordLikeReceived(): { points: number; newBadges: string[] } {
+    this.stats.community.likesReceived++;
+
+    const points = 5;
+    this.stats.totalPoints += points;
+
+    const newBadges = this.checkBadges();
+    // 좋아요 받음은 수동적 이벤트라 스트릭에 미반영
+    this.save();
+
+    return { points, newBadges };
+  }
+
+  // 좋아요 줌
+  recordLikeGiven(): { newBadges: string[] } {
+    this.stats.community.likesGiven++;
+    this.updateStreak(); // 능동적 활동이므로 스트릭에 반영
+    const newBadges = this.checkBadges(); // 스트릭 배지 체크 추가
+    this.save();
+    return { newBadges };
+  }
+
+  // 게시글 작성
+  recordPostWrite(): { points: number; newBadges: string[] } {
+    this.stats.community.postsWritten++;
+
+    const points = 5;
+    this.stats.totalPoints += points;
+
+    this.updateStreak(); // 커뮤니티 활동도 스트릭에 반영
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
+    this.save();
+
+    return { points, newBadges };
+  }
+
+  // 댓글 작성
+  recordCommentWrite(): { points: number; newBadges: string[] } {
+    this.stats.community.commentsWritten++;
+
+    const points = 2;
+    this.stats.totalPoints += points;
+
+    this.updateStreak(); // 커뮤니티 활동도 스트릭에 반영
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
+    this.save();
+
+    return { points, newBadges };
+  }
+
+  // 커뮤니티 통계 조회
+  getCommunityStats(): CommunityStats {
+    return { ...this.stats.community };
+  }
+
+  // ============================================================================
+  // 대결 기록
+  // ============================================================================
+
+  // 대결 결과 기록
+  recordDuelResult(options: {
+    won: boolean;
+    isComeback?: boolean;
+    isPerfect?: boolean;
+    responseTimeMs?: number;
+    questionsCount?: number;
+  }): { points: number; newBadges: string[] } {
+    const duel = this.stats.duel;
+    duel.duelsPlayed++;
+
+    if (options.won) {
+      duel.wins++;
+      duel.currentWinStreak++;
+      duel.longestWinStreak = Math.max(duel.longestWinStreak, duel.currentWinStreak);
+
+      if (options.isComeback) {
+        duel.comebacks++;
+      }
+      if (options.isPerfect) {
+        duel.perfectWins++;
+      }
+    } else {
+      duel.losses++;
+      duel.currentWinStreak = 0;
+    }
+
+    // 응답 시간 통계
+    if (options.responseTimeMs) {
+      duel.totalResponseTime += options.responseTimeMs;
+    }
+    if (options.questionsCount) {
+      duel.totalQuestions += options.questionsCount;
+    }
+
+    const points = options.won ? 15 : 5; // 승리 15점, 패배 5점 (참여 보상)
+    this.stats.totalPoints += points;
+
+    this.updateStreak();
+    const newBadges = this.checkBadges(); // 스트릭 업데이트 후 배지 체크
+    this.save();
+
+    return { points, newBadges };
+  }
+
+  // 대결 통계 조회
+  getDuelStats(): DuelStats {
+    return { ...this.stats.duel };
+  }
+
+  // 대결 승률 계산
+  getDuelWinRate(): number {
+    if (this.stats.duel.duelsPlayed === 0) return 0;
+    return Math.round((this.stats.duel.wins / this.stats.duel.duelsPlayed) * 100);
+  }
+
+  // 평균 응답 시간 (ms)
+  getAverageResponseTime(): number {
+    if (this.stats.duel.totalQuestions === 0) return 0;
+    return Math.round(this.stats.duel.totalResponseTime / this.stats.duel.totalQuestions);
   }
 
   // ============================================================================
@@ -269,11 +624,20 @@ class GamificationService {
   // ============================================================================
 
   private getToday(): string {
+    return this.formatDate(new Date());
+  }
+
+  private getYesterday(): string {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return this.formatDate(yesterday);
+  }
+
+  private formatDate(date: Date): string {
     // 로컬 시간대 기준 날짜 (YYYY-MM-DD)
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
 
@@ -285,12 +649,7 @@ class GamificationService {
       return; // 오늘 이미 활동함
     }
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yYear = yesterday.getFullYear();
-    const yMonth = String(yesterday.getMonth() + 1).padStart(2, '0');
-    const yDay = String(yesterday.getDate()).padStart(2, '0');
-    const yesterdayStr = `${yYear}-${yMonth}-${yDay}`;
+    const yesterdayStr = this.getYesterday();
 
     if (lastActivityDate === yesterdayStr) {
       // 연속 유지
@@ -335,20 +694,19 @@ class GamificationService {
     return newBadges;
   }
 
-  private checkBadgeCondition(badge: typeof BADGES[0]): boolean {
+  private checkBadgeCondition(badge: Badge): boolean {
     const { condition } = badge;
 
     switch (badge.category) {
+      // ============================================
+      // 레거시 카테고리 (기존 로직 유지)
+      // ============================================
       case 'test':
         if (condition.type === 'first') {
           return this.stats.testsCompleted >= 1;
         }
         if (condition.type === 'count' && condition.value) {
           return this.stats.testsCompleted >= condition.value;
-        }
-        if (condition.type === 'special' && badge.id === 'all-rounder') {
-          // 모든 메인 테스트 완료 체크
-          return MAIN_TEST_KEYS.every(test => (this.stats.testsByType[test] || 0) > 0);
         }
         break;
 
@@ -357,12 +715,10 @@ class GamificationService {
           return this.stats.quizzesCorrect >= 1;
         }
         if (condition.type === 'streak' && condition.value) {
-          // 퀴즈 연속 정답 체크
           return this.stats.quizCorrectStreak >= condition.value;
         }
         if (condition.type === 'count' && condition.value) {
           if (condition.target) {
-            // 카테고리별 정답 수 체크
             const categoryStats = this.stats.quizzesByCategory[condition.target];
             return categoryStats ? categoryStats.correct >= condition.value : false;
           }
@@ -376,30 +732,259 @@ class GamificationService {
         }
         if (condition.type === 'count' && condition.value) {
           if (condition.target === 'minority') {
-            // 소수 의견 횟수 체크
             return (this.stats.minorityVotes || 0) >= condition.value;
           }
           if (condition.target) {
-            // 카테고리별 투표 수 체크
             return (this.stats.pollsByCategory[condition.target] || 0) >= condition.value;
           }
           return this.stats.pollsVoted >= condition.value;
         }
-        if (condition.type === 'special' && badge.id === 'minority-voice') {
-          // 소수 의견 비율 50% 이상 (10회 이상 투표 후)
-          if (this.stats.pollsVoted < 10) return false;
-          return this.getMinorityVoteRatio() >= 50;
+        break;
+
+      case 'social':
+        // 소셜 배지는 나중에 공유 기능 구현 시 처리
+        if (condition.type === 'first' && badge.id === 'first-share') {
+          // TODO: 공유 횟수 추적 필요
+          return false;
         }
         break;
 
+      // ============================================
+      // 스트릭 배지 (역대 최고 기록으로 달성 가능)
+      // ============================================
       case 'streak':
         if (condition.type === 'streak' && condition.value) {
-          return this.stats.streak.currentStreak >= condition.value;
+          return this.stats.streak.longestStreak >= condition.value;
         }
         break;
+
+      // ============================================
+      // 전문가 트랙 배지 (새로 추가)
+      // ============================================
+      case 'expert':
+        return this.checkExpertBadgeCondition(badge);
+
+      // ============================================
+      // 커뮤니티 배지 (새로 추가)
+      // ============================================
+      case 'community':
+        return this.checkCommunityBadgeCondition(badge);
+
+      // ============================================
+      // 대결 배지 (새로 추가)
+      // ============================================
+      case 'duel':
+        return this.checkDuelBadgeCondition(badge);
+
+      // ============================================
+      // 비율 배지 (서버 계산 필요 - 클라이언트에서는 false)
+      // ============================================
+      case 'percentile':
+        // 비율 배지는 서버에서 주기적으로 계산하여 부여
+        // 클라이언트에서는 체크하지 않음
+        return false;
+
+      // ============================================
+      // 특별 달성 배지
+      // ============================================
+      case 'special':
+        return this.checkSpecialBadgeCondition(badge);
     }
 
     return false;
+  }
+
+  // ============================================================================
+  // 전문가 트랙 배지 체크
+  // ============================================================================
+
+  private checkExpertBadgeCondition(badge: Badge): boolean {
+    const { condition, subject, tier } = badge;
+    if (!subject || !tier || !condition.requirements) return false;
+
+    const progress = this.stats.expertProgress[subject];
+    if (!progress) return false;
+
+    const req = condition.requirements;
+    const tierOrder: BadgeTier[] = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
+
+    // 이전 등급이 있어야 다음 등급 획득 가능 (bronze 제외)
+    if (tier !== 'bronze') {
+      const prevTierIndex = tierOrder.indexOf(tier) - 1;
+      if (prevTierIndex >= 0) {
+        const prevTier = tierOrder[prevTierIndex];
+        const hasPrevTier = this.stats.badges.some(
+          b => b.badgeId === `expert-${subject}-${prevTier}`
+        );
+        if (!hasPrevTier) return false;
+      }
+    }
+
+    // 기본 테스트 완료 체크
+    if (req.test && progress.testsCompleted.length === 0) return false;
+
+    // 세부 테스트 체크 (silver 이상)
+    if (req.detailTest && progress.testsCompleted.length < 2) return false;
+
+    // 퀴즈 정답 수 체크
+    if (req.quizCorrect && progress.quizCorrect < req.quizCorrect) return false;
+
+    // 퀴즈 정답률 체크 (최소 10문제 이상 풀어야 유효)
+    if (req.quizAccuracy) {
+      const MIN_QUIZ_FOR_ACCURACY = 10;
+      if (progress.quizTotal < MIN_QUIZ_FOR_ACCURACY) return false;
+      const accuracy = (progress.quizCorrect / progress.quizTotal) * 100;
+      if (accuracy < req.quizAccuracy) return false;
+    }
+
+    // 투표 참여 체크
+    if (req.pollVotes && progress.pollVotes < req.pollVotes) return false;
+
+    // 스트릭 체크
+    if (req.streakDays && progress.streakDays < req.streakDays) return false;
+
+    // 커뮤니티 좋아요 체크 (platinum 이상)
+    if (req.communityLikes && this.stats.community.likesReceived < req.communityLikes) return false;
+
+    // 답변 채택 체크 (diamond)
+    if (req.answersAdopted && this.stats.community.answersAdopted < req.answersAdopted) return false;
+
+    return true;
+  }
+
+  // ============================================================================
+  // 커뮤니티 배지 체크
+  // ============================================================================
+
+  private checkCommunityBadgeCondition(badge: Badge): boolean {
+    const { condition } = badge;
+    const req = condition.communityRequirements;
+    if (!req) return false;
+
+    const community = this.stats.community;
+
+    // 답변 작성 수 체크
+    if (req.answersWritten && community.answersWritten < req.answersWritten) return false;
+
+    // 받은 좋아요 체크
+    if (req.likesReceived && community.likesReceived < req.likesReceived) return false;
+
+    // 채택된 답변 체크
+    if (req.answersAdopted && community.answersAdopted < req.answersAdopted) return false;
+
+    // 게시글 수 체크
+    if (req.postsWritten && community.postsWritten < req.postsWritten) return false;
+
+    // 댓글 수 체크
+    if (req.commentsWritten && community.commentsWritten < req.commentsWritten) return false;
+
+    return true;
+  }
+
+  // ============================================================================
+  // 대결 배지 체크
+  // ============================================================================
+
+  private checkDuelBadgeCondition(badge: Badge): boolean {
+    const { condition } = badge;
+    const req = condition.duelRequirements;
+    if (!req) return false;
+
+    const duel = this.stats.duel;
+
+    // 대결 참여 횟수
+    if (req.duelsPlayed && duel.duelsPlayed < req.duelsPlayed) return false;
+
+    // 승리 횟수
+    if (req.wins && duel.wins < req.wins) return false;
+
+    // 연승 횟수 (longestWinStreak으로 체크 - 역대 최고 연승)
+    if (req.winStreak && duel.longestWinStreak < req.winStreak) return false;
+
+    // 승률 체크 (최소 대결 수 필요)
+    if (req.winRate && req.duelsPlayed) {
+      if (duel.duelsPlayed < req.duelsPlayed) return false;
+      const winRate = (duel.wins / duel.duelsPlayed) * 100;
+      if (winRate < req.winRate) return false;
+    }
+
+    // 역전승 횟수
+    if (req.comebacks && duel.comebacks < req.comebacks) return false;
+
+    // 완승 횟수
+    if (req.perfectWins && duel.perfectWins < req.perfectWins) return false;
+
+    return true;
+  }
+
+  // ============================================================================
+  // 특별 달성 배지 체크
+  // ============================================================================
+
+  private checkSpecialBadgeCondition(badge: Badge): boolean {
+    const { id } = badge;
+
+    switch (id) {
+      // 크로스 대상 배지
+      case 'animal-explorer': {
+        // 반려동물 4종 Bronze 달성
+        const animals: ExpertSubject[] = ['cat', 'dog', 'rabbit', 'hamster'];
+        return animals.every(animal =>
+          this.stats.badges.some(b => b.badgeId === `expert-${animal}-bronze`)
+        );
+      }
+
+      case 'animal-expert': {
+        // 반려동물 4종 Silver 달성
+        const animals: ExpertSubject[] = ['cat', 'dog', 'rabbit', 'hamster'];
+        return animals.every(animal =>
+          this.stats.badges.some(b => b.badgeId === `expert-${animal}-silver`)
+        );
+      }
+
+      case 'zookeeper': {
+        // 모든 동물 Gold 달성 (7종)
+        const allAnimals: ExpertSubject[] = ['cat', 'dog', 'rabbit', 'hamster', 'fish', 'bird', 'reptile'];
+        return allAnimals.every(animal =>
+          this.stats.badges.some(b => b.badgeId === `expert-${animal}-gold`)
+        );
+      }
+
+      case 'all-rounder': {
+        // 모든 9개 대상 Silver 등급
+        const allSubjects: ExpertSubject[] = ['cat', 'dog', 'rabbit', 'hamster', 'fish', 'bird', 'reptile', 'coffee', 'plant'];
+        return allSubjects.every(subject =>
+          this.stats.badges.some(b => b.badgeId === `expert-${subject}-silver`)
+        );
+      }
+
+      case 'grandmaster': {
+        // 3개 이상 Diamond 달성
+        const allSubjects: ExpertSubject[] = ['cat', 'dog', 'rabbit', 'hamster', 'fish', 'bird', 'reptile', 'coffee', 'plant'];
+        const diamondCount = allSubjects.filter(subject =>
+          this.stats.badges.some(b => b.badgeId === `expert-${subject}-diamond`)
+        ).length;
+        return diamondCount >= 3;
+      }
+
+      // 바이럴/인플루언서 배지
+      case 'viral-post':
+        // 단일 게시글 좋아요 50개 - 서버에서 처리 필요
+        return false;
+
+      case 'influencer':
+        // 총 좋아요 500개 받음
+        return this.stats.community.likesReceived >= 500;
+
+      // 얼리 어답터
+      case 'early-adopter':
+        // 2025년 가입자 - 가입일 체크 필요 (현재는 false)
+        // TODO: 가입일 추적 시스템 추가 시 구현
+        return false;
+
+      default:
+        return false;
+    }
   }
 
   // ============================================================================
