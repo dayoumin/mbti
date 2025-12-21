@@ -1,10 +1,9 @@
 import { useMemo, useState, useEffect } from 'react';
-import * as Icons from './Icons';
-import { SUBJECT_CONFIG } from '../data/config';
+import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
 import { CHEMI_DATA } from '../data/index';
 import { gamificationService } from '../services/GamificationService';
 import { nextActionService } from '../services/NextActionService';
-import { ChevronRight, Flame, Star, Sunrise, Sun, Moon, Sparkles } from 'lucide-react';
+import { ChevronRight, Flame, Star } from 'lucide-react';
 import { DETAIL_TEST_KEYS } from '../config/testKeys';
 import Footer from './Footer';
 import HeroBanner from './HeroBanner';
@@ -229,41 +228,6 @@ const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusActi
     );
 };
 
-// 시간대별 추천 카드
-const TimeBasedCard = ({ action, onAction }) => {
-    if (!action) return null;
-
-    // 시간대별 아이콘/색상
-    const getTimeStyle = () => {
-        const hour = new Date().getHours();
-        if (hour >= 6 && hour < 9) return { icon: Sunrise, gradient: 'from-amber-100 to-orange-100', border: 'border-amber-200', text: 'text-amber-700' };
-        if (hour >= 9 && hour < 18) return { icon: Sun, gradient: 'from-yellow-100 to-amber-100', border: 'border-yellow-200', text: 'text-yellow-700' };
-        if (hour >= 18 && hour < 22) return { icon: Moon, gradient: 'from-indigo-100 to-purple-100', border: 'border-indigo-200', text: 'text-indigo-700' };
-        return { icon: Sparkles, gradient: 'from-slate-100 to-blue-100', border: 'border-slate-200', text: 'text-slate-700' };
-    };
-
-    const style = getTimeStyle();
-    const TimeIcon = style.icon;
-
-    return (
-        <button
-            onClick={() => onAction?.(action)}
-            className={`w-full flex items-center gap-3 bg-gradient-to-r ${style.gradient} rounded-xl p-3 border ${style.border} hover:shadow-md transition-all group`}
-        >
-            <div className={`w-8 h-8 bg-white/70 rounded-lg flex items-center justify-center flex-shrink-0`}>
-                <TimeIcon className={`w-4 h-4 ${style.text}`} />
-            </div>
-            <div className="flex-1 text-left min-w-0">
-                <div className="flex items-center gap-1.5">
-                    <span className={`text-xs font-bold ${style.text}`}>{action.icon} {action.label}</span>
-                </div>
-                <p className="text-xs font-medium text-slate-600 truncate">{action.description}</p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors flex-shrink-0" />
-        </button>
-    );
-};
-
 // 포인트 획득 토스트 컴포넌트
 const PointsToast = ({ points, message, onClose }) => {
     useEffect(() => {
@@ -309,8 +273,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     const [pointsToast, setPointsToast] = useState(null);
     const [showStreakBanner, setShowStreakBanner] = useState(false); // 오늘 첫 방문 시에만 true
 
-    // 시간대/스트릭 기반 추천
-    const [timeBasedAction, setTimeBasedAction] = useState(null);
+    // 스트릭 보너스 추천
     const [streakBonusAction, setStreakBonusAction] = useState(null);
 
     // 랭킹 모달 상태
@@ -319,6 +282,11 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
     useEffect(() => {
         // 게이미피케이션 초기화 및 방문 기록
         /* eslint-disable react-hooks/set-state-in-effect */
+        // SSR/테스트 환경에서 gamificationService가 null일 수 있음
+        if (!gamificationService) {
+            return;
+        }
+
         const stats = gamificationService.getStats();
         setGameStats(stats);
         setCurrentLevel(gamificationService.getLevel());
@@ -330,11 +298,6 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
             setGameStats(gamificationService.getStats());
             setShowStreakBanner(true); // 오늘 첫 방문 시에만 배너 표시
         }
-
-        // 시간대별 추천 초기화
-        const currentHour = new Date().getHours();
-        const timeAction = nextActionService.getTimeBasedAction(currentHour);
-        setTimeBasedAction(timeAction);
 
         // 스트릭 보너스 초기화
         const streakCount = stats.streak?.currentStreak || 0;
@@ -352,7 +315,7 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
         switch (action.type) {
             case 'test':
                 // 테스트 추천 → targetId가 있으면 해당 테스트, 없으면 인기 테스트
-                onStartTest?.(action.targetId || POPULAR_TESTS[0] || 'human');
+                onStartTest?.(action.targetId || POPULAR_TESTS[0] || MAIN_TEST_KEYS[0]);
                 break;
             case 'quiz':
             case 'poll':
@@ -601,9 +564,8 @@ const Dashboard = ({ onStartTest, onContentExplore }) => {
             <TodayRankingModal
                 isOpen={showRankingModal}
                 onClose={() => setShowRankingModal(false)}
-                onPollClick={(pollId) => {
+                onPollClick={() => {
                     // TODO: 해당 투표로 이동하는 로직
-                    console.log('Poll clicked:', pollId);
                 }}
                 onViewAllClick={() => {
                     onContentExplore?.();

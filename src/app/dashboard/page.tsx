@@ -78,6 +78,8 @@ import ConversionAnalysis from './components/ConversionAnalysis';
 import PersonalizationStrategy from './components/PersonalizationStrategy';
 import CategoryStrategy from './components/CategoryStrategy';
 import UserStrategy from './components/UserStrategy';
+import BadgeSystem from './components/BadgeSystem';
+import CareSystem from './components/CareSystem';
 
 // ============================================================================
 // Types
@@ -149,6 +151,8 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
           { key: 'features', label: '제품 기능', icon: <Layers className="w-4 h-4" /> },
           { key: 'community', label: '커뮤니티', icon: <MessageCircle className="w-4 h-4" /> },
           { key: 'profile', label: '프로필', icon: <User className="w-4 h-4" /> },
+          { key: 'badge', label: '배지 시스템', icon: <Star className="w-4 h-4" /> },
+          { key: 'care', label: '케어 시스템', icon: <Heart className="w-4 h-4" /> },
           { key: 'ranking', label: '인기 랭킹', icon: <PieChart className="w-4 h-4" /> },
           { key: 'fairness', label: '공정성', icon: <Activity className="w-4 h-4" /> },
         ],
@@ -477,6 +481,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'features' && <ProductFeatures />}
           {activeCategory === 'planning' && activeSubTab === 'community' && <CommunityStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'profile' && <ProfileSystem />}
+          {activeCategory === 'planning' && activeSubTab === 'badge' && <BadgeSystem />}
           {activeCategory === 'planning' && activeSubTab === 'ranking' && <PopularRanking />}
           {activeCategory === 'planning' && activeSubTab === 'viral' && <ViralContent />}
           {activeCategory === 'planning' && activeSubTab === 'retention' && <RetentionSystem />}
@@ -484,6 +489,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'fairness' && <FairnessSystem />}
           {activeCategory === 'planning' && activeSubTab === 'analytics' && <AnalyticsSystem />}
           {activeCategory === 'planning' && activeSubTab === 'conversion' && <ConversionAnalysis />}
+          {activeCategory === 'planning' && activeSubTab === 'care' && <CareSystem />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
