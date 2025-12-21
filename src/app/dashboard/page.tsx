@@ -388,8 +388,8 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="ml-72">
         {/* Header */}
-        <header className="sticky top-0 z-40 h-14 db-header">
-          <div className="h-full px-6 flex items-center gap-6">
+        <header className="sticky top-0 z-40 db-header pt-4 pb-3">
+          <div className="px-6 flex items-center gap-6">
             {/* 그룹 선택이 있는 경우: 그룹 라벨 표시 + 현재 그룹 탭들 */}
             {currentSidebarItem?.subTabGroups ? (
               <>
