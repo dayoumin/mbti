@@ -56,6 +56,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   Copy,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
@@ -3815,7 +3816,7 @@ function FeedbackAnalysis() {
 // ============================================================================
 
 function ProductFeatures() {
-  const [activeTab, setActiveTab] = useState<'content' | 'social' | 'community' | 'retention' | 'personalization' | 'marketing'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'social' | 'community' | 'retention' | 'personalization' | 'marketing' | 'operations'>('content');
 
   const tabs = [
     { key: 'content' as const, label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },
@@ -3824,6 +3825,7 @@ function ProductFeatures() {
     { key: 'retention' as const, label: '리텐션', icon: <RefreshCw className="w-4 h-4" /> },
     { key: 'personalization' as const, label: '개인화', icon: <User className="w-4 h-4" /> },
     { key: 'marketing' as const, label: '마케팅', icon: <TrendingUp className="w-4 h-4" /> },
+    { key: 'operations' as const, label: '운영', icon: <Shield className="w-4 h-4" /> },
   ];
 
   return (
@@ -3855,6 +3857,7 @@ function ProductFeatures() {
       {activeTab === 'retention' && <RetentionStrategy />}
       {activeTab === 'personalization' && <PersonalizationStrategy />}
       {activeTab === 'marketing' && <MarketingStrategy />}
+      {activeTab === 'operations' && <OperationsSystem />}
     </div>
   );
 }
