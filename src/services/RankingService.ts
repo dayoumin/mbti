@@ -150,6 +150,132 @@ interface StorageProvider {
 const VOTES_KEY = 'chemi_ranking_votes';
 const STATS_KEY = 'chemi_ranking_stats';
 
+// ========== Turso Provider (API 기반) ==========
+
+const tursoProvider: StorageProvider = {
+  name: 'turso',
+
+  async saveVote(vote: RankingVote): Promise<SaveResult> {
+    try {
+      const res = await fetch('/api/ranking-votes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deviceId: vote.userId,
+          categoryId: vote.categoryId,
+          resultKey: vote.resultKey,
+          resultEmoji: vote.resultEmoji,
+          testType: vote.testType,
+          seasonId: vote.seasonId,
+          seasonType: vote.seasonType,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save vote');
+      const data = await res.json();
+      return { success: true, id: data.id };
+    } catch (error) {
+      console.error('[RankingService] Turso 저장 실패:', error);
+      return { success: false, error: (error as Error).message };
+    }
+  },
+
+  async getVotes(seasonId: string, categoryId?: string): Promise<RankingVote[]> {
+    try {
+      let url = `/api/ranking-votes?seasonId=${encodeURIComponent(seasonId)}`;
+      if (categoryId) {
+        url += `&categoryId=${encodeURIComponent(categoryId)}`;
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch votes');
+      const data = await res.json();
+      return data.votes || [];
+    } catch (error) {
+      console.error('[RankingService] 투표 조회 실패:', error);
+      return [];
+    }
+  },
+
+  async getAllVotes(): Promise<RankingVote[]> {
+    try {
+      const res = await fetch('/api/ranking-votes?type=all&limit=10000');
+      if (!res.ok) throw new Error('Failed to fetch all votes');
+      const data = await res.json();
+      return data.votes || [];
+    } catch (error) {
+      console.error('[RankingService] 전체 투표 조회 실패:', error);
+      return [];
+    }
+  },
+
+  async getVotesByUser(userId: string): Promise<RankingVote[]> {
+    try {
+      const res = await fetch(`/api/ranking-votes?deviceId=${encodeURIComponent(userId)}`);
+      if (!res.ok) throw new Error('Failed to fetch user votes');
+      const data = await res.json();
+      return data.votes || [];
+    } catch (error) {
+      console.error('[RankingService] 사용자 투표 조회 실패:', error);
+      return [];
+    }
+  },
+
+  async getStats(seasonId: string, categoryId: string): Promise<RankingStats | null> {
+    try {
+      const res = await fetch(`/api/ranking-votes?type=stats&seasonId=${encodeURIComponent(seasonId)}`);
+      if (!res.ok) throw new Error('Failed to fetch stats');
+      const data = await res.json();
+
+      const categoryStats = data.stats?.[categoryId];
+      if (!categoryStats) return null;
+
+      return {
+        categoryId,
+        seasonId,
+        votes: categoryStats.votes,
+        totalVotes: categoryStats.totalVotes,
+        lastUpdated: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('[RankingService] 통계 조회 실패:', error);
+      return null;
+    }
+  },
+
+  async getAllStats(seasonId: string): Promise<RankingStats[]> {
+    try {
+      const res = await fetch(`/api/ranking-votes?type=stats&seasonId=${encodeURIComponent(seasonId)}`);
+      if (!res.ok) throw new Error('Failed to fetch all stats');
+      const data = await res.json();
+
+      return Object.entries(data.stats || {}).map(([catId, catStats]) => ({
+        categoryId: catId,
+        seasonId,
+        votes: (catStats as { votes: Record<string, number> }).votes,
+        totalVotes: (catStats as { totalVotes: number }).totalVotes,
+        lastUpdated: new Date().toISOString(),
+      }));
+    } catch (error) {
+      console.error('[RankingService] 전체 통계 조회 실패:', error);
+      return [];
+    }
+  },
+
+  async getAvailableSeasons(): Promise<string[]> {
+    try {
+      const res = await fetch('/api/ranking-votes?type=seasons');
+      if (!res.ok) throw new Error('Failed to fetch seasons');
+      const data = await res.json();
+      return data.seasons || [];
+    } catch (error) {
+      console.error('[RankingService] 시즌 목록 조회 실패:', error);
+      return [];
+    }
+  },
+};
+
+// ========== localStorage Provider (오프라인/폴백) ==========
+
 const localStorageProvider: StorageProvider = {
   name: 'localStorage',
 
@@ -268,12 +394,26 @@ class RankingServiceClass {
   private provider: StorageProvider;
 
   constructor() {
-    this.provider = localStorageProvider;
+    // 기본: Turso 사용 (서버 저장, 기기 간 공유)
+    // SSR 환경에서는 localStorage 사용 불가하므로 turso가 기본
+    this.provider = typeof window !== 'undefined' ? tursoProvider : tursoProvider;
   }
 
-  // Provider 수동 변경 (테스트용)
+  // Provider 수동 변경 (테스트/오프라인용)
   setProvider(provider: StorageProvider): void {
     this.provider = provider;
+  }
+
+  // localStorage 폴백 모드로 전환
+  useLocalStorage(): void {
+    if (typeof window !== 'undefined') {
+      this.provider = localStorageProvider;
+    }
+  }
+
+  // Turso 모드로 전환
+  useTurso(): void {
+    this.provider = tursoProvider;
   }
 
   getProviderName(): string {
