@@ -86,6 +86,7 @@ interface TodayRankingModalProps {
   onClose: () => void;
   onPollClick?: (pollId: string) => void;
   onViewAllClick?: () => void;
+  defaultTab?: 'polls' | 'results';
 }
 
 // ============================================================================
@@ -97,8 +98,9 @@ export default function TodayRankingModal({
   onClose,
   onPollClick,
   onViewAllClick,
+  defaultTab = 'polls',
 }: TodayRankingModalProps) {
-  const [activeTab, setActiveTab] = useState<'polls' | 'results'>('polls');
+  const [activeTab, setActiveTab] = useState<'polls' | 'results'>(defaultTab);
   const [pollRankings, setPollRankings] = useState<PollRankingItem[]>([]);
   const [resultRankings, setResultRankings] = useState<ResultRankingItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +115,13 @@ export default function TodayRankingModal({
   const [commentInput, setCommentInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [commentTotal, setCommentTotal] = useState(0);
+
+  // 모달이 열릴 때 defaultTab으로 초기화
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(defaultTab);
+    }
+  }, [isOpen, defaultTab]);
 
   // 데이터 로드
   useEffect(() => {

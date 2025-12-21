@@ -3,6 +3,7 @@ import "./globals.css";
 import UTMInitializer from "@/components/UTMInitializer";
 import { ToastProvider } from "@/components/Toast";
 import { SessionProvider } from "@/components/auth";
+import { MyResultsProvider } from "@/contexts/MyResultsContext";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://chemi.app';
 
@@ -60,10 +61,12 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body className="antialiased bg-gray-50 min-h-screen" suppressHydrationWarning>
         <SessionProvider>
-          <ToastProvider>
-            <UTMInitializer />
-            {children}
-          </ToastProvider>
+          <MyResultsProvider>
+            <ToastProvider>
+              <UTMInitializer />
+              {children}
+            </ToastProvider>
+          </MyResultsProvider>
         </SessionProvider>
       </body>
     </html>

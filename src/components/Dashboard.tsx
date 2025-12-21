@@ -1,10 +1,33 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
+import { ChevronRight, Flame, Star } from 'lucide-react';
+
+// Data & Config
+import { CHEMI_DATA } from '../data/index';
+import { SUBJECT_CONFIG } from '../data/config';
+import { DETAIL_TEST_KEYS } from '../config/testKeys';
+import { POPULAR_TESTS } from '../data/recommendationPolicy';
 import type { SubjectKey } from '../data/types';
 
+// Services
+import { gamificationService } from '../services/GamificationService';
+import { nextActionService } from '../services/NextActionService';
+
+// Components
+import Footer from './Footer';
+import HeroBanner from './HeroBanner';
+import DiscoveryFeed from './DiscoveryFeed';
+import { RecommendedSection } from './ContentSections';
+import TodayRankingPreview from './TodayRankingPreview';
+import TodayRankingModal from './TodayRankingModal';
+import TestCard from './TestCard';
+import MyRankingMini from './MyRankingMini';
+
+// ============================================================================
 // 타입 정의
+// ============================================================================
+
 interface StreakData {
     currentStreak: number;
     longestStreak: number;
@@ -27,19 +50,6 @@ interface DashboardProps {
     onStartTest?: (testKey: SubjectKey) => void;
     onContentExplore?: () => void;
 }
-import { CHEMI_DATA } from '../data/index';
-import { gamificationService, type UserGameStats } from '../services/GamificationService';
-import { nextActionService } from '../services/NextActionService';
-import { ChevronRight, Flame, Star } from 'lucide-react';
-import { DETAIL_TEST_KEYS } from '../config/testKeys';
-import Footer from './Footer';
-import HeroBanner from './HeroBanner';
-import DiscoveryFeed from './DiscoveryFeed';
-import { RecommendedSection } from './ContentSections';
-import TodayRankingPreview from './TodayRankingPreview';
-import TodayRankingModal from './TodayRankingModal';
-import TestCard from './TestCard';
-import { POPULAR_TESTS } from '../data/recommendationPolicy';
 
 // 1차 필터: 테스트 유형 (심리/매칭/관계/라이프)
 const TEST_TYPE_TABS = {
@@ -320,7 +330,10 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
     const [streakBonusAction, setStreakBonusAction] = useState<BonusAction | null>(null);
 
     // 랭킹 모달 상태
-    const [showRankingModal, setShowRankingModal] = useState(false);
+    const [rankingModalState, setRankingModalState] = useState<{
+        isOpen: boolean;
+        defaultTab: 'polls' | 'results';
+    }>({ isOpen: false, defaultTab: 'polls' });
 
     useEffect(() => {
         // 게이미피케이션 초기화 및 방문 기록
@@ -358,7 +371,7 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
         switch (action.type) {
             case 'test':
                 // 테스트 추천 → targetId가 있으면 해당 테스트, 없으면 인기 테스트
-                onStartTest?.((action.targetId || POPULAR_TESTS[0] || MAIN_TEST_KEYS[0]) as SubjectKey);
+                onStartTest?.((action.targetId || POPULAR_TESTS[0]) as SubjectKey);
                 break;
             case 'quiz':
             case 'poll':
@@ -491,7 +504,13 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
 
                     {/* 오늘의 랭킹 - 미니 프리뷰 */}
                     <TodayRankingPreview
-                        onClick={() => setShowRankingModal(true)}
+                        onClick={() => setRankingModalState({ isOpen: true, defaultTab: 'polls' })}
+                        className="mb-4 animate-fade-in-up"
+                    />
+
+                    {/* 내 결과 순위 - 랭킹 테스트 결과가 있는 경우 표시 */}
+                    <MyRankingMini
+                        onOpenRanking={() => setRankingModalState({ isOpen: true, defaultTab: 'results' })}
                         className="mb-6 animate-fade-in-up"
                     />
 
@@ -612,8 +631,9 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
 
             {/* 오늘의 랭킹 모달 */}
             <TodayRankingModal
-                isOpen={showRankingModal}
-                onClose={() => setShowRankingModal(false)}
+                isOpen={rankingModalState.isOpen}
+                defaultTab={rankingModalState.defaultTab}
+                onClose={() => setRankingModalState(prev => ({ ...prev, isOpen: false }))}
                 onPollClick={() => {
                     // TODO: 해당 투표로 이동하는 로직
                 }}
