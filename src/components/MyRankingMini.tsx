@@ -4,19 +4,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { Trophy, ChevronRight, Star } from 'lucide-react';
 import { CHEMI_DATA } from '@/data';
 import { RANKABLE_TESTS } from '@/data/config';
-import { resultService } from '@/services/ResultService';
-import type { SubjectKey, ResultLabel, SubjectData } from '@/data/types';
+import { RANKING_CATEGORIES } from '@/data/ranking-categories';
+import type { SubjectKey, SubjectData } from '@/data/types';
 
-// ============================================================================
-// 타입 정의
-// ============================================================================
-
-interface MyResult {
-  testType: SubjectKey;
-  resultName: string;
-  resultEmoji: string;
-  createdAt: string;
-}
+// Context 사용
+import { useMyResults, type MyResult } from '@/contexts/MyResultsContext';
 
 interface CategoryRank {
   category: string;
@@ -24,126 +16,6 @@ interface CategoryRank {
   rank: number;
   total: number;
 }
-
-// ============================================================================
-// 랭킹 카테고리 정의 (RankingTab.tsx에서 가져옴)
-// ============================================================================
-
-const RANKING_CATEGORIES: Record<string, { id: string; name: string; emoji: string; getScore: (result: ResultLabel) => number }[]> = {
-  petMatch: [
-    {
-      id: 'activity', name: '활동성', emoji: '🏃',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.activity === 'high') score += 3;
-        else if (c.activity === 'medium') score += 2;
-        else if (c.activity === 'low') score += 1;
-        if (c.time === 'high') score += 2;
-        return score;
-      }
-    },
-    {
-      id: 'easy', name: '초보 친화', emoji: '🌱',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 6;
-        if (c.activity === 'high') score -= 1;
-        if (c.time === 'high') score -= 1;
-        if (c.space === 'high') score -= 1;
-        return Math.max(0, score);
-      }
-    },
-  ],
-  plant: [
-    {
-      id: 'easy', name: '초보 추천', emoji: '🌱',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 6;
-        if (c.care === 'high') score -= 2;
-        if (c.water === 'high') score -= 1;
-        return Math.max(0, score);
-      }
-    },
-    {
-      id: 'neglect', name: '방치 가능', emoji: '😴',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.water === 'low') score += 3;
-        else if (c.water === 'medium') score += 2;
-        return score;
-      }
-    },
-  ],
-  coffee: [
-    {
-      id: 'strong', name: '진한 맛', emoji: '💪',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.bitter === 'high') score += 3;
-        if (c.caffeine === 'high') score += 2;
-        return score;
-      }
-    },
-    {
-      id: 'sweet', name: '달달함', emoji: '🍬',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.sweet === 'high') score += 3;
-        else if (c.sweet === 'medium') score += 2;
-        return score;
-      }
-    },
-  ],
-  idealType: [
-    {
-      id: 'passion', name: '열정', emoji: '🔥',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.passion === 'high') score += 3;
-        else if (c.passion === 'medium') score += 2;
-        return score;
-      }
-    },
-    {
-      id: 'stable', name: '안정', emoji: '🏠',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.commit === 'high') score += 3;
-        else if (c.commit === 'medium') score += 2;
-        return score;
-      }
-    },
-  ],
-  food: [
-    {
-      id: 'adventure', name: '모험심', emoji: '🌶️',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.adventure === 'high') score += 3;
-        else if (c.adventure === 'medium') score += 2;
-        return score;
-      }
-    },
-    {
-      id: 'comfort', name: '편안함', emoji: '🍚',
-      getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.comfort === 'high') score += 3;
-        else if (c.comfort === 'medium') score += 2;
-        return score;
-      }
-    },
-  ],
-};
 
 // ============================================================================
 // 카테고리 순위 계산
@@ -162,8 +34,11 @@ function calculateCategoryRanks(testType: SubjectKey, resultName: string): Categ
       .sort((a, b) => b.score - a.score);
 
     const foundIndex = rankedResults.findIndex(r => r.result.name === resultName);
-    // 결과를 찾지 못한 경우 해당 카테고리 스킵
-    if (foundIndex === -1) return;
+    if (foundIndex === -1) {
+      // 결과명이 데이터와 불일치 (테스트 데이터 변경 등)
+      console.warn(`[MyRankingMini] Result "${resultName}" not found in ${testType} for category ${category.name}`);
+      return;
+    }
 
     ranks.push({
       category: category.name,
@@ -186,45 +61,16 @@ interface MyRankingMiniProps {
 }
 
 export default function MyRankingMini({ onOpenRanking, className = '' }: MyRankingMiniProps) {
-  const [myResults, setMyResults] = useState<MyResult[]>([]);
+  // Context에서 결과 가져오기 (Provider가 없으면 에러 발생하므로 try-catch로 처리하지 않음)
+  const { myResults } = useMyResults();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 내 테스트 결과 로드
+  // myResults 변경 시 currentIndex 범위 초과 방지
   useEffect(() => {
-    const loadResults = async () => {
-      try {
-        const results = await resultService.getMyResults();
-        // RANKABLE_TESTS에 있는 테스트만 필터링
-        const rankableKeys = RANKABLE_TESTS.map(t => t.key);
-        const filtered = results
-          .filter(r => rankableKeys.includes(r.testType as SubjectKey))
-          .map(r => ({
-            testType: r.testType as SubjectKey,
-            resultName: r.resultKey,  // resultKey가 실제 결과 이름
-            resultEmoji: r.resultEmoji,
-            createdAt: r.createdAt,
-          }));
-
-        // 중복 제거 (같은 테스트의 최신 결과만 유지)
-        const unique = filtered.reduce((acc, curr) => {
-          const existing = acc.find(r => r.testType === curr.testType);
-          if (!existing) {
-            acc.push(curr);
-          } else if (new Date(curr.createdAt) > new Date(existing.createdAt)) {
-            // 더 최신 결과로 교체
-            const idx = acc.indexOf(existing);
-            acc[idx] = curr;
-          }
-          return acc;
-        }, [] as MyResult[]);
-
-        setMyResults(unique);
-      } catch (e) {
-        console.error('[MyRankingMini] Failed to load results:', e);
-      }
-    };
-    loadResults();
-  }, []);
+    if (myResults.length > 0 && currentIndex >= myResults.length) {
+      setCurrentIndex(myResults.length - 1);
+    }
+  }, [myResults.length, currentIndex]);
 
   // 8초마다 자동 로테이션
   useEffect(() => {

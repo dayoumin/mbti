@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, ChevronRight, User } from 'lucide-react';
 import { NavTab, SIDEBAR_NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
@@ -80,84 +80,152 @@ export default function Sidebar({
   const [rotationOffset, setRotationOffset] = useState(0);
   const [recommendLabel, setRecommendLabel] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadData = async () => {
+  const loadData = useCallback(async () => {
+    try {
+      const results = await resultService.getMyResults();
+      const completedKeys = [...new Set(results.map(r => r.testType))] as SubjectKey[];
+
+      // 최근 2개만 (사이드바 표시용)
+      setRecentTests(results.slice(0, 2).map(r => ({
+        testType: r.testType,
+        resultKey: r.resultKey,
+        resultEmoji: r.resultEmoji,
+        createdAt: r.createdAt,
+      })));
+      setCompletedCount(results.length);
+
+      // 추천 테스트: 실제 참여 데이터 기반 인기순
+      const demographic = demographicService.getDemographic();
+      const ageGroup = demographic?.ageGroup;
+      const gender = demographic?.gender;
+
+      // 1. 연령 제한 필터링 (예: alcohol은 20대 이상만)
+      const ageFilteredTests = filterTestsByAge(MAIN_TEST_KEYS, ageGroup);
+
+      // 2. 완료하지 않은 테스트만
+      const notCompleted = ageFilteredTests.filter(key => !completedKeys.includes(key));
+
+      // 3. 실제 참여 데이터 기반 인기순 가져오기 (세션 캐싱)
+      let popularTestOrder: string[] = [];
+      let label = '인기순';
+
       try {
-        const results = await resultService.getMyResults();
-        const completedKeys = [...new Set(results.map(r => r.testType))] as SubjectKey[];
+        // 실제 API 요청에 사용할 gender 값 결정 (other는 필터에서 제외)
+        const effectiveGender = gender && gender !== 'other' ? gender : null;
 
-        // 최근 2개만 (사이드바 표시용)
-        setRecentTests(results.slice(0, 2).map(r => ({
-          testType: r.testType,
-          resultKey: r.resultKey,
-          resultEmoji: r.resultEmoji,
-          createdAt: r.createdAt,
-        })));
-        setCompletedCount(results.length);
+        // 캐시 키 생성 (실제 API 요청과 동일한 파라미터 기준)
+        const cacheKey = `popular_tests_${ageGroup || 'all'}_${effectiveGender || 'all'}`;
+        const now = Date.now();
 
-        // 추천 테스트: 실제 참여 데이터 기반 인기순
-        const demographic = demographicService.getDemographic();
-        const ageGroup = demographic?.ageGroup;
-        const gender = demographic?.gender;
+        // SSR 안전성: 브라우저에서만 sessionStorage 접근
+        let cached: string | null = null;
+        let cacheExpiry: string | null = null;
+        if (typeof window !== 'undefined') {
+          cached = sessionStorage.getItem(cacheKey);
+          cacheExpiry = sessionStorage.getItem(`${cacheKey}_expiry`);
+        }
 
-        // 1. 연령 제한 필터링 (예: alcohol은 20대 이상만)
-        const ageFilteredTests = filterTestsByAge(MAIN_TEST_KEYS, ageGroup);
+        // 캐시가 있고 5분 이내면 사용
+        if (cached && cacheExpiry && now < parseInt(cacheExpiry, 10)) {
+          try {
+            popularTestOrder = JSON.parse(cached);
+          } catch (parseError) {
+            // 손상된 캐시 제거
+            console.warn('Corrupted popular tests cache, clearing:', parseError);
+            if (typeof window !== 'undefined') {
+              sessionStorage.removeItem(cacheKey);
+              sessionStorage.removeItem(`${cacheKey}_expiry`);
+            }
+          }
+        }
 
-        // 2. 완료하지 않은 테스트만
-        const notCompleted = ageFilteredTests.filter(key => !completedKeys.includes(key));
-
-        // 3. 실제 참여 데이터 기반 인기순 가져오기
-        let popularTestOrder: string[] = [];
-        let label = '인기순';
-
-        try {
+        // 캐시가 없거나 파싱 실패 시 API 호출
+        if (popularTestOrder.length === 0) {
           // 연령/성별 정보가 있으면 해당 그룹의 인기순, 없으면 전체 인기순
           const params = new URLSearchParams({ type: 'popular-tests', limit: '20' });
           if (ageGroup) params.set('ageGroup', ageGroup);
-          if (gender && gender !== 'other') params.set('gender', gender);
+          if (effectiveGender) params.set('gender', effectiveGender);
 
           const res = await fetch(`/api/ranking?${params.toString()}`);
           if (res.ok) {
             const data = await res.json();
             popularTestOrder = (data.popularTests || []).map((t: { testType: string }) => t.testType);
 
-            // 맞춤 라벨 설정
-            if (ageGroup || gender) {
-              label = demographicService.getRecommendationLabel() || '인기순';
+            // 5분간 캐싱 (브라우저에서만)
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem(cacheKey, JSON.stringify(popularTestOrder));
+              sessionStorage.setItem(`${cacheKey}_expiry`, String(now + 5 * 60 * 1000));
             }
           }
-        } catch (e) {
-          console.warn('Failed to fetch popular tests:', e);
         }
 
-        // 4. 인기순으로 정렬 (API 데이터 우선, 없으면 POPULAR_TESTS 폴백)
-        const popularityOrder = popularTestOrder.length > 0 ? popularTestOrder : POPULAR_TESTS;
-        const sortedRecommended = notCompleted.sort((a, b) => {
-          const aIdx = popularityOrder.indexOf(a);
-          const bIdx = popularityOrder.indexOf(b);
-          // 인기 목록에 없으면 맨 뒤로
-          const aPriority = aIdx >= 0 ? aIdx : 1000;
-          const bPriority = bIdx >= 0 ? bIdx : 1000;
-          return aPriority - bPriority;
-        });
-
-        setRecommendedTests(sortedRecommended);
-        setRecommendLabel(label);
-        // 추천 목록이 변경되면 rotationOffset 리셋
-        setRotationOffset(0);
-
-        // TODO: 실제 API 연동 시 교체
-        // 현재는 localStorage에서 내가 쓴 글 가져오기 (Mock)
-        const savedPosts = localStorage.getItem('chemi_my_posts');
-        if (savedPosts) {
-          setMyPosts(JSON.parse(savedPosts).slice(0, 3));
+        // 맞춤 라벨 설정
+        if (ageGroup || gender) {
+          label = demographicService.getRecommendationLabel() || '인기순';
         }
       } catch (e) {
-        console.error('Failed to load data:', e);
+        console.warn('Failed to fetch popular tests:', e);
       }
-    };
-    loadData();
+
+      // 4. 인기순으로 정렬 (API 데이터 우선, 없으면 POPULAR_TESTS 폴백)
+      const popularityOrder = popularTestOrder.length > 0 ? popularTestOrder : POPULAR_TESTS;
+      // Map으로 인덱스 캐시 (O(n²) → O(n) 개선)
+      const priorityMap = new Map(popularityOrder.map((key, idx) => [key, idx]));
+      // [...notCompleted]로 복사하여 원본 배열 변형 방지
+      const sortedRecommended = [...notCompleted].sort((a, b) => {
+        const aPriority = priorityMap.get(a) ?? 1000;
+        const bPriority = priorityMap.get(b) ?? 1000;
+        return aPriority - bPriority;
+      });
+
+      setRecommendedTests(sortedRecommended);
+      setRecommendLabel(label);
+      // 추천 목록이 변경되면 rotationOffset 리셋
+      setRotationOffset(0);
+
+      // TODO: 실제 API 연동 시 교체
+      // 현재는 localStorage에서 내가 쓴 글 가져오기 (Mock)
+      if (typeof window !== 'undefined') {
+        try {
+          const savedPosts = localStorage.getItem('chemi_my_posts');
+          if (savedPosts) {
+            setMyPosts(JSON.parse(savedPosts).slice(0, 3));
+          }
+        } catch {
+          // 손상된 데이터 무시
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load data:', e);
+    }
   }, []);
+
+  // 초기 로드 + 이벤트 리스너
+  useEffect(() => {
+    loadData();
+
+    // 테스트 결과 저장 시 갱신
+    window.addEventListener('chemi:resultSaved', loadData);
+    // 프로필(demographic) 변경 시 캐시 무효화 후 갱신
+    const handleProfileUpdated = () => {
+      // 인기순 캐시 무효화
+      if (typeof window !== 'undefined') {
+        const keys = Object.keys(sessionStorage);
+        keys.forEach(key => {
+          if (key.startsWith('popular_tests_')) {
+            sessionStorage.removeItem(key);
+          }
+        });
+      }
+      loadData();
+    };
+    window.addEventListener('chemi:profileUpdated', handleProfileUpdated);
+
+    return () => {
+      window.removeEventListener('chemi:resultSaved', loadData);
+      window.removeEventListener('chemi:profileUpdated', handleProfileUpdated);
+    };
+  }, [loadData]);
 
   // 10초마다 추천 테스트 로테이션
   useEffect(() => {

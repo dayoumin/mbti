@@ -208,6 +208,9 @@ class DemographicServiceClass {
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem(DEMOGRAPHIC_KEY, JSON.stringify(updated));
+
+        // 프로필 변경 이벤트 발생 (Sidebar 등에서 캐시 무효화 및 갱신용)
+        window.dispatchEvent(new CustomEvent('chemi:profileUpdated'));
       } catch (e) {
         console.warn('Failed to save demographic data:', e);
       }
