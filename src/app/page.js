@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { CHEMI_DATA } from '../data/index';
 import { SUBJECT_CONFIG } from '../data/config';
 import { CHEMI_CONSTANTS } from '../data/constants';
@@ -22,420 +22,22 @@ import { TabletSlidePanel } from '../components/responsive';
 import FriendInvite from '../components/FriendInvite';
 import FriendCompare from '../components/FriendCompare';
 import BadgeNotification from '../components/BadgeNotification';
-import ParticipationStats from '../components/ParticipationStats';
-import { nextActionService } from '../services/NextActionService';
 import { getGamificationService } from '../services/GamificationService';
-import { NextActionInline } from '../components/NextActionCard';
 import CommunityBoard from '../components/CommunityBoard';
+import BreedDetailCard from '../components/BreedDetailCard';
+import NextTestRecommendation from '../components/NextTestRecommendation';
+import ContentActions from '../components/ContentActions';
 import * as Icons from '../components/Icons';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
     Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, Users, MessageSquare,
-    MapPin, Clock, Scale, Heart, AlertTriangle, Zap, Scissors, Dog, Cat, Fish, Bird, Bug, DollarSign, Lightbulb, ChevronDown, ChevronUp
+    Dog, Cat, Fish, Bird, Bug
 } from 'lucide-react';
 
 // Icons extraction for Result Characters (Keep custom SVGs for character art)
 const { Capsule, HumanIcon } = Icons;
 
 const MAX_SCORE_PER_QUESTION = CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
-
-// --- Components ---
-
-// Breed/Type Detail Info Utilities (재사용 가능)
-const DETAIL_LABELS = {
-    needsLevel: { low: '낮음', medium: '보통', high: '높음' },
-    difficulty: { easy: '쉬움', medium: '보통', hard: '어려움' },
-};
-
-const DETAIL_COLORS = {
-    needsLevel: { low: 'text-green-600 bg-green-50', medium: 'text-amber-600 bg-amber-50', high: 'text-rose-600 bg-rose-50' },
-    difficulty: { easy: 'text-green-600 bg-green-50', medium: 'text-amber-600 bg-amber-50', hard: 'text-rose-600 bg-rose-50' },
-};
-
-// Breed Detail Info Card Component
-// title: 표시할 제목 (기본: "상세 정보")
-// icon: 아이콘 컴포넌트 (기본: null, 아이콘 없음)
-const BreedDetailCard = ({ detailInfo, title = "상세 정보", icon: IconComponent = null }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    if (!detailInfo) return null;
-
-    const needsLevelLabel = (level) => DETAIL_LABELS.needsLevel[level] || level;
-    const difficultyLabel = (level) => DETAIL_LABELS.difficulty[level] || level;
-    const needsLevelColor = (level) => DETAIL_COLORS.needsLevel[level] || 'text-slate-600 bg-slate-50';
-    const difficultyColor = (level) => DETAIL_COLORS.difficulty[level] || 'text-slate-600 bg-slate-50';
-
-    return (
-        <div className="w-full mt-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-200/50 overflow-hidden">
-            {/* 헤더 - 항상 보임 */}
-            <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full p-4 flex items-center justify-between text-left"
-            >
-                <div className="flex items-center gap-2">
-                    {IconComponent && <IconComponent className="w-5 h-5 text-amber-600" />}
-                    <span className="font-bold text-slate-800">{title}</span>
-                </div>
-                {isExpanded ? (
-                    <ChevronUp className="w-5 h-5 text-slate-400" />
-                ) : (
-                    <ChevronDown className="w-5 h-5 text-slate-400" />
-                )}
-            </button>
-
-            {/* 확장 콘텐츠 */}
-            {isExpanded && (
-                <div className="px-4 pb-4 space-y-4 animate-fade-in">
-                    {/* 기본 정보 */}
-                    <div className="grid grid-cols-2 gap-2">
-                        {detailInfo.origin && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
-                                <MapPin className="w-4 h-4 text-slate-400" />
-                                <div>
-                                    <p className="text-xs text-slate-400">원산지</p>
-                                    <p className="text-xs font-semibold text-slate-700">{detailInfo.origin}</p>
-                                </div>
-                            </div>
-                        )}
-                        {detailInfo.lifespan && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
-                                <Clock className="w-4 h-4 text-slate-400" />
-                                <div>
-                                    <p className="text-xs text-slate-400">평균 수명</p>
-                                    <p className="text-xs font-semibold text-slate-700">{detailInfo.lifespan}</p>
-                                </div>
-                            </div>
-                        )}
-                        {detailInfo.size && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
-                                <Scale className="w-4 h-4 text-slate-400" />
-                                <div>
-                                    <p className="text-xs text-slate-400">크기</p>
-                                    <p className="text-xs font-semibold text-slate-700">{detailInfo.size}</p>
-                                </div>
-                            </div>
-                        )}
-                        {detailInfo.weight && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
-                                <Scale className="w-4 h-4 text-slate-400" />
-                                <div>
-                                    <p className="text-xs text-slate-400">체중</p>
-                                    <p className="text-xs font-semibold text-slate-700">{detailInfo.weight}</p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* 성격 특성 */}
-                    {detailInfo.personality && detailInfo.personality.length > 0 && (
-                        <div>
-                            <h4 className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5">
-                                <Heart className="w-3.5 h-3.5 text-pink-500" /> 성격 특성
-                            </h4>
-                            <div className="flex flex-wrap gap-1.5">
-                                {detailInfo.personality.map((trait, idx) => (
-                                    <span key={idx} className="px-2 py-1 bg-pink-50 text-pink-700 text-xs font-medium rounded-full">
-                                        {trait}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 잘 맞는 / 주의 대상 */}
-                    <div className="grid grid-cols-2 gap-2">
-                        {detailInfo.goodWith && detailInfo.goodWith.length > 0 && (
-                            <div className="p-2.5 bg-green-50/80 rounded-lg">
-                                <h4 className="text-xs font-bold text-green-700 mb-1.5 flex items-center gap-1">
-                                    <Check className="w-3 h-3" /> 잘 맞는 환경
-                                </h4>
-                                <div className="space-y-0.5">
-                                    {detailInfo.goodWith.map((item, idx) => (
-                                        <p key={idx} className="text-xs text-green-800">{item}</p>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        {detailInfo.notGoodWith && detailInfo.notGoodWith.length > 0 && (
-                            <div className="p-2.5 bg-rose-50/80 rounded-lg">
-                                <h4 className="text-xs font-bold text-rose-700 mb-1.5 flex items-center gap-1">
-                                    <AlertTriangle className="w-3 h-3" /> 주의 사항
-                                </h4>
-                                <div className="space-y-0.5">
-                                    {detailInfo.notGoodWith.map((item, idx) => (
-                                        <p key={idx} className="text-xs text-rose-800">{item}</p>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* 관리 정보 */}
-                    <div>
-                        <h4 className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5">
-                            <Scissors className="w-3.5 h-3.5 text-indigo-500" /> 관리 정보
-                        </h4>
-                        <div className="grid grid-cols-2 gap-2">
-                            {detailInfo.exerciseNeeds && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-xs text-slate-500 flex items-center gap-1">
-                                        <Zap className="w-3 h-3" /> 운동량
-                                    </span>
-                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.exerciseNeeds)}`}>
-                                        {needsLevelLabel(detailInfo.exerciseNeeds)}
-                                    </span>
-                                </div>
-                            )}
-                            {detailInfo.groomingNeeds && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-xs text-slate-500 flex items-center gap-1">
-                                        <Scissors className="w-3 h-3" /> 미용관리
-                                    </span>
-                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.groomingNeeds)}`}>
-                                        {needsLevelLabel(detailInfo.groomingNeeds)}
-                                    </span>
-                                </div>
-                            )}
-                            {detailInfo.sheddingLevel && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-xs text-slate-500">털빠짐</span>
-                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.sheddingLevel)}`}>
-                                        {needsLevelLabel(detailInfo.sheddingLevel)}
-                                    </span>
-                                </div>
-                            )}
-                            {detailInfo.trainingDifficulty && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
-                                    <span className="text-xs text-slate-500">훈련난이도</span>
-                                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${difficultyColor(detailInfo.trainingDifficulty)}`}>
-                                        {difficultyLabel(detailInfo.trainingDifficulty)}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* 건강 주의사항 */}
-                    {detailInfo.healthIssues && detailInfo.healthIssues.length > 0 && (
-                        <div>
-                            <h4 className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5">
-                                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> 건강 주의사항
-                            </h4>
-                            <div className="flex flex-wrap gap-1.5">
-                                {detailInfo.healthIssues.map((issue, idx) => (
-                                    <span key={idx} className="px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-full">
-                                        {issue}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 비용 정보 */}
-                    {(detailInfo.monthlyCost || detailInfo.initialCost) && (
-                        <div>
-                            <h4 className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5">
-                                <DollarSign className="w-3.5 h-3.5 text-green-500" /> 예상 비용 (만원)
-                            </h4>
-                            <div className="grid grid-cols-2 gap-2">
-                                {detailInfo.initialCost && (
-                                    <div className="p-2.5 bg-white/70 rounded-lg">
-                                        <p className="text-xs text-slate-400 mb-0.5">초기 비용</p>
-                                        <p className="text-sm font-bold text-slate-700">
-                                            {detailInfo.initialCost.min}~{detailInfo.initialCost.max}만원
-                                        </p>
-                                        {detailInfo.initialCost.note && (
-                                            <p className="text-xs text-slate-400 mt-0.5">{detailInfo.initialCost.note}</p>
-                                        )}
-                                    </div>
-                                )}
-                                {detailInfo.monthlyCost && (
-                                    <div className="p-2.5 bg-white/70 rounded-lg">
-                                        <p className="text-xs text-slate-400 mb-0.5">월 비용</p>
-                                        <p className="text-sm font-bold text-slate-700">
-                                            {detailInfo.monthlyCost.min}~{detailInfo.monthlyCost.max}만원
-                                        </p>
-                                        {detailInfo.monthlyCost.note && (
-                                            <p className="text-xs text-slate-400 mt-0.5">{detailInfo.monthlyCost.note}</p>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 양육 꿀팁 */}
-                    {detailInfo.tips && detailInfo.tips.length > 0 && (
-                        <div>
-                            <h4 className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5">
-                                <Lightbulb className="w-3.5 h-3.5 text-yellow-500" /> 양육 꿀팁
-                            </h4>
-                            <div className="space-y-1.5">
-                                {detailInfo.tips.map((tip, idx) => (
-                                    <div key={idx} className="flex items-start gap-2 p-2 bg-yellow-50/80 rounded-lg">
-                                        <span className="text-yellow-500 font-bold text-xs mt-0.5">💡</span>
-                                        <p className="text-xs text-slate-700 leading-relaxed">{tip}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
-};
-
-// Premium Button Component
-const GlassButton = ({ children, onClick, className = "", variant = "primary" }) => {
-    const baseStyle = "w-full py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 active:scale-95";
-
-    // Variants
-    const variants = {
-        primary: "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5",
-        secondary: "bg-white/60 hover:bg-white/90 text-slate-700 border border-white/60 shadow-sm hover:shadow-md backdrop-blur-sm",
-        outline: "border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50",
-        ghost: "text-slate-500 hover:bg-slate-100/50 hover:text-slate-800"
-    };
-
-    return (
-        <button onClick={onClick} className={`${baseStyle} ${variants[variant] || variants.primary} ${className}`}>
-            {children}
-        </button>
-    );
-};
-
-// Content Actions - 퀴즈/투표 다음 액션 추천
-const ContentActions = ({ testType, onQuizClick, onPollClick }) => {
-    const actions = nextActionService.getRecommendations({
-        endpoint: 'test_result',
-        contentId: testType,
-    });
-
-    // test 타입 제외하고 quiz, poll만 필터링
-    const contentActions = actions.filter(a => a.type === 'quiz' || a.type === 'poll').slice(0, 2);
-
-    if (contentActions.length === 0) return null;
-
-    const handleActionClick = (action) => {
-        if (action.type === 'quiz') {
-            onQuizClick?.(action.targetCategory);
-        } else if (action.type === 'poll') {
-            onPollClick?.(action.targetCategory);
-        }
-    };
-
-    return (
-        <div className="mt-4 w-full">
-            <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold text-slate-500">🎯 관련 콘텐츠</span>
-            </div>
-            <NextActionInline actions={contentActions} onActionClick={handleActionClick} />
-        </div>
-    );
-};
-
-// Next Test Recommendation Card - Compact (개인화 추천 사용)
-const NextTestRecommendation = ({ currentTest, onSelectTest, onGoHome }) => {
-    const [recommendation, setRecommendation] = useState(null);
-    const [completedCount, setCompletedCount] = useState(0);
-    const [incompleteCount, setIncompleteCount] = useState(0);
-
-    useEffect(() => {
-        const loadRecommendation = async () => {
-            const completed = await resultService.getCompletedTests();
-            const incomplete = await resultService.getIncompleteTests();
-            setCompletedCount(completed.length);
-            setIncompleteCount(incomplete.length);
-
-            // NextActionService의 개인화 추천 사용
-            const personalizedAction = nextActionService.getPersonalizedTestRecommendation(
-                currentTest,
-                completed,
-                incomplete.filter(t => t !== currentTest)
-            );
-
-            if (personalizedAction && personalizedAction.targetId) {
-                setRecommendation({
-                    testType: personalizedAction.targetId,
-                    reason: incomplete.includes(personalizedAction.targetId) ? 'new' : 'retest',
-                    label: personalizedAction.label,
-                    description: personalizedAction.description,
-                });
-            } else {
-                // 폴백: 기존 로직
-                const rec = await resultService.getRecommendedTest();
-                if (rec && rec.testType !== currentTest) {
-                    setRecommendation(rec);
-                }
-            }
-        };
-        loadRecommendation();
-    }, [currentTest]);
-
-    if (!recommendation) return null;
-
-    const config = SUBJECT_CONFIG[recommendation.testType];
-    const data = CHEMI_DATA[recommendation.testType];
-
-    if (!config || !data) return null;
-
-    const IconComponent = Icons[config.icon];
-
-    // 개인화 추천 메시지 결정
-    const getRecommendationMessage = () => {
-        if (recommendation.reason === 'retest') return '다시 해볼까요?';
-        if (recommendation.description) return recommendation.description;
-        if (incompleteCount > 0) return `${incompleteCount}개 테스트가 남았어요`;
-        return '다음 추천';
-    };
-
-    return (
-        <div className="mt-5 w-full">
-            <div className="p-0.5 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-xl border border-white/60">
-                <div className="bg-white/70 rounded-[10px] p-3">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                            {recommendation.label || (recommendation.reason === 'retest' ? '다시 해볼까요?' : '다음 추천')}
-                        </span>
-                        <span className="text-xs font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
-                            {completedCount}/{completedCount + incompleteCount} 완료
-                        </span>
-                    </div>
-
-                    <button
-                        onClick={() => onSelectTest(recommendation.testType)}
-                        className="w-full flex items-center gap-3 text-left group"
-                    >
-                        {IconComponent && (
-                            <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                                <IconComponent mood="happy" className="w-7 h-7" />
-                            </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
-                            <p className="text-xs text-slate-400 truncate">
-                                {recommendation.reason === 'new' ? '아직 안 해본 테스트예요!' : data.subtitle}
-                            </p>
-                        </div>
-                        <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all flex-shrink-0">
-                            <ArrowRight className="w-3 h-3" />
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <button
-                onClick={onGoHome}
-                className="w-full mt-2 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors"
-            >
-                <HomeIcon className="w-3 h-3" />
-                대시보드로 돌아가기
-            </button>
-        </div>
-    );
-};
 
 export default function Home() {
     const [view, setView] = useState('dashboard');
@@ -704,24 +306,6 @@ export default function Home() {
                 />
             )}
 
-            {/* PC 우측 사이드바 - 커뮤니티/랭킹/세부테스트 */}
-            {view === 'dashboard' && (
-                <RightSidebar
-                    onOpenCommunity={() => {
-                        setShowCommunity(true);
-                        setActiveNavTab('talk');
-                    }}
-                    onOpenRanking={() => {
-                        setShowRanking(true);
-                        setActiveNavTab('ranking');
-                    }}
-                    onStartTest={(testKey) => {
-                        setActiveNavTab('home');
-                        handleStartTest(testKey);
-                    }}
-                />
-            )}
-
             {/* 태블릿 띠지 탭 + 슬라이드 패널 */}
             {view === 'dashboard' && (
                 <TabletSlidePanel
@@ -735,19 +319,42 @@ export default function Home() {
                 />
             )}
 
-            {/* 메인 콘텐츠 영역: 좌측 Sidebar(flex) + 우측 RightSidebar(fixed w-80) */}
-            <main className="flex-1 min-h-screen flex items-center justify-center p-4 pb-20 lg:pb-4 xl:mr-80">
+            {/* 메인 콘텐츠 영역: 좌측 Sidebar(flex) + 우측 RightSidebar(sticky) */}
+            <main className="flex-1 min-h-screen flex p-4 pb-20 lg:pb-4">
                 {view === 'dashboard' ? (
-                    <Dashboard
-                        onStartTest={(testKey) => {
-                            setActiveNavTab('home');
-                            handleStartTest(testKey);
-                        }}
-                        onContentExplore={() => {
-                            setShowContentExplore(true);
-                            setActiveNavTab('explore');
-                        }}
-                    />
+                    <div className="flex-1 flex justify-center">
+                        {/* 메인 Dashboard + RightSidebar 래퍼 - 함께 중앙 정렬 */}
+                        <div className="flex gap-6 w-full max-w-[1400px]">
+                            {/* 메인 Dashboard */}
+                            <div className="flex-1 min-w-0">
+                            <Dashboard
+                                onStartTest={(testKey) => {
+                                    setActiveNavTab('home');
+                                    handleStartTest(testKey);
+                                }}
+                                onContentExplore={() => {
+                                    setShowContentExplore(true);
+                                    setActiveNavTab('explore');
+                                }}
+                            />
+                            </div>
+                            {/* PC 우측 사이드바 - 콘텐츠와 함께 중앙 정렬 */}
+                            <RightSidebar
+                                onOpenCommunity={() => {
+                                    setShowCommunity(true);
+                                    setActiveNavTab('talk');
+                                }}
+                                onOpenRanking={() => {
+                                    setShowRanking(true);
+                                    setActiveNavTab('ranking');
+                                }}
+                                onStartTest={(testKey) => {
+                                    setActiveNavTab('home');
+                                    handleStartTest(testKey);
+                                }}
+                            />
+                        </div>
+                    </div>
                 ) : (
                     <div className="glass-card rounded-[2.5rem] overflow-hidden flex flex-col relative transition-all duration-500 w-full h-full max-w-md min-h-[750px] shadow-2xl border border-white/50">
                         {/* Aurora Background Mesh */}
