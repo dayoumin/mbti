@@ -10,6 +10,12 @@
 - 중복 코드 컴포넌트 추출 (CareButtonWithModal)
 - ESC 키 핸들링 및 aria 속성 추가
 
+**3차 수정 (AI 리뷰 피드백 반영)**:
+- ESC 키 중첩 처리 수정: CareHome에서 ESC 시 부모 프로필 모달이 함께 닫히는 버그 해결
+- useEscapeKey 훅에 stopPropagation 옵션 추가
+- E2E 테스트에 부모 모달 유지 검증 추가
+- **포커스 트랩 구현**: useFocusTrap 훅 추가 (포커스 복귀 + Tab 키 순환)
+
 **배경**:
 - 기존에 `showCare` 상태와 CareHome 오버레이가 page.tsx에 있었으나, 탭에서 제거 후 진입 경로가 없어 dead code 상태였음
 - 업계 관행 참고: 케어/트래킹 기능은 프로필 내부에 통합하거나 홈 위젯으로 노출하는 것이 일반적
@@ -23,12 +29,35 @@
 **변경**: CareButtonWithModal 공통 컴포넌트 추출 + TabPet/TabLife에서 사용
 
 ```tsx
-// 354-392라인: 공통 컴포넌트
+// 23-43라인: useEscapeKey 훅 (stopPropagation 옵션 추가)
+function useEscapeKey(
+  onClose: (() => void) | undefined,
+  isActive: boolean = true,
+  options: { stopPropagation?: boolean } = {}
+) {
+  useEffect(() => {
+    if (!onClose || !isActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        // 중첩 모달에서 ESC가 부모까지 전파되지 않도록 함
+        if (options.stopPropagation) {
+          e.stopImmediatePropagation();
+        }
+        onClose();
+      }
+    };
+    // capture: true로 먼저 캡처하여 다른 핸들러보다 우선 처리
+    window.addEventListener('keydown', handleKeyDown, options.stopPropagation ? true : false);
+    return () => window.removeEventListener('keydown', handleKeyDown, options.stopPropagation ? true : false);
+  }, [onClose, isActive, options.stopPropagation]);
+}
+
+// 365-402라인: 공통 컴포넌트
 function CareButtonWithModal({ label = '케어 관리', className = '' }: CareButtonProps) {
   const [showCareHome, setShowCareHome] = useState(false);
 
-  // ESC 키로 모달 닫기 (커스텀 훅 사용)
-  useEscapeKey(() => setShowCareHome(false), showCareHome);
+  // ESC 키로 모달 닫기 (부모 모달까지 닫히지 않도록 stopPropagation)
+  useEscapeKey(() => setShowCareHome(false), showCareHome, { stopPropagation: true });
 
   return (
     <>
@@ -62,9 +91,10 @@ function CareButtonWithModal({ label = '케어 관리', className = '' }: CareBu
 - [x] aria 속성 추가 (role="dialog", aria-modal, aria-label)
 - [x] 중복 코드 컴포넌트로 추출
 - [x] TabLife에도 케어 진입 버튼 추가 (식물 결과 있을 때)
+- [x] **ESC 중첩 처리 버그 수정**: CareHome ESC 시 부모 FullProfile도 닫히는 문제 해결
+- [x] **포커스 트랩 구현**: useFocusTrap 훅으로 키보드 포커스가 모달 밖으로 나가지 않음 + 닫힐 때 이전 포커스 복귀
 
-**남은 리뷰 포인트**:
-- [ ] 포커스 트랩은 미구현 (복잡도 대비 우선순위 낮음으로 판단)
+**모든 리뷰 포인트 해결 완료** ✅
 
 ---
 
@@ -148,13 +178,13 @@ const careTabGuide = careType === 'plant' ? '라이프' : '동물';
 ✓ 프로필 > 동물 탭 > 케어 관리 버튼이 보임
 - 프로필 > 라이프 탭 > 식물 결과가 있으면 케어 버튼 표시 (스킵 - localStorage 형식 복잡)
 ✓ 케어 관리 버튼 클릭 시 CareHome 오버레이 표시
-✓ ESC 키로 CareHome 닫기
+✓ ESC 키로 CareHome 닫기 + 부모 프로필 모달 유지 검증 (ESC 중첩 처리)
 ✓ 프로필로 돌아가기 버튼으로 CareHome 닫기
 ✓ 동물 테스트 결과에서 "동물 탭" 안내 표시
 - 식물 테스트 결과에서 "라이프 탭" 안내 표시 (스킵)
 ✓ CareHome 모달에 aria 속성이 있음
 
-결과: 6 passed, 2 skipped
+결과: 18 passed (3 viewports × 6 tests), 6 skipped
 ```
 
 ---
@@ -165,6 +195,7 @@ const careTabGuide = careType === 'plant' ? '라이프' : '동물';
 - [x] 프로필 > 라이프 탭 > 식물 결과 있을 때 "케어 관리" 버튼 표시 ✅ (코드 확인)
 - [x] CareHome에서 "프로필로 돌아가기" 클릭 → 정상 닫힘 ✅ (e2e)
 - [x] ESC 키로 CareHome 닫힘 ✅ (e2e)
+- [x] **ESC 키 중첩 처리**: CareHome 닫힘 후 부모 프로필 모달 유지 ✅ (e2e)
 - [x] 동물 테스트 결과에서 케어 프로필 생성 → "동물 탭" 안내 ✅ (e2e)
 - [ ] 식물 테스트 결과에서 케어 프로필 생성 → "라이프 탭" 안내 (수동 확인 필요)
 - [x] 빌드 성공 확인 (`npm run build`) ✅
@@ -215,5 +246,7 @@ tests/e2e/care-refactored.test.ts                 # 신규 E2E 테스트 (6 pass
 ---
 
 *생성일: 2024-12-21*
+*최종 수정: 2024-12-21 (포커스 트랩 추가)*
 *작성: Claude Opus 4.5*
-*테스트 결과: 6/8 통과 (2 스킵), 빌드 성공*
+*테스트 결과: 18 passed, 6 skipped (3 viewports × 8 tests), 빌드 성공*
+*상태: 모든 리뷰 포인트 해결 완료* ✅

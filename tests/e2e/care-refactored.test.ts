@@ -129,6 +129,10 @@ test.describe('프로필에서 케어 진입 (리팩토링 후)', () => {
 
     // CareHome이 닫혔는지 확인
     await expect(careDialog).not.toBeVisible();
+
+    // 부모 프로필 모달은 여전히 열려있어야 함 (ESC 중첩 처리 검증)
+    const profileDialog = page.locator('[role="dialog"][aria-label="내 프로필"]');
+    await expect(profileDialog).toBeVisible();
   });
 
   test('프로필로 돌아가기 버튼으로 CareHome 닫기', async ({ page, viewport }) => {

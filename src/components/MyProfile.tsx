@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useProfile } from '@/hooks/useProfile';
 import {
@@ -40,6 +40,70 @@ function useEscapeKey(
     window.addEventListener('keydown', handleKeyDown, options.stopPropagation ? true : false);
     return () => window.removeEventListener('keydown', handleKeyDown, options.stopPropagation ? true : false);
   }, [onClose, isActive, options.stopPropagation]);
+}
+
+// ============================================================================
+// 커스텀 훅 - 포커스 트랩 (접근성)
+// ============================================================================
+
+function useFocusTrap(isActive: boolean) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // 모달 열릴 때 이전 포커스 저장 및 첫 번째 요소로 포커스 이동
+  useEffect(() => {
+    if (!isActive) return;
+
+    // 현재 포커스된 요소 저장
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    // 첫 번째 포커스 가능한 요소로 이동
+    const container = containerRef.current;
+    if (container) {
+      const focusableElements = container.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
+    }
+
+    // 모달 닫힐 때 이전 포커스로 복귀
+    return () => {
+      if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
+        previousFocusRef.current.focus();
+      }
+    };
+  }, [isActive]);
+
+  // Tab 키로 포커스가 모달 밖으로 나가지 않도록 트랩
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const focusableElements = container.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Shift+Tab: 첫 번째 요소에서 마지막으로 이동
+    if (e.shiftKey && document.activeElement === firstElement) {
+      e.preventDefault();
+      lastElement.focus();
+    }
+    // Tab: 마지막 요소에서 첫 번째로 이동
+    else if (!e.shiftKey && document.activeElement === lastElement) {
+      e.preventDefault();
+      firstElement.focus();
+    }
+  }, []);
+
+  return { containerRef, handleKeyDown };
 }
 
 // ============================================================================
@@ -368,6 +432,9 @@ function CareButtonWithModal({ label = '케어 관리', className = '' }: CareBu
   // ESC 키로 모달 닫기 (부모 모달까지 닫히지 않도록 stopPropagation)
   useEscapeKey(() => setShowCareHome(false), showCareHome, { stopPropagation: true });
 
+  // 포커스 트랩 (접근성: 키보드 포커스가 모달 밖으로 나가지 않음)
+  const { containerRef, handleKeyDown } = useFocusTrap(showCareHome);
+
   return (
     <>
       <button
@@ -380,6 +447,8 @@ function CareButtonWithModal({ label = '케어 관리', className = '' }: CareBu
 
       {showCareHome && (
         <div
+          ref={containerRef}
+          onKeyDown={handleKeyDown}
           className="fixed inset-0 z-[60] bg-[#F0F2F5] overflow-y-auto"
           role="dialog"
           aria-modal="true"
@@ -390,7 +459,6 @@ function CareButtonWithModal({ label = '케어 관리', className = '' }: CareBu
               <button
                 onClick={() => setShowCareHome(false)}
                 className="flex items-center gap-2 text-slate-600 hover:text-slate-800 font-medium"
-                autoFocus
               >
                 ← 프로필로 돌아가기
               </button>
