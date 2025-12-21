@@ -34,10 +34,11 @@ test.describe('FullProfile 모달', () => {
   });
 
   test('프로필 더보기 버튼으로 모달 열기', async ({ page }) => {
-    // 프로필 더보기 버튼 클릭
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    // 프로필 카드 내의 더보기 버튼만 선택 (Lv. 텍스트가 있는 섹션)
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -49,9 +50,10 @@ test.describe('FullProfile 모달', () => {
   });
 
   test('ESC 키로 FullProfile 모달 닫기', async ({ page }) => {
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -69,9 +71,10 @@ test.describe('FullProfile 모달', () => {
   });
 
   test('닫기 버튼으로 FullProfile 모달 닫기', async ({ page }) => {
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -87,9 +90,10 @@ test.describe('FullProfile 모달', () => {
   });
 
   test('탭 네비게이션 동작', async ({ page }) => {
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -134,10 +138,11 @@ test.describe('CareButtonWithModal', () => {
   });
 
   test('동물 탭에서 반려생물 케어 관리 버튼 표시', async ({ page }) => {
-    // 프로필 더보기
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    // 프로필 카드 내의 더보기 버튼
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -153,9 +158,10 @@ test.describe('CareButtonWithModal', () => {
   });
 
   test('케어 관리 버튼 클릭으로 CareHome 열기', async ({ page }) => {
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -176,9 +182,10 @@ test.describe('CareButtonWithModal', () => {
   });
 
   test('ESC 키로 CareHome 모달 닫기', async ({ page }) => {
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -201,9 +208,10 @@ test.describe('CareButtonWithModal', () => {
   });
 
   test('뒤로가기 버튼으로 CareHome 모달 닫기', async ({ page }) => {
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -246,9 +254,10 @@ test.describe('케어 진입 통합 (동물 탭)', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -282,9 +291,10 @@ test.describe('케어 진입 통합 (동물 탭)', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 
@@ -322,9 +332,10 @@ test.describe('접근성', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    const moreButton = page.locator('button').filter({ hasText: /더보기/ });
+    const profileCard = page.locator('div:has-text("Lv.")').first();
+    const moreButton = profileCard.locator('button:has-text("더보기")').first();
 
-    if (await moreButton.isVisible()) {
+    if (await moreButton.count() > 0 && await moreButton.isVisible()) {
       await moreButton.click();
       await page.waitForTimeout(300);
 

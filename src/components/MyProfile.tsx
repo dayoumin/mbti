@@ -20,15 +20,26 @@ import CareHome from '@/components/care/CareHome';
 // 커스텀 훅 - ESC 키 핸들링
 // ============================================================================
 
-function useEscapeKey(onClose: (() => void) | undefined, isActive: boolean = true) {
+function useEscapeKey(
+  onClose: (() => void) | undefined,
+  isActive: boolean = true,
+  options: { stopPropagation?: boolean } = {}
+) {
   useEffect(() => {
     if (!onClose || !isActive) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        // 중첩 모달에서 ESC가 부모까지 전파되지 않도록 함
+        if (options.stopPropagation) {
+          e.stopImmediatePropagation();
+        }
+        onClose();
+      }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, isActive]);
+    // capture: true로 먼저 캡처하여 다른 핸들러보다 우선 처리
+    window.addEventListener('keydown', handleKeyDown, options.stopPropagation ? true : false);
+    return () => window.removeEventListener('keydown', handleKeyDown, options.stopPropagation ? true : false);
+  }, [onClose, isActive, options.stopPropagation]);
 }
 
 // ============================================================================
@@ -354,8 +365,8 @@ interface CareButtonProps {
 function CareButtonWithModal({ label = '케어 관리', className = '' }: CareButtonProps) {
   const [showCareHome, setShowCareHome] = useState(false);
 
-  // ESC 키로 모달 닫기
-  useEscapeKey(() => setShowCareHome(false), showCareHome);
+  // ESC 키로 모달 닫기 (부모 모달까지 닫히지 않도록 stopPropagation)
+  useEscapeKey(() => setShowCareHome(false), showCareHome, { stopPropagation: true });
 
   return (
     <>
