@@ -592,6 +592,69 @@ export const MARKETING_PHASE_3: MarketingPhase = {
 };
 
 // ============================================================================
+// Phase 4: 글로벌 확장 (다국어 지원)
+// ============================================================================
+
+export const MARKETING_PHASE_4: MarketingPhase = {
+  id: 'phase-4',
+  title: 'Phase 4: 글로벌 확장',
+  description: '다국어 지원 + 해외 시장 진출',
+  timeframe: '12개월+',
+  goal: '해외 사용자 30% 달성',
+  budget: '월 100-200만원',
+  activities: [
+    {
+      id: 'i18n-infra',
+      name: '다국어 인프라 구축',
+      channel: 'all',
+      description: 'next-intl 기반 i18n 시스템 구축, 언어 자동 감지',
+      priority: 'high',
+      status: 'planned',
+    },
+    {
+      id: 'english-first',
+      name: '영어 버전 우선 출시',
+      channel: 'all',
+      description: 'UI/테스트/결과 영어 번역 (1차 글로벌 진출)',
+      priority: 'high',
+      status: 'planned',
+    },
+    {
+      id: 'japanese-version',
+      name: '일본어 버전',
+      channel: 'all',
+      description: '일본 시장 공략 (성격 테스트 인기 시장)',
+      priority: 'medium',
+      status: 'planned',
+    },
+    {
+      id: 'sea-languages',
+      name: '동남아 언어 확장',
+      channel: 'all',
+      description: '태국어, 베트남어, 인도네시아어 (바이럴 잠재력 높음)',
+      priority: 'medium',
+      status: 'planned',
+    },
+    {
+      id: 'global-sns',
+      name: '글로벌 SNS 채널',
+      channel: 'tiktok',
+      description: '영어 틱톡 계정 운영, 글로벌 트렌드 활용',
+      priority: 'high',
+      status: 'planned',
+    },
+    {
+      id: 'localized-content',
+      name: '현지화 콘텐츠',
+      channel: 'all',
+      description: '단순 번역이 아닌 문화적 맥락 반영 콘텐츠',
+      priority: 'medium',
+      status: 'planned',
+    },
+  ],
+};
+
+// ============================================================================
 // 콘텐츠 캘린더 템플릿
 // ============================================================================
 
@@ -674,6 +737,7 @@ export const MARKETING_KPIS = [
     phase1: '1,000',
     phase2: '10,000',
     phase3: '100,000',
+    phase4: '500,000+',
   },
   {
     id: 'followers',
@@ -681,6 +745,7 @@ export const MARKETING_KPIS = [
     phase1: '1,000',
     phase2: '10,000',
     phase3: '50,000',
+    phase4: '200,000+',
   },
   {
     id: 'share-rate',
@@ -688,6 +753,7 @@ export const MARKETING_KPIS = [
     phase1: '5%',
     phase2: '10%',
     phase3: '15%',
+    phase4: '20%',
   },
   {
     id: 'organic-ratio',
@@ -695,6 +761,7 @@ export const MARKETING_KPIS = [
     phase1: '50%',
     phase2: '60%',
     phase3: '70%',
+    phase4: '75%',
   },
   {
     id: 'cac',
@@ -702,6 +769,23 @@ export const MARKETING_KPIS = [
     phase1: '0원',
     phase2: '<100원',
     phase3: '<50원',
+    phase4: '<30원',
+  },
+  {
+    id: 'global-ratio',
+    name: '해외 사용자 비율',
+    phase1: '-',
+    phase2: '-',
+    phase3: '5%',
+    phase4: '30%+',
+  },
+  {
+    id: 'languages',
+    name: '지원 언어 수',
+    phase1: '1 (한국어)',
+    phase2: '1',
+    phase3: '2 (한/영)',
+    phase4: '5+ (한/영/일/태/베)',
   },
 ];
 
@@ -1062,7 +1146,7 @@ export const MARKETING_STRATEGY = {
   principles: MARKETING_PRINCIPLES,
   contentPillars: CONTENT_PILLARS,
   channels: MARKETING_CHANNELS,
-  phases: [MARKETING_PHASE_1, MARKETING_PHASE_2, MARKETING_PHASE_3],
+  phases: [MARKETING_PHASE_1, MARKETING_PHASE_2, MARKETING_PHASE_3, MARKETING_PHASE_4],
   weeklyTemplate: WEEKLY_CONTENT_TEMPLATE,
   tools: MARKETING_TOOLS,
   kpis: MARKETING_KPIS,
