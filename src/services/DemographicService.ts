@@ -157,8 +157,9 @@ const DEMOGRAPHIC_KEY = 'chemi_demographic';
 
 // ========== 타입 가드 ==========
 
-const VALID_AGE_GROUPS: AgeGroup[] = ['10s', '20s', '30s', '40s+'];
-const VALID_GENDERS: Gender[] = ['male', 'female', 'other'];
+// 유효한 값 배열 (API 검증용으로도 export)
+export const VALID_AGE_GROUPS: readonly AgeGroup[] = ['10s', '20s', '30s', '40s+'];
+export const VALID_GENDERS: readonly Gender[] = ['male', 'female', 'other'];
 
 function isValidAgeGroup(value: unknown): value is AgeGroup {
   return typeof value === 'string' && VALID_AGE_GROUPS.includes(value as AgeGroup);
@@ -401,30 +402,35 @@ class DemographicServiceClass {
   }
 
   // ========== 연령 제한 카테고리 ==========
+  // 참고: 테스트(SubjectKey) 연령 제한은 recommendationPolicy.ts에서 관리
+  // 여기서는 콘텐츠 카테고리(ContentCategory) 연령 제한만 관리
 
   // 연령 제한이 필요한 카테고리 (법적/윤리적 이유)
   private readonly AGE_RESTRICTED_CATEGORIES: Partial<Record<ContentCategory, AgeGroup[]>> = {
-    // 술: 20대 이상만
-    // 'alcohol': ['20s', '30s', '40s+'],
+    alcohol: ['20s', '30s', '40s+'], // 술: 20대 이상만
   };
 
   // 10대에게 부적절한 카테고리 (술 등)
   private readonly ADULT_ONLY_CATEGORIES: ContentCategory[] = [
-    // 현재 alcohol 테스트가 있으면 여기에 추가
+    'alcohol',
   ];
 
   /**
    * 카테고리가 현재 사용자 연령에 적합한지 확인
+   * 안전 우선 정책: 연령 미확인 시 제한된 카테고리 모두 차단
    */
   isCategoryAllowedForAge(category: ContentCategory): boolean {
     const demographic = this.getDemographic();
+    const ageGroup = demographic?.ageGroup;
 
-    // 인구통계 없으면 안전하게 성인 콘텐츠 제외
-    if (!demographic?.ageGroup) {
-      return !this.ADULT_ONLY_CATEGORIES.includes(category);
+    // 연령 제한이 있는 카테고리인지 확인
+    const isRestricted = this.ADULT_ONLY_CATEGORIES.includes(category) ||
+                         category in this.AGE_RESTRICTED_CATEGORIES;
+
+    // 인구통계 없으면 안전하게 제한 카테고리 모두 제외
+    if (!ageGroup) {
+      return !isRestricted;
     }
-
-    const { ageGroup } = demographic;
 
     // 10대면 성인 전용 콘텐츠 제외
     if (ageGroup === '10s' && this.ADULT_ONLY_CATEGORIES.includes(category)) {

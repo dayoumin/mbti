@@ -8,13 +8,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTursoClient } from '@/lib/turso';
 import { cookies } from 'next/headers';
-
-// 유효한 값 화이트리스트
-const VALID_AGE_GROUPS = ['10s', '20s', '30s', '40s+'] as const;
-const VALID_GENDERS = ['male', 'female', 'other'] as const;
-
-type AgeGroup = typeof VALID_AGE_GROUPS[number];
-type Gender = typeof VALID_GENDERS[number];
+import {
+  type AgeGroup,
+  type Gender,
+  VALID_AGE_GROUPS,
+  VALID_GENDERS,
+} from '@/services/DemographicService';
 
 function isValidAgeGroup(value: unknown): value is AgeGroup {
   return typeof value === 'string' && VALID_AGE_GROUPS.includes(value as AgeGroup);

@@ -286,6 +286,141 @@ ageRestrictionTests.forEach(([test, age, expected, desc]) => {
 
 console.log(`\n   통과: ${ageTestPass}/${ageRestrictionTests.length}`);
 
+// 8. 콘텐츠 메타데이터 연령 제한 테스트 (isContentAllowedForAge)
+console.log('\n' + '='.repeat(50));
+console.log('\n8️⃣ 콘텐츠 메타데이터 연령 제한 테스트\n');
+
+const AGE_ORDER = ['10s', '20s', '30s', '40s+'];
+
+function isContentAllowedForAge(content, ageGroup) {
+  const meta = content.meta;
+
+  // 메타데이터 없으면 전체 허용
+  if (!meta) return true;
+
+  // 성인 전용 콘텐츠 체크
+  if (meta.isAdultOnly) {
+    if (!ageGroup || ageGroup === '10s') return false;
+  }
+
+  // 최소 연령 체크 (안전 우선: minAge 있으면 연령 확인 필수)
+  if (meta.minAge) {
+    if (!ageGroup) return false; // 연령 미확인 시 차단
+    const minIndex = AGE_ORDER.indexOf(meta.minAge);
+    const userIndex = AGE_ORDER.indexOf(ageGroup);
+    if (userIndex < minIndex) return false;
+  }
+
+  // 허용 연령 목록 체크
+  if (meta.allowedAges && meta.allowedAges.length > 0) {
+    if (!ageGroup || !meta.allowedAges.includes(ageGroup)) return false;
+  }
+
+  return true;
+}
+
+// 테스트 콘텐츠 샘플
+const testContents = {
+  noMeta: {},
+  adultOnly: { meta: { isAdultOnly: true } },
+  minAge20s: { meta: { minAge: '20s' } },
+  minAge30s: { meta: { minAge: '30s' } },
+  allowedAges2030: { meta: { allowedAges: ['20s', '30s'] } },
+  combined: { meta: { isAdultOnly: true, minAge: '20s' } },
+};
+
+const contentAgeTests = [
+  // 메타데이터 없음 → 전체 허용
+  [testContents.noMeta, undefined, true, '메타 없음 + 미확인 → 허용 ✓'],
+  [testContents.noMeta, '10s', true, '메타 없음 + 10대 → 허용 ✓'],
+
+  // isAdultOnly
+  [testContents.adultOnly, undefined, false, 'isAdultOnly + 미확인 → 차단 ❌'],
+  [testContents.adultOnly, '10s', false, 'isAdultOnly + 10대 → 차단 ❌'],
+  [testContents.adultOnly, '20s', true, 'isAdultOnly + 20대 → 허용 ✓'],
+
+  // minAge (핵심 테스트 - 이전 리뷰 지적 사항)
+  [testContents.minAge20s, undefined, false, 'minAge:20s + 미확인 → 차단 ❌ (수정됨)'],
+  [testContents.minAge20s, '10s', false, 'minAge:20s + 10대 → 차단 ❌'],
+  [testContents.minAge20s, '20s', true, 'minAge:20s + 20대 → 허용 ✓'],
+  [testContents.minAge20s, '30s', true, 'minAge:20s + 30대 → 허용 ✓'],
+  [testContents.minAge30s, '20s', false, 'minAge:30s + 20대 → 차단 ❌'],
+  [testContents.minAge30s, '30s', true, 'minAge:30s + 30대 → 허용 ✓'],
+
+  // allowedAges
+  [testContents.allowedAges2030, undefined, false, 'allowedAges:[20s,30s] + 미확인 → 차단 ❌'],
+  [testContents.allowedAges2030, '10s', false, 'allowedAges:[20s,30s] + 10대 → 차단 ❌'],
+  [testContents.allowedAges2030, '20s', true, 'allowedAges:[20s,30s] + 20대 → 허용 ✓'],
+  [testContents.allowedAges2030, '40s+', false, 'allowedAges:[20s,30s] + 40대 → 차단 ❌'],
+];
+
+let contentTestPass = 0;
+contentAgeTests.forEach(([content, age, expected, desc]) => {
+  const result = isContentAllowedForAge(content, age);
+  const pass = result === expected;
+  if (pass) contentTestPass++;
+  console.log(`   ${pass ? '✅' : '❌'} ${desc}`);
+});
+
+console.log(`\n   통과: ${contentTestPass}/${contentAgeTests.length}`);
+
+// 9. 카테고리 연령 제한 테스트 (isCategoryAllowedForAge)
+console.log('\n' + '='.repeat(50));
+console.log('\n9️⃣ 카테고리 연령 제한 테스트\n');
+
+const AGE_RESTRICTED_CATEGORIES = {
+  alcohol: ['20s', '30s', '40s+'],
+};
+const ADULT_ONLY_CATEGORIES = ['alcohol'];
+
+function isCategoryAllowedForAge(category, ageGroup) {
+  // 연령 제한이 있는 카테고리인지 확인
+  const isRestricted = ADULT_ONLY_CATEGORIES.includes(category) ||
+                       category in AGE_RESTRICTED_CATEGORIES;
+
+  // 인구통계 없으면 안전하게 제한 카테고리 모두 제외
+  if (!ageGroup) {
+    return !isRestricted;
+  }
+
+  // 10대면 성인 전용 콘텐츠 제외
+  if (ageGroup === '10s' && ADULT_ONLY_CATEGORIES.includes(category)) {
+    return false;
+  }
+
+  // 연령 제한 체크
+  const allowedAges = AGE_RESTRICTED_CATEGORIES[category];
+  if (allowedAges && !allowedAges.includes(ageGroup)) {
+    return false;
+  }
+
+  return true;
+}
+
+const categoryAgeTests = [
+  // 일반 카테고리
+  ['coffee', undefined, true, 'coffee + 미확인 → 허용 ✓'],
+  ['coffee', '10s', true, 'coffee + 10대 → 허용 ✓'],
+  ['personality', undefined, true, 'personality + 미확인 → 허용 ✓'],
+
+  // 제한 카테고리 (alcohol)
+  ['alcohol', undefined, false, 'alcohol + 미확인 → 차단 ❌ (수정됨)'],
+  ['alcohol', '10s', false, 'alcohol + 10대 → 차단 ❌'],
+  ['alcohol', '20s', true, 'alcohol + 20대 → 허용 ✓'],
+  ['alcohol', '30s', true, 'alcohol + 30대 → 허용 ✓'],
+  ['alcohol', '40s+', true, 'alcohol + 40대 → 허용 ✓'],
+];
+
+let categoryTestPass = 0;
+categoryAgeTests.forEach(([category, age, expected, desc]) => {
+  const result = isCategoryAllowedForAge(category, age);
+  const pass = result === expected;
+  if (pass) categoryTestPass++;
+  console.log(`   ${pass ? '✅' : '❌'} ${desc}`);
+});
+
+console.log(`\n   통과: ${categoryTestPass}/${categoryAgeTests.length}`);
+
 // 결과 요약
 console.log('\n' + '='.repeat(50));
 console.log('\n📊 테스트 결과 요약\n');
@@ -294,5 +429,19 @@ console.log(`   ✅ 시드 매칭: ${seedMatches}개, 해시 폴백: ${seedMisse
 console.log(`   ✅ 해시 일관성: 모든 테스트 통과`);
 console.log(`   ✅ 퍼센트 범위: 10-50% 정상`);
 console.log(`   ✅ 콘텐츠 추천: 연령/성별별 맞춤 추천 정상`);
-console.log(`   ✅ 연령 제한: ${ageTestPass}/${ageRestrictionTests.length} 통과`);
-console.log(`\n🎉 모든 테스트 완료!\n`);
+console.log(`   ✅ 테스트 연령 제한: ${ageTestPass}/${ageRestrictionTests.length} 통과`);
+console.log(`   ✅ 콘텐츠 메타 연령 제한: ${contentTestPass}/${contentAgeTests.length} 통과`);
+console.log(`   ✅ 카테고리 연령 제한: ${categoryTestPass}/${categoryAgeTests.length} 통과`);
+
+// 전체 통과 여부 확인
+const allPassed = passCount === slugTests.length &&
+                  ageTestPass === ageRestrictionTests.length &&
+                  contentTestPass === contentAgeTests.length &&
+                  categoryTestPass === categoryAgeTests.length;
+
+if (allPassed) {
+  console.log(`\n🎉 모든 테스트 완료!\n`);
+} else {
+  console.log(`\n⚠️ 일부 테스트 실패 - 위 결과 확인 필요\n`);
+  process.exit(1);
+}
