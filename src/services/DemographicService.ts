@@ -56,13 +56,14 @@ interface AgeDistribution {
 }
 
 // 결과명을 슬러그(ID)로 변환 - 표시명 변경에도 안정적
+// 예: "철학 냥이" → "철학-냥이", "열정적🔥리더형" → "열정적-리더형"
 function toResultSlug(name: string): string {
   return name
     .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w가-힣-]/g, '') // 특수문자/이모지 제거
-    .replace(/-+/g, '-') // 연속 하이픈 제거
-    .replace(/^-|-$/g, ''); // 앞뒤 하이픈 제거
+    .replace(/[^\w\s가-힣-]/g, '-') // 특수문자/이모지 → 하이픈 (먼저 처리)
+    .replace(/\s+/g, '-')           // 공백 → 하이픈
+    .replace(/-+/g, '-')            // 연속 하이픈 제거
+    .replace(/^-|-$/g, '');         // 앞뒤 하이픈 제거
 }
 
 // 테스트별 시드 데이터 (슬러그 기반 키 사용)
@@ -156,7 +157,7 @@ const DEMOGRAPHIC_KEY = 'chemi_demographic';
 // ========== DemographicService Class ==========
 
 class DemographicServiceClass {
-  // 사용자 인구통계 저장
+  // 사용자 인구통계 저장 (localStorage + 서버)
   saveDemographic(data: Partial<DemographicData>): void {
     const existing = this.getDemographic();
     const updated: DemographicData = {
@@ -169,9 +170,30 @@ class DemographicServiceClass {
       try {
         localStorage.setItem(DEMOGRAPHIC_KEY, JSON.stringify(updated));
       } catch (e) {
-        // Safari 프라이빗 모드 또는 스토리지 Quota 초과 시 무시
         console.warn('Failed to save demographic data:', e);
       }
+
+      // 연령대와 성별 둘 다 있으면 서버에도 저장
+      if (updated.ageGroup && updated.gender) {
+        this.syncToServer(updated).catch(console.warn);
+      }
+    }
+  }
+
+  // 서버에 인구통계 저장 (비동기, 실패해도 무시)
+  private async syncToServer(data: DemographicData): Promise<void> {
+    try {
+      await fetch('/api/demographic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ageGroup: data.ageGroup,
+          gender: data.gender,
+          source: data.source,
+        }),
+      });
+    } catch {
+      // 서버 저장 실패해도 로컬은 저장됨, 무시
     }
   }
 
