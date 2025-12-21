@@ -56,7 +56,7 @@ export interface SeasonSummary {
     categoryName: string;
     totalVotes: number;
   }>;
-  startDate: string;
+  startDate?: string;  // event 시즌은 undefined
   endDate?: string;
 }
 
@@ -140,9 +140,11 @@ interface StorageProvider {
   name: string;
   saveVote(vote: RankingVote): Promise<SaveResult>;
   getVotes(seasonId: string, categoryId?: string): Promise<RankingVote[]>;
+  getAllVotes(): Promise<RankingVote[]>;  // 전체 투표 조회 (모든 시즌)
   getVotesByUser(userId: string): Promise<RankingVote[]>;
   getStats(seasonId: string, categoryId: string): Promise<RankingStats | null>;
   getAllStats(seasonId: string): Promise<RankingStats[]>;
+  getAvailableSeasons(): Promise<string[]>;  // 데이터가 있는 시즌 목록
 }
 
 const VOTES_KEY = 'chemi_ranking_votes';
@@ -199,6 +201,14 @@ const localStorageProvider: StorageProvider = {
     }
   },
 
+  async getAllVotes(): Promise<RankingVote[]> {
+    try {
+      return JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
+    } catch {
+      return [];
+    }
+  },
+
   async getVotesByUser(userId: string): Promise<RankingVote[]> {
     try {
       const votes = JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
@@ -222,6 +232,30 @@ const localStorageProvider: StorageProvider = {
     try {
       const allStats = JSON.parse(localStorage.getItem(STATS_KEY) || '{}') as Record<string, RankingStats>;
       return Object.values(allStats).filter(s => s.seasonId === seasonId);
+    } catch {
+      return [];
+    }
+  },
+
+  async getAvailableSeasons(): Promise<string[]> {
+    try {
+      const votes = JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
+      const seasons = new Set(votes.map(v => v.seasonId));
+      // 시즌 정렬: 연도 내림차순 → 분기 내림차순 (2025-Q4 > 2025-Q1 > 2024-yearly)
+      return Array.from(seasons).sort((a, b) => {
+        const [yearA, typeA] = a.split('-');
+        const [yearB, typeB] = b.split('-');
+        // 연도 비교 (내림차순)
+        if (yearA !== yearB) return parseInt(yearB, 10) - parseInt(yearA, 10);
+        // 같은 연도 내 정렬 (내림차순: Q4 > Q3 > Q2 > Q1 > yearly > event)
+        // priority가 높을수록 먼저 오도록 내림차순 정렬
+        const priority = (t: string) => {
+          if (t.startsWith('Q')) return 10 + parseInt(t.replace('Q', ''), 10); // Q4=14, Q1=11
+          if (t === 'yearly') return 5;
+          return 0; // event
+        };
+        return priority(typeB) - priority(typeA); // 내림차순
+      });
     } catch {
       return [];
     }
@@ -403,20 +437,106 @@ class RankingServiceClass {
     });
   }
 
+  // ========== 과거 시즌 조회 ==========
+
+  /**
+   * 특정 시즌의 요약 정보 조회 (seasonId 직접 지정)
+   */
+  async getSeasonSummaryById(seasonId: string): Promise<SeasonSummary> {
+    const allStats = await this.provider.getAllStats(seasonId);
+
+    // 전체 투표 수 계산
+    const totalVotes = allStats.reduce((sum, s) => sum + s.totalVotes, 0);
+
+    // 참여자 수 계산 (유니크 유저)
+    const votes = await this.provider.getVotes(seasonId);
+    const uniqueUsers = new Set(votes.map(v => v.userId));
+
+    // 카테고리별 투표 수 정렬
+    const topCategories = allStats
+      .map(s => ({
+        categoryId: s.categoryId,
+        categoryName: getCategoryName(s.categoryId),
+        totalVotes: s.totalVotes,
+      }))
+      .sort((a, b) => b.totalVotes - a.totalVotes)
+      .slice(0, 5);
+
+    // seasonId에서 시즌 타입 추출
+    const seasonType = this.parseSeasonType(seasonId);
+
+    return {
+      seasonId,
+      seasonType,
+      seasonName: getSeasonName(seasonId),
+      totalVotes,
+      participantCount: uniqueUsers.size,
+      topCategories,
+      startDate: this.getSeasonStartDateFromId(seasonId),
+      endDate: this.getSeasonEndDateFromId(seasonId),
+    };
+  }
+
+  /**
+   * 사용 가능한 시즌 목록 조회 (데이터가 있는 시즌만)
+   */
+  async getAvailableSeasons(): Promise<Array<{ seasonId: string; seasonName: string; seasonType: SeasonType }>> {
+    const seasonIds = await this.provider.getAvailableSeasons();
+    return seasonIds.map(seasonId => ({
+      seasonId,
+      seasonName: getSeasonName(seasonId),
+      seasonType: this.parseSeasonType(seasonId),
+    }));
+  }
+
+  /**
+   * 연간 변동 데이터 조회 (마케팅용)
+   * 지정된 연도의 분기별 투표 수 추이 반환
+   */
+  async getYearlyTrend(year: number): Promise<Array<{
+    seasonId: string;
+    seasonName: string;
+    totalVotes: number;
+    participantCount: number;
+  }>> {
+    const quarters = [`${year}-Q1`, `${year}-Q2`, `${year}-Q3`, `${year}-Q4`];
+
+    // 병렬 처리로 성능 개선 (원격 provider 사용 시 중요)
+    const results = await Promise.all(
+      quarters.map(async (seasonId) => {
+        const votes = await this.provider.getVotes(seasonId);
+        const uniqueUsers = new Set(votes.map(v => v.userId));
+        return {
+          seasonId,
+          seasonName: getSeasonName(seasonId),
+          totalVotes: votes.length,
+          participantCount: uniqueUsers.size,
+        };
+      })
+    );
+
+    return results;
+  }
+
   // ========== 대시보드용 요약 ==========
 
   async getDashboardStats(): Promise<{
     currentSeason: SeasonSummary;
     totalAllTimeVotes: number;
+    currentSeasonVotes: number;
     mostPopularCategory: string | null;
     mostVotedResult: { name: string; emoji: string; votes: number } | null;
     recentActivity: Array<{ date: string; votes: number }>;
   }> {
     const currentSeason = await this.getSeasonSummary('quarterly');
 
-    // 전체 투표 수 계산 (모든 시즌, 모든 사용자)
-    const allSeasonVotes = await this.provider.getVotes(getCurrentSeasonId('quarterly'));
-    const totalAllTimeVotes = allSeasonVotes.length;
+    // 전체 투표 수 계산 (모든 시즌)
+    const allVotes = await this.provider.getAllVotes();
+    const totalAllTimeVotes = allVotes.length;
+
+    // 현재 시즌 투표 수
+    const currentSeasonVotes = await this.provider.getVotes(getCurrentSeasonId('quarterly'));
+    const currentSeasonVotesCount = currentSeasonVotes.length;
 
     // 가장 인기 있는 카테고리
     const categorySummaries = await this.getAllCategorySummaries('quarterly');
@@ -440,16 +560,58 @@ class RankingServiceClass {
     }
 
     // 최근 7일 활동
-    const votes = await this.provider.getVotes(getCurrentSeasonId('quarterly'));
-    const recentActivity = this.calculateRecentActivity(votes, 7);
+    const recentActivity = this.calculateRecentActivity(currentSeasonVotes, 7);
 
     return {
       currentSeason,
       totalAllTimeVotes,
+      currentSeasonVotes: currentSeasonVotesCount,
       mostPopularCategory,
       mostVotedResult,
       recentActivity,
     };
+  }
+
+  // ========== seasonId 파싱 유틸리티 ==========
+
+  private parseSeasonType(seasonId: string): SeasonType {
+    if (seasonId.includes('yearly')) return 'yearly';
+    if (seasonId.includes('Q')) return 'quarterly';
+    if (seasonId.includes('event')) return 'event';
+    return 'yearly';
+  }
+
+  private getSeasonStartDateFromId(seasonId: string): string | undefined {
+    // 예: "2024-Q1" → "2024-01-01", "2024-yearly" → "2024-01-01"
+    const parts = seasonId.split('-');
+    const year = parseInt(parts[0], 10);
+
+    if (seasonId.includes('yearly')) {
+      return `${year}-01-01`;
+    }
+    if (seasonId.includes('Q')) {
+      const quarter = parseInt(parts[1].replace('Q', ''), 10);
+      const startMonth = (quarter - 1) * 3 + 1;
+      return `${year}-${String(startMonth).padStart(2, '0')}-01`;
+    }
+    // event의 경우 seasonId에서 날짜를 알 수 없음
+    return undefined;
+  }
+
+  private getSeasonEndDateFromId(seasonId: string): string | undefined {
+    const parts = seasonId.split('-');
+    const year = parseInt(parts[0], 10);
+
+    if (seasonId.includes('yearly')) {
+      return `${year}-12-31`;
+    }
+    if (seasonId.includes('Q')) {
+      const quarter = parseInt(parts[1].replace('Q', ''), 10);
+      const endMonth = quarter * 3;
+      const lastDay = new Date(year, endMonth, 0).getDate();
+      return `${year}-${String(endMonth).padStart(2, '0')}-${lastDay}`;
+    }
+    return undefined;
   }
 
   private calculateRecentActivity(
