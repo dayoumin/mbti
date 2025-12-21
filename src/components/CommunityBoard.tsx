@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { MessageCircle, Heart, Share2, Search, Filter, Plus, ChevronRight, Flame, Users, TrendingUp, Hash, Award, Sparkles, PenSquare } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { MessageCircle, Heart, Share2, Search, Filter, ChevronRight, Flame, TrendingUp, Hash, Award, Sparkles, PenSquare, ArrowUp, ArrowDown } from 'lucide-react';
 import CommentSystem from './CommentSystem';
 import { MOCK_COMMUNITY_POSTS, POST_CATEGORY_LABELS, getPostCategoryLabel, getPostCategoryStyle, type PostCategory } from '@/data/content/community';
+import { SUBJECT_CONFIG } from '@/data/config';
+import { CHEMI_DATA } from '@/data/index';
+import { getIconComponent } from '@/utils';
 
 type CategoryKey = 'all' | PostCategory;
 
@@ -18,12 +21,19 @@ const DAILY_TOPICS = [
   { question: "반려동물과 여행 가본 곳", emoji: "✈️", tags: ["#여행", "#펫프렌들리"] },
 ];
 
-// 오늘 날짜 기반 주제 선택
-const getTodayTopic = () => {
-  const today = new Date();
-  const index = (today.getDate() + today.getMonth()) % DAILY_TOPICS.length;
-  return DAILY_TOPICS[index];
-};
+// 오늘의 주제를 위한 커스텀 훅 (하이드레이션 안전)
+function useTodayTopic() {
+  const [topic, setTopic] = useState(DAILY_TOPICS[0]); // 초기값: 첫 번째 주제
+
+  useEffect(() => {
+    // 클라이언트에서만 날짜 기반 계산 수행
+    const today = new Date();
+    const index = (today.getDate() + today.getMonth()) % DAILY_TOPICS.length;
+    setTopic(DAILY_TOPICS[index]);
+  }, []);
+
+  return topic;
+}
 
 // ============================================================================
 // Mock 활발한 유저 데이터
@@ -38,9 +48,11 @@ const ACTIVE_USERS = [
 // 우측 사이드바 컴포넌트
 // ============================================================================
 function CommunitySidebar({ posts }: { posts: typeof MOCK_COMMUNITY_POSTS }) {
-  const todayTopic = getTodayTopic();
+  const todayTopic = useTodayTopic();
 
   // HOT 게시물 (좋아요 순 TOP 3)
+  // 참고: 현재 Mock 데이터(~5개)에서는 full sort가 충분함
+  // 대규모 데이터(100+) 시 partial selection 또는 서버 사이드 정렬 권장
   const hotPosts = useMemo(() => {
     return [...posts].sort((a, b) => b.likes - a.likes).slice(0, 3);
   }, [posts]);
@@ -60,12 +72,20 @@ function CommunitySidebar({ posts }: { posts: typeof MOCK_COMMUNITY_POSTS }) {
     }));
   }, [posts]);
 
-  // 커뮤니티 통계
+  // 커뮤니티 통계 (하이드레이션 안전: 날짜 계산은 useEffect로 분리)
+  const [todayDateStr, setTodayDateStr] = useState<string>('');
+  useEffect(() => {
+    setTodayDateStr(new Date().toISOString().split('T')[0]);
+  }, []);
+
   const stats = useMemo(() => ({
-    todayPosts: posts.filter(p => p.date === new Date().toISOString().split('T')[0]).length || posts.length,
+    // todayDateStr이 빈 문자열이면 (SSR/초기 렌더) 전체 글 수 표시
+    todayPosts: todayDateStr
+      ? posts.filter(p => p.date === todayDateStr).length || posts.length
+      : posts.length,
     totalLikes: posts.reduce((sum, p) => sum + p.likes, 0),
     totalComments: posts.reduce((sum, p) => sum + p.comments, 0),
-  }), [posts]);
+  }), [posts, todayDateStr]);
 
   return (
     <aside className="hidden xl:block w-80 flex-shrink-0">
@@ -157,7 +177,7 @@ function CommunitySidebar({ posts }: { posts: typeof MOCK_COMMUNITY_POSTS }) {
                 <span className="text-slate-400">({count})</span>
               </button>
             ))}
-            {todayTopic.tags.map(tag => (
+            {todayTopic.tags.map((tag: string) => (
               <button
                 key={tag}
                 className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 text-amber-600 rounded-full text-xs font-bold"
@@ -196,10 +216,232 @@ function CommunitySidebar({ posts }: { posts: typeof MOCK_COMMUNITY_POSTS }) {
 }
 
 // ============================================================================
+// 게시글 상세 우측 사이드바 (PC)
+// ============================================================================
+interface PostDetailSidebarProps {
+  currentPost: typeof MOCK_COMMUNITY_POSTS[0];
+  allPosts: typeof MOCK_COMMUNITY_POSTS;
+  onSelectPost: (id: string) => void;
+  onBack: () => void;
+}
+
+function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack }: PostDetailSidebarProps) {
+  // 같은 카테고리의 다른 글
+  const relatedPosts = useMemo(() => {
+    return allPosts
+      .filter(p => p.category === currentPost.category && p.id !== currentPost.id)
+      .slice(0, 3);
+  }, [allPosts, currentPost]);
+
+  // 인기 게시물 (전체 중 TOP 3, 현재 글 제외)
+  const hotPosts = useMemo(() => {
+    return allPosts
+      .filter(p => p.id !== currentPost.id)
+      .sort((a, b) => b.likes - a.likes)
+      .slice(0, 3);
+  }, [allPosts, currentPost]);
+
+  // 현재 글의 위치 (이전/다음 네비게이션)
+  const currentIndex = allPosts.findIndex(p => p.id === currentPost.id);
+  const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+  const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+
+  // Mock 테스트 결과 배지 (빈 ID 가드 포함)
+  const testBadges = ['🐕 골든리트리버', '☕ 아메리카노', '😺 츤데레냥', '🐹 활발이'];
+  const authorBadgeIndex = currentPost.id?.length > 0
+    ? currentPost.id.charCodeAt(0) % testBadges.length
+    : 0;
+  const authorBadge = testBadges[authorBadgeIndex];
+
+  // 추천 테스트 (글 카테고리 기반)
+  const recommendedTests = useMemo(() => {
+    const testMap: Record<PostCategory, string[]> = {
+      tip: ['cat', 'dog'],
+      qna: ['human', 'petMatch'],
+      boast: ['cat', 'dog', 'rabbit'],
+      general: ['human', 'coffee']
+    };
+    return (testMap[currentPost.category] || ['human']).slice(0, 2);
+  }, [currentPost.category]);
+
+  return (
+    <aside className="hidden xl:block w-72 flex-shrink-0">
+      <div className="sticky top-20 space-y-4">
+        {/* 작성자 정보 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
+              {currentPost.author.charAt(0)}
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-slate-700">{currentPost.author}</p>
+              <p className="text-xs text-indigo-500">{authorBadge}</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-colors">
+              팔로우
+            </button>
+            <button className="flex-1 py-2 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-xs font-bold text-indigo-600 transition-colors">
+              다른 글 보기
+            </button>
+          </div>
+        </section>
+
+        {/* 이전/다음 글 네비게이션 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-3 pb-2">
+            <h3 className="text-sm font-bold text-slate-600 flex items-center gap-1">
+              📖 글 이동
+            </h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {prevPost && (
+              <button
+                onClick={() => onSelectPost(prevPost.id)}
+                className="w-full flex items-center gap-2 p-2.5 bg-slate-50 rounded-lg hover:bg-indigo-50 transition-colors group text-left"
+              >
+                <ArrowUp className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-slate-400">이전 글</p>
+                  <p className="text-xs font-bold text-slate-600 truncate group-hover:text-indigo-600">
+                    {prevPost.title}
+                  </p>
+                </div>
+              </button>
+            )}
+            {nextPost && (
+              <button
+                onClick={() => onSelectPost(nextPost.id)}
+                className="w-full flex items-center gap-2 p-2.5 bg-slate-50 rounded-lg hover:bg-indigo-50 transition-colors group text-left"
+              >
+                <ArrowDown className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-slate-400">다음 글</p>
+                  <p className="text-xs font-bold text-slate-600 truncate group-hover:text-indigo-600">
+                    {nextPost.title}
+                  </p>
+                </div>
+              </button>
+            )}
+            <button
+              onClick={onBack}
+              className="w-full py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              ← 목록으로 돌아가기
+            </button>
+          </div>
+        </section>
+
+        {/* 관련 글 */}
+        {relatedPosts.length > 0 && (
+          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-4 pt-3 pb-2 flex items-center gap-2">
+              <Hash className="w-4 h-4 text-emerald-500" />
+              <h3 className="text-sm font-bold text-slate-600">관련 글</h3>
+            </div>
+            <div className="px-3 pb-3 space-y-2">
+              {relatedPosts.map(post => (
+                <button
+                  key={post.id}
+                  onClick={() => onSelectPost(post.id)}
+                  className="w-full p-2.5 bg-slate-50 rounded-lg hover:bg-emerald-50 transition-colors text-left group"
+                >
+                  <p className="text-xs font-bold text-slate-600 truncate group-hover:text-emerald-600">
+                    {post.title}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                    <span className="flex items-center gap-0.5">
+                      <Heart className="w-3 h-3" /> {post.likes}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <MessageCircle className="w-3 h-3" /> {post.comments}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 인기 게시물 */}
+        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="px-4 pt-3 pb-2 flex items-center gap-2">
+            <Flame className="w-4 h-4 text-rose-500" />
+            <h3 className="text-sm font-bold text-slate-600">인기 글</h3>
+          </div>
+          <div className="px-3 pb-3 space-y-2">
+            {hotPosts.map((post, index) => (
+              <button
+                key={post.id}
+                onClick={() => onSelectPost(post.id)}
+                className="w-full flex items-start gap-2 p-2 bg-slate-50 rounded-lg hover:bg-rose-50 transition-colors text-left group"
+              >
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
+                  index === 0 ? 'bg-amber-400 text-white' :
+                  index === 1 ? 'bg-slate-300 text-white' :
+                  'bg-orange-200 text-orange-700'
+                }`}>
+                  {index + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-slate-600 truncate group-hover:text-rose-600">
+                    {post.title}
+                  </p>
+                  <span className="text-xs text-rose-400 flex items-center gap-0.5 mt-0.5">
+                    <Heart className="w-3 h-3 fill-rose-400" /> {post.likes}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* 추천 테스트 */}
+        <section className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-indigo-500" />
+            <h3 className="text-sm font-bold text-indigo-700">추천 테스트</h3>
+          </div>
+          <div className="space-y-2">
+            {recommendedTests.map(testKey => {
+              const config = SUBJECT_CONFIG[testKey as keyof typeof SUBJECT_CONFIG];
+              const data = CHEMI_DATA[testKey as keyof typeof CHEMI_DATA];
+              if (!config || !data) return null;
+              const IconComponent = getIconComponent(config.icon);
+
+              return (
+                <button
+                  key={testKey}
+                  className="w-full flex items-center gap-3 p-2.5 bg-white/80 rounded-xl hover:bg-white transition-colors group"
+                >
+                  <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <IconComponent mood="happy" className="w-7 h-7" />
+                  </div>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-xs font-bold text-slate-700 truncate group-hover:text-indigo-600">
+                      {data.title}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {data.resultLabels?.length || 0}가지 결과
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400" />
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    </aside>
+  );
+}
+
+// ============================================================================
 // 참여 유도 배너
 // ============================================================================
 function EngagementBanner() {
-  const todayTopic = getTodayTopic();
+  const todayTopic = useTodayTopic();
 
   return (
     <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50 rounded-2xl p-4 border border-amber-100 mb-4">
@@ -239,7 +481,11 @@ function PostCard({ post, onClick }: PostCardProps) {
 
   // Mock 테스트 결과 배지 (실제로는 유저 프로필에서 가져옴)
   const testBadges = ['🐕 골든리트리버', '☕ 아메리카노', '😺 츤데레냥', '🐹 활발이'];
-  const randomBadge = testBadges[post.id.charCodeAt(post.id.length - 1) % testBadges.length];
+  // 빈 ID 가드: ID가 없거나 빈 문자열이면 첫 번째 배지 사용
+  const badgeIndex = post.id?.length > 0
+    ? post.id.charCodeAt(post.id.length - 1) % testBadges.length
+    : 0;
+  const randomBadge = testBadges[badgeIndex];
 
   return (
     <button
@@ -312,7 +558,7 @@ export default function CommunityBoard({ className = '' }: { className?: string 
 
     if (selectedPostId && selectedPost) {
         return (
-            <div className={`flex flex-col h-full bg-white animate-fade-in ${className}`}>
+            <div className={`flex flex-col h-full bg-slate-50 animate-fade-in ${className}`}>
                 {/* Post Detail Header */}
                 <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between">
                     <button onClick={() => setSelectedPostId(null)} className="text-slate-500 font-bold flex items-center gap-1">
@@ -324,29 +570,57 @@ export default function CommunityBoard({ className = '' }: { className?: string 
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6">
-                    <div className="mb-6">
-                        <span className={`px-2 py-0.5 text-xs font-bold rounded-full mb-2 inline-block ${getPostCategoryStyle(selectedPost.category)}`}>
-                            {getPostCategoryLabel(selectedPost.category)}
-                        </span>
-                        <h1 className="text-xl font-black text-slate-800 leading-tight mb-3">
-                            {selectedPost.title}
-                        </h1>
-                        <div className="flex items-center gap-2 text-xs text-slate-400">
-                            <span className="font-bold text-slate-600">{selectedPost.author}</span>
-                            <span>·</span>
-                            <span>{selectedPost.date}</span>
-                            <span>·</span>
-                            <span>조회 {selectedPost.viewCount}</span>
+                {/* 2단 레이아웃: 본문 + 사이드바 */}
+                <div className="flex-1 overflow-y-auto">
+                    <div className="flex justify-center p-4 xl:p-6">
+                        <div className="flex gap-6 w-full max-w-[1000px]">
+                            {/* 메인 콘텐츠 */}
+                            <article className="flex-1 min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                                <div className="mb-6">
+                                    <span className={`px-2 py-0.5 text-xs font-bold rounded-full mb-2 inline-block ${getPostCategoryStyle(selectedPost.category)}`}>
+                                        {getPostCategoryLabel(selectedPost.category)}
+                                    </span>
+                                    <h1 className="text-xl font-black text-slate-800 leading-tight mb-3">
+                                        {selectedPost.title}
+                                    </h1>
+                                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                                        <span className="font-bold text-slate-600">{selectedPost.author}</span>
+                                        <span>·</span>
+                                        <span>{selectedPost.date}</span>
+                                        <span>·</span>
+                                        <span>조회 {selectedPost.viewCount}</span>
+                                    </div>
+                                </div>
+
+                                <div className="text-slate-700 leading-relaxed text-sm mb-8 whitespace-pre-wrap min-h-[200px]">
+                                    {selectedPost.content}
+                                </div>
+
+                                {/* 좋아요/공유 액션 바 */}
+                                <div className="flex items-center justify-center gap-4 py-4 border-t border-b border-slate-100 mb-6">
+                                    <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-500 transition-colors">
+                                        <Heart className="w-5 h-5" />
+                                        <span className="text-sm font-bold">{selectedPost.likes}</span>
+                                    </button>
+                                    <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 hover:bg-indigo-50 text-slate-500 hover:text-indigo-500 transition-colors">
+                                        <Share2 className="w-5 h-5" />
+                                        <span className="text-sm font-bold">공유</span>
+                                    </button>
+                                </div>
+
+                                <div className="pt-2">
+                                    <CommentSystem targetType="test_result" targetId={`post_${selectedPostId}`} />
+                                </div>
+                            </article>
+
+                            {/* 우측 사이드바 - PC만 */}
+                            <PostDetailSidebar
+                                currentPost={selectedPost}
+                                allPosts={MOCK_COMMUNITY_POSTS}
+                                onSelectPost={setSelectedPostId}
+                                onBack={() => setSelectedPostId(null)}
+                            />
                         </div>
-                    </div>
-
-                    <div className="text-slate-700 leading-relaxed text-sm mb-8 whitespace-pre-wrap">
-                        {selectedPost.content}
-                    </div>
-
-                    <div className="border-t border-slate-100 pt-6">
-                        <CommentSystem targetType="test_result" targetId={`post_${selectedPostId}`} />
                     </div>
                 </div>
             </div>
@@ -418,9 +692,10 @@ export default function CommunityBoard({ className = '' }: { className?: string 
                 </div>
             </div>
 
-            {/* Write Button */}
-            <button className="fixed bottom-24 right-6 xl:bottom-6 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full shadow-lg shadow-indigo-300 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-20">
-                <Plus className="w-6 h-6" />
+            {/* Write Button - 모바일: FAB, PC: 텍스트 포함 버튼 */}
+            <button className="fixed bottom-24 right-6 xl:bottom-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-20 w-14 h-14 rounded-full xl:w-auto xl:h-auto xl:px-5 xl:py-3 xl:rounded-xl xl:gap-2">
+                <PenSquare className="w-5 h-5" />
+                <span className="hidden xl:inline text-sm font-bold">글쓰기</span>
             </button>
         </div>
     );
