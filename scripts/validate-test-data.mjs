@@ -48,11 +48,20 @@ const REQUIRED_FIELDS = {
   dimension: ['name', 'emoji', 'desc'],
   question: ['q', 'dimension', 'a'],
   answer: ['text', 'score'],
-  resultLabel: ['name', 'emoji', 'desc', 'condition', 'matchPoints', 'interpretation', 'guide']
+  resultLabel: ['name', 'emoji', 'desc', 'condition', 'interpretation', 'guide'],
+  // matching 테스트에서만 추가로 체크
+  resultLabelMatching: ['matchPoints']
 };
 
 // 세부 테스트 (petMatch 하위)에서 detailInfo 필수인 테스트
 const DETAIL_INFO_REQUIRED_TESTS = [
+  'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
+];
+
+// matching 테스트 (matchPoints 필수)
+const MATCHING_TESTS = [
+  'idealType', 'plant', 'petMatch', 'coffee', 'tea',
+  'fruit', 'alcohol', 'bread', 'perfume', 'aroma',
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
 
@@ -181,7 +190,7 @@ function loadLegacyData(subject) {
 // ============================================================
 
 // 1. 구조 검증
-function validateStructure(data, result) {
+function validateStructure(data, result, subject) {
   // 루트 필드 체크
   for (const field of REQUIRED_FIELDS.root) {
     if (!(field in data)) {
@@ -223,10 +232,20 @@ function validateStructure(data, result) {
 
   // resultLabels 체크
   if (data.resultLabels) {
+    const isMatching = MATCHING_TESTS.includes(subject);
     data.resultLabels.forEach((r, idx) => {
+      // 기본 필드 체크
       for (const field of REQUIRED_FIELDS.resultLabel) {
         if (!(field in r)) {
           result.warn('구조', `결과 '${r.name || idx}'에 필드 누락: ${field}`);
+        }
+      }
+      // matching 테스트에서만 matchPoints 체크
+      if (isMatching) {
+        for (const field of REQUIRED_FIELDS.resultLabelMatching) {
+          if (!(field in r)) {
+            result.warn('구조', `결과 '${r.name || idx}'에 필드 누락: ${field}`);
+          }
         }
       }
     });
@@ -540,7 +559,7 @@ function validateSubject(subject) {
   }
 
   // 2. 구조 검증
-  validateStructure(data, result);
+  validateStructure(data, result, subject);
 
   // 3. 차원 검증
   validateDimensions(data, result);
