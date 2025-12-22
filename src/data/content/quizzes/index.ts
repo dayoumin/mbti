@@ -12,6 +12,8 @@ import type { ContentCategory, KnowledgeQuiz, ScenarioQuiz } from '../types';
 // --- 지식 퀴즈 import ---
 import { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
 import { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
+import { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
+import { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
 
 // --- 시나리오 퀴즈 import ---
 import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
@@ -24,7 +26,8 @@ import { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 const KNOWLEDGE_QUIZ_REGISTRY: KnowledgeQuiz[][] = [
   CAT_KNOWLEDGE_QUIZZES,
   DOG_KNOWLEDGE_QUIZZES,
-  // 새 지식 퀴즈는 여기에 추가 (예: RABBIT_KNOWLEDGE_QUIZZES)
+  RABBIT_KNOWLEDGE_QUIZZES,
+  PLANT_KNOWLEDGE_QUIZZES,
 ];
 
 const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
@@ -43,6 +46,8 @@ export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = SCENARIO_QUIZ_REGISTRY.flat(
 // 개별 퀴즈 배열도 export (필요시 직접 접근용)
 export { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
 export { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
+export { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
+export { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
 export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import {
   ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle,
   Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp,
-  Trophy, Flame, Heart, Search, Sparkles, LayoutGrid, X
+  Trophy, Flame, Heart, Search, Sparkles, X
 } from 'lucide-react';
 import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
 import { RANKABLE_TESTS } from '@/data/config';
@@ -21,48 +21,8 @@ import { nextActionService, type NextAction } from '@/services/NextActionService
 import { NextActionInline } from '@/components/NextActionCard';
 import CommentSystem from '@/components/CommentSystem';
 import PopularPolls from '@/components/content/PopularPolls';
-import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
-import { DETAIL_TEST_KEYS } from '@/config/testKeys';
-import TestCard from '@/components/TestCard';
+import { SUBJECT_CONFIG } from '@/data/config';
 import { CHEMI_DATA } from '@/data';
-
-const TEST_BADGES: Record<string, string> = {
-  human: 'HOT',
-  fruit: 'NEW',
-  tea: 'UPDATE',
-};
-
-const TEST_SUBJECT_MAP: Record<string, string> = {
-  human: 'me',
-  conflictStyle: 'me',
-  cat: 'pet',
-  dog: 'pet',
-  rabbit: 'pet',
-  hamster: 'pet',
-  coffee: 'drink',
-  tea: 'drink',
-  alcohol: 'drink',
-  bread: 'food',
-  fruit: 'food',
-  plant: 'life',
-  petMatch: 'life',
-  idealType: 'love',
-  dogBreed: 'pet',
-  catBreed: 'pet',
-  smallPet: 'pet',
-  fishType: 'pet',
-  birdType: 'pet',
-  reptileType: 'pet'
-};
-
-const TEST_SUBJECT_LABELS: Record<string, { name: string; emoji: string }> = {
-  me: { name: '나', emoji: '👤' },
-  pet: { name: '반려동물', emoji: '🐾' },
-  drink: { name: '음료', emoji: '🥤' },
-  food: { name: '음식', emoji: '🍽️' },
-  life: { name: '라이프', emoji: '🌿' },
-  love: { name: '연애', emoji: '💕' }
-};
 
 // ============================================================================
 // 타입 정의
@@ -70,12 +30,12 @@ const TEST_SUBJECT_LABELS: Record<string, { name: string; emoji: string }> = {
 
 interface ContentExploreProps {
   onClose: () => void;
-  initialTab?: 'test' | 'quiz' | 'poll' | 'community';
+  initialTab?: 'quiz' | 'poll' | 'community';
   onStartTest?: (testKey: string) => void;
   onNavigate?: (target: 'ranking' | 'community') => void;
 }
 
-type TabType = 'test' | 'quiz' | 'poll' | 'community';
+type TabType = 'quiz' | 'poll' | 'community';
 type CommunitySubTab = 'tips' | 'qna' | 'debate';
 
 // CATEGORY_LABELS는 @/data/content/categories에서 import
@@ -796,40 +756,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
     return () => window.removeEventListener('chemi_content_participation_updated', handleUpdated);
   }, []);
 
-  // 1. 테스트 데이터 통합
-  const allTests = useMemo(() => {
-    return [...MAIN_TEST_KEYS, ...DETAIL_TEST_KEYS].map(key => {
-      const config = SUBJECT_CONFIG[key as keyof typeof SUBJECT_CONFIG];
-      const data = CHEMI_DATA[key as keyof typeof CHEMI_DATA];
-      if (!config) return null; // 테스트가 없는 카테고리 건너뛰기
-
-      return {
-        key,
-        ...config,
-        title: data?.title || config.label,
-        subtitle: data?.subtitle || config.intro?.[0] || '',
-      };
-    }).filter((t): t is NonNullable<typeof t> => t !== null && !!t.label);
-  }, []);
-
-  const filteredTests = useMemo(() => {
-    const term = searchQuery.trim().toLowerCase();
-
-    return allTests.filter(t => {
-      // 카테고리 필터
-      const matchesCategory = selectedCategory === 'all' || TEST_SUBJECT_MAP[t.key] === selectedCategory;
-
-      // 검색 필터 (레이블, 제목, 부제목 모두 검색)
-      const matchesSearch = !term ||
-        t.label.toLowerCase().includes(term) ||
-        t.title?.toLowerCase().includes(term) ||
-        t.subtitle?.toLowerCase().includes(term);
-
-      return matchesCategory && matchesSearch;
-    });
-  }, [allTests, selectedCategory, searchQuery]);
-
-  // 2. 퀴즈 필터링
+  // 퀴즈 필터링
   const filteredQuizzes = useMemo(() => {
     return ALL_KNOWLEDGE_QUIZZES.filter(q => {
       const matchesCategory = selectedCategory === 'all' || q.category === selectedCategory;
@@ -931,9 +858,6 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
   // 현재 필터에 있는 카테고리들
   const availableCategories = useMemo(() => {
-    if (activeTab === 'test') {
-      return Object.keys(TEST_SUBJECT_LABELS);
-    }
     if (activeTab === 'quiz') {
       return [...new Set(ALL_KNOWLEDGE_QUIZZES.map(q => q.category))];
     }
@@ -946,11 +870,6 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
   // 헤더 타이틀 & 서브타이틀
   const getHeaderInfo = () => {
     switch (activeTab) {
-      case 'test':
-        return {
-          title: '테스트 탐색',
-          subtitle: `전체 ${allTests.length}개의 다양한 테스트`,
-        };
       case 'quiz':
         return {
           title: '퀴즈 & 투표',
@@ -967,7 +886,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
           subtitle: '팁, Q&A, 토론에 참여하세요!',
         };
       default:
-        return { title: '콘텐츠', subtitle: '' };
+        return { title: '퀴즈 & 투표', subtitle: '' };
     }
   };
 
@@ -993,16 +912,6 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
           {/* 메인 탭 */}
           <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
-            <button
-              onClick={() => { setActiveTab('test'); setSelectedCategory('all'); }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'test'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              테스트
-            </button>
             <button
               onClick={() => { setActiveTab('quiz'); setSelectedCategory('all'); }}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'quiz'
@@ -1041,7 +950,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder={`${activeTab === 'test' ? '테스트' : activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
+                placeholder={`${activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
@@ -1070,9 +979,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                 전체
               </button>
               {availableCategories.map((cat) => {
-                const labelInfo = activeTab === 'test'
-                  ? TEST_SUBJECT_LABELS[cat]
-                  : CATEGORY_LABELS[cat as ContentCategory];
+                const labelInfo = CATEGORY_LABELS[cat as ContentCategory];
 
                 return (
                   <button
@@ -1097,37 +1004,6 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
         <div className="max-w-6xl mx-auto px-4 py-4 xl:flex xl:gap-6">
         {/* 메인 콘텐츠 영역 */}
         <div className="flex-1 min-w-0 max-w-2xl mx-auto xl:mx-0">
-          {activeTab === 'test' && (
-            filteredTests.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3">
-                {filteredTests.map((item) => (
-                  <TestCard
-                    key={item.key}
-                    item={item as any}
-                    onStart={(key) => {
-                      onClose();
-                      onStartTest?.(key);
-                    }}
-                    badge={TEST_BADGES[item.key]}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <Search className="w-8 h-8 text-slate-200" />
-                </div>
-                <h3 className="font-bold text-slate-700">검색 결과가 없습니다</h3>
-                <p className="text-slate-400 text-xs mt-1">다른 검색어나 카테고리를 선택해보세요</p>
-                <button
-                  onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
-                  className="mt-6 px-6 py-2.5 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-lg shadow-slate-200 active:scale-95 transition-all"
-                >
-                  필터 초기화
-                </button>
-              </div>
-            )
-          )}
           <div className="space-y-3">
             {activeTab === 'quiz' && (
               filteredQuizzes.length > 0 ? (

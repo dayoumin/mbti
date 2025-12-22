@@ -274,6 +274,42 @@ export const VS_POLLS: VSPoll[] = [
   },
 
   // ==========================================================================
+  // 토끼
+  // ==========================================================================
+  {
+    id: 'vs-rabbit-001',
+    category: 'rabbit',
+    question: '토끼 사료 선택은?',
+    optionA: { id: 'a', text: '펠릿 위주', emoji: '🥣' },
+    optionB: { id: 'b', text: '건초 위주', emoji: '🌾' },
+    tags: ['토끼', '사료'],
+  },
+  {
+    id: 'vs-rabbit-002',
+    category: 'rabbit',
+    question: '토끼 사육 방식은?',
+    optionA: { id: 'a', text: '케이지 사육', emoji: '🏠' },
+    optionB: { id: 'b', text: '방목 사육', emoji: '🐰' },
+    tags: ['토끼', '환경'],
+  },
+  {
+    id: 'vs-rabbit-003',
+    category: 'rabbit',
+    question: '토끼 털 관리는?',
+    optionA: { id: 'a', text: '자주 빗질', emoji: '🪮' },
+    optionB: { id: 'b', text: '자연스럽게', emoji: '🍃' },
+    tags: ['토끼', '관리'],
+  },
+  {
+    id: 'vs-rabbit-004',
+    category: 'rabbit',
+    question: '토끼 간식 선호는?',
+    optionA: { id: 'a', text: '과일 (사과, 바나나)', emoji: '🍎' },
+    optionB: { id: 'b', text: '채소 (당근, 상추)', emoji: '🥕' },
+    tags: ['토끼', '간식'],
+  },
+
+  // ==========================================================================
   // 식물
   // ==========================================================================
   {
@@ -299,6 +335,22 @@ export const VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '흙 재배', emoji: '🪴' },
     optionB: { id: 'b', text: '수경 재배', emoji: '💧' },
     tags: ['식물'],
+  },
+  {
+    id: 'vs-plant-004',
+    category: 'plant',
+    question: '식물 구매 장소는?',
+    optionA: { id: 'a', text: '꽃집/화원', emoji: '🏪' },
+    optionB: { id: 'b', text: '온라인/당근마켓', emoji: '📦' },
+    tags: ['식물', '구매'],
+  },
+  {
+    id: 'vs-plant-005',
+    category: 'plant',
+    question: '화분 스타일은?',
+    optionA: { id: 'a', text: '테라코타/토분', emoji: '🏺' },
+    optionB: { id: 'b', text: '화이트/모던', emoji: '⬜' },
+    tags: ['식물', '인테리어'],
   },
 ];
 

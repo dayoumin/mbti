@@ -69,11 +69,13 @@ class ParticipationBridge {
     category?: string
   ): Promise<PollVoteResult> {
     // 1. 소수 의견 여부 판단
+    // BADGE_THRESHOLDS.MINORITY_OPINION (30%) 미만이면 소수 의견
+    const { BADGE_THRESHOLDS } = await import('@/config');
     let isMinority = false;
     if (pollStats && pollStats.totalVotes > 0) {
       const optionVotes = pollStats.optionVotes[optionId] || 0;
       const ratio = (optionVotes / pollStats.totalVotes) * 100;
-      isMinority = ratio < 30; // 30% 미만이면 소수 의견
+      isMinority = ratio < BADGE_THRESHOLDS.MINORITY_OPINION;
     }
 
     // 2. TursoService에 저장

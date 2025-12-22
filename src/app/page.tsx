@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { CHEMI_DATA } from '../data/index';
 import { SUBJECT_CONFIG } from '../data/config';
-import { CHEMI_CONSTANTS } from '../data/constants';
+import { SCORING } from '@/config';
 import { matchResultLabel } from '../data/utils';
 import { resultService } from '../services/ResultService';
 import ResultRankingView from '../components/ResultRankingView';
@@ -42,7 +42,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { Capsule, HumanIcon } = Icons as any;
 
-const MAX_SCORE_PER_QUESTION = CHEMI_CONSTANTS.MAX_SCORE_PER_QUESTION;
+const MAX_SCORE_PER_QUESTION = SCORING.MAX_SCORE_PER_QUESTION;
 
 // ============================================================================
 // 타입 정의
@@ -56,7 +56,7 @@ type DetailTabType = 'interpretation' | 'guide';
 // care는 프로필 > 동물 탭에서 직접 관리하므로 제거
 type ActiveModal =
     | 'profile'
-    | 'contentExplore'
+    | 'contentExplore'  // 퀴즈/투표 (참여형 콘텐츠)
     | 'ranking'
     | 'community'
     | 'shareCard'
@@ -180,7 +180,7 @@ export default function Home() {
         // 탭에 따라 모달 열기
         const tabToModal: Record<NavTab, ActiveModal> = {
             home: null,
-            explore: 'contentExplore',
+            explore: 'contentExplore', // 퀴즈/투표 (참여형 콘텐츠)
             talk: 'community',
             ranking: 'ranking',
             profile: 'profile',
@@ -276,8 +276,11 @@ export default function Home() {
                 />
             )}
 
+
+            {/* 퀴즈/투표 (참여형 콘텐츠) */}
             {activeModal === 'contentExplore' && (
                 <ContentExplore
+                    initialTab="quiz"
                     onClose={() => {
                         closeModal();
                         setActiveNavTab('home');
