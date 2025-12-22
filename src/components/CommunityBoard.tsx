@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { MessageCircle, Heart, Share2, Search, Filter, ChevronRight, Flame, TrendingUp, Hash, Award, Sparkles, PenSquare, ArrowUp, ArrowDown } from 'lucide-react';
+import { MessageCircle, Heart, Share2, Search, Filter, ChevronRight, Flame, TrendingUp, Hash, Award, Sparkles, PenSquare, ArrowUp, ArrowDown, X } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 import CommentSystem from './CommentSystem';
 import { MOCK_COMMUNITY_POSTS, POST_CATEGORY_LABELS, getPostCategoryLabel, getPostCategoryStyle, type PostCategory } from '@/data/content/community';
 import { SUBJECT_CONFIG } from '@/data/config';
@@ -595,6 +596,7 @@ function PostCard({ post, onClick }: PostCardProps) {
 interface CommunityBoardProps {
   className?: string;
   onStartTest?: (testKey: string) => void;
+  onClose?: () => void;
 }
 
 // 검색 debounce 훅
@@ -609,7 +611,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export default function CommunityBoard({ className = '', onStartTest }: CommunityBoardProps) {
+export default function CommunityBoard({ className = '', onStartTest, onClose }: CommunityBoardProps) {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('all');
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -740,24 +742,30 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
 
   return (
     <div className={`flex flex-col h-full bg-slate-50 relative ${className}`}>
-      {/* Search & Header */}
-      <div className="bg-white px-6 py-4 shadow-sm border-b border-slate-100 sticky top-0 z-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-black text-slate-800">커뮤니티</h2>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
-            <input
-              type="text"
-              placeholder="검색어를 입력하세요"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-slate-50 border-none rounded-full py-2 pl-9 pr-4 text-xs w-48 focus:ring-2 focus:ring-indigo-500/20"
-            />
-          </div>
+      {/* 헤더 */}
+      <PageHeader title="커뮤니티" onBack={onClose}>
+        {/* 검색 바 */}
+        <div className="relative mt-3">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="검색어를 입력하세요"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <X className="w-3.5 h-3.5 text-gray-400" />
+            </button>
+          )}
         </div>
 
         {/* Categories */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar py-1 mt-3">
           <button
             onClick={() => setActiveCategory('all')}
             className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
@@ -782,7 +790,7 @@ export default function CommunityBoard({ className = '', onStartTest }: Communit
             </button>
           ))}
         </div>
-      </div>
+      </PageHeader>
 
       {/* 2단 레이아웃: 메인 콘텐츠 + 우측 사이드바 */}
       <div className="flex-1 overflow-y-auto">

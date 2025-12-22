@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import {
-  ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle,
+  HelpCircle, Vote, CheckCircle, MessageCircle,
   Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp,
   Trophy, Flame, Heart, Search, Sparkles, X
 } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
 import { RANKABLE_TESTS } from '@/data/config';
 import { getIconComponent } from '@/utils';
@@ -895,109 +896,98 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
   return (
     <div className="fixed inset-0 z-50 bg-white flex flex-col lg:left-60">
       {/* 헤더 */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={onClose}
-              className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all group"
-            >
-              <ChevronLeft className="w-6 h-6 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
-            </button>
-            <div className="flex-1">
-              <h1 className="font-black text-slate-800 tracking-tight">{headerInfo.title}</h1>
-              <p className="text-xs text-slate-500">{headerInfo.subtitle}</p>
-            </div>
-          </div>
-
-          {/* 메인 탭 */}
-          <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
-            <button
-              onClick={() => { setActiveTab('quiz'); setSelectedCategory('all'); }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'quiz'
-                ? 'bg-blue-500 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              퀴즈
-            </button>
-            <button
-              onClick={() => { setActiveTab('poll'); setSelectedCategory('all'); }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'poll'
-                ? 'bg-purple-500 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-            >
-              <Vote className="w-3.5 h-3.5" />
-              투표
-            </button>
-            <button
-              onClick={() => { setActiveTab('community'); setSelectedCategory('all'); }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'community'
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              커뮤니티
-            </button>
-          </div>
-
-          {/* 검색 바 */}
-          {activeTab !== 'community' && (
-            <div className="relative mt-3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder={`${activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 transition-colors"
-                >
-                  <X className="w-3.5 h-3.5 text-gray-400" />
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* 카테고리 필터 */}
-          {activeTab !== 'community' && (
-            <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === 'all'
-                  ? 'bg-slate-800 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-              >
-                전체
-              </button>
-              {availableCategories.map((cat) => {
-                const labelInfo = CATEGORY_LABELS[cat as ContentCategory];
-
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === cat
-                      ? 'bg-slate-800 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                  >
-                    {labelInfo?.emoji} {labelInfo?.name}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+      <PageHeader
+        title={headerInfo.title}
+        subtitle={headerInfo.subtitle}
+        onBack={onClose}
+      >
+        {/* 메인 탭 */}
+        <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
+          <button
+            onClick={() => { setActiveTab('quiz'); setSelectedCategory('all'); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'quiz'
+              ? 'bg-blue-500 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            퀴즈
+          </button>
+          <button
+            onClick={() => { setActiveTab('poll'); setSelectedCategory('all'); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'poll'
+              ? 'bg-purple-500 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+          >
+            <Vote className="w-3.5 h-3.5" />
+            투표
+          </button>
+          <button
+            onClick={() => { setActiveTab('community'); setSelectedCategory('all'); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'community'
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            커뮤니티
+          </button>
         </div>
-      </div>
+
+        {/* 검색 바 */}
+        {activeTab !== 'community' && (
+          <div className="relative mt-3">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder={`${activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+              >
+                <X className="w-3.5 h-3.5 text-gray-400" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* 카테고리 필터 */}
+        {activeTab !== 'community' && (
+          <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === 'all'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
+            >
+              전체
+            </button>
+            {availableCategories.map((cat) => {
+              const labelInfo = CATEGORY_LABELS[cat as ContentCategory];
+
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${selectedCategory === cat
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                    }`}
+                >
+                  {labelInfo?.emoji} {labelInfo?.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </PageHeader>
 
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto pb-24 lg:pb-6">

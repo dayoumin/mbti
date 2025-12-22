@@ -7,11 +7,11 @@ import { RANKABLE_TESTS } from '@/data/config';
 import { RANKING_CATEGORIES } from '@/data/ranking-categories';
 import { resultService } from '@/services/ResultService';
 import {
-  ChevronLeft,
   Trophy,
   Medal,
   Star,
   Sparkles,
+  ChevronLeft,
   ChevronRight,
   BarChart3,
   Vote,
@@ -20,6 +20,7 @@ import {
   MessageCircle,
   Heart,
 } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 import { VS_POLLS } from '@/data/content/polls';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
@@ -552,27 +553,12 @@ export default function RankingTab({ onClose, onStartTest, onNavigate }: Ranking
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-slate-100 to-slate-200 lg:left-60">
       {/* 헤더 */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10">
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={onClose}
-              className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all"
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <div>
-              <h1 className="font-bold text-slate-800 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-amber-500" />
-                랭킹
-              </h1>
-              <p className="text-xs text-slate-500">
-                {completedCount}/{RANKABLE_TESTS.length} 테스트 완료
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="랭킹"
+        subtitle={`${completedCount}/${RANKABLE_TESTS.length} 테스트 완료`}
+        icon={<Trophy className="w-5 h-5 text-amber-500" />}
+        onBack={onClose}
+      />
 
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto pb-24 lg:pb-6">

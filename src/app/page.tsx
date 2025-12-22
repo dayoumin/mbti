@@ -305,7 +305,13 @@ export default function Home() {
 
             {activeModal === 'community' && (
                 <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-60 lg:right-0">
-                    <CommunityBoard className="h-full" />
+                    <CommunityBoard
+                        className="h-full"
+                        onClose={() => {
+                            closeModal();
+                            setActiveNavTab('home');
+                        }}
+                    />
                 </div>
             )}
 
