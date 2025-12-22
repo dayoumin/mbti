@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   HelpCircle, Vote, CheckCircle, MessageCircle,
   Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp,
@@ -327,6 +327,14 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
   const [showResult, setShowResult] = useState(isAnswered);
   const [showComments, setShowComments] = useState(false);
 
+  // props 변경 시 상태 동기화 (방어적 코드)
+  useEffect(() => {
+    if (previousAnswer) {
+      setSelectedOption(previousAnswer);
+      setShowResult(true);
+    }
+  }, [previousAnswer]);
+
   // 다음 액션 추천
   const nextActions = showResult
     ? nextActionService.getRecommendations({
@@ -410,15 +418,26 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
                 const INCORRECT_RANGE = 25;
 
                 const hash = quiz.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-                const totalPercent = quiz.options.reduce((sum, o) => {
+                const totalRaw = quiz.options.reduce((sum, o) => {
                   return sum + (o.isCorrect ? CORRECT_BASE + (hash % CORRECT_RANGE) : INCORRECT_BASE + (hash % INCORRECT_RANGE));
                 }, 0);
 
-                return quiz.options.map((option) => {
+                // 퍼센트 계산 (합계 100% 보장)
+                const rawPercents = quiz.options.map((option) => {
                   const basePercent = option.isCorrect
                     ? CORRECT_BASE + (hash % CORRECT_RANGE)
                     : INCORRECT_BASE + (hash % INCORRECT_RANGE);
-                  const percent = Math.round((basePercent / totalPercent) * 100);
+                  return (basePercent / totalRaw) * 100;
+                });
+
+                // floor로 계산 후 나머지를 가장 큰 값에 할당
+                const floored = rawPercents.map(p => Math.floor(p));
+                const remainder = 100 - floored.reduce((a, b) => a + b, 0);
+                const maxIndex = rawPercents.indexOf(Math.max(...rawPercents));
+                floored[maxIndex] += remainder;
+
+                return quiz.options.map((option, idx) => {
+                  const percent = floored[idx];
 
                   return (
                     <div key={option.id} className="flex items-center gap-2">
@@ -486,24 +505,14 @@ interface PollCardProps {
   onNextAction?: (action: NextAction) => void;
 }
 
-function getStablePollResults(pollId: string) {
-  const seedStr = String(pollId || '');
-  let hash = 0;
-  for (let i = 0; i < seedStr.length; i++) {
-    hash = ((hash << 5) - hash + seedStr.charCodeAt(i)) | 0;
-  }
-  const base = Math.abs(hash) % 41; // 0..40
-  const a = 30 + base; // 30..70
-  return { a, b: 100 - a };
-}
-
 function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCardProps) {
   const [localVoted, setLocalVoted] = useState<'a' | 'b' | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [realStats, setRealStats] = useState<{ a: number; b: number; total: number } | null>(null);
   const voted = previousVote ?? localVoted;
-  const fallbackResults = getStablePollResults(poll.id);
-  const results = realStats ? { a: realStats.a, b: realStats.b } : fallbackResults;
+  // API 실패 또는 0표 시 균등 분포 표시 (가짜 통계 방지)
+  const hasRealVotes = realStats && realStats.total > 0;
+  const results = hasRealVotes ? { a: realStats.a, b: realStats.b } : { a: 50, b: 50 };
 
   // 투표 후 실제 통계 가져오기
   useEffect(() => {
@@ -511,9 +520,10 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
       fetch(`/api/poll?pollId=${poll.id}`)
         .then(res => res.json())
         .then(data => {
-          if (data.totalVotes > 0) {
-            const aOpt = data.options.find((o: { optionId: string }) => o.optionId === 'a');
-            const bOpt = data.options.find((o: { optionId: string }) => o.optionId === 'b');
+          // totalVotes가 0 이상이면 통계 표시 (0표도 유효한 상태)
+          if (typeof data.totalVotes === 'number') {
+            const aOpt = data.options?.find((o: { optionId: string }) => o.optionId === 'a');
+            const bOpt = data.options?.find((o: { optionId: string }) => o.optionId === 'b');
             setRealStats({
               a: aOpt?.percentage ?? 50,
               b: bOpt?.percentage ?? 50,
@@ -616,7 +626,11 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
       {voted && (
         <div className="mt-3 text-center">
           <span className="text-xs text-slate-400">
-            {realStats ? `${realStats.total.toLocaleString()}명 참여` : '통계 로딩 중...'}
+            {hasRealVotes
+              ? `${realStats.total.toLocaleString()}명 참여`
+              : realStats?.total === 0
+                ? '첫 번째 투표입니다! 🎉'
+                : '통계 로딩 중...'}
           </span>
         </div>
       )}
@@ -1091,10 +1105,36 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
   const [participation, setParticipation] = useState(contentParticipationService.getParticipation());
   const [showUncompletedOnly, setShowUncompletedOnly] = useState(false);
   const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
+  const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   // 스트릭 데이터
   const streak = contentParticipationService.getStreak();
   const hasParticipatedToday = contentParticipationService.hasParticipatedToday();
+
+  // 아이템 ref 설정 콜백
+  const setItemRef = useCallback((id: string, element: HTMLDivElement | null) => {
+    if (element) {
+      itemRefs.current.set(id, element);
+    } else {
+      itemRefs.current.delete(id);
+    }
+  }, []);
+
+  // 포커스된 아이템으로 스크롤
+  useEffect(() => {
+    if (focusedItemId) {
+      // 약간의 지연 후 스크롤 (DOM 렌더링 대기)
+      const timer = setTimeout(() => {
+        const element = itemRefs.current.get(focusedItemId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        // 포커스 표시 3초 후 해제
+        setTimeout(() => setFocusedItemId(null), 3000);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [focusedItemId]);
 
   useEffect(() => {
     const handleUpdated = () => {
@@ -1429,7 +1469,8 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                   return (
                     <div
                       key={quiz.id}
-                      className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl' : ''}
+                      ref={(el) => setItemRef(quiz.id, el)}
+                      className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
                     >
                       <QuizCard
                         quiz={quiz}
@@ -1462,7 +1503,8 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                     return (
                       <div
                         key={poll.id}
-                        className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl' : ''}
+                        ref={(el) => setItemRef(poll.id, el)}
+                        className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
                       >
                         <PollCard
                           poll={poll}
