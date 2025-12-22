@@ -17,6 +17,8 @@ import {
   BookOpen,
 } from 'lucide-react';
 
+// Note: AGENTS and SKILLS are kept for potential future use or external access
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -307,18 +309,36 @@ const QUALITY_CRITERIA = [
   { item: '결과 도달률 100%', score: 20, required: false },
 ];
 
+const RESEARCH_DECISION = {
+  required: [
+    { type: '심리학/성격 기반', reason: '학술 프레임워크 필요', examples: '사람, 고양이, 강아지 성격' },
+    { type: '전문 지식 필요', reason: '분류 체계/풍미 프로필 필요', examples: '위스키, 와인, 커피, 향수' },
+  ],
+  notRequired: [
+    { type: '일상 선택/기분 기반', reason: '상식 수준으로 충분', examples: '라면, 치킨, 간식, 야식' },
+    { type: '상황/재미 중심', reason: '창의성이 더 중요', examples: '오늘 뭐 먹지, 주말 활동' },
+  ],
+  flowchart: `research/{subject}.md 파일이 있나?
+├── 있음 → 파싱 후 생성
+└── 없음 → 아래 분기
+         ├── 명확히 전문 지식 필요 → "딥리서치 먼저 필요합니다" 안내
+         ├── 명확히 일상 주제 → 상식 기반으로 바로 생성
+         └── 애매함 → 사용자에게 질문 (딥리서치 vs 상식 기반)`,
+};
+
 // =============================================================================
 // Component
 // =============================================================================
 
 export default function AutomationSystem() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'agents' | 'skills' | 'workflow' | 'process'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'agents' | 'skills' | 'workflow' | 'research' | 'process'>('overview');
 
   const tabs = [
     { key: 'overview', label: '개요', icon: <Layers className="w-4 h-4" /> },
     { key: 'agents', label: 'Subagents', icon: <Bot className="w-4 h-4" /> },
     { key: 'skills', label: 'Skills', icon: <Sparkles className="w-4 h-4" /> },
     { key: 'workflow', label: '워크플로우', icon: <ArrowRight className="w-4 h-4" /> },
+    { key: 'research', label: '리서치 판단', icon: <Search className="w-4 h-4" /> },
     { key: 'process', label: '생성 과정', icon: <BookOpen className="w-4 h-4" /> },
   ];
 
@@ -655,6 +675,147 @@ docs/test-creation/
                   <Copy className="w-4 h-4 opacity-40 hover:opacity-100 cursor-pointer" />
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Research Decision Tab */}
+      {activeTab === 'research' && (
+        <div className="space-y-6">
+          {/* 리서치 필요 여부 판단 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Search className="w-5 h-5 text-blue-400" />
+              리서치 필요 여부 판단
+            </h3>
+            <p className="text-sm opacity-70 mb-6">
+              test-creator는 주제에 따라 딥리서치가 필요한지 자동으로 판단합니다.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 리서치 필요 */}
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                <h4 className="font-semibold text-red-400 mb-3 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  딥리서치 필요
+                </h4>
+                <div className="space-y-3">
+                  {RESEARCH_DECISION.required.map((item) => (
+                    <div key={item.type} className="text-sm">
+                      <div className="font-medium">{item.type}</div>
+                      <div className="opacity-60">{item.reason}</div>
+                      <div className="text-xs text-red-400 mt-1">예: {item.examples}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 리서치 불필요 */}
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                <h4 className="font-semibold text-green-400 mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  상식 기반 생성 가능
+                </h4>
+                <div className="space-y-3">
+                  {RESEARCH_DECISION.notRequired.map((item) => (
+                    <div key={item.type} className="text-sm">
+                      <div className="font-medium">{item.type}</div>
+                      <div className="opacity-60">{item.reason}</div>
+                      <div className="text-xs text-green-400 mt-1">예: {item.examples}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 판단 흐름도 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <ArrowRight className="w-5 h-5 text-purple-400" />
+              판단 흐름도
+            </h3>
+            <pre className="bg-black/30 rounded-lg p-4 text-sm overflow-x-auto">
+              {RESEARCH_DECISION.flowchart}
+            </pre>
+          </div>
+
+          {/* 테스트 케이스 결과 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-green-400" />
+              검증된 테스트 케이스
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-4">주제</th>
+                    <th className="text-left py-3 px-4">유형</th>
+                    <th className="text-left py-3 px-4">판단 결과</th>
+                    <th className="text-left py-3 px-4">상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { subject: 'whiskey-sample', type: '리서치 파일 있음', result: '파싱 후 생성', status: '✅' },
+                    { subject: 'ramen', type: '일상 음식', result: '상식 기반 생성', status: '✅' },
+                    { subject: 'wine', type: '전문 지식', result: '딥리서치 필요 안내', status: '✅' },
+                    { subject: 'pasta', type: '애매함', result: '사용자에게 선택 요청', status: '✅' },
+                    { subject: 'weekend', type: '상황/재미', result: '상식 기반 생성', status: '✅' },
+                  ].map((item) => (
+                    <tr key={item.subject} className="border-b border-white/5">
+                      <td className="py-3 px-4">
+                        <code className="text-purple-400">{item.subject}</code>
+                      </td>
+                      <td className="py-3 px-4 opacity-70">{item.type}</td>
+                      <td className="py-3 px-4">{item.result}</td>
+                      <td className="py-3 px-4">{item.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs opacity-50 mt-4">
+              * 2024-12-23 test-creator agent로 5개 케이스 테스트 통과
+            </p>
+          </div>
+
+          {/* 상식 기반 생성 규칙 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4">상식 기반 생성 시 규칙</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-sm font-semibold opacity-70 mb-2">기본 설정</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>testType</span>
+                    <code className="text-blue-400">matching</code>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>차원</span>
+                    <span>4-5개</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>질문</span>
+                    <span>10-12개</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>결과</span>
+                    <span>8-10개 (실제 상품/메뉴)</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold opacity-70 mb-2">예시 차원 (라면)</h4>
+                <pre className="bg-black/30 rounded-lg p-3 text-xs">
+{`spicy: 매움 (순한맛 ↔ 불닭급)
+soup: 국물 (볶음면 ↔ 국물면)
+hunger: 배고픔 (간단히 ↔ 든든하게)
+mood: 기분 (평범한 날 ↔ 특별한 날)`}
+                </pre>
+              </div>
             </div>
           </div>
         </div>
