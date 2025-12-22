@@ -23,6 +23,13 @@ export interface PollParticipation {
   votedAt: string;
 }
 
+export interface StreakData {
+  currentStreak: number;          // 현재 연속 참여 일수
+  longestStreak: number;          // 최장 연속 참여 일수
+  lastParticipationDate: string | null;  // 마지막 참여 날짜 (YYYY-MM-DD)
+  streakHistory: string[];        // 참여 날짜 기록 (최근 30일)
+}
+
 export interface ContentParticipationData {
   quizzes: QuizParticipation[];
   polls: PollParticipation[];
@@ -32,6 +39,7 @@ export interface ContentParticipationData {
     totalPollVoted: number;
     lastParticipatedAt: string | null;
   };
+  streak: StreakData;
 }
 
 const STORAGE_KEY = STORAGE_KEYS.CONTENT_PARTICIPATION;
@@ -77,7 +85,79 @@ class ContentParticipationServiceClass {
         totalPollVoted: 0,
         lastParticipatedAt: null,
       },
+      streak: {
+        currentStreak: 0,
+        longestStreak: 0,
+        lastParticipationDate: null,
+        streakHistory: [],
+      },
     };
+  }
+
+  // 날짜를 YYYY-MM-DD 형식으로 변환
+  private getDateString(date: Date = new Date()): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  // 두 날짜가 연속인지 확인 (어제와 오늘)
+  private isConsecutiveDay(prevDate: string, currentDate: string): boolean {
+    const prev = new Date(prevDate);
+    const curr = new Date(currentDate);
+    const diffTime = curr.getTime() - prev.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays === 1;
+  }
+
+  // 같은 날인지 확인
+  private isSameDay(date1: string, date2: string): boolean {
+    return date1 === date2;
+  }
+
+  // 스트릭 업데이트
+  private updateStreak(): void {
+    const today = this.getDateString();
+    const streak = this.data.streak;
+
+    // 스트릭 데이터가 없으면 초기화
+    if (!streak) {
+      this.data.streak = {
+        currentStreak: 1,
+        longestStreak: 1,
+        lastParticipationDate: today,
+        streakHistory: [today],
+      };
+      return;
+    }
+
+    const lastDate = streak.lastParticipationDate;
+
+    // 오늘 이미 참여했으면 스킵
+    if (lastDate && this.isSameDay(lastDate, today)) {
+      return;
+    }
+
+    // 어제 참여했으면 스트릭 증가
+    if (lastDate && this.isConsecutiveDay(lastDate, today)) {
+      streak.currentStreak++;
+    } else {
+      // 스트릭 끊김 - 새로 시작
+      streak.currentStreak = 1;
+    }
+
+    // 최장 스트릭 업데이트
+    if (streak.currentStreak > streak.longestStreak) {
+      streak.longestStreak = streak.currentStreak;
+    }
+
+    streak.lastParticipationDate = today;
+
+    // 히스토리에 오늘 추가 (최근 30일만 유지)
+    if (!streak.streakHistory.includes(today)) {
+      streak.streakHistory.push(today);
+      if (streak.streakHistory.length > 30) {
+        streak.streakHistory = streak.streakHistory.slice(-30);
+      }
+    }
   }
 
   // 저장소에 저장
@@ -111,6 +191,9 @@ class ContentParticipationServiceClass {
     }
     this.data.stats.lastParticipatedAt = new Date().toISOString();
 
+    // 스트릭 업데이트
+    this.updateStreak();
+
     this.saveToStorage();
   }
 
@@ -128,6 +211,9 @@ class ContentParticipationServiceClass {
 
     this.data.stats.totalPollVoted++;
     this.data.stats.lastParticipatedAt = new Date().toISOString();
+
+    // 스트릭 업데이트
+    this.updateStreak();
 
     this.saveToStorage();
   }
@@ -163,6 +249,40 @@ class ContentParticipationServiceClass {
       ...this.data.stats,
       accuracy: this.getQuizAccuracy(),
     };
+  }
+
+  // 스트릭 조회
+  getStreak(): StreakData {
+    // 기존 데이터에 streak이 없으면 기본값 반환
+    if (!this.data.streak) {
+      return {
+        currentStreak: 0,
+        longestStreak: 0,
+        lastParticipationDate: null,
+        streakHistory: [],
+      };
+    }
+
+    // 스트릭이 끊겼는지 확인 (어제 이전 마지막 참여)
+    const today = this.getDateString();
+    const yesterday = this.getDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
+    const lastDate = this.data.streak.lastParticipationDate;
+
+    if (lastDate && !this.isSameDay(lastDate, today) && !this.isSameDay(lastDate, yesterday)) {
+      // 스트릭이 끊김 - currentStreak을 0으로 반환 (저장은 하지 않음)
+      return {
+        ...this.data.streak,
+        currentStreak: 0,
+      };
+    }
+
+    return this.data.streak;
+  }
+
+  // 오늘 참여 여부
+  hasParticipatedToday(): boolean {
+    const today = this.getDateString();
+    return this.data.streak?.lastParticipationDate === today;
   }
 
   // 데이터 초기화 (테스트용)

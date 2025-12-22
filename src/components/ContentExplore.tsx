@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import {
   HelpCircle, Vote, CheckCircle, MessageCircle,
   Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp,
-  Trophy, Flame, Heart, Search, Sparkles, X
+  Trophy, Flame, Heart, Search, Sparkles, X, Zap, TrendingUp
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
@@ -14,7 +14,7 @@ import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls';
 import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
 import { CATEGORY_LABELS } from '@/data/content/categories';
-import { contentParticipationService } from '@/services/ContentParticipationService';
+import { contentParticipationService, type ContentParticipationData } from '@/services/ContentParticipationService';
 import { getParticipationBridge } from '@/services/ParticipationBridge';
 import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/content/explore';
 import type { Tip, Question, Debate } from '@/data/content/explore';
@@ -40,6 +40,275 @@ type TabType = 'quiz' | 'poll' | 'community';
 type CommunitySubTab = 'tips' | 'qna' | 'debate';
 
 // CATEGORY_LABELS는 @/data/content/categories에서 import
+
+// ============================================================================
+// 스트릭 배너 컴포넌트
+// ============================================================================
+
+interface StreakBannerProps {
+  currentStreak: number;
+  longestStreak: number;
+  hasParticipatedToday: boolean;
+}
+
+function StreakBanner({ currentStreak, longestStreak, hasParticipatedToday }: StreakBannerProps) {
+  if (currentStreak === 0 && !hasParticipatedToday) {
+    return (
+      <div className="bg-gradient-to-r from-slate-100 to-slate-50 rounded-2xl p-4 mb-4 border border-slate-200">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-slate-200 rounded-xl flex items-center justify-center">
+            <Flame className="w-5 h-5 text-slate-400" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-slate-600">오늘 첫 참여를 시작하세요!</p>
+            <p className="text-xs text-slate-400">퀴즈나 투표에 참여하면 스트릭이 시작됩니다</p>
+          </div>
+          <Zap className="w-5 h-5 text-slate-300" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`rounded-2xl p-4 mb-4 ${
+      hasParticipatedToday
+        ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+        : 'bg-gradient-to-r from-orange-400 to-amber-400'
+    }`}>
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+          <span className="text-2xl">🔥</span>
+        </div>
+        <div className="flex-1">
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-black text-white">{currentStreak}</span>
+            <span className="text-sm font-bold text-white/80">일 연속 참여!</span>
+          </div>
+          <p className="text-xs text-white/70">
+            {hasParticipatedToday
+              ? '오늘도 참여 완료!'
+              : '오늘 참여하면 스트릭이 이어집니다'}
+            {longestStreak > currentStreak && ` · 최고 기록: ${longestStreak}일`}
+          </p>
+        </div>
+        {hasParticipatedToday && (
+          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-5 h-5 text-white" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 핫 토픽 컴포넌트
+// ============================================================================
+
+interface HotTopicItemProps {
+  rank: number;
+  emoji: string;
+  title: string;
+  type: 'quiz' | 'poll';
+  stat: string;
+  onClick?: () => void;
+}
+
+function HotTopicItem({ rank, emoji, title, type, stat, onClick }: HotTopicItemProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/50 transition-all group"
+    >
+      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
+        rank === 1 ? 'bg-amber-400 text-white' :
+        rank === 2 ? 'bg-slate-300 text-white' :
+        'bg-orange-200 text-orange-700'
+      }`}>
+        {rank}
+      </span>
+      <span className="text-lg">{emoji}</span>
+      <div className="flex-1 text-left min-w-0">
+        <p className="text-sm font-bold text-slate-700 truncate group-hover:text-orange-600">
+          {title}
+        </p>
+        <p className="text-xs text-slate-400">
+          {type === 'quiz' ? '퀴즈' : '투표'} · {stat}
+        </p>
+      </div>
+      <TrendingUp className="w-4 h-4 text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+    </button>
+  );
+}
+
+interface HotTopicsSectionProps {
+  quizzes: typeof ALL_KNOWLEDGE_QUIZZES;
+  polls: typeof VS_POLLS;
+  participation: ContentParticipationData;
+  onQuizClick: (quizId: string) => void;
+  onPollClick: (pollId: string) => void;
+}
+
+function HotTopicsSection({ quizzes, polls, participation, onQuizClick, onPollClick }: HotTopicsSectionProps) {
+  // 인기도 계산 (결정론적 - ID 기반)
+  const getPopularityScore = (id: string) => {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = ((hash << 5) - hash + id.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash) % 1000;
+  };
+
+  // 아직 참여하지 않은 것 중에서 인기순 정렬
+  const uncompletedQuizzes = quizzes
+    .filter(q => !participation.quizzes.some(pq => pq.quizId === q.id))
+    .map(q => ({ ...q, popularity: getPopularityScore(q.id) }))
+    .sort((a, b) => b.popularity - a.popularity)
+    .slice(0, 2);
+
+  const uncompletedPolls = polls
+    .filter(p => !participation.polls.some(pp => pp.pollId === p.id))
+    .map(p => ({ ...p, popularity: getPopularityScore(p.id) }))
+    .sort((a, b) => b.popularity - a.popularity)
+    .slice(0, 2);
+
+  // 퀴즈와 투표를 섞어서 상위 3개 선택
+  const hotItems = [...uncompletedQuizzes.map(q => ({
+    id: q.id,
+    type: 'quiz' as const,
+    title: q.question,
+    emoji: CATEGORY_LABELS[q.category]?.emoji || '🧠',
+    stat: `정답률 ${30 + (getPopularityScore(q.id) % 40)}%`,
+    popularity: q.popularity,
+  })), ...uncompletedPolls.map(p => ({
+    id: p.id,
+    type: 'poll' as const,
+    title: p.question,
+    emoji: CATEGORY_LABELS[p.category]?.emoji || '🗳️',
+    stat: `${100 + (getPopularityScore(p.id) % 900)}명 참여`,
+    popularity: p.popularity,
+  }))]
+    .sort((a, b) => b.popularity - a.popularity)
+    .slice(0, 3);
+
+  if (hotItems.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+          <Flame className="w-3.5 h-3.5 text-white" />
+        </div>
+        <h3 className="text-sm font-bold text-slate-700">지금 인기</h3>
+        <span className="text-xs text-slate-400">참여하지 않은 콘텐츠 중</span>
+      </div>
+      <div className="space-y-2">
+        {hotItems.map((item, index) => (
+          <HotTopicItem
+            key={item.id}
+            rank={index + 1}
+            emoji={item.emoji}
+            title={item.title}
+            type={item.type}
+            stat={item.stat}
+            onClick={() => item.type === 'quiz' ? onQuizClick(item.id) : onPollClick(item.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 카테고리 진행률 컴포넌트
+// ============================================================================
+
+interface CategoryProgressProps {
+  quizzes: typeof ALL_KNOWLEDGE_QUIZZES;
+  polls: typeof VS_POLLS;
+  participation: ContentParticipationData;
+  activeTab: 'quiz' | 'poll';
+  onCategoryClick: (category: string) => void;
+}
+
+function CategoryProgress({ quizzes, polls, participation, activeTab, onCategoryClick }: CategoryProgressProps) {
+  const categoryStats = useMemo(() => {
+    if (activeTab === 'quiz') {
+      const categories = [...new Set(quizzes.map(q => q.category))];
+      return categories.map(cat => {
+        const total = quizzes.filter(q => q.category === cat).length;
+        const completed = quizzes.filter(q =>
+          q.category === cat &&
+          participation.quizzes.some(pq => pq.quizId === q.id)
+        ).length;
+        return {
+          category: cat,
+          label: CATEGORY_LABELS[cat as ContentCategory],
+          total,
+          completed,
+          percent: Math.round((completed / total) * 100),
+        };
+      });
+    } else {
+      const categories = [...new Set(polls.map(p => p.category))];
+      return categories.map(cat => {
+        const total = polls.filter(p => p.category === cat).length;
+        const completed = polls.filter(p =>
+          p.category === cat &&
+          participation.polls.some(pp => pp.pollId === p.id)
+        ).length;
+        return {
+          category: cat,
+          label: CATEGORY_LABELS[cat as ContentCategory],
+          total,
+          completed,
+          percent: Math.round((completed / total) * 100),
+        };
+      });
+    }
+  }, [quizzes, polls, participation, activeTab]);
+
+  return (
+    <div className="mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center">
+          <Trophy className="w-3.5 h-3.5 text-indigo-600" />
+        </div>
+        <h3 className="text-sm font-bold text-slate-700">카테고리별 진행률</h3>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {categoryStats.map(({ category, label, total, completed, percent }) => (
+          <button
+            key={category}
+            onClick={() => onCategoryClick(category)}
+            className="p-3 bg-white rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all text-left group"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">{label?.emoji}</span>
+              <span className="text-xs font-bold text-slate-600 truncate">{label?.name}</span>
+            </div>
+            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-1">
+              <div
+                className={`h-full rounded-full transition-all ${
+                  percent === 100 ? 'bg-emerald-500' : 'bg-indigo-500'
+                }`}
+                style={{ width: `${percent}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-400">{completed}/{total}</span>
+              {percent === 100 && (
+                <span className="text-xs text-emerald-500 font-bold">완료!</span>
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ============================================================================
 // 퀴즈 카드 컴포넌트
@@ -125,7 +394,49 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
 
       {showResult && (
         <div className={`mt-3 p-3 rounded-xl text-xs ${selectedIsCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-          {selectedIsCorrect ? '🎉 정답!' : '💡 오답!'} {quiz.explanation}
+          <div className="flex items-start justify-between gap-2">
+            <span>{selectedIsCorrect ? '🎉 정답!' : '💡 오답!'} {quiz.explanation}</span>
+          </div>
+          {/* 통계 표시 - 다른 사람들의 선택 분포 */}
+          <div className="mt-3 pt-3 border-t border-current/10">
+            <p className="text-xs font-bold mb-2 opacity-80">📊 다른 사람들의 선택</p>
+            <div className="space-y-1.5">
+              {(() => {
+                // 결정론적 mock 통계 (실제 API 연동 전)
+                // hash를 한 번만 계산하여 재사용
+                const CORRECT_BASE = 25;
+                const CORRECT_RANGE = 30;
+                const INCORRECT_BASE = 10;
+                const INCORRECT_RANGE = 25;
+
+                const hash = quiz.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+                const totalPercent = quiz.options.reduce((sum, o) => {
+                  return sum + (o.isCorrect ? CORRECT_BASE + (hash % CORRECT_RANGE) : INCORRECT_BASE + (hash % INCORRECT_RANGE));
+                }, 0);
+
+                return quiz.options.map((option) => {
+                  const basePercent = option.isCorrect
+                    ? CORRECT_BASE + (hash % CORRECT_RANGE)
+                    : INCORRECT_BASE + (hash % INCORRECT_RANGE);
+                  const percent = Math.round((basePercent / totalPercent) * 100);
+
+                  return (
+                    <div key={option.id} className="flex items-center gap-2">
+                      <div className="flex-1 h-5 bg-white/50 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            option.isCorrect ? 'bg-emerald-400' : 'bg-slate-300'
+                          }`}
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                      <span className="text-xs w-10 text-right font-bold">{percent}%</span>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
         </div>
       )}
 
@@ -189,8 +500,30 @@ function getStablePollResults(pollId: string) {
 function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCardProps) {
   const [localVoted, setLocalVoted] = useState<'a' | 'b' | null>(null);
   const [showComments, setShowComments] = useState(false);
+  const [realStats, setRealStats] = useState<{ a: number; b: number; total: number } | null>(null);
   const voted = previousVote ?? localVoted;
-  const results = getStablePollResults(poll.id);
+  const fallbackResults = getStablePollResults(poll.id);
+  const results = realStats ? { a: realStats.a, b: realStats.b } : fallbackResults;
+
+  // 투표 후 실제 통계 가져오기
+  useEffect(() => {
+    if (voted && !realStats) {
+      fetch(`/api/poll?pollId=${poll.id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.totalVotes > 0) {
+            const aOpt = data.options.find((o: { optionId: string }) => o.optionId === 'a');
+            const bOpt = data.options.find((o: { optionId: string }) => o.optionId === 'b');
+            setRealStats({
+              a: aOpt?.percentage ?? 50,
+              b: bOpt?.percentage ?? 50,
+              total: data.totalVotes,
+            });
+          }
+        })
+        .catch(() => {/* 실패 시 fallback 유지 */});
+    }
+  }, [voted, poll.id, realStats]);
 
   // 다음 액션 추천
   const nextActions = voted
@@ -278,6 +611,15 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
           )}
         </button>
       </div>
+
+      {/* 참여자 수 표시 */}
+      {voted && (
+        <div className="mt-3 text-center">
+          <span className="text-xs text-slate-400">
+            {realStats ? `${realStats.total.toLocaleString()}명 참여` : '통계 로딩 중...'}
+          </span>
+        </div>
+      )}
 
       {/* 다음 액션 추천 */}
       {voted && nextActions.length > 0 && (
@@ -747,6 +1089,12 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [participation, setParticipation] = useState(contentParticipationService.getParticipation());
+  const [showUncompletedOnly, setShowUncompletedOnly] = useState(false);
+  const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
+
+  // 스트릭 데이터
+  const streak = contentParticipationService.getStreak();
+  const hasParticipatedToday = contentParticipationService.hasParticipatedToday();
 
   useEffect(() => {
     const handleUpdated = () => {
@@ -757,23 +1105,27 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
     return () => window.removeEventListener('chemi_content_participation_updated', handleUpdated);
   }, []);
 
-  // 퀴즈 필터링
+  // 퀴즈 필터링 (안 푼 것만 보기 옵션 포함)
   const filteredQuizzes = useMemo(() => {
     return ALL_KNOWLEDGE_QUIZZES.filter(q => {
       const matchesCategory = selectedCategory === 'all' || q.category === selectedCategory;
       const matchesSearch = q.question.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const isAnswered = participation.quizzes.some(pq => pq.quizId === q.id);
+      const matchesCompletionFilter = !showUncompletedOnly || !isAnswered;
+      return matchesCategory && matchesSearch && matchesCompletionFilter;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, showUncompletedOnly, participation.quizzes]);
 
-  // 3. 투표 필터링
+  // 투표 필터링 (안 푼 것만 보기 옵션 포함)
   const filteredPolls = useMemo(() => {
     return VS_POLLS.filter(p => {
       const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
       const matchesSearch = p.question.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const isVoted = participation.polls.some(pp => pp.pollId === p.id);
+      const matchesCompletionFilter = !showUncompletedOnly || !isVoted;
+      return matchesCategory && matchesSearch && matchesCompletionFilter;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, showUncompletedOnly, participation.polls]);
 
   // 퀴즈 정답 처리
   // ContentParticipationService: UI 상태 (참여 여부 표시용)
@@ -987,6 +1339,43 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             })}
           </div>
         )}
+
+        {/* 안 푼 것만 보기 토글 */}
+        {activeTab !== 'community' && (
+          <div className="flex items-center justify-between mt-3 py-2 px-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">
+                {activeTab === 'quiz'
+                  ? `${stats.quizTotal - stats.quizAnswered}개 남음`
+                  : `${stats.pollTotal - stats.pollVoted}개 남음`
+                }
+              </span>
+            </div>
+            <button
+              onClick={() => setShowUncompletedOnly(!showUncompletedOnly)}
+              role="switch"
+              aria-checked={showUncompletedOnly}
+              aria-label="안 한 것만 보기"
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                showUncompletedOnly
+                  ? 'bg-indigo-100 text-indigo-700'
+                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+              }`}
+            >
+              <div
+                className={`w-8 h-4 rounded-full transition-colors relative ${
+                  showUncompletedOnly ? 'bg-indigo-500' : 'bg-slate-300'
+                }`}
+                aria-hidden="true"
+              >
+                <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${
+                  showUncompletedOnly ? 'translate-x-4' : 'translate-x-0.5'
+                }`} />
+              </div>
+              안 한 것만
+            </button>
+          </div>
+        )}
       </PageHeader>
 
       {/* 콘텐츠 */}
@@ -994,20 +1383,62 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
         <div className="max-w-6xl mx-auto px-4 py-4 xl:flex xl:gap-6">
         {/* 메인 콘텐츠 영역 */}
         <div className="flex-1 min-w-0 max-w-2xl mx-auto xl:mx-0">
+          {/* 스트릭 배너 - 퀴즈/투표 탭에서 표시 */}
+          {activeTab !== 'community' && (
+            <StreakBanner
+              currentStreak={streak.currentStreak}
+              longestStreak={streak.longestStreak}
+              hasParticipatedToday={hasParticipatedToday}
+            />
+          )}
+
+          {/* 핫 토픽 섹션 - 전체 카테고리일 때만 */}
+          {activeTab !== 'community' && selectedCategory === 'all' && !showUncompletedOnly && (
+            <HotTopicsSection
+              quizzes={ALL_KNOWLEDGE_QUIZZES}
+              polls={VS_POLLS}
+              participation={participation}
+              onQuizClick={(quizId) => {
+                setActiveTab('quiz');
+                setFocusedItemId(quizId);
+              }}
+              onPollClick={(pollId) => {
+                setActiveTab('poll');
+                setFocusedItemId(pollId);
+              }}
+            />
+          )}
+
+          {/* 카테고리별 진행률 - 전체 카테고리일 때만 */}
+          {activeTab !== 'community' && selectedCategory === 'all' && !showUncompletedOnly && (
+            <CategoryProgress
+              quizzes={ALL_KNOWLEDGE_QUIZZES}
+              polls={VS_POLLS}
+              participation={participation}
+              activeTab={activeTab}
+              onCategoryClick={(category) => setSelectedCategory(category)}
+            />
+          )}
+
           <div className="space-y-3">
             {activeTab === 'quiz' && (
               filteredQuizzes.length > 0 ? (
                 filteredQuizzes.map((quiz) => {
                   const answered = participation.quizzes.find(q => q.quizId === quiz.id);
+                  const isFocused = focusedItemId === quiz.id;
                   return (
-                    <QuizCard
+                    <div
                       key={quiz.id}
-                      quiz={quiz}
-                      isAnswered={!!answered}
-                      previousAnswer={answered?.selectedOption}
-                      onAnswer={handleQuizAnswer}
-                      onNextAction={handleNextAction}
-                    />
+                      className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl' : ''}
+                    >
+                      <QuizCard
+                        quiz={quiz}
+                        isAnswered={!!answered}
+                        previousAnswer={answered?.selectedOption}
+                        onAnswer={handleQuizAnswer}
+                        onNextAction={handleNextAction}
+                      />
+                    </div>
                   );
                 })
               ) : (
@@ -1018,8 +1449,8 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             )}
             {activeTab === 'poll' && (
               <>
-                {/* 인기 투표 섹션 (카테고리가 '전체'일 때만) */}
-                {selectedCategory === 'all' && (
+                {/* 인기 투표 섹션 (카테고리가 '전체'일 때, showUncompletedOnly일 때만) */}
+                {selectedCategory === 'all' && showUncompletedOnly && (
                   <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
                 )}
 
@@ -1027,15 +1458,20 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                 {filteredPolls.length > 0 ? (
                   filteredPolls.map((poll) => {
                     const voted = participation.polls.find(p => p.pollId === poll.id);
+                    const isFocused = focusedItemId === poll.id;
                     return (
-                      <PollCard
+                      <div
                         key={poll.id}
-                        poll={poll}
-                        isVoted={!!voted}
-                        previousVote={voted?.choice}
-                        onVote={handlePollVote}
-                        onNextAction={handleNextAction}
-                      />
+                        className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl' : ''}
+                      >
+                        <PollCard
+                          poll={poll}
+                          isVoted={!!voted}
+                          previousVote={voted?.choice}
+                          onVote={handlePollVote}
+                          onNextAction={handleNextAction}
+                        />
+                      </div>
                     );
                   })
                 ) : (
