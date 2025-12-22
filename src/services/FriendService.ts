@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { getDeviceId } from '@/utils/device';
+import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
 
 // ============================================================================
 // 타입 정의
@@ -37,10 +38,11 @@ export interface TestComparison {
 // 상수
 // ============================================================================
 
+// 로컬 키 매핑 (기존 코드 호환)
 const STORAGE_KEYS = {
-  INVITE_CODES: 'chemi_invite_codes',
-  FRIENDS: 'chemi_friends',
-  PENDING_INVITES: 'chemi_pending_invites',
+  INVITE_CODES: GLOBAL_STORAGE_KEYS.INVITE_CODES,
+  FRIENDS: GLOBAL_STORAGE_KEYS.FRIENDS,
+  PENDING_INVITES: GLOBAL_STORAGE_KEYS.PENDING_INVITES,
 };
 
 const INVITE_CODE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7일

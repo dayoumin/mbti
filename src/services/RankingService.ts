@@ -1,12 +1,13 @@
 /**
  * RankingService - 랭킹 투표 및 통계 서비스
  *
- * 현재: localStorage 사용
- * 향후: Supabase 연동 시 StorageProvider만 교체
+ * 현재: localStorage + Turso API 사용
+ * StorageProvider 패턴으로 확장 가능
  */
 
 import { SubjectKey } from '@/data/types';
 import { getDeviceId } from '@/utils/device';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
@@ -86,25 +87,11 @@ function getCurrentSeasonId(type: SeasonType): string {
   }
 }
 
+// 중앙화된 설정에서 시즌명 조회
+import { getSeasonDisplayName } from '@/config';
+
 function getSeasonName(seasonId: string): string {
-  if (seasonId.includes('yearly')) {
-    const year = seasonId.split('-')[0];
-    return `${year} 연간 랭킹`;
-  }
-  if (seasonId.includes('Q')) {
-    const [year, quarter] = seasonId.split('-');
-    const quarterNames: Record<string, string> = {
-      'Q1': '1분기 (봄맞이)',
-      'Q2': '2분기 (여름)',
-      'Q3': '3분기 (가을)',
-      'Q4': '4분기 (연말)',
-    };
-    return `${year} ${quarterNames[quarter] || quarter}`;
-  }
-  if (seasonId.includes('event')) {
-    return '특별 이벤트 랭킹';
-  }
-  return seasonId;
+  return getSeasonDisplayName(seasonId);
 }
 
 // 카테고리 ID → 한글 이름 매핑
@@ -147,8 +134,8 @@ interface StorageProvider {
   getAvailableSeasons(): Promise<string[]>;  // 데이터가 있는 시즌 목록
 }
 
-const VOTES_KEY = 'chemi_ranking_votes';
-const STATS_KEY = 'chemi_ranking_stats';
+const VOTES_KEY = STORAGE_KEYS.RANKING_VOTES;
+const STATS_KEY = STORAGE_KEYS.RANKING_STATS;
 
 // ========== Turso Provider (API 기반) ==========
 

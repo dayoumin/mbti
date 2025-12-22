@@ -1,8 +1,8 @@
 /**
  * ResultService - 테스트 결과 저장/조회 서비스
  *
- * 현재: localStorage 사용
- * 향후: Supabase 연동 시 StorageProvider만 교체
+ * 현재: localStorage + Turso API 사용
+ * StorageProvider 패턴으로 확장 가능
  */
 
 import { ResultLabel } from '@/data/types';
@@ -14,6 +14,7 @@ import {
   RECOMMENDATION_ORDER,
 } from '@/data/recommendationPolicy';
 import { getDeviceId, USER_KEY } from '@/utils/device';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
@@ -266,7 +267,7 @@ const supabaseProvider: StorageProvider = {
 
 class ResultServiceClass {
   private provider: StorageProvider;
-  private RESULTS_KEY = 'chemi_test_results';
+  private RESULTS_KEY = STORAGE_KEYS.TEST_RESULTS;
 
   constructor() {
     // Supabase URL이 설정되어 있으면 supabaseProvider 사용

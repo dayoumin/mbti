@@ -16,11 +16,13 @@ import {
   getCareTypesForTarget,
   getDefaultCareTypesForTarget,
 } from '../data/care/types';
+import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
 
+// 로컬 키 매핑 (기존 코드 호환)
 const STORAGE_KEYS = {
-  profiles: 'chemi_care_profiles',
-  schedules: 'chemi_care_schedules',
-  logs: 'chemi_care_logs',
+  profiles: GLOBAL_STORAGE_KEYS.CARE_PROFILES,
+  schedules: GLOBAL_STORAGE_KEYS.CARE_SCHEDULES,
+  logs: GLOBAL_STORAGE_KEYS.CARE_LOGS,
 };
 
 // ============================================================================

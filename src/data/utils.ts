@@ -1,11 +1,10 @@
 // 케미테스트 유틸리티 함수
 // 생성일 2025-12-11
 
-import { CHEMI_CONSTANTS, Level } from './constants';
+import { LEVEL_THRESHOLDS, LEVELS, SCORING, type Level } from '@/config';
 import type { Dimension, ResultLabel } from './types';
 
 export function getScoreLevel(score: number, maxScore: number): Level {
-  const { LEVEL_THRESHOLDS, LEVELS } = CHEMI_CONSTANTS;
   const percentage = (score / maxScore) * 100;
   if (percentage >= LEVEL_THRESHOLDS.HIGH) return LEVELS.HIGH as Level;
   if (percentage <= LEVEL_THRESHOLDS.LOW) return LEVELS.LOW as Level;
@@ -18,7 +17,7 @@ export function matchResultLabel(
   resultLabels: ResultLabel[],
   dimCounts?: Record<string, number>
 ): ResultLabel {
-  const { MAX_SCORE_PER_QUESTION, DEFAULT_QUESTION_COUNT } = CHEMI_CONSTANTS;
+  const { MAX_SCORE_PER_QUESTION, DEFAULT_QUESTION_COUNT } = SCORING;
 
   const levels: Record<string, Level> = {};
   Object.keys(dimensions).forEach(dim => {

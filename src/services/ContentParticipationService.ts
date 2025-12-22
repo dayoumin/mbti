@@ -4,6 +4,8 @@
  * localStorage에 참여 기록을 저장하여 재방문 시에도 유지
  */
 
+import { STORAGE_KEYS } from '@/lib/storage';
+
 // ============================================================================
 // 타입 정의
 // ============================================================================
@@ -32,7 +34,7 @@ export interface ContentParticipationData {
   };
 }
 
-const STORAGE_KEY = 'chemi_content_participation';
+const STORAGE_KEY = STORAGE_KEYS.CONTENT_PARTICIPATION;
 const UPDATE_EVENT = 'chemi_content_participation_updated';
 
 // ============================================================================

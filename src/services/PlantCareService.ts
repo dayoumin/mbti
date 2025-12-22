@@ -12,11 +12,13 @@ import type {
   CareTargetType
 } from '../data/care/types';
 import { PLANT_CARE_TYPES } from '../data/care/types';
+import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
 
+// 로컬 키 매핑 (기존 코드 호환)
 const STORAGE_KEYS = {
-  profiles: 'chemi_plant_profiles',
-  schedules: 'chemi_plant_schedules',
-  logs: 'chemi_plant_logs',
+  profiles: GLOBAL_STORAGE_KEYS.PLANT_PROFILES,
+  schedules: GLOBAL_STORAGE_KEYS.PLANT_SCHEDULES,
+  logs: GLOBAL_STORAGE_KEYS.PLANT_LOGS,
 };
 
 // ============================================================================

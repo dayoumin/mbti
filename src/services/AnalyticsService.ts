@@ -1,13 +1,14 @@
 /**
  * AnalyticsService - 사용자 행동 이벤트 추적 서비스
  *
- * 현재: Supabase에 저장 (미설정 시 localStorage 폴백)
+ * 현재: Turso에 저장 (미설정 시 localStorage 폴백)
  * 용도: 추천 클릭률, 전환율 분석
  */
 
 import { resultService } from './ResultService';
 import type { NextActionType, ActionPriority } from './NextActionService';
 import { getUTMForAnalytics } from '@/utils';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
@@ -139,7 +140,7 @@ async function getSupabaseClient() {
 
 // ========== 로컬 스토리지 폴백 ==========
 
-const STORAGE_KEY = 'chemi_analytics_events';
+const STORAGE_KEY = STORAGE_KEYS.ANALYTICS_EVENTS;
 const MAX_LOCAL_EVENTS = 100; // 로컬에 최대 100개만 저장
 
 function saveToLocalStorage(event: EventData): void {
@@ -342,6 +343,7 @@ class AnalyticsServiceClass {
    */
   trackSessionStart(): void {
     // 이미 이 세션에서 추적했는지 확인
+    // sessionStorage는 탭 단위라 STORAGE_KEYS 사용 안 함
     const sessionKey = 'chemi_session_tracked';
     if (sessionStorage.getItem(sessionKey)) return;
 

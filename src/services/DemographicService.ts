@@ -7,6 +7,7 @@
 
 import { getDeviceId } from '@/utils/device';
 import type { ContentCategory } from '@/data/content/types';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
@@ -153,7 +154,7 @@ const SEED_DATA: Partial<Record<string, Partial<AgeDistribution>>> = {
 
 // ========== localStorage 키 ==========
 
-const DEMOGRAPHIC_KEY = 'chemi_demographic';
+const DEMOGRAPHIC_KEY = STORAGE_KEYS.DEMOGRAPHIC;
 
 // ========== 타입 가드 ==========
 

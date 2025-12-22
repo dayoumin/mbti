@@ -1,5 +1,7 @@
 'use client';
 
+import { BADGE_THRESHOLDS } from '@/config';
+
 interface MinorityVoteBadgeProps {
   percentage: number; // 해당 옵션의 투표 비율
   showLabel?: boolean;
@@ -8,15 +10,15 @@ interface MinorityVoteBadgeProps {
 
 /**
  * 소수 의견 표시 배지
- * 30% 미만일 때만 표시
+ * BADGE_THRESHOLDS.MINORITY_OPINION (30%) 미만일 때만 표시
  */
 export default function MinorityVoteBadge({
   percentage,
   showLabel = true,
   size = 'md',
 }: MinorityVoteBadgeProps) {
-  // 30% 이상이면 표시하지 않음
-  if (percentage >= 30) return null;
+  // 임계값 이상이면 표시하지 않음
+  if (percentage >= BADGE_THRESHOLDS.MINORITY_OPINION) return null;
 
   const sizeClasses = {
     sm: 'text-xs px-1.5 py-0.5',
@@ -45,7 +47,7 @@ export function VoteResultWithMinority({
   percentage: number;
   isSelected: boolean;
 }) {
-  const isMinority = percentage < 30;
+  const isMinority = percentage < BADGE_THRESHOLDS.MINORITY_OPINION;
 
   return (
     <div

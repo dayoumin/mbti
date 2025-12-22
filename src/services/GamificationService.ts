@@ -7,6 +7,7 @@ export type { UserGameStats };
 import type { SubjectKey } from '../data/types';
 import { BADGES, getBadgeById } from '../data/gamification/badges';
 import { getLevelByPoints, getPointsToNextLevel, DAILY_MISSIONS } from '../data/gamification/levels';
+import { STORAGE_KEYS } from '@/lib/storage';
 
 // SubjectKey 또는 category에서 ExpertSubject 추출 (전문가 트랙 대상)
 // 퀴즈/투표의 category는 SubjectKey에 없는 값('fish' 등)도 포함할 수 있음
@@ -35,7 +36,7 @@ export function getExpertSubjectFromKey(key: SubjectKey | string): ExpertSubject
   return EXPERT_SUBJECT_MAP[key as SubjectKey] || null;
 }
 
-const STORAGE_KEY = 'chemi_game_stats';
+const STORAGE_KEY = STORAGE_KEYS.GAME_STATS;
 
 // 기본 전문가 트랙 진행도 생성
 function createDefaultExpertProgress(): ExpertTrackProgress {

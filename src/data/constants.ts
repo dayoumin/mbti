@@ -1,25 +1,17 @@
-// 케미 테스트 상수 정의
-// 생성일: 2025-12-11
+/**
+ * @deprecated 이 파일은 @/config로 이동되었습니다.
+ * 하위 호환성을 위해 re-export합니다.
+ *
+ * 새 코드에서는 다음을 사용하세요:
+ * import { LEVEL_THRESHOLDS, LEVELS, SCORING, type Level } from '@/config';
+ */
+export { type Level, LEVEL_THRESHOLDS, LEVELS, SCORING } from '@/config';
 
-// 레벨 타입
-export type Level = 'high' | 'medium' | 'low';
+// 레거시 호환용 (기존 코드가 CHEMI_CONSTANTS를 사용하는 경우)
+import { LEVEL_THRESHOLDS, LEVELS, SCORING } from '@/config';
 
 export const CHEMI_CONSTANTS = {
-    // 점수 관련
-    MAX_SCORE_PER_QUESTION: 5,
-    MIN_SCORE_PER_QUESTION: 1,
-    DEFAULT_QUESTION_COUNT: 5,
-
-    // 레벨 판정 기준 (백분율)
-    LEVEL_THRESHOLDS: {
-        HIGH: 60,    // 60% 이상 = high
-        LOW: 40      // 40% 이하 = low, 그 사이 = medium
-    },
-
-    // 레벨 값
-    LEVELS: {
-        HIGH: 'high',
-        MEDIUM: 'medium',
-        LOW: 'low'
-    }
+    ...SCORING,
+    LEVEL_THRESHOLDS,
+    LEVELS,
 };

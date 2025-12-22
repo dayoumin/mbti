@@ -5,6 +5,7 @@
  */
 
 import { getDeviceId, USER_KEY } from '@/utils/device';
+import { STORAGE_KEYS, LocalStorage } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
@@ -22,10 +23,10 @@ interface AuthUser {
   provider?: string;
 }
 
-// ========== 상수 ==========
+// ========== 상수 (레거시 호환 - STORAGE_KEYS 사용 권장) ==========
 
-const AUTH_USER_KEY = 'chemi_auth_user';
-const MERGED_DEVICE_IDS_KEY = 'chemi_merged_device_ids';
+const AUTH_USER_KEY = STORAGE_KEYS.AUTH_USER;
+const MERGED_DEVICE_IDS_KEY = STORAGE_KEYS.MERGED_DEVICE_IDS;
 
 // ========== AuthService Class ==========
 
@@ -41,12 +42,10 @@ class AuthServiceClass {
    * 로그인한 사용자 정보 저장 (로컬)
    */
   setAuthUser(user: AuthUser | null): void {
-    if (typeof window === 'undefined') return;
-
     if (user) {
-      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+      LocalStorage.set(AUTH_USER_KEY, user);
     } else {
-      localStorage.removeItem(AUTH_USER_KEY);
+      LocalStorage.remove(AUTH_USER_KEY);
     }
   }
 
@@ -54,14 +53,7 @@ class AuthServiceClass {
    * 저장된 로그인 사용자 정보 가져오기
    */
   getAuthUser(): AuthUser | null {
-    if (typeof window === 'undefined') return null;
-
-    try {
-      const stored = localStorage.getItem(AUTH_USER_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
+    return LocalStorage.get<AuthUser | null>(AUTH_USER_KEY, null);
   }
 
   /**
@@ -101,58 +93,33 @@ class AuthServiceClass {
    * 병합 기록 저장
    */
   private recordMerge(deviceId: string, authUserId: string): void {
-    if (typeof window === 'undefined') return;
+    const merged = LocalStorage.get<Record<string, string[]>>(MERGED_DEVICE_IDS_KEY, {});
 
-    try {
-      const stored = localStorage.getItem(MERGED_DEVICE_IDS_KEY);
-      const merged: Record<string, string[]> = stored ? JSON.parse(stored) : {};
-
-      if (!merged[authUserId]) {
-        merged[authUserId] = [];
-      }
-
-      if (!merged[authUserId].includes(deviceId)) {
-        merged[authUserId].push(deviceId);
-      }
-
-      localStorage.setItem(MERGED_DEVICE_IDS_KEY, JSON.stringify(merged));
-    } catch (error) {
-      console.error('[AuthService] 병합 기록 저장 실패:', error);
+    if (!merged[authUserId]) {
+      merged[authUserId] = [];
     }
+
+    if (!merged[authUserId].includes(deviceId)) {
+      merged[authUserId].push(deviceId);
+    }
+
+    LocalStorage.set(MERGED_DEVICE_IDS_KEY, merged);
   }
 
   /**
    * 이미 병합된 device_id인지 확인
    */
   private isAlreadyMerged(deviceId: string, authUserId: string): boolean {
-    if (typeof window === 'undefined') return false;
-
-    try {
-      const stored = localStorage.getItem(MERGED_DEVICE_IDS_KEY);
-      if (!stored) return false;
-
-      const merged: Record<string, string[]> = JSON.parse(stored);
-      return merged[authUserId]?.includes(deviceId) || false;
-    } catch {
-      return false;
-    }
+    const merged = LocalStorage.get<Record<string, string[]>>(MERGED_DEVICE_IDS_KEY, {});
+    return merged[authUserId]?.includes(deviceId) || false;
   }
 
   /**
    * 특정 user_id에 연결된 모든 device_id 가져오기
    */
   getMergedDeviceIds(authUserId: string): string[] {
-    if (typeof window === 'undefined') return [];
-
-    try {
-      const stored = localStorage.getItem(MERGED_DEVICE_IDS_KEY);
-      if (!stored) return [];
-
-      const merged: Record<string, string[]> = JSON.parse(stored);
-      return merged[authUserId] || [];
-    } catch {
-      return [];
-    }
+    const merged = LocalStorage.get<Record<string, string[]>>(MERGED_DEVICE_IDS_KEY, {});
+    return merged[authUserId] || [];
   }
 
   /**
@@ -175,20 +142,15 @@ class AuthServiceClass {
    */
   async deleteAccount(authUserId: string): Promise<{ success: boolean }> {
     try {
-      // TODO: Supabase에서 user_id 관련 데이터 삭제
+      // TODO: Turso에서 user_id 관련 데이터 삭제
 
       // 로컬 정리
       this.setAuthUser(null);
 
       // 병합 기록에서 제거
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem(MERGED_DEVICE_IDS_KEY);
-        if (stored) {
-          const merged: Record<string, string[]> = JSON.parse(stored);
-          delete merged[authUserId];
-          localStorage.setItem(MERGED_DEVICE_IDS_KEY, JSON.stringify(merged));
-        }
-      }
+      const merged = LocalStorage.get<Record<string, string[]>>(MERGED_DEVICE_IDS_KEY, {});
+      delete merged[authUserId];
+      LocalStorage.set(MERGED_DEVICE_IDS_KEY, merged);
 
       return { success: true };
     } catch (error) {
