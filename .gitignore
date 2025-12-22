@@ -13,7 +13,9 @@ build/
 
 # IDE/Editor
 .vscode/
-.claude/
+.claude/*
+!.claude/agents/
+!.claude/skills/
 *.code-workspace
 .DS_Store
 
