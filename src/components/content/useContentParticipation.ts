@@ -88,6 +88,10 @@ export function useContentParticipation(): UseContentParticipationReturn {
   // 레이스 컨디션 방지: 현재 poll.id 추적
   const currentPollIdRef = useRef<string | null>(null);
 
+  // 중복 클릭 방지: 제출 진행 중 플래그
+  const isSubmittingQuizRef = useRef(false);
+  const isSubmittingPollRef = useRef(false);
+
   // 투표 통계 로드 (레이스 컨디션 방지)
   const loadPollStats = useCallback(async (pollId: string) => {
     currentPollIdRef.current = pollId;
@@ -154,6 +158,11 @@ export function useContentParticipation(): UseContentParticipationReturn {
       : getRandomPoll();
     setPoll(nextPoll ?? null);
 
+    // 초기 poll 선택 시 currentPollIdRef 설정 (레이스 컨디션 방지)
+    if (nextPoll) {
+      currentPollIdRef.current = nextPoll.id;
+    }
+
     // 이미 참여한 경우 상태 복원
     if (nextQuiz) {
       const answered = currentParticipation.quizzes.find(q => q.quizId === nextQuiz.id);
@@ -173,7 +182,10 @@ export function useContentParticipation(): UseContentParticipationReturn {
 
   // 퀴즈 답변 처리
   const handleQuizAnswer = useCallback(async (optionId: string) => {
-    if (showQuizResult || !quiz) return;
+    // 중복 클릭 방지: ref 플래그로 동기적 체크
+    if (showQuizResult || !quiz || isSubmittingQuizRef.current) return;
+    isSubmittingQuizRef.current = true;
+
     setSelectedQuizOption(optionId);
     setShowQuizResult(true);
 
@@ -205,7 +217,13 @@ export function useContentParticipation(): UseContentParticipationReturn {
 
   // 투표 처리
   const handlePollVote = useCallback(async (choice: 'a' | 'b') => {
-    if (selectedPollOption || !poll) return;
+    // 중복 클릭 방지: ref 플래그로 동기적 체크
+    if (selectedPollOption || !poll || isSubmittingPollRef.current) return;
+    isSubmittingPollRef.current = true;
+
+    // pollId 스냅샷: 비동기 작업 중 poll 변경에 대비
+    const pollIdSnapshot = poll.id;
+
     setSelectedPollOption(choice);
 
     contentParticipationService.recordPollVote(poll.id, choice);
@@ -226,8 +244,10 @@ export function useContentParticipation(): UseContentParticipationReturn {
       console.error('[Poll] Failed to save to Turso:', e);
     }
 
-    // 통계 로드
-    loadPollStats(poll.id);
+    // 통계 로드 (스냅샷 pollId가 현재 poll과 일치할 때만)
+    if (currentPollIdRef.current === pollIdSnapshot) {
+      loadPollStats(pollIdSnapshot);
+    }
   }, [poll, selectedPollOption, loadPollStats]);
 
   // 남은 퀴즈/투표 계산
@@ -252,6 +272,7 @@ export function useContentParticipation(): UseContentParticipationReturn {
       setSelectedQuizOption(null);
       setShowQuizResult(false);
       setLastQuizReward(null); // 보상 리셋
+      isSubmittingQuizRef.current = false; // 제출 플래그 리셋
     }
   }, [quiz, getUnansweredQuizzes]);
 
@@ -267,6 +288,7 @@ export function useContentParticipation(): UseContentParticipationReturn {
       setPollResults({ a: 50, b: 50, total: 0 });
       setIsLoadingStats(false); // 로딩 상태 리셋 (락 방지)
       setLastPollReward(null); // 보상 리셋
+      isSubmittingPollRef.current = false; // 제출 플래그 리셋
     }
   }, [poll, getUnvotedPolls]);
 
