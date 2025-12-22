@@ -1001,14 +1001,15 @@ export default function Home() {
                     </div>
                 )}
 
-                {/* 하단 내비게이션 */}
-                {view === 'dashboard' && (
-                    <BottomNav
-                        activeTab={activeNavTab}
-                        onTabChange={handleNavTabChange}
-                    />
-                )}
             </main>
+
+            {/* 하단 내비게이션 - 모달 위에 표시되도록 main 밖에 배치 */}
+            {view === 'dashboard' && (
+                <BottomNav
+                    activeTab={activeNavTab}
+                    onTabChange={handleNavTabChange}
+                />
+            )}
         </div>
     );
 }

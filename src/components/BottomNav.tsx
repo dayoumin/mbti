@@ -14,7 +14,7 @@ interface BottomNavProps {
 export default function BottomNav({ activeTab, onTabChange, className = '' }: BottomNavProps) {
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-40 lg:hidden ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-[60] lg:hidden ${className}`}
       role="navigation"
       aria-label="하단 네비게이션"
     >
