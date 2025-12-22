@@ -24,6 +24,8 @@ interface RankingVoteInput {
   seasonType: string;
 }
 
+const VALID_SEASON_TYPES = ['quarterly', 'yearly', 'event'] as const;
+
 // ========== POST: 투표 저장 ==========
 
 export async function POST(request: NextRequest) {
@@ -34,6 +36,15 @@ export async function POST(request: NextRequest) {
     if (!body.deviceId || !body.categoryId || !body.resultKey || !body.testType || !body.seasonId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // seasonType 검증
+    const seasonType = body.seasonType || 'quarterly';
+    if (!VALID_SEASON_TYPES.includes(seasonType as typeof VALID_SEASON_TYPES[number])) {
+      return NextResponse.json(
+        { error: 'Invalid seasonType. Must be: quarterly, yearly, or event' },
         { status: 400 }
       );
     }
@@ -53,7 +64,7 @@ export async function POST(request: NextRequest) {
         body.resultEmoji || '',
         body.testType,
         body.seasonId,
-        body.seasonType || 'quarterly',
+        seasonType,
       ]
     );
 

@@ -395,8 +395,7 @@ class RankingServiceClass {
 
   constructor() {
     // 기본: Turso 사용 (서버 저장, 기기 간 공유)
-    // SSR 환경에서는 localStorage 사용 불가하므로 turso가 기본
-    this.provider = typeof window !== 'undefined' ? tursoProvider : tursoProvider;
+    this.provider = tursoProvider;
   }
 
   // Provider 수동 변경 (테스트/오프라인용)
