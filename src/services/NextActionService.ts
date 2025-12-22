@@ -602,7 +602,11 @@ class NextActionService {
     if (completedTests.length === 0) return [];
 
     const actions: NextAction[] = [];
-    const recentTest = completedTests[0]; // 가장 최근
+    // 가장 최근 테스트 (호출자가 최신순 정렬을 보장한다고 가정)
+    // 정렬이 보장되지 않으면 첫 번째 요소를 사용 (방어적 처리)
+    const recentTest = completedTests[0];
+    if (!recentTest) return actions;
+
     const connections = TEST_TO_CONTENT.filter(c => c.from === recentTest);
 
     // 관련 퀴즈
@@ -807,8 +811,13 @@ class NextActionService {
     // 시간대별 추천 (선택적으로 추가)
     if (context.currentHour !== undefined) {
       const timeAction = this.getTimeBasedAction(context.currentHour);
-      // 중복 방지: 같은 타입이 없을 때만 추가
-      if (!actions.some(a => a.type === timeAction.type)) {
+      // 중복 방지: type + targetId + targetCategory 조합으로 비교
+      const isDuplicate = actions.some(a =>
+        a.type === timeAction.type &&
+        a.targetId === timeAction.targetId &&
+        a.targetCategory === timeAction.targetCategory
+      );
+      if (!isDuplicate) {
         actions.push(timeAction);
       }
     }

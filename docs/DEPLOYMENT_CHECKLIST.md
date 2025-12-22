@@ -33,6 +33,45 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 | 모든 결과 도달 가능 | [ ] | 위 스크립트에서 확인 |
 | 빈 condition 없음 | [ ] | 위 스크립트에서 확인 |
 
+### 1.4 MOCK/SAMPLE 데이터 실제 데이터 전환
+
+> ⚠️ 배포 전 실제 DB 데이터로 전환 필요
+
+#### MOCK_COMMUNITY_POSTS (커뮤니티 게시물)
+
+| 파일 | 라인 | 용도 | 전환 방법 |
+|------|------|------|-----------|
+| `src/components/CommunityBoard.tsx` | 642-643, 656, 728, 825 | 커뮤니티 게시물 목록 | API/DB 조회로 대체 |
+| `src/components/ContentExplore.tsx` | 670 | HOT 게시물 사이드바 | API/DB 조회로 대체 |
+| `src/components/RankingTab.tsx` | 410 | HOT 게시물 사이드바 | API/DB 조회로 대체 |
+| `src/components/RightSidebar.tsx` | 60 | 커뮤니티 미리보기 | API/DB 조회로 대체 |
+| `src/components/TalkPreview.tsx` | 26 | 톡 미리보기 | API/DB 조회로 대체 |
+
+#### SAMPLE_* (커뮤니티 콘텐츠)
+
+| 파일 | 라인 | 용도 | 전환 방법 |
+|------|------|------|-----------|
+| `src/components/ContentExplore.tsx` | 631 | 팁 베스트 목록 | API/DB 조회로 대체 |
+| `src/components/ContentExplore.tsx` | 643 | Q&A 목록 | API/DB 조회로 대체 |
+| `src/components/ContentExplore.tsx` | 655 | 토론 목록 | API/DB 조회로 대체 |
+
+#### getStablePollResults (투표 결과 mock)
+
+| 파일 | 라인 | 문제점 | 전환 방법 |
+|------|------|--------|-----------|
+| `src/components/ContentExplore.tsx` | 217-223, 877-879 | 하드코딩된 투표 통계 (`totalVotes: 100`) | `/api/poll` 실제 통계 조회 |
+| `src/modules/vote/utils.ts` | 9 | 결정론적 mock 결과 | API 실제 통계 조회 |
+| `src/components/content/useContentParticipation.ts` | 13 | fallback용 mock | 에러 시에만 사용 (OK) |
+
+#### 전환 체크리스트
+
+| 항목 | 확인 |
+|------|:----:|
+| MOCK_COMMUNITY_POSTS → DB 조회 | [ ] |
+| SAMPLE_TIPS/QUESTIONS/DEBATES → DB 조회 | [ ] |
+| getStablePollResults → 실제 통계 API | [ ] |
+| DailyMissionWidget mock 데이터 확인 | [ ] |
+
 ---
 
 ## 2. 법적 체크리스트
@@ -226,6 +265,7 @@ track(event: AnalyticsEvent): void {
 - [ ] Rate limiting 구현 (AnalyticsService)
 - [ ] 공용 기기 사용 안내 추가
 - [ ] 에러 모니터링 설정 (Sentry 등)
+- [ ] AI 크롤러 차단 설정 (robots.txt에 GPTBot, Claude-Web, CCBot 등 차단)
 
 ### 6.3 선택 (향후)
 
@@ -279,3 +319,4 @@ cat .env.local
 | 날짜 | 변경 내용 |
 |------|-----------|
 | 2025-12-15 | 초기 문서 작성 |
+| 2025-12-22 | MOCK/SAMPLE 데이터 전환 체크리스트 추가 |

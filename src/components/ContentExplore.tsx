@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle, Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp, TrendingUp, Trophy, Flame, Heart } from 'lucide-react';
+import {
+  ChevronLeft, HelpCircle, Vote, CheckCircle, MessageCircle,
+  Lightbulb, ThumbsUp, Bookmark, ChevronRight, ChevronDown, ChevronUp,
+  Trophy, Flame, Heart, Search, Sparkles, LayoutGrid, X
+} from 'lucide-react';
 import { MOCK_COMMUNITY_POSTS } from '@/data/content/community';
 import { RANKABLE_TESTS } from '@/data/config';
 import { getIconComponent } from '@/utils';
@@ -20,7 +24,6 @@ import PopularPolls from '@/components/content/PopularPolls';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '@/data/config';
 import { DETAIL_TEST_KEYS } from '@/config/testKeys';
 import TestCard from '@/components/TestCard';
-import { Search, Sparkles, Brain, LayoutGrid, X } from 'lucide-react';
 import { CHEMI_DATA } from '@/data';
 
 const TEST_BADGES: Record<string, string> = {
@@ -778,7 +781,7 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
 // 메인 컴포넌트
 // ============================================================================
 
-export default function ContentExplore({ onClose, initialTab = 'test', onStartTest, onNavigate }: ContentExploreProps) {
+export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTest, onNavigate }: ContentExploreProps) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
