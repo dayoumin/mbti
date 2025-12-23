@@ -13,6 +13,10 @@ export { getRandomQuiz } from './quizzes';
 export * from './polls';
 export { getRandomPoll } from './polls';
 
+// Situation Reactions (상황별 반응 투표)
+export * from './situation-reactions';
+export { getRandomSituationReaction } from './situation-reactions';
+
 // Community (게시판용)
 export * from './community';
 
@@ -22,13 +26,15 @@ export * from './explore';
 // 통합 통계
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from './quizzes';
 import { VS_POLLS } from './polls';
-import type { ContentCategory } from './types';
+import { ALL_SITUATION_REACTIONS } from './situation-reactions';
+import type { ContentCategory, SituationCategory } from './types';
 
 export const CONTENT_STATS = {
   knowledgeQuizzes: ALL_KNOWLEDGE_QUIZZES.length,
   scenarioQuizzes: ALL_SCENARIO_QUIZZES.length,
   vsPolls: VS_POLLS.length,
-  total: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length + VS_POLLS.length,
+  situationReactions: ALL_SITUATION_REACTIONS.length,
+  total: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length + VS_POLLS.length + ALL_SITUATION_REACTIONS.length,
 };
 
 // 카테고리별 콘텐츠 수 조회
@@ -38,4 +44,9 @@ export function getContentCountByCategory(category: ContentCategory) {
     scenarioQuizzes: ALL_SCENARIO_QUIZZES.filter(q => q.category === category).length,
     vsPolls: VS_POLLS.filter(p => p.category === category).length,
   };
+}
+
+// 상황별 반응 카테고리별 수 조회
+export function getSituationReactionCountByCategory(category: SituationCategory) {
+  return ALL_SITUATION_REACTIONS.filter(sr => sr.category === category).length;
 }

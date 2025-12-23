@@ -146,11 +146,38 @@ export interface ChoicePoll {
 }
 
 // ============================================================================
+// 상황별 반응 투표 (Situation-Reaction)
+// ============================================================================
+
+export type SituationCategory = 'relationship' | 'work' | 'social' | 'awkward';
+export type ReactionTag = 'cool' | 'emotional' | 'rational' | 'avoidant' |
+                          'confrontational' | 'humorous' | 'caring' | 'passive';
+
+export interface SituationReaction {
+  id: string;                    // "situation-reaction-{category}-{번호}"
+  type: 'situation-reaction';
+  category: SituationCategory;
+  situation: string;             // 상황 설명 (1-2문장)
+  question: string;              // "이럴 때 나는?"
+  options: {
+    id: string;                  // 'a', 'b', 'c', 'd'
+    text: string;                // 반응 텍스트
+    emoji: string;               // 반응 이모지
+    tag: ReactionTag;            // 반응 유형 태그
+  }[];
+  personalityMapping?: {         // 성격 유형별 예상 반응 (통계용)
+    [personalityType: string]: string;  // MBTI 등 -> optionId
+  };
+  tags?: string[];               // 검색용 태그
+  meta?: ContentMeta;
+}
+
+// ============================================================================
 // 통합 콘텐츠 타입
 // ============================================================================
 
 export type QuizContent = KnowledgeQuiz | ScenarioQuiz;
-export type PollContent = VSPoll | ChoicePoll;
+export type PollContent = VSPoll | ChoicePoll | SituationReaction;
 
 // 메타데이터가 있는 콘텐츠 타입
 export type ContentWithMeta = { meta?: ContentMeta };
