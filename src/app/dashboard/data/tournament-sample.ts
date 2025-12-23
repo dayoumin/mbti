@@ -915,6 +915,483 @@ export const MBTI_WORLDCUP: Tournament = {
 };
 
 // ============================================================================
+// 샘플 데이터: 금요일 저녁 활동 월드컵 16강
+// ============================================================================
+
+export const FRIDAY_NIGHT_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'netflix',
+    name: '집에서 넷플릭스',
+    emoji: '📺',
+    description: '아무 생각 없이 소파에 누워 드라마/영화 정주행',
+    tags: ['집순이', '힐링', '실내', '혼자'],
+    funFact: '한 편만 보려 했는데 어느새 시즌 전체를 다 봤어요',
+  },
+  {
+    id: 'drinks-with-friends',
+    name: '친구들과 술 한잔',
+    emoji: '🍻',
+    description: '단골 포차에서 소주 한잔하며 수다 떨기',
+    tags: ['친구', '외출', '술', '수다'],
+    funFact: '한잔만 하려 했는데 2차까지 가는 건 기본',
+  },
+  {
+    id: 'solo-drink-youtube',
+    name: '혼술하며 유튜브',
+    emoji: '🍺',
+    description: '편한 옷 입고 집에서 맥주 한캔, 유튜브 정주행',
+    tags: ['혼자', '술', '힐링', '실내'],
+    funFact: '알고리즘이 추천하는 대로 새벽 3시까지 시청',
+  },
+  {
+    id: 'restaurant-tour',
+    name: '맛집 탐방',
+    emoji: '🍴',
+    description: '인스타에서 찾아둔 핫플 맛집 방문',
+    tags: ['외식', '외출', '그루메', 'SNS'],
+    funFact: '음식 사진 찍느라 식기 전에 먹은 적이 없어요',
+  },
+  {
+    id: 'gym',
+    name: '헬스장 운동',
+    emoji: '💪',
+    description: '한 주 스트레스를 땀으로 날려버리기',
+    tags: ['운동', '건강', '외출', '자기관리'],
+    funFact: '금요일 저녁 헬스장은 사람이 없어서 쾌적해요',
+  },
+  {
+    id: 'cafe-reading',
+    name: '카페에서 책 읽기',
+    emoji: '☕',
+    description: '조용한 카페 찾아서 아메리카노와 책 한 권',
+    tags: ['힐링', '독서', '카페', '혼자'],
+    funFact: '책보다 카페 분위기를 더 즐기는 중일지도',
+  },
+  {
+    id: 'gaming',
+    name: '게임하기',
+    emoji: '🎮',
+    description: 'PC방이나 집에서 밤새 게임 삼매경',
+    tags: ['게임', '취미', '실내', '몰입'],
+    funFact: '한 판만 하려 했는데 해가 떠있어요',
+  },
+  {
+    id: 'shopping',
+    name: '쇼핑몰 구경',
+    emoji: '🛍️',
+    description: '백화점/아울렛 돌아다니며 쇼핑&구경',
+    tags: ['쇼핑', '외출', '힐링', '소비'],
+    funFact: '구경만 하려 했는데 카드가 움직였어요',
+  },
+  {
+    id: 'movie-theater',
+    name: '영화관 가기',
+    emoji: '🎬',
+    description: '큰 스크린으로 보는 신작 영화',
+    tags: ['외출', '영화', '문화', '힐링'],
+    funFact: '팝콘 콤보가 영화 티켓보다 비싼 건 비밀',
+  },
+  {
+    id: 'cooking',
+    name: '집에서 요리하기',
+    emoji: '🍳',
+    description: '좋아하는 음악 틀고 여유롭게 요리 타임',
+    tags: ['요리', '실내', '취미', '힐링'],
+    funFact: '인스타 보고 도전했다가 주방이 난장판',
+  },
+  {
+    id: 'online-shopping',
+    name: '온라인 쇼핑',
+    emoji: '📱',
+    description: '침대에 누워서 쿠팡/무신사 장바구니 채우기',
+    tags: ['쇼핑', '실내', '혼자', '소비'],
+    funFact: '새벽 배송으로 내일 아침이 크리스마스',
+  },
+  {
+    id: 'early-sleep',
+    name: '목욕하고 일찍 자기',
+    emoji: '🛀',
+    description: '향기로운 입욕제 넣고 반신욕, 9시 취침',
+    tags: ['휴식', '힐링', '실내', '자기관리'],
+    funFact: '한 주 동안 쌓인 피로를 완벽하게 리셋',
+  },
+  {
+    id: 'drive',
+    name: '드라이브하기',
+    emoji: '🚗',
+    description: '좋아하는 음악 틀고 야경 보러 드라이브',
+    tags: ['외출', '자유', '힐링', '감성'],
+    funFact: '목적지는 없어도 괜찮아요. 과정이 중요',
+  },
+  {
+    id: 'karaoke',
+    name: '노래방 가기',
+    emoji: '🎤',
+    description: '친구들이나 혼자 가서 스트레스 해소 노래방',
+    tags: ['외출', '스트레스해소', '취미', '노래'],
+    funFact: '1시간만 하려 했는데 연장이 기본',
+  },
+  {
+    id: 'delivery',
+    name: '배달음식 시켜 먹기',
+    emoji: '🍕',
+    description: '피자/치킨/족발 시켜서 집에서 편하게',
+    tags: ['식사', '실내', '편안', '혼자'],
+    funFact: '요리 안 해도 되고 설거지도 없는 완벽한 금요일',
+  },
+  {
+    id: 'walk',
+    name: '산책하기',
+    emoji: '🚶',
+    description: '한강이나 공원 산책하며 한 주 정리',
+    tags: ['외출', '힐링', '운동', '여유'],
+    funFact: '생각 정리하기 좋고, 운동도 되고 일석이조',
+  },
+];
+
+export const FRIDAY_NIGHT_WORLDCUP: Tournament = {
+  id: 'friday-night-worldcup-v1',
+  type: 'worldcup',
+  category: 'lifestyle',
+  title: '금요일 저녁 활동 월드컵',
+  subtitle: '16강',
+  description: '불금에 뭐하고 싶어? 나의 최애 금요일 활동 찾기!',
+  emoji: '🌃',
+  themeColor: 'bg-indigo-100',
+
+  contestants: FRIDAY_NIGHT_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 금요일 활동은 {winner}! 🌃 너는 뭐야?',
+  },
+};
+
+// ============================================================================
+// 샘플 데이터: 스트레스 해소법 월드컵 16강
+// ============================================================================
+
+export const STRESS_RELIEF_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'sleep',
+    name: '잠자기',
+    emoji: '😴',
+    description: '눈 감으면 세상 걱정도 끝! 최고의 리셋 버튼',
+    tags: ['휴식', '회복', '실내', '혼자'],
+    funFact: '수면은 뇌가 스트레스 호르몬을 정리하는 자연 치유 시간이에요',
+  },
+  {
+    id: 'eating',
+    name: '먹기 (폭식)',
+    emoji: '🍔',
+    description: '스트레스는 달달짭짤로 해결! 치팅데이는 자유',
+    tags: ['음식', '즉각', '쾌락', '실내'],
+    funFact: '먹을 때만큼은 다 잊어버려요. 단, 내일의 나는 후회할지도...',
+  },
+  {
+    id: 'exercise',
+    name: '운동하기',
+    emoji: '🏃',
+    description: '땀으로 스트레스를 배출! 건강도 챙기는 일석이조',
+    tags: ['건강', '활동', '외출', '장기효과'],
+    funFact: '운동하면 엔도르핀이 분비되어 자연스럽게 기분이 좋아져요',
+  },
+  {
+    id: 'gaming',
+    name: '게임하기',
+    emoji: '🎮',
+    description: '가상세계로 도피! 몰입하면 현실 걱정은 잠시 bye',
+    tags: ['몰입', '취미', '실내', '혼자'],
+    funFact: '한 판만 하려다 새벽 되는 건 기본. 중독 주의!',
+  },
+  {
+    id: 'singing',
+    name: '노래 부르기',
+    emoji: '🎤',
+    description: '목청 터지게 질러보자! 속 시원한 카타르시스',
+    tags: ['표현', '외출', '스트레스해소', '감정'],
+    funFact: '노래방에서 고음 지르면 억눌린 감정이 싹 날아가요',
+  },
+  {
+    id: 'drinking',
+    name: '술 마시기',
+    emoji: '🍺',
+    description: '오늘 하루 수고했어, 한잔하자! 취기로 잊어버리기',
+    tags: ['사교', '외출', '즉각', '회피'],
+    funFact: '술은 일시적 기분 전환은 되지만, 숙취와 함께 스트레스도 돌아와요',
+  },
+  {
+    id: 'shopping',
+    name: '쇼핑하기',
+    emoji: '🛍️',
+    description: '지갑은 가벼워지고 마음은 부유해져요!',
+    tags: ['소비', '즉각', '외출', '쾌락'],
+    funFact: '뇌는 물건을 살 때 도파민을 분비해서 기분이 좋아져요. 단, 통장 주의',
+  },
+  {
+    id: 'watching',
+    name: '영화/드라마 보기',
+    emoji: '📺',
+    description: '소파에 누워 몰아보기! 타인의 삶으로 현실 도피',
+    tags: ['몰입', '실내', '혼자', '휴식'],
+    funFact: '시즌 전체를 정주행하면 시간 가는 줄 몰라요',
+  },
+  {
+    id: 'chatting',
+    name: '친구와 수다',
+    emoji: '💬',
+    description: '하소연하고 공감받기! 들어주는 친구가 최고의 명약',
+    tags: ['사교', '공감', '외출', '감정'],
+    funFact: '고민을 말로 표현하면 뇌가 정리하면서 스트레스가 줄어들어요',
+  },
+  {
+    id: 'cleaning',
+    name: '청소하기',
+    emoji: '🧹',
+    description: '더러운 집 = 복잡한 마음. 정리하면 속도 시원!',
+    tags: ['활동', '실내', '생산적', '혼자'],
+    funFact: '청소하면 세로토닌이 분비되고, 깨끗한 공간은 마음까지 정돈해줘요',
+  },
+  {
+    id: 'walking',
+    name: '산책하기',
+    emoji: '🚶',
+    description: '한강, 공원, 동네 한 바퀴. 걷다보면 머리가 맑아져요',
+    tags: ['외출', '운동', '여유', '자연'],
+    funFact: '걷기는 뇌에 산소를 공급하고 생각을 정리하는 데 최고예요',
+  },
+  {
+    id: 'bathing',
+    name: '목욕/반신욕',
+    emoji: '🛁',
+    description: '따뜻한 물에 몸 담그고 힐링 타임! 향기로운 입욕제 필수',
+    tags: ['휴식', '힐링', '실내', '혼자'],
+    funFact: '따뜻한 물은 근육 긴장을 풀고 부교감신경을 활성화해요',
+  },
+  {
+    id: 'meditation',
+    name: '명상/요가',
+    emoji: '🧘',
+    description: '호흡에 집중하며 마음 다스리기. 내면의 평화 찾기',
+    tags: ['정신', '건강', '실내', '장기효과'],
+    funFact: '규칙적인 명상은 스트레스 호르몬(코르티솔)을 실제로 줄여줘요',
+  },
+  {
+    id: 'crying',
+    name: '울기',
+    emoji: '😭',
+    description: '억지로 참지 말고 펑펑 울어버리자! 눈물은 해독제',
+    tags: ['감정', '표현', '해소', '혼자'],
+    funFact: '눈물에는 스트레스 호르몬이 포함되어 있어서 우는 게 실제로 도움돼요',
+  },
+  {
+    id: 'sns',
+    name: 'SNS 하기',
+    emoji: '📱',
+    description: '무한 스크롤로 시간 보내기. 뇌는 쉬고 손은 바쁘게',
+    tags: ['소비', '실내', '혼자', '회피'],
+    funFact: 'SNS는 일시적 기분 전환은 되지만, 비교 심리로 오히려 스트레스가 될 수도...',
+  },
+  {
+    id: 'nothing',
+    name: '아무것도 안하기',
+    emoji: '🪫',
+    description: '그냥 멍 때리기. 생각도 행동도 멈추고 배터리 충전',
+    tags: ['휴식', '실내', '혼자', '회복'],
+    funFact: '멍 때리기는 뇌의 디폴트 모드 네트워크를 활성화해서 창의성을 높여줘요',
+  },
+];
+
+export const STRESS_RELIEF_WORLDCUP: Tournament = {
+  id: 'stress-relief-worldcup-v1',
+  type: 'worldcup',
+  category: 'lifestyle',
+  title: '스트레스 해소법 월드컵',
+  subtitle: '16강',
+  description: '힘들 때 당신이 제일 먼저 하는 건? 나만의 힐링 방법 찾기!',
+  emoji: '😤',
+  themeColor: 'bg-teal-100',
+
+  contestants: STRESS_RELIEF_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최고 스트레스 해소법은 {winner}! 😤 너는 뭐야?',
+  },
+};
+
+// ============================================================================
+// 샘플 데이터: 주말 활동 월드컵 16강
+// ============================================================================
+
+export const WEEKEND_ACTIVITY_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'sleep-in',
+    name: '집에서 푹 자기',
+    emoji: '😴',
+    description: '알람 없이 늦잠 자고 이불 속에서 뒹굴뒹굴',
+    tags: ['휴식', '실내', '혼자', '충전'],
+    funFact: '주말 늦잠은 평일 부족한 수면을 보충하는 최고의 선물!',
+  },
+  {
+    id: 'cafe-chill',
+    name: '카페에서 여유',
+    emoji: '☕',
+    description: '분위기 좋은 카페에서 커피 한잔과 여유로운 시간',
+    tags: ['외출', '카페', '힐링', '혼자'],
+    funFact: '카페 음악과 커피 향기는 스트레스를 줄여주는 치유제',
+  },
+  {
+    id: 'hiking',
+    name: '등산/하이킹',
+    emoji: '⛰️',
+    description: '상쾌한 공기 마시며 산 오르기, 정상 인증샷 필수',
+    tags: ['외출', '운동', '자연', '건강'],
+    funFact: '등산은 유산소 운동과 힐링을 동시에! 정상에서 먹는 컵라면은 별미',
+  },
+  {
+    id: 'food-tour',
+    name: '맛집 탐방',
+    emoji: '🍴',
+    description: '인스타에 저장해둔 맛집 리스트 정복하기',
+    tags: ['외출', '음식', 'SNS', '탐험'],
+    funFact: '음식 사진 찍는 시간이 먹는 시간보다 길어요',
+  },
+  {
+    id: 'movie-theater',
+    name: '영화관 가기',
+    emoji: '🎬',
+    description: '큰 스크린으로 보는 신작 영화, 팝콘 콤보 필수',
+    tags: ['외출', '문화', '힐링', '실내'],
+    funFact: '주말 조조 할인 시간대는 가성비 최고!',
+  },
+  {
+    id: 'shopping',
+    name: '쇼핑하기',
+    emoji: '🛍️',
+    description: '백화점/아울렛 돌아다니며 쇼핑 & 구경',
+    tags: ['외출', '쇼핑', '소비', '힐링'],
+    funFact: '구경만 하려 했는데 카드가 움직이는 건 기본',
+  },
+  {
+    id: 'friends-meetup',
+    name: '친구 만나기',
+    emoji: '👥',
+    description: '오랜만에 친구들과 수다 떨고 밥 먹기',
+    tags: ['외출', '사교', '관계', '수다'],
+    funFact: '한 시간만 만나려 했는데 4시간은 기본',
+  },
+  {
+    id: 'family-time',
+    name: '가족과 시간',
+    emoji: '👨‍👩‍👧',
+    description: '부모님 뵙거나 가족과 함께 시간 보내기',
+    tags: ['가족', '관계', '외출', '따뜻함'],
+    funFact: '부모님 집에 가면 밥 먹이고 반찬 싸주는 건 덤',
+  },
+  {
+    id: 'exercise',
+    name: '운동하기',
+    emoji: '💪',
+    description: '헬스장, 수영장, 요가 등 땀 흘리며 건강 챙기기',
+    tags: ['운동', '건강', '외출', '자기관리'],
+    funFact: '주말에 미리 운동하면 다음 주 죄책감 제로!',
+  },
+  {
+    id: 'drive',
+    name: '드라이브',
+    emoji: '🚗',
+    description: '좋아하는 음악 틀고 바다/산으로 드라이브',
+    tags: ['외출', '자유', '감성', '힐링'],
+    funFact: '목적지는 중요하지 않아요. 과정이 힐링!',
+  },
+  {
+    id: 'exhibition',
+    name: '전시회/박물관',
+    emoji: '🎨',
+    description: '미술관, 박물관, 전시회 관람하며 문화생활',
+    tags: ['문화', '외출', '교양', '감성'],
+    funFact: '전시 관람 후 굿즈 사는 건 필수 코스',
+  },
+  {
+    id: 'reading',
+    name: '독서하기',
+    emoji: '📚',
+    description: '밀린 책 읽거나 서점 구경하며 책 고르기',
+    tags: ['실내', '독서', '혼자', '교양'],
+    funFact: '책 읽다가 잠드는 건 독서의 최고 경지',
+  },
+  {
+    id: 'gaming',
+    name: '게임하기',
+    emoji: '🎮',
+    description: 'PC방이나 집에서 밤새 게임 삼매경',
+    tags: ['게임', '실내', '몰입', '혼자'],
+    funFact: '한 판만 하려 했는데 해가 떠있는 마법',
+  },
+  {
+    id: 'cooking-baking',
+    name: '요리/베이킹',
+    emoji: '👨‍🍳',
+    description: '새로운 레시피 도전하거나 홈베이킹',
+    tags: ['요리', '실내', '취미', '생산적'],
+    funFact: '인스타 레시피 따라 했다가 주방이 난장판',
+  },
+  {
+    id: 'cleaning',
+    name: '청소/정리',
+    emoji: '🧹',
+    description: '집 대청소하고 정리정돈으로 기분 전환',
+    tags: ['실내', '생산적', '혼자', '힐링'],
+    funFact: '깨끗한 집에서 맞이하는 월요일은 기분 좋아요',
+  },
+  {
+    id: 'hobby',
+    name: '취미활동',
+    emoji: '🎸',
+    description: '악기, 그림, 운동 등 나만의 취미에 몰입',
+    tags: ['취미', '실내', '외출', '자기계발'],
+    funFact: '좋아하는 걸 할 때 시간이 가장 빨리 가요',
+  },
+];
+
+export const WEEKEND_ACTIVITY_WORLDCUP: Tournament = {
+  id: 'weekend-activity-worldcup-v1',
+  type: 'worldcup',
+  category: 'lifestyle',
+  title: '주말 활동 월드컵',
+  subtitle: '16강',
+  description: '이번 주말에 뭐하지? 나의 최애 주말 활동 찾기!',
+  emoji: '🌞',
+  themeColor: 'bg-yellow-100',
+
+  contestants: WEEKEND_ACTIVITY_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 주말 활동은 {winner}! 🌞 너는 뭐야?',
+  },
+};
+
+// ============================================================================
 // 추가 토너먼트 아이디어 (샘플)
 // ============================================================================
 
@@ -965,7 +1442,7 @@ export const TOURNAMENT_IDEAS: { category: TournamentCategory; ideas: string[] }
     category: 'personality',
     ideas: [
       '내 성격과 맞는 직업 월드컵',
-      '스트레스 해소법 월드컵',
+      '스트레스 해소법 월드컵 ✅',
       '취미 월드컵',
     ],
   },
@@ -976,6 +1453,8 @@ export const TOURNAMENT_IDEAS: { category: TournamentCategory; ideas: string[] }
       '넷플릭스 장르 월드컵',
       '여행지 월드컵',
       'OTT 서비스 월드컵',
+      '금요일 저녁 활동 월드컵 ✅',
+      '주말 활동 월드컵 ✅',
     ],
   },
 ];
@@ -1168,18 +1647,33 @@ export const IDEALTYPE_CONDITIONS_VALIDATION = validateTournament(IDEALTYPE_COND
 // MBTI 월드컵 검증 실행
 export const MBTI_WORLDCUP_VALIDATION = validateTournament(MBTI_WORLDCUP);
 
+// 금요일 저녁 활동 월드컵 검증 실행
+export const FRIDAY_NIGHT_WORLDCUP_VALIDATION = validateTournament(FRIDAY_NIGHT_WORLDCUP);
+
+// 스트레스 해소법 월드컵 검증 실행
+export const STRESS_RELIEF_WORLDCUP_VALIDATION = validateTournament(STRESS_RELIEF_WORLDCUP);
+
+// 주말 활동 월드컵 검증 실행
+export const WEEKEND_ACTIVITY_WORLDCUP_VALIDATION = validateTournament(WEEKEND_ACTIVITY_WORLDCUP);
+
 export const TOURNAMENT_SAMPLE = {
   catBreed: CAT_BREED_TOURNAMENT,
   ramenWorldcup: RAMEN_WORLDCUP,
   valuesWorldcup: VALUES_WORLDCUP,
   idealtypeConditions: IDEALTYPE_CONDITIONS_WORLDCUP,
   mbtiWorldcup: MBTI_WORLDCUP,
+  fridayNightWorldcup: FRIDAY_NIGHT_WORLDCUP,
+  stressReliefWorldcup: STRESS_RELIEF_WORLDCUP,
+  weekendActivityWorldcup: WEEKEND_ACTIVITY_WORLDCUP,
   contestants: {
     catBreed: CAT_BREED_CONTESTANTS,
     ramen: RAMEN_WORLDCUP_CONTESTANTS,
     values: VALUES_WORLDCUP_CONTESTANTS,
     idealtypeConditions: IDEALTYPE_CONDITIONS_CONTESTANTS,
     mbti: MBTI_WORLDCUP_CONTESTANTS,
+    fridayNight: FRIDAY_NIGHT_CONTESTANTS,
+    stressRelief: STRESS_RELIEF_CONTESTANTS,
+    weekendActivity: WEEKEND_ACTIVITY_CONTESTANTS,
   },
   ideas: TOURNAMENT_IDEAS,
   template: TOURNAMENT_TEMPLATE,
@@ -1190,6 +1684,9 @@ export const TOURNAMENT_SAMPLE = {
     values: VALUES_WORLDCUP_VALIDATION,
     idealtypeConditions: IDEALTYPE_CONDITIONS_VALIDATION,
     mbti: MBTI_WORLDCUP_VALIDATION,
+    fridayNight: FRIDAY_NIGHT_WORLDCUP_VALIDATION,
+    stressRelief: STRESS_RELIEF_WORLDCUP_VALIDATION,
+    weekendActivity: WEEKEND_ACTIVITY_WORLDCUP_VALIDATION,
   },
   utils: {
     getRoundName,

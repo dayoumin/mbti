@@ -1,7 +1,7 @@
 // drinkingStyle 테스트 데이터
 // 생성일: 2025-12-23
 
-export const DRINKING_STYLE_DATA = {
+export const drinkingStyleData = {
     title: "음주 유형 테스트",
     subtitle: "나의 음주 스타일은?",
     themeColor: "bg-amber-100",

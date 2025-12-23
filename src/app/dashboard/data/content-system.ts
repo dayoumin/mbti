@@ -7,7 +7,7 @@
 // ============================================================================
 
 export type ContentType = 'quiz' | 'poll' | 'qna';
-export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'food' | 'general';
+export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'food' | 'work' | 'money' | 'general';
 export type Frequency = 'once' | 'daily' | 'weekly' | 'seasonal' | 'event';
 
 export interface ContentTypeDefinition {
@@ -492,6 +492,15 @@ export const CATEGORIES: CategoryDefinition[] = [
     relatedTests: ['coffee', 'petMatch'],
     pollTopics: ['일상', '취미', '음식', '여행'],
     quizTopics: ['트렌드', '라이프해킹'],
+  },
+  {
+    id: 'money',
+    name: '돈',
+    icon: '💰',
+    color: '#feca57',
+    relatedTests: [],
+    pollTopics: ['소비', '저축', '투자', '금융', '가치관'],
+    quizTopics: ['금융 상식', '재테크', '소비 심리'],
   },
   {
     id: 'general',

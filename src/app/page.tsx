@@ -29,6 +29,7 @@ import { CareProfilePrompt } from '../components/care';
 import BreedDetailCard from '../components/BreedDetailCard';
 import NextTestRecommendation from '../components/NextTestRecommendation';
 import ContentActions from '../components/ContentActions';
+import TournamentPlay from '../components/TournamentPlay';
 import * as Icons from '../components/Icons';
 import type { SubjectKey, ResultLabel, Dimension, SubjectConfig } from '../data/types';
 import type { NavTab } from '../components/nav/types';
@@ -48,7 +49,7 @@ const MAX_SCORE_PER_QUESTION = SCORING.MAX_SCORE_PER_QUESTION;
 // 타입 정의
 // ============================================================================
 
-type ViewType = 'dashboard' | 'test';
+type ViewType = 'dashboard' | 'test' | 'tournament';
 type StepType = 'intro' | 'question' | 'directSelect' | 'loading' | 'result';
 type DetailTabType = 'interpretation' | 'guide';
 
@@ -101,6 +102,7 @@ export default function Home() {
     const [parentInfo, setParentInfo] = useState<ParentInfo | null>(null);
     const [activeNavTab, setActiveNavTab] = useState<NavTab>('home');
     const [badgeQueue, setBadgeQueue] = useState<string[]>([]);
+    const [activeTournamentId, setActiveTournamentId] = useState<string | null>(null);
 
     // 헬퍼: 모달 열기/닫기
     const openModal = (modal: ActiveModal) => setActiveModal(modal);
@@ -403,7 +405,23 @@ export default function Home() {
                                 openModal('contentExplore');
                                 setActiveNavTab('explore');
                             }}
+                            onTournamentClick={(tournamentId: string) => {
+                                setActiveTournamentId(tournamentId);
+                                setView('tournament');
+                            }}
                         />
+                    </div>
+                ) : view === 'tournament' && activeTournamentId ? (
+                    <div className="flex-1 flex justify-center">
+                        <div className="w-full max-w-lg">
+                            <TournamentPlay
+                                tournamentId={activeTournamentId}
+                                onBack={() => {
+                                    setView('dashboard');
+                                    setActiveTournamentId(null);
+                                }}
+                            />
+                        </div>
                     </div>
                 ) : (
                     <div className="glass-card rounded-[2.5rem] overflow-hidden flex flex-col relative transition-all duration-500 w-full h-full max-w-md min-h-[750px] shadow-2xl border border-white/50">

@@ -24,6 +24,7 @@ import TodayRankingModal from './TodayRankingModal';
 import TestCard from './TestCard';
 import MyRankingMini from './MyRankingMini';
 import TodayQuizPoll from './TodayQuizPoll';
+import TournamentCards from './TournamentCards';
 
 // ============================================================================
 // 타입 정의
@@ -50,6 +51,7 @@ interface BonusAction {
 interface DashboardProps {
     onStartTest?: (testKey: SubjectKey) => void;
     onContentExplore?: () => void;
+    onTournamentClick?: (tournamentId: string) => void;
 }
 
 // 1차 필터: 테스트 유형 (심리/매칭/관계/라이프)
@@ -312,7 +314,7 @@ const BackgroundDecoration = () => (
 type TestTypeFilter = keyof typeof TEST_TYPE_TABS;
 type SubjectFilter = keyof typeof SUBJECT_CATEGORIES | null;
 
-const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
+const Dashboard = ({ onStartTest, onContentExplore, onTournamentClick }: DashboardProps) => {
     // 2단계 필터 상태
     const [activeType, setActiveType] = useState<TestTypeFilter>('all');        // 1차: 심리/매칭
     const [activeSubject, setActiveSubject] = useState<SubjectFilter>(null);   // 2차: 주제별 (null = 전체)
@@ -509,6 +511,12 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
                         className="mb-4 animate-fade-in-up"
                     />
 
+                    {/* 이상형 월드컵 - 대결형 콘텐츠 */}
+                    <TournamentCards
+                        onTournamentClick={onTournamentClick}
+                        className="mb-4 animate-fade-in-up"
+                    />
+
                     {/* 오늘의 랭킹 - 미니 프리뷰 */}
                     <TodayRankingPreview
                         onClick={() => setRankingModalState({ isOpen: true, defaultTab: 'polls' })}
@@ -534,6 +542,12 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
                     {/* 오늘의 퀴즈 & 투표 - PC에서도 참여 유도 (넷플릭스 스타일) */}
                     <TodayQuizPoll
                         onExploreMore={onContentExplore}
+                        className="mb-4 animate-fade-in-up"
+                    />
+
+                    {/* 이상형 월드컵 - PC에서도 표시 */}
+                    <TournamentCards
+                        onTournamentClick={onTournamentClick}
                         className="mb-4 animate-fade-in-up"
                     />
 
