@@ -143,7 +143,7 @@ export interface TestType {
 export interface SubjectConfig {
   testType: string;
   icon: string;
-  lucideIcon?: string;  // 대시보드용 lucide-react 아이콘명
+  lucideIcon: string;  // 대시보드용 lucide-react 아이콘명 (필수)
   emoji?: string;
   label: string;
   intro?: string[];
@@ -160,6 +160,7 @@ export type SubjectKey =
   | 'human' | 'cat' | 'dog' | 'rabbit' | 'hamster'
   | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'tea' | 'conflictStyle'
   | 'fruit' | 'alcohol' | 'bread' | 'perfume' | 'aroma' | 'food' | 'whiskeySample' | 'ramen'
+  | 'spendingStyle' | 'drinkingStyle' | 'travelStyle'
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 

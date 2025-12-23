@@ -802,6 +802,124 @@ export const AromaIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4"
   </svg>
 );
 
+// 음주 유형 아이콘 (drinkingStyle 테스트용)
+export const DrinkingStyleIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 맥주잔 */}
+    <path
+      d="M35 30 L40 70 Q40 80 50 80 Q60 80 60 70 L65 30 Z"
+      fill="#FFC107"
+      stroke="#4A4A4A"
+      strokeWidth="2.5"
+    />
+    {/* 거품 */}
+    <ellipse cx="50" cy="28" rx="15" ry="8" fill="#FAFAFA" opacity="0.9" />
+    <circle cx="45" cy="24" r="4" fill="white" opacity="0.8" />
+    <circle cx="55" cy="26" r="3" fill="white" opacity="0.8" />
+    <circle cx="50" cy="22" r="3" fill="white" opacity="0.8" />
+    {/* 손잡이 */}
+    <path
+      d="M65 40 Q 75 40 75 50 Q 75 60 65 60"
+      fill="none"
+      stroke="#4A4A4A"
+      strokeWidth="2.5"
+    />
+    {/* 기포 */}
+    <circle cx="48" cy="60" r="2" fill="#FFD54F" opacity="0.6" />
+    <circle cx="52" cy="50" r="1.5" fill="#FFD54F" opacity="0.6" />
+    <circle cx="46" cy="45" r="1.5" fill="#FFD54F" opacity="0.6" />
+
+    {mood === "happy" && (
+      <>
+        {/* 반짝임 효과 */}
+        <circle cx="42" cy="55" r="1.5" fill="white" opacity="0.8" />
+        <circle cx="56" cy="65" r="1" fill="white" opacity="0.8" />
+      </>
+    )}
+    {mood === "excited" && (
+      <>
+        {/* 더 많은 거품과 기포 */}
+        <circle cx="40" cy="35" r="2" fill="white" opacity="0.9" />
+        <circle cx="60" cy="33" r="2" fill="white" opacity="0.9" />
+        <circle cx="50" cy="55" r="2" fill="#FFD54F" opacity="0.7" />
+      </>
+    )}
+    {mood === "calm" && (
+      <>
+        {/* 차분한 거품 */}
+        <ellipse cx="50" cy="28" rx="12" ry="6" fill="#F5F5F5" opacity="0.7" />
+      </>
+    )}
+  </svg>
+);
+
+// 소비 성향 아이콘 (spendingStyle 테스트용)
+export const SpendingStyleIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 지갑 */}
+    <path d="M20 35 L80 35 L80 75 Q80 85 70 85 L30 85 Q20 85 20 75 Z" fill="#4B5563" stroke="#1F2937" strokeWidth="3" />
+    {/* 지갑 플랩 */}
+    <path d="M20 35 Q20 25 30 25 L70 25 Q80 25 80 35" fill="#6B7280" stroke="#1F2937" strokeWidth="3" />
+    {/* 카드 슬롯 */}
+    <rect x="30" y="45" width="40" height="6" fill="#374151" rx="1" />
+    <rect x="30" y="55" width="40" height="6" fill="#374151" rx="1" />
+    {/* 동전/지폐 */}
+    {mood === "happy" && (
+      <g>
+        {/* 동전들 */}
+        <circle cx="35" cy="68" r="6" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        <circle cx="50" cy="70" r="6" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        <circle cx="65" cy="68" r="6" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        {/* 달러 사인 */}
+        <text x="47" y="73" fontSize="8" fill="#D97706" fontWeight="bold">$</text>
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        {/* 넘치는 돈 */}
+        <circle cx="30" cy="65" r="5" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        <circle cx="45" cy="68" r="5" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        <circle cx="55" cy="68" r="5" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        <circle cx="70" cy="65" r="5" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        {/* 지폐 */}
+        <rect x="35" y="72" width="30" height="10" fill="#10B981" stroke="#059669" strokeWidth="1" rx="1" />
+        {/* 반짝이 */}
+        <path d="M15 30 L20 35 M25 25 L20 35 M15 40 L20 35" stroke="#FCD34D" strokeWidth="2" />
+        <path d="M85 30 L80 35 M75 25 L80 35 M85 40 L80 35" stroke="#FCD34D" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "sad" && (
+      <g>
+        {/* 거의 빈 지갑 */}
+        <circle cx="50" cy="70" r="4" fill="#9CA3AF" stroke="#6B7280" strokeWidth="1" opacity="0.6" />
+        {/* 파리 */}
+        <circle cx="40" cy="60" r="1.5" fill="#374151" />
+        <ellipse cx="38" cy="60" rx="3" ry="1" fill="none" stroke="#374151" strokeWidth="0.5" />
+        <ellipse cx="42" cy="60" rx="3" ry="1" fill="none" stroke="#374151" strokeWidth="0.5" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        {/* 카드 */}
+        <rect x="35" y="65" width="30" height="15" fill="#3B82F6" stroke="#1D4ED8" strokeWidth="2" rx="2" />
+        <rect x="38" y="68" width="8" height="6" fill="#FCD34D" rx="1" />
+        <line x1="38" y1="77" x2="62" y2="77" stroke="#93C5FD" strokeWidth="1" />
+        {/* 선글라스 */}
+        <rect x="25" y="40" width="10" height="5" rx="2" fill="black" />
+        <rect x="65" y="40" width="10" height="5" rx="2" fill="black" />
+        <path d="M35 42 L65 42" stroke="black" strokeWidth="2" />
+      </g>
+    )}
+    {(mood === "calm" || !['happy', 'excited', 'sad', 'cool'].includes(mood || '')) && (
+      <g>
+        {/* 정리된 동전 */}
+        <circle cx="40" cy="68" r="5" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+        <circle cx="60" cy="68" r="5" fill="#F59E0B" stroke="#D97706" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
 // 라면 아이콘 (ramen 테스트용)
 export const RamenIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
   <svg viewBox="0 0 100 100" className={className}>
@@ -858,6 +976,55 @@ export const RamenIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4"
   </svg>
 );
 
+// 여행 스타일 아이콘 (travelStyle 테스트용)
+export const TravelStyleIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 비행기 */}
+    <path d="M50 25 L70 45 L90 40 L92 42 L75 55 L78 75 L80 77 L72 75 L50 90 L28 75 L20 77 L22 75 L25 55 L8 42 L10 40 L30 45 Z" fill="#60A5FA" stroke="#1E40AF" strokeWidth="3" />
+    {/* 비행기 창문 */}
+    <circle cx="50" cy="50" r="5" fill="white" stroke="#1E40AF" strokeWidth="1.5" />
+    <circle cx="45" cy="60" r="3" fill="white" stroke="#1E40AF" strokeWidth="1" />
+    <circle cx="55" cy="60" r="3" fill="white" stroke="#1E40AF" strokeWidth="1" />
+    {/* 구름 */}
+    <g opacity="0.7">
+      <ellipse cx="20" cy="30" rx="8" ry="5" fill="white" stroke="#CBD5E1" strokeWidth="1" />
+      <ellipse cx="15" cy="32" rx="5" ry="3" fill="white" stroke="#CBD5E1" strokeWidth="1" />
+      <ellipse cx="25" cy="32" rx="5" ry="3" fill="white" stroke="#CBD5E1" strokeWidth="1" />
+    </g>
+    <g opacity="0.7">
+      <ellipse cx="80" cy="65" rx="10" ry="6" fill="white" stroke="#CBD5E1" strokeWidth="1" />
+      <ellipse cx="75" cy="68" rx="6" ry="4" fill="white" stroke="#CBD5E1" strokeWidth="1" />
+      <ellipse cx="87" cy="68" rx="6" ry="4" fill="white" stroke="#CBD5E1" strokeWidth="1" />
+    </g>
+    {mood === "happy" && (
+      <g>
+        {/* 비행운 */}
+        <path d="M30 85 Q28 88 30 90" fill="none" stroke="#E0E7FF" strokeWidth="2" opacity="0.6" />
+        <path d="M35 88 Q33 91 35 93" fill="none" stroke="#E0E7FF" strokeWidth="2" opacity="0.6" />
+        <path d="M40 91 Q38 94 40 96" fill="none" stroke="#E0E7FF" strokeWidth="2" opacity="0.6" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        {/* 반짝임 */}
+        <path d="M15 15 L20 20 M25 10 L20 20 M15 25 L20 20" stroke="#FCD34D" strokeWidth="2" />
+        <path d="M85 25 L80 30 M75 20 L80 30 M85 35 L80 30" stroke="#FCD34D" strokeWidth="2" />
+        {/* 비행운 */}
+        <path d="M25 85 Q22 90 25 95" fill="none" stroke="#E0E7FF" strokeWidth="2.5" opacity="0.7" />
+        <path d="M35 88 Q32 93 35 98" fill="none" stroke="#E0E7FF" strokeWidth="2.5" opacity="0.7" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        {/* 선글라스 */}
+        <rect x="42" y="47" width="6" height="4" rx="1" fill="black" />
+        <rect x="52" y="47" width="6" height="4" rx="1" fill="black" />
+        <path d="M48 49 L52 49" stroke="black" strokeWidth="1" />
+      </g>
+    )}
+  </svg>
+);
+
 // 아이콘 맵핑 (동적 렌더링용)
 export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   HumanIcon,
@@ -879,6 +1046,9 @@ export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   ChefHatIcon,
   WhiskeySampleIcon,
   RamenIcon,
+  DrinkingStyleIcon,
+  SpendingStyleIcon,
+  TravelStyleIcon,
 };
 
 export const getIcon = (iconName: string): React.ComponentType<IconProps> => {

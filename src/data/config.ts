@@ -277,6 +277,36 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         checkColor: "text-red-600",
         analysisButtonText: "🍜 상세 취향 분석 보기"
     },
+    spendingStyle: {
+        testType: "personality",
+        icon: "SpendingStyleIcon",
+        lucideIcon: "Wallet",
+        emoji: "💳",
+        label: "소비 성향",
+        intro: ["나는 어떤 소비 스타일?", "내 지갑 사용법은?", "쇼핑 홀릭? 절약왕?"],
+        resultFormat: "simple",
+        deepButtonText: "소비 성향"
+    },
+    drinkingStyle: {
+        testType: "personality",
+        icon: "DrinkingStyleIcon",
+        lucideIcon: "Beer",
+        emoji: "🍺",
+        label: "음주 유형",
+        intro: ["나는 어떤 음주 스타일?", "술자리에서 나는?", "분위기 메이커? 조용한 음미파?"],
+        resultFormat: "simple",
+        deepButtonText: "음주 유형"
+    },
+    travelStyle: {
+        testType: "personality",
+        icon: "TravelStyleIcon",
+        lucideIcon: "Plane",
+        emoji: "✈️",
+        label: "여행 스타일",
+        intro: ["나의 여행 스타일은?", "계획형? 즉흥형?", "힐링 여행? 액티비티 여행?"],
+        resultFormat: "simple",
+        deepButtonText: "여행 스타일"
+    },
     // 세부 테스트
     dogBreed: {
         testType: "matching",
