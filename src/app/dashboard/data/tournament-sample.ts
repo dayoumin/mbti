@@ -1165,16 +1165,21 @@ export const VALUES_WORLDCUP_VALIDATION = validateTournament(VALUES_WORLDCUP);
 // 이상형 조건 월드컵 검증 실행
 export const IDEALTYPE_CONDITIONS_VALIDATION = validateTournament(IDEALTYPE_CONDITIONS_WORLDCUP);
 
+// MBTI 월드컵 검증 실행
+export const MBTI_WORLDCUP_VALIDATION = validateTournament(MBTI_WORLDCUP);
+
 export const TOURNAMENT_SAMPLE = {
   catBreed: CAT_BREED_TOURNAMENT,
   ramenWorldcup: RAMEN_WORLDCUP,
   valuesWorldcup: VALUES_WORLDCUP,
   idealtypeConditions: IDEALTYPE_CONDITIONS_WORLDCUP,
+  mbtiWorldcup: MBTI_WORLDCUP,
   contestants: {
     catBreed: CAT_BREED_CONTESTANTS,
     ramen: RAMEN_WORLDCUP_CONTESTANTS,
     values: VALUES_WORLDCUP_CONTESTANTS,
     idealtypeConditions: IDEALTYPE_CONDITIONS_CONTESTANTS,
+    mbti: MBTI_WORLDCUP_CONTESTANTS,
   },
   ideas: TOURNAMENT_IDEAS,
   template: TOURNAMENT_TEMPLATE,
@@ -1184,6 +1189,7 @@ export const TOURNAMENT_SAMPLE = {
     ramen: RAMEN_WORLDCUP_VALIDATION,
     values: VALUES_WORLDCUP_VALIDATION,
     idealtypeConditions: IDEALTYPE_CONDITIONS_VALIDATION,
+    mbti: MBTI_WORLDCUP_VALIDATION,
   },
   utils: {
     getRoundName,
