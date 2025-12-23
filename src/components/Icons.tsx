@@ -508,6 +508,300 @@ export const WhiskeySampleIcon = ({ mood = "happy", className = "w-32 h-32 mx-au
   </svg>
 );
 
+// 차 아이콘 (tea 테스트용)
+export const TeaIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 찻잔 */}
+    <path d="M20 40 L25 80 L75 80 L80 40 Z" fill="#F5F5DC" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 차 */}
+    <path d="M23 50 L27 75 L73 75 L77 50 Z" fill="#90EE90" opacity="0.6" />
+    {/* 손잡이 */}
+    <path d="M80 50 Q 95 50 95 62 Q 95 74 80 74" fill="none" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 받침대 */}
+    <ellipse cx="50" cy="85" rx="30" ry="5" fill="#DEB887" stroke="#4A4A4A" strokeWidth="2" />
+    {mood === "happy" && (
+      <g>
+        {/* 증기 */}
+        <path d="M35 35 Q38 25 35 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+        <path d="M50 32 Q53 22 50 12" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+        <path d="M65 35 Q68 25 65 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+        {/* 찻잎 */}
+        <ellipse cx="40" cy="58" rx="4" ry="2" fill="#228B22" opacity="0.6" />
+        <ellipse cx="55" cy="62" rx="3" ry="1.5" fill="#228B22" opacity="0.6" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <path d="M30 35 Q34 22 30 8" fill="none" stroke="#A9A9A9" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M45 32 Q49 18 45 5" fill="none" stroke="#A9A9A9" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M60 32 Q64 18 60 5" fill="none" stroke="#A9A9A9" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M75 35 Q79 22 75 8" fill="none" stroke="#A9A9A9" strokeWidth="2.5" strokeLinecap="round" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <path d="M50 35 Q53 25 50 15" fill="none" stroke="#A9A9A9" strokeWidth="2" strokeLinecap="round" />
+      </g>
+    )}
+  </svg>
+);
+
+// 갈등 대처 아이콘 (conflictStyle 테스트용)
+export const ConflictIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 두 사람 */}
+    <circle cx="30" cy="35" r="12" fill="#FFB6C1" stroke="#4A4A4A" strokeWidth="2" />
+    <path d="M18 50 L42 50 L42 75 Q30 85 18 75 Z" fill="#87CEEB" stroke="#4A4A4A" strokeWidth="2" />
+    <circle cx="70" cy="35" r="12" fill="#98FB98" stroke="#4A4A4A" strokeWidth="2" />
+    <path d="M58 50 L82 50 L82 75 Q70 85 58 75 Z" fill="#DDA0DD" stroke="#4A4A4A" strokeWidth="2" />
+    {mood === "happy" && (
+      <g>
+        {/* 악수/하트 */}
+        <path d="M42 62 L58 62" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="50" cy="62" r="5" fill="#FF6B9D" />
+        {/* 웃는 표정 */}
+        <circle cx="27" cy="33" r="2" fill="#4A4A4A" />
+        <circle cx="33" cy="33" r="2" fill="#4A4A4A" />
+        <path d="M25 38 Q30 42 35 38" fill="none" stroke="#4A4A4A" strokeWidth="1.5" />
+        <circle cx="67" cy="33" r="2" fill="#4A4A4A" />
+        <circle cx="73" cy="33" r="2" fill="#4A4A4A" />
+        <path d="M65 38 Q70 42 75 38" fill="none" stroke="#4A4A4A" strokeWidth="1.5" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <path d="M42 62 L58 62" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+        <rect x="23" cy="30" width="10" height="4" rx="1" fill="black" />
+        <rect x="63" cy="30" width="10" height="4" rx="1" fill="black" />
+      </g>
+    )}
+    {mood === "sad" && (
+      <g>
+        <path d="M42 65 L46 62 M54 62 L58 65" stroke="#4A4A4A" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="27" cy="33" r="2" fill="#4A4A4A" />
+        <circle cx="33" cy="33" r="2" fill="#4A4A4A" />
+        <path d="M25 40 Q30 37 35 40" fill="none" stroke="#4A4A4A" strokeWidth="1.5" />
+      </g>
+    )}
+  </svg>
+);
+
+// 과일 아이콘 (fruit 테스트용)
+export const FruitIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 사과 */}
+    <ellipse cx="50" cy="55" rx="28" ry="30" fill="#FF6B6B" stroke="#4A4A4A" strokeWidth="3" />
+    <ellipse cx="40" cy="50" rx="8" ry="12" fill="#FF8787" opacity="0.5" />
+    {/* 꼭지 */}
+    <path d="M50 25 Q55 20 52 15" fill="none" stroke="#8B4513" strokeWidth="3" strokeLinecap="round" />
+    {/* 잎 */}
+    <ellipse cx="58" cy="22" rx="8" ry="5" fill="#22C55E" transform="rotate(30 58 22)" />
+    {mood === "happy" && (
+      <g>
+        <circle cx="42" cy="50" r="3" fill="#4A4A4A" />
+        <circle cx="58" cy="50" r="3" fill="#4A4A4A" />
+        <path d="M45 60 Q50 66 55 60" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <circle cx="42" cy="50" r="4" fill="#4A4A4A" />
+        <circle cx="58" cy="50" r="4" fill="#4A4A4A" />
+        <path d="M43 60 Q50 70 57 60" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        <path d="M20 35 L25 40 M30 30 L25 40" stroke="#FFD700" strokeWidth="2" />
+        <path d="M80 35 L75 40 M70 30 L75 40" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="35" y="47" width="10" height="5" rx="2" fill="black" />
+        <rect x="55" y="47" width="10" height="5" rx="2" fill="black" />
+        <path d="M47 50 L53 50" stroke="black" strokeWidth="2" />
+        <path d="M45 62 Q50 62 55 62" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 술 아이콘 (alcohol 테스트용)
+export const AlcoholIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 맥주잔 */}
+    <path d="M25 30 L25 80 L65 80 L65 30 Z" fill="#FCD34D" stroke="#4A4A4A" strokeWidth="3" />
+    <path d="M25 30 L65 30" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 맥주 거품 */}
+    <ellipse cx="35" cy="28" rx="8" ry="6" fill="white" />
+    <ellipse cx="50" cy="26" rx="10" ry="7" fill="white" />
+    <ellipse cx="58" cy="30" rx="6" ry="5" fill="white" />
+    {/* 손잡이 */}
+    <path d="M65 40 Q 80 40 80 55 Q 80 70 65 70" fill="none" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 기포 */}
+    <circle cx="35" cy="50" r="2" fill="white" opacity="0.6" />
+    <circle cx="50" cy="60" r="3" fill="white" opacity="0.6" />
+    <circle cx="40" cy="70" r="2" fill="white" opacity="0.6" />
+    {mood === "happy" && (
+      <g>
+        <circle cx="38" cy="50" r="3" fill="#4A4A4A" />
+        <circle cx="52" cy="50" r="3" fill="#4A4A4A" />
+        <path d="M40 60 Q45 66 50 60" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <circle cx="38" cy="50" r="4" fill="#4A4A4A" />
+        <circle cx="52" cy="50" r="4" fill="#4A4A4A" />
+        <path d="M38 60 Q45 70 52 60" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        <path d="M15 25 L20 30 M25 20 L20 30" stroke="#FFD700" strokeWidth="2" />
+        <path d="M85 45 L80 50 M75 40 L80 50" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="32" y="47" width="10" height="5" rx="2" fill="black" />
+        <rect x="48" y="47" width="10" height="5" rx="2" fill="black" />
+        <path d="M43 50 L47 50" stroke="black" strokeWidth="2" />
+        <path d="M40 62 Q45 62 50 62" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 빵 아이콘 (bread 테스트용)
+export const BreadIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 크로아상 */}
+    <path d="M15 60 Q30 40 50 50 Q70 40 85 60 Q70 75 50 65 Q30 75 15 60 Z" fill="#DEB887" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 크로아상 줄무늬 */}
+    <path d="M25 55 Q35 48 45 55" fill="none" stroke="#CD853F" strokeWidth="2" />
+    <path d="M40 52 Q50 45 60 52" fill="none" stroke="#CD853F" strokeWidth="2" />
+    <path d="M55 55 Q65 48 75 55" fill="none" stroke="#CD853F" strokeWidth="2" />
+    {/* 광택 */}
+    <ellipse cx="35" cy="55" rx="5" ry="3" fill="#F5DEB3" opacity="0.5" />
+    <ellipse cx="65" cy="55" rx="5" ry="3" fill="#F5DEB3" opacity="0.5" />
+    {mood === "happy" && (
+      <g>
+        <circle cx="42" cy="58" r="2" fill="#4A4A4A" />
+        <circle cx="58" cy="58" r="2" fill="#4A4A4A" />
+        <path d="M46 63 Q50 67 54 63" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <circle cx="42" cy="58" r="3" fill="#4A4A4A" />
+        <circle cx="58" cy="58" r="3" fill="#4A4A4A" />
+        <path d="M44 63 Q50 70 56 63" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        <path d="M20 45 L25 50 M30 40 L25 50" stroke="#FFD700" strokeWidth="2" />
+        <path d="M80 45 L75 50 M70 40 L75 50" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="36" y="55" width="10" height="5" rx="2" fill="black" />
+        <rect x="54" y="55" width="10" height="5" rx="2" fill="black" />
+        <path d="M47 58 L53 58" stroke="black" strokeWidth="2" />
+        <path d="M46 65 Q50 65 54 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 향수 아이콘 (perfume 테스트용)
+export const PerfumeIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 향수병 몸통 */}
+    <path d="M30 40 L30 85 L70 85 L70 40 Z" fill="#E8D4F0" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 향수 액체 */}
+    <path d="M32 50 L32 83 L68 83 L68 50 Z" fill="#DDA0DD" opacity="0.6" />
+    {/* 병 목 */}
+    <rect x="40" y="25" width="20" height="15" fill="#E8D4F0" stroke="#4A4A4A" strokeWidth="2" />
+    {/* 뚜껑 */}
+    <rect x="42" y="15" width="16" height="10" fill="#FFD700" stroke="#4A4A4A" strokeWidth="2" rx="2" />
+    {/* 분사 노즐 */}
+    <rect x="48" y="10" width="4" height="5" fill="#C0C0C0" />
+    {mood === "happy" && (
+      <g>
+        {/* 향기 입자 */}
+        <circle cx="25" cy="35" r="3" fill="#FFB6C1" opacity="0.6" />
+        <circle cx="75" cy="30" r="2" fill="#FFB6C1" opacity="0.6" />
+        <circle cx="20" cy="25" r="2" fill="#DDA0DD" opacity="0.6" />
+        <circle cx="80" cy="40" r="2.5" fill="#DDA0DD" opacity="0.6" />
+        <circle cx="42" cy="60" r="3" fill="#4A4A4A" />
+        <circle cx="58" cy="60" r="3" fill="#4A4A4A" />
+        <path d="M46 70 Q50 75 54 70" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <circle cx="20" cy="30" r="4" fill="#FFB6C1" opacity="0.7" />
+        <circle cx="80" cy="25" r="3" fill="#FFB6C1" opacity="0.7" />
+        <circle cx="15" cy="20" r="3" fill="#DDA0DD" opacity="0.7" />
+        <circle cx="85" cy="35" r="3.5" fill="#DDA0DD" opacity="0.7" />
+        <circle cx="25" cy="45" r="2" fill="#E6E6FA" opacity="0.7" />
+        <circle cx="42" cy="60" r="4" fill="#4A4A4A" />
+        <circle cx="58" cy="60" r="4" fill="#4A4A4A" />
+        <path d="M44 70 Q50 80 56 70" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <circle cx="25" cy="35" r="2" fill="#FFB6C1" opacity="0.5" />
+        <circle cx="75" cy="30" r="2" fill="#FFB6C1" opacity="0.5" />
+        <rect x="36" y="57" width="10" height="5" rx="2" fill="black" />
+        <rect x="54" y="57" width="10" height="5" rx="2" fill="black" />
+        <path d="M47 60 L53 60" stroke="black" strokeWidth="2" />
+        <path d="M46 72 Q50 72 54 72" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 아로마 아이콘 (aroma 테스트용)
+export const AromaIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 디퓨저 병 */}
+    <path d="M35 45 L35 85 L65 85 L65 45 Z" fill="#F5F5DC" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 오일 */}
+    <path d="M37 55 L37 83 L63 83 L63 55 Z" fill="#9ACD32" opacity="0.5" />
+    {/* 병 목 */}
+    <rect x="42" y="35" width="16" height="10" fill="#F5F5DC" stroke="#4A4A4A" strokeWidth="2" />
+    {/* 리드 스틱들 */}
+    <line x1="45" y1="35" x2="40" y2="10" stroke="#8B4513" strokeWidth="2" />
+    <line x1="50" y1="35" x2="50" y2="8" stroke="#8B4513" strokeWidth="2" />
+    <line x1="55" y1="35" x2="60" y2="10" stroke="#8B4513" strokeWidth="2" />
+    {mood === "happy" && (
+      <g>
+        {/* 향기 파동 */}
+        <path d="M30 25 Q35 20 30 15" fill="none" stroke="#90EE90" strokeWidth="2" opacity="0.6" />
+        <path d="M50 20 Q55 15 50 10" fill="none" stroke="#90EE90" strokeWidth="2" opacity="0.6" />
+        <path d="M70 25 Q65 20 70 15" fill="none" stroke="#90EE90" strokeWidth="2" opacity="0.6" />
+        <circle cx="43" cy="65" r="3" fill="#4A4A4A" />
+        <circle cx="57" cy="65" r="3" fill="#4A4A4A" />
+        <path d="M46 73 Q50 78 54 73" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <path d="M25 28 Q32 20 25 12" fill="none" stroke="#90EE90" strokeWidth="2.5" opacity="0.7" />
+        <path d="M45 22 Q52 14 45 6" fill="none" stroke="#90EE90" strokeWidth="2.5" opacity="0.7" />
+        <path d="M55 22 Q48 14 55 6" fill="none" stroke="#90EE90" strokeWidth="2.5" opacity="0.7" />
+        <path d="M75 28 Q68 20 75 12" fill="none" stroke="#90EE90" strokeWidth="2.5" opacity="0.7" />
+        <circle cx="43" cy="65" r="4" fill="#4A4A4A" />
+        <circle cx="57" cy="65" r="4" fill="#4A4A4A" />
+        <path d="M44 73 Q50 82 56 73" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <path d="M50 20 Q55 15 50 10" fill="none" stroke="#90EE90" strokeWidth="2" opacity="0.5" />
+        <rect x="37" y="62" width="10" height="5" rx="2" fill="black" />
+        <rect x="53" y="62" width="10" height="5" rx="2" fill="black" />
+        <path d="M48 65 L52 65" stroke="black" strokeWidth="2" />
+        <path d="M46 75 Q50 75 54 75" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
 // 라면 아이콘 (ramen 테스트용)
 export const RamenIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
   <svg viewBox="0 0 100 100" className={className}>
@@ -575,6 +869,13 @@ export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   PlantIcon,
   PetMatchIcon,
   CoffeeIcon,
+  TeaIcon,
+  ConflictIcon,
+  FruitIcon,
+  AlcoholIcon,
+  BreadIcon,
+  PerfumeIcon,
+  AromaIcon,
   ChefHatIcon,
   WhiskeySampleIcon,
   RamenIcon,
