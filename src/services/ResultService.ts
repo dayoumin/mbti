@@ -1,8 +1,8 @@
 /**
  * ResultService - 테스트 결과 저장/조회 서비스
  *
- * 현재: localStorage + Turso API 사용
- * StorageProvider 패턴으로 확장 가능
+ * 저장: Turso DB (서버) + localStorage (로컬 백업)
+ * 조회: Turso 우선, 실패 시 localStorage 폴백
  */
 
 import { ResultLabel } from '@/data/types';
@@ -15,6 +15,7 @@ import {
 } from '@/data/recommendationPolicy';
 import { getDeviceId, USER_KEY } from '@/utils/device';
 import { STORAGE_KEYS } from '@/lib/storage';
+import { tursoService, TestResult } from './TursoService';
 
 // ========== 타입 정의 ==========
 
@@ -28,8 +29,8 @@ interface TestResultData {
   scores: Record<string, number>;
   is_deep_mode: boolean;
   created_at: string;
-  parent_test?: string;  // petMatch → 세부 테스트 연결용
-  parent_result?: string; // 부모 테스트의 결과명 (예: "강아지")
+  parent_test?: string;
+  parent_result?: string;
   meta: {
     user_agent: string;
     screen_width: number;
@@ -47,8 +48,8 @@ interface TestResultCamel {
   scores: Record<string, number>;
   isDeepMode: boolean;
   createdAt: string;
-  parentTest?: string;  // petMatch → 세부 테스트 연결용
-  parentResult?: string; // 부모 테스트의 결과명 (예: "강아지")
+  parentTest?: string;
+  parentResult?: string;
   meta: {
     userAgent: string;
     screenWidth: number;
@@ -78,215 +79,32 @@ interface Stats {
   byTestType: Record<string, number>;
 }
 
-// ========== 케이스 변환 유틸리티 ==========
+// ========== localStorage 백업 함수 ==========
 
-const toCamelCase = (str: string): string => {
-  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-};
-
-const keysToCamel = <T>(obj: unknown): T => {
-  if (Array.isArray(obj)) {
-    return obj.map(keysToCamel) as unknown as T;
-  }
-  if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj as Record<string, unknown>).reduce((result, key) => {
-      const camelKey = toCamelCase(key);
-      (result as Record<string, unknown>)[camelKey] = keysToCamel((obj as Record<string, unknown>)[key]);
-      return result;
-    }, {} as Record<string, unknown>) as T;
-  }
-  return obj as T;
-};
-
-// ========== Storage Provider ==========
-
-interface StorageProvider {
-  name: string;
-  save(key: string, data: TestResultData): Promise<SaveResult>;
-  getAll(key: string): Promise<TestResultData[]>;
-  getByUserId(key: string, userId: string): Promise<TestResultData[]>;
-  clear(key: string): Promise<SaveResult>;
-}
-
-const localStorageProvider: StorageProvider = {
-  name: 'localStorage',
-
-  async save(key: string, data: TestResultData): Promise<SaveResult> {
-    try {
-      const existing = JSON.parse(localStorage.getItem(key) || '[]') as TestResultData[];
-      existing.push(data);
-      localStorage.setItem(key, JSON.stringify(existing));
-      return { success: true, id: data.id };
-    } catch (error) {
-      console.error('[ResultService] localStorage 저장 실패:', error);
-      return { success: false, error: (error as Error).message };
-    }
-  },
-
-  async getAll(key: string): Promise<TestResultData[]> {
-    try {
-      return JSON.parse(localStorage.getItem(key) || '[]') as TestResultData[];
-    } catch {
-      return [];
-    }
-  },
-
-  async getByUserId(key: string, userId: string): Promise<TestResultData[]> {
-    const all = await this.getAll(key);
-    return all.filter((item) => item.user_id === userId);
-  },
-
-  async clear(key: string): Promise<SaveResult> {
-    localStorage.removeItem(key);
-    return { success: true };
-  },
-};
-
-// ========== Supabase Provider (준비됨 - npm install @supabase/supabase-js 후 활성화) ==========
-// 사용법:
-// 1. npm install @supabase/supabase-js
-// 2. .env.local에 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY 설정
-// 3. Supabase에서 001_mbti_results.sql, 002_mbti_results_parent_info.sql 실행
-
-// Supabase 클라이언트 싱글톤 (패키지 설치 시 활성화)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let supabaseClient: any = null;
-
-async function getSupabaseClient() {
-  if (supabaseClient) return supabaseClient;
-
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return null;
-  }
-
+function saveToLocalStorage(key: string, data: TestResultData): void {
   try {
-    // 동적 import로 패키지 없이도 빌드 가능하게 함
-    const moduleName = '@supabase/supabase-js';
-    const { createClient } = await import(/* webpackIgnore: true */ moduleName);
-    supabaseClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
-    return supabaseClient;
-  } catch {
-    // @supabase/supabase-js 패키지 미설치
-    return null;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]') as TestResultData[];
+    existing.push(data);
+    localStorage.setItem(key, JSON.stringify(existing));
+  } catch (error) {
+    console.error('[ResultService] localStorage 백업 실패:', error);
   }
 }
 
-const supabaseProvider: StorageProvider = {
-  name: 'supabase',
-
-  async save(_key: string, data: TestResultData): Promise<SaveResult> {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      // Supabase 미설정 - localStorage로 폴백
-      return localStorageProvider.save(_key, data);
-    }
-
-    try {
-      const { data: result, error } = await supabase
-        .from('mbti_results')
-        .insert({
-          device_id: data.user_id,  // 익명 사용자는 device_id로 추적
-          subject_key: data.test_type,
-          result_name: data.result_key,
-          result_emoji: data.result_emoji,
-          parent_test: data.parent_test,
-          parent_result: data.parent_result,
-          scores: data.scores,
-          is_deep_mode: data.is_deep_mode,
-        })
-        .select('id')
-        .single();
-
-      if (error) throw error;
-
-      // localStorage에도 백업 저장 (오프라인 대응)
-      await localStorageProvider.save(_key, data);
-
-      return { success: true, id: result?.id };
-    } catch (error) {
-      console.error('[ResultService] Supabase 저장 실패, localStorage로 폴백:', error);
-      return localStorageProvider.save(_key, data);
-    }
-  },
-
-  async getAll(key: string): Promise<TestResultData[]> {
-    return localStorageProvider.getAll(key);
-  },
-
-  async getByUserId(key: string, userId: string): Promise<TestResultData[]> {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      return localStorageProvider.getByUserId(key, userId);
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('mbti_results')
-        .select('*')
-        .eq('device_id', userId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (data || []).map((row: any) => ({
-        id: row.id,
-        user_id: row.device_id || row.user_id,
-        project: 'chemi-test',
-        test_type: row.subject_key,
-        result_key: row.result_name,
-        result_emoji: row.result_emoji || '',
-        parent_test: row.parent_test || undefined,
-        parent_result: row.parent_result || undefined,
-        scores: row.scores,
-        is_deep_mode: row.is_deep_mode,
-        created_at: row.created_at,
-        meta: {
-          user_agent: '',
-          screen_width: 0,
-          timestamp: new Date(row.created_at).getTime(),
-        },
-      }));
-    } catch (error) {
-      console.error('[ResultService] Supabase 조회 실패, localStorage로 폴백:', error);
-      return localStorageProvider.getByUserId(key, userId);
-    }
-  },
-
-  async clear(key: string): Promise<SaveResult> {
-    return localStorageProvider.clear(key);
-  },
-};
+function getFromLocalStorage(key: string, userId: string): TestResultData[] {
+  try {
+    const all = JSON.parse(localStorage.getItem(key) || '[]') as TestResultData[];
+    return all.filter((item) => item.user_id === userId);
+  } catch {
+    return [];
+  }
+}
 
 // ========== ResultService Class ==========
 
 class ResultServiceClass {
-  private provider: StorageProvider;
   private RESULTS_KEY = STORAGE_KEYS.TEST_RESULTS;
 
-  constructor() {
-    // Supabase URL이 설정되어 있으면 supabaseProvider 사용
-    // 그렇지 않으면 localStorageProvider 사용 (개발 환경)
-    this.provider = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SUPABASE_URL
-      ? supabaseProvider
-      : localStorageProvider;
-  }
-
-  // Provider 수동 변경 (테스트용)
-  setProvider(name: 'localStorage' | 'supabase'): void {
-    this.provider = name === 'supabase' ? supabaseProvider : localStorageProvider;
-  }
-
-  getProviderName(): string {
-    return this.provider.name;
-  }
-
-  // getUserId는 공통 유틸리티 사용
   getUserId(): string {
     return getDeviceId();
   }
@@ -304,16 +122,33 @@ class ResultServiceClass {
     isDeep = false,
     parentInfo?: { testType: string; resultName: string }
   ): Promise<SaveResult> {
-    const data: TestResultData = {
-      id: Date.now() + '_' + Math.random().toString(36).substring(2, 11),
-      user_id: this.getUserId(),
+    const userId = this.getUserId();
+
+    // 동일한 타임스탬프 사용 (Turso + localStorage 중복 방지)
+    const timestamp = new Date().toISOString();
+
+    // 1. Turso에 저장
+    const tursoResult = await tursoService.saveTestResult(
+      testType,
+      result.name,
+      result.emoji,
+      scores,
+      isDeep,
+      parentInfo,
+      timestamp
+    );
+
+    // 2. localStorage에도 백업 저장 (동일 타임스탬프)
+    const localData: TestResultData = {
+      id: tursoResult.id || Date.now() + '_' + Math.random().toString(36).substring(2, 11),
+      user_id: userId,
       project: 'chemi-test',
       test_type: testType,
       result_key: result.name,
       result_emoji: result.emoji,
       scores: scores,
       is_deep_mode: isDeep,
-      created_at: new Date().toISOString(),
+      created_at: timestamp,
       parent_test: parentInfo?.testType,
       parent_result: parentInfo?.resultName,
       meta: {
@@ -323,23 +158,85 @@ class ResultServiceClass {
       },
     };
 
-    const saved = await this.provider.save(this.RESULTS_KEY, data);
+    saveToLocalStorage(this.RESULTS_KEY, localData);
 
-    if (saved.success && typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('chemi:resultSaved', { detail: data }));
+    // 3. 이벤트 발생
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('chemi:resultSaved', { detail: localData }));
     }
 
-    return saved;
-  }
-
-  private async _getMyResultsRaw(): Promise<TestResultData[]> {
-    const userId = this.getUserId();
-    return await this.provider.getByUserId(this.RESULTS_KEY, userId);
+    return {
+      success: tursoResult.success,
+      id: tursoResult.id,
+      pending: !tursoResult.success, // Turso 실패 시 pending 상태
+    };
   }
 
   async getMyResults(): Promise<TestResultCamel[]> {
-    const results = await this._getMyResultsRaw();
-    return keysToCamel<TestResultCamel[]>(results);
+    const userId = this.getUserId();
+
+    // 1. Turso에서 조회
+    let tursoResults: TestResultCamel[] = [];
+    try {
+      const results = await tursoService.getMyResults();
+      tursoResults = results.map((r: TestResult) => ({
+        id: String(r.id),
+        userId: userId,
+        project: 'chemi-test',
+        testType: r.testType,
+        resultKey: r.resultKey,
+        resultEmoji: r.resultEmoji,
+        scores: r.scores,
+        isDeepMode: r.isDeepMode,
+        createdAt: r.createdAt,
+        parentTest: r.parentTest,
+        parentResult: r.parentResult,
+        meta: {
+          userAgent: '',
+          screenWidth: 0,
+          timestamp: new Date(r.createdAt).getTime(),
+        },
+      }));
+    } catch (error) {
+      console.warn('[ResultService] Turso 조회 실패:', error);
+    }
+
+    // 2. localStorage에서 조회
+    const localResults = getFromLocalStorage(this.RESULTS_KEY, userId).map((r) => ({
+      id: r.id,
+      userId: r.user_id,
+      project: r.project,
+      testType: r.test_type,
+      resultKey: r.result_key,
+      resultEmoji: r.result_emoji,
+      scores: r.scores,
+      isDeepMode: r.is_deep_mode,
+      createdAt: r.created_at,
+      parentTest: r.parent_test,
+      parentResult: r.parent_result,
+      meta: {
+        userAgent: r.meta.user_agent,
+        screenWidth: r.meta.screen_width,
+        timestamp: r.meta.timestamp,
+      },
+    }));
+
+    // 3. 병합 (Turso 우선, localStorage는 Turso에 없는 것만 추가)
+    // 중복 판단: testType + createdAt 조합
+    const tursoKeys = new Set(
+      tursoResults.map((r) => `${r.testType}_${r.createdAt}`)
+    );
+
+    const uniqueLocalResults = localResults.filter(
+      (r) => !tursoKeys.has(`${r.testType}_${r.createdAt}`)
+    );
+
+    // 4. 병합 후 시간순 정렬 (최신 먼저)
+    const merged = [...tursoResults, ...uniqueLocalResults].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return merged;
   }
 
   async getResultsByType(testType: string): Promise<TestResultCamel[]> {
@@ -416,7 +313,32 @@ class ResultServiceClass {
   }
 
   async clearAll(): Promise<SaveResult> {
-    return await this.provider.clear(this.RESULTS_KEY);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.RESULTS_KEY);
+    }
+    return { success: true };
+  }
+
+  // ========== 분포 조회 (신규) ==========
+
+  /**
+   * 테스트 결과 분포 조회
+   * @param testType 테스트 종류
+   * @param filter 연령대/성별 필터
+   */
+  async getResultDistribution(
+    testType: string,
+    filter?: { ageGroup?: string; gender?: string }
+  ) {
+    return tursoService.getResultDistribution(testType, filter);
+  }
+
+  /**
+   * 내 결과 순위 조회
+   * @param testType 테스트 종류
+   */
+  async getMyResultRank(testType: string) {
+    return tursoService.getMyResultRank(testType);
   }
 }
 

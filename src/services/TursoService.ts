@@ -328,6 +328,146 @@ class TursoServiceClass {
       return { count: 0, liked: false };
     }
   }
+
+  // ========== 테스트 결과 ==========
+
+  /**
+   * 테스트 결과 저장
+   */
+  async saveTestResult(
+    testType: string,
+    resultName: string,
+    resultEmoji: string,
+    scores: Record<string, number>,
+    isDeepMode: boolean = false,
+    parentInfo?: { testType: string; resultName: string },
+    timestamp?: string
+  ): Promise<{ success: boolean; id?: string }> {
+    try {
+      const res = await fetch(`${this.apiBase}/test-results`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deviceId: getDeviceId(),
+          testType,
+          resultName,
+          resultEmoji,
+          scores,
+          isDeepMode,
+          parentInfo,
+          timestamp,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save test result');
+      const data = await res.json();
+      return { success: true, id: data.id };
+    } catch (error) {
+      console.error('[TursoService] saveTestResult error:', error);
+      return { success: false };
+    }
+  }
+
+  /**
+   * 내 테스트 결과 조회
+   */
+  async getMyResults(): Promise<TestResult[]> {
+    try {
+      const res = await fetch(
+        `${this.apiBase}/test-results?type=my-results&deviceId=${encodeURIComponent(getDeviceId())}`
+      );
+      if (!res.ok) throw new Error('Failed to get my results');
+      const data = await res.json();
+      return data.results || [];
+    } catch (error) {
+      console.error('[TursoService] getMyResults error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * 결과 분포 조회 (다른 유형은 어떤지)
+   */
+  async getResultDistribution(
+    testType: string,
+    filter?: { ageGroup?: string; gender?: string }
+  ): Promise<ResultDistribution> {
+    try {
+      const params = new URLSearchParams({
+        type: 'distribution',
+        testType,
+      });
+      if (filter?.ageGroup) params.set('ageGroup', filter.ageGroup);
+      if (filter?.gender) params.set('gender', filter.gender);
+
+      const res = await fetch(`${this.apiBase}/test-results?${params}`);
+      if (!res.ok) throw new Error('Failed to get distribution');
+      return await res.json();
+    } catch (error) {
+      console.error('[TursoService] getResultDistribution error:', error);
+      return { testType, total: 0, distribution: [], filter: { ageGroup: 'all', gender: 'all' } };
+    }
+  }
+
+  /**
+   * 내 결과 순위 조회
+   */
+  async getMyResultRank(testType: string): Promise<MyResultRank> {
+    try {
+      const params = new URLSearchParams({
+        type: 'my-rank',
+        testType,
+        deviceId: getDeviceId(),
+      });
+
+      const res = await fetch(`${this.apiBase}/test-results?${params}`);
+      if (!res.ok) throw new Error('Failed to get my rank');
+      return await res.json();
+    } catch (error) {
+      console.error('[TursoService] getMyResultRank error:', error);
+      return { hasResult: false };
+    }
+  }
+}
+
+// ========== 추가 타입 정의 ==========
+
+export interface TestResult {
+  id: number;
+  testType: string;
+  resultKey: string;
+  resultEmoji: string;
+  scores: Record<string, number>;
+  isDeepMode: boolean;
+  parentTest?: string;
+  parentResult?: string;
+  createdAt: string;
+}
+
+export interface ResultDistribution {
+  testType: string;
+  total: number;
+  distribution: {
+    rank: number;
+    resultName: string;
+    count: number;
+    percentage: number;
+  }[];
+  filter: {
+    ageGroup: string;
+    gender: string;
+  };
+}
+
+export interface MyResultRank {
+  hasResult: boolean;
+  testType?: string;
+  resultName?: string;
+  rank?: number;
+  totalResults?: number;
+  count?: number;
+  percentage?: number;
+  total?: number;
 }
 
 // 싱글톤 인스턴스
