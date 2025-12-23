@@ -1,6 +1,19 @@
 // ============================================================================
-// 콘텐츠 샘플 데이터 (퀴즈/투표/토너먼트)
-// Agent 생성 전 수동 테스트용
+// 콘텐츠 샘플 데이터 - 대시보드 전용 (퀴즈/투표/토너먼트)
+// ============================================================================
+//
+// ⚠️ 중요: 이 파일은 대시보드 문서화/검증용입니다!
+//
+// 실제 서비스 데이터 위치:
+//   - 퀴즈: src/data/content/quizzes/
+//   - 투표: src/data/content/polls/
+//   - 상황별 반응: (미구현) src/data/content/situation-reactions/
+//
+// 이 파일의 목적:
+//   1. AI가 새 콘텐츠 생성 시 참고할 구조 예시
+//   2. 검증 함수(validate*) 테스트용 샘플
+//   3. 대시보드 UI에서 데이터 구조 설명용
+//
 // ============================================================================
 
 import { ContentCategory } from './content-system';
@@ -928,9 +941,18 @@ export function validateQuiz(quiz: Quiz): ContentValidationResult {
   if (!quiz.options || quiz.options.length < 2) errors.push('options 최소 2개 필요');
 
   if (quiz.type === 'knowledge') {
-    const hasCorrect = quiz.options.some(o => o.isCorrect);
+    const hasCorrect = quiz.options?.some(o => o.isCorrect);
     if (!hasCorrect) errors.push('knowledge 퀴즈는 정답(isCorrect: true) 필수');
+
+    const correctCount = quiz.options?.filter(o => o.isCorrect).length || 0;
+    if (correctCount > 1) errors.push('정답은 1개만 가능');
+
     if (!quiz.explanation) warnings.push('explanation 권장');
+  }
+
+  // difficulty 체크 (CLI와 동기화)
+  if (!quiz.difficulty || ![1, 2, 3].includes(quiz.difficulty)) {
+    warnings.push('difficulty는 1, 2, 3 중 하나 권장');
   }
 
   if (!quiz.tags || quiz.tags.length === 0) warnings.push('tags 권장');
@@ -953,24 +975,28 @@ export function validateScenario(scenario: ScenarioQuiz): ContentValidationResul
   if (!scenario.questions || scenario.questions.length < 3) errors.push('questions 최소 3개 필요');
   if (!scenario.results || scenario.results.length < 2) errors.push('results 최소 2개 필요');
 
-  // 점수 범위 연속성 체크
-  const sortedResults = [...scenario.results].sort((a, b) => a.minScore - b.minScore);
-  let prevMax = -1;
-  for (const result of sortedResults) {
-    if (result.minScore !== prevMax + 1 && prevMax !== -1) {
-      warnings.push(`점수 범위 갭: ${prevMax} ~ ${result.minScore}`);
+  // questions/results가 있을 때만 추가 검증
+  if (scenario.questions && scenario.questions.length > 0 && scenario.results && scenario.results.length > 0) {
+    // 점수 범위 연속성 체크
+    const sortedResults = [...scenario.results].sort((a, b) => a.minScore - b.minScore);
+    let prevMax = -1;
+    for (const result of sortedResults) {
+      if (result.minScore !== prevMax + 1 && prevMax !== -1) {
+        warnings.push(`점수 범위 갭: ${prevMax} ~ ${result.minScore}`);
+      }
+      prevMax = result.maxScore;
     }
-    prevMax = result.maxScore;
-  }
 
-  // 최대 점수 계산 & 체크
-  const maxPossibleScore = scenario.questions.reduce((sum, q) => {
-    const maxPoints = Math.max(...q.options.map(o => o.points));
-    return sum + maxPoints;
-  }, 0);
+    // 최대 점수 계산 & 체크
+    const maxPossibleScore = scenario.questions.reduce((sum, q) => {
+      const maxPoints = Math.max(...(q.options?.map(o => o.points) || [0]));
+      return sum + maxPoints;
+    }, 0);
 
-  if (sortedResults[sortedResults.length - 1].maxScore !== maxPossibleScore) {
-    warnings.push(`최대 가능 점수(${maxPossibleScore})와 최고 등급 maxScore 불일치`);
+    const lastResult = sortedResults[sortedResults.length - 1];
+    if (lastResult && lastResult.maxScore !== maxPossibleScore) {
+      warnings.push(`최대 가능 점수(${maxPossibleScore})와 최고 등급 maxScore 불일치`);
+    }
   }
 
   return {
@@ -990,9 +1016,20 @@ export function validatePoll(poll: Poll): ContentValidationResult {
   if (!poll.question) errors.push('question 필수');
   if (!poll.options || poll.options.length < 2) errors.push('options 최소 2개 필요');
 
-  if (poll.type === 'vs' && poll.options.length !== 2) {
+  if (poll.type === 'vs' && poll.options?.length !== 2) {
     errors.push('vs 타입은 정확히 2개 옵션 필요');
   }
+
+  // choice 타입 옵션 수 체크 (CLI와 동기화)
+  if (poll.type === 'choice') {
+    if (poll.options && poll.options.length < 3) warnings.push('choice 타입은 3개 이상 옵션 권장');
+    if (poll.options && poll.options.length > 5) warnings.push('choice 타입은 5개 이하 옵션 권장');
+  }
+
+  // 이모지 일관성 체크 (CLI와 동기화)
+  const hasEmoji = poll.options?.some(o => o.emoji);
+  const allEmoji = poll.options?.every(o => o.emoji);
+  if (hasEmoji && !allEmoji) warnings.push('일부 옵션에만 emoji 있음');
 
   if (!poll.tags || poll.tags.length === 0) warnings.push('tags 권장');
 
@@ -1015,11 +1052,34 @@ export function validateSituationReaction(sr: SituationReaction): ContentValidat
   if (!sr.options || sr.options.length < 2) errors.push('options 최소 2개 필요');
   if (!sr.category) errors.push('category 필수');
 
+  // ID와 category 일치 확인 (CLI와 동기화)
+  if (sr.id && sr.category) {
+    const idParts = sr.id.split('-');
+    const idCategory = idParts[2]; // situation-reaction-{category}-xxx
+    if (idCategory !== sr.category) {
+      errors.push(`ID(${sr.id})와 category(${sr.category}) 불일치`);
+    }
+  }
+
+  // 유효한 category 확인 (CLI와 동기화)
+  const validCategories = ['relationship', 'work', 'social', 'awkward'];
+  if (sr.category && !validCategories.includes(sr.category)) {
+    errors.push(`잘못된 category: ${sr.category}`);
+  }
+
   // 각 옵션에 tag가 있는지 확인
   const missingTags = sr.options?.filter(o => !o.tag);
   if (missingTags && missingTags.length > 0) {
     errors.push(`옵션 ${missingTags.map(o => o.id).join(', ')}에 tag 필수`);
   }
+
+  // tag 유효성 확인 (CLI와 동기화)
+  const validTags = ['cool', 'emotional', 'rational', 'avoidant', 'confrontational', 'humorous', 'caring', 'passive'];
+  sr.options?.forEach(o => {
+    if (o.tag && !validTags.includes(o.tag)) {
+      warnings.push(`옵션 ${o.id}의 tag '${o.tag}'가 표준 태그 아님`);
+    }
+  });
 
   // personalityMapping 권장
   if (!sr.personalityMapping || Object.keys(sr.personalityMapping).length === 0) {

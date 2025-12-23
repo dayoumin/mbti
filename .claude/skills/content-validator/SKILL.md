@@ -35,7 +35,7 @@ node scripts/validate-content-samples.mjs
 | 정답 없음 | 에러 | isCorrect: true 1개 필수 |
 | 정답 여러 개 | 에러 | isCorrect: true 1개만 |
 | explanation 누락 | 경고 | 권장 |
-| difficulty 범위 | 에러 | 1, 2, 3 중 하나 |
+| difficulty 범위 | 경고 | 1, 2, 3 중 하나 권장 |
 | points 범위 | 경고 | 10, 15, 20 권장 |
 
 ### 3. 시나리오 퀴즈 검증
@@ -56,7 +56,19 @@ node scripts/validate-content-samples.mjs
 | choice 옵션 개수 | 경고 | 3-5개 권장 |
 | emoji 누락 | 경고 | 권장 |
 
-### 5. 토너먼트 검증
+### 5. 상황별 반응 투표 검증 (situation-reaction)
+
+| 항목 | 에러/경고 | 기준 |
+|------|----------|------|
+| id 필수 | 에러 | 필수 |
+| situation 누락 | 에러 | 필수 |
+| category 누락 | 에러 | 필수, 'relationship'/'work'/'social'/'awkward' 중 하나 |
+| id-category 불일치 | 에러 | id에 포함된 category와 category 필드 일치 필수 |
+| 옵션 tag 누락 | 에러 | 각 옵션에 tag 필수 |
+| personalityMapping 누락 | 경고 | 성격별 통계용 권장 |
+| tags 누락 | 경고 | 검색용 권장 |
+
+### 6. 토너먼트 검증
 
 | 항목 | 에러/경고 | 기준 |
 |------|----------|------|

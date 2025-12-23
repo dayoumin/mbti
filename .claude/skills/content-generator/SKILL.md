@@ -114,7 +114,45 @@ interface Poll {
 }
 ```
 
-### 5. 토너먼트/월드컵 (Tournament)
+### 5. 상황별 반응 투표 (Situation-Reaction)
+
+```typescript
+interface SituationReaction {
+  id: string;                    // "situation-reaction-{category}-{번호}"
+  type: 'situation-reaction';
+  category: SituationCategory;   // 'relationship' | 'work' | 'social' | 'awkward'
+  situation: string;             // 상황 설명 (1-2문장)
+  question: string;              // "이럴 때 나는?"
+  options: {
+    id: string;                  // 'a', 'b', 'c', 'd'
+    text: string;                // 반응 텍스트
+    emoji: string;               // 반응 이모지
+    tag: ReactionTag;            // 반응 유형 태그 (필수!)
+  }[];
+  personalityMapping?: {         // 성격 유형별 예상 반응 (통계용)
+    [personalityType: string]: string;  // MBTI 등 -> optionId
+  };
+  tags: string[];                // 검색용 태그
+}
+
+type SituationCategory = 'relationship' | 'work' | 'social' | 'awkward';
+type ReactionTag = 'cool' | 'emotional' | 'rational' | 'avoidant' |
+                   'confrontational' | 'humorous' | 'caring' | 'passive';
+```
+
+**필수 규칙:**
+- id 형식: `situation-reaction-{category}-{번호}` (category와 일치 필수!)
+- 옵션 3-4개, 각 옵션에 tag 필수
+- situation은 구체적이고 공감 가는 상황 (1-2문장)
+- personalityMapping으로 MBTI/성격 유형과 연동 권장
+
+**카테고리별 상황 예시:**
+- `relationship`: 연애, 이별, 썸, 전애인
+- `work`: 직장, 상사, 동료, 회의, 회식
+- `social`: 친구 모임, SNS, 파티
+- `awkward`: 어색한 순간, 민망한 상황
+
+### 6. 토너먼트/월드컵 (Tournament)
 
 ```typescript
 interface Tournament {
@@ -177,7 +215,12 @@ interface TournamentContestant {
 
 ### 2단계: 기존 데이터 참조
 ```bash
-# 기존 샘플 확인
+# 실제 서비스 데이터 확인
+src/data/content/quizzes/      # 퀴즈
+src/data/content/polls/        # 투표
+src/data/content/types.ts      # 타입 정의
+
+# 대시보드 샘플 (구조 참고용)
 src/app/dashboard/data/content-samples.ts
 src/app/dashboard/data/tournament-sample.ts
 ```
@@ -194,12 +237,18 @@ node scripts/validate-content-samples.mjs
 
 ## 출력 위치
 
+### 실제 서비스용 (ContentExplore에서 표시됨)
 | 타입 | 파일 위치 |
 |-----|----------|
-| 퀴즈 | `src/app/dashboard/data/quizzes/{category}.ts` |
-| 시나리오 | `src/app/dashboard/data/scenarios/{category}-{topic}.ts` |
-| 투표 | `src/app/dashboard/data/polls/{category}.ts` |
-| 토너먼트 | `src/app/dashboard/data/tournaments/{category}-{topic}.ts` |
+| 퀴즈 | `src/data/content/quizzes/{category}.ts` |
+| 투표 | `src/data/content/polls/{category}.ts` |
+| 상황별 반응 | `src/data/content/situation-reactions/{category}.ts` (미구현) |
+
+### 대시보드 샘플용 (문서화/검증용)
+| 타입 | 파일 위치 |
+|-----|----------|
+| 샘플 | `src/app/dashboard/data/content-samples.ts` |
+| 토너먼트 샘플 | `src/app/dashboard/data/tournament-sample.ts` |
 
 ## 품질 체크리스트
 
