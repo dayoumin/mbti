@@ -23,6 +23,7 @@ import TodayRankingPreview from './TodayRankingPreview';
 import TodayRankingModal from './TodayRankingModal';
 import TestCard from './TestCard';
 import MyRankingMini from './MyRankingMini';
+import TodayQuizPoll from './TodayQuizPoll';
 
 // ============================================================================
 // 타입 정의
@@ -502,6 +503,12 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
                         <RecommendedSection onStartTest={onStartTest} />
                     </div>
 
+                    {/* 오늘의 퀴즈 & 투표 - 참여 유도 */}
+                    <TodayQuizPoll
+                        onExploreMore={onContentExplore}
+                        className="mb-4 animate-fade-in-up"
+                    />
+
                     {/* 오늘의 랭킹 - 미니 프리뷰 */}
                     <TodayRankingPreview
                         onClick={() => setRankingModalState({ isOpen: true, defaultTab: 'polls' })}
@@ -524,6 +531,12 @@ const Dashboard = ({ onStartTest, onContentExplore }: DashboardProps) => {
 
                 {/* PC 전용: 단일 컬럼 테스트 카탈로그 (좌우 사이드바가 있으므로 내부 2컬럼 불필요) */}
                 <div className="hidden lg:block mt-4">
+                    {/* 오늘의 퀴즈 & 투표 - PC에서도 참여 유도 (넷플릭스 스타일) */}
+                    <TodayQuizPoll
+                        onExploreMore={onContentExplore}
+                        className="mb-4 animate-fade-in-up"
+                    />
+
                     {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
                     <div className="sticky top-4 z-20 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200/60 p-3 shadow-sm" style={{ minHeight: '84px' }}>
                         {/* 1차 필터: 탭 스타일 (underline) */}

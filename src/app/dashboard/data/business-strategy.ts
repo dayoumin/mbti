@@ -84,6 +84,7 @@ export interface BusinessPhase {
 // ============================================================================
 
 export const VALUE_CHAIN = {
+  // 플랫폼 가치 흐름 (기존)
   flow: [
     { step: 1, name: '테스트', icon: '🧪', description: '성격/취향 테스트 참여' },
     { step: 2, name: '자기 인식', icon: '🪞', description: '결과를 통한 자기 이해' },
@@ -93,6 +94,172 @@ export const VALUE_CHAIN = {
     { step: 6, name: '비즈니스 가치', icon: '💰', description: '광고/제휴/리포트 수익화' },
   ],
   coreInsight: '테스트를 통해 자신을 알고, 누적을 통해 다른 사람도 알고, 랭킹으로 발전시키면 기간별 중요한 데이터가 된다',
+
+  // 콘텐츠 요청 생태계 (사용자 참여형)
+  contentRequestEcosystem: {
+    name: '콘텐츠 요청 생태계',
+    description: '사용자가 원하는 콘텐츠를 요청하고, 투표로 우선순위를 정하고, 플랫폼이 제작하는 참여형 구조',
+
+    // 핵심 플라이휠
+    flywheel: [
+      { step: 1, name: '요청', icon: '💡', description: '사용자가 테스트/퀴즈/투표 아이디어 제안' },
+      { step: 2, name: '투표', icon: '🗳️', description: '다른 사용자들이 요청에 투표' },
+      { step: 3, name: '선정', icon: '🏆', description: '상위 요청 선정, 리스트에서 제거' },
+      { step: 4, name: '제작', icon: '🔨', description: '플랫폼이 품질 보장하며 제작' },
+      { step: 5, name: '출시', icon: '🎉', description: '요청자/투표자에게 알림, 크레딧 표시' },
+      { step: 6, name: '참여', icon: '🔄', description: '완성된 콘텐츠 참여 → 새 아이디어 발굴' },
+    ],
+    keyInsight: '사용자는 아이디어를, 플랫폼은 품질을 책임진다. 둘 다 잘하는 걸 한다.',
+
+    // 요청 가능한 콘텐츠 유형
+    requestTypes: [
+      { type: '테스트', icon: '🧪', example: '"와인 취향 테스트 만들어주세요"', difficulty: 'high', reward: '제작 시 크레딧 + 배지' },
+      { type: '퀴즈', icon: '❓', example: '"고양이 품종 퀴즈 추가해주세요"', difficulty: 'medium', reward: '채택 시 포인트' },
+      { type: '투표', icon: '🗳️', example: '"습식 vs 건식 사료 투표"', difficulty: 'low', reward: '즉시 반영 가능' },
+      { type: '토너먼트', icon: '🏆', example: '"인기 카페 월드컵"', difficulty: 'medium', reward: '후보 추천자 표시' },
+      { type: '시나리오', icon: '🎭', example: '"직장 갈등 상황 추가"', difficulty: 'medium', reward: '채택 시 포인트' },
+    ],
+
+    // 요청 → 제작 프로세스
+    process: {
+      submit: {
+        name: '요청 제출',
+        rules: [
+          '카테고리 선택 (테스트/퀴즈/투표/토너먼트)',
+          '제목 + 간단한 설명 작성',
+          '중복 요청 자동 병합',
+          '부적절한 요청 필터링',
+        ],
+        limits: {
+          perUser: '주간 3개 (스팸 방지)',
+          titleLength: '5~50자',
+          descLength: '10~200자',
+        },
+        duplicateDetection: {
+          method: '제목 유사도 70% 이상 시 기존 요청에 병합 제안',
+          action: '사용자가 병합 수락 시 투표수 합산',
+        },
+        filterRules: [
+          '욕설/비속어 포함',
+          '특정인 비방/저격',
+          '상업적 홍보',
+          '저작권 침해 우려',
+          '실현 불가능 (예: "모든 연예인 테스트")',
+        ],
+      },
+      vote: {
+        name: '투표 기간',
+        rules: [
+          '요청당 1인 1표',
+          '주간/월간 투표 집계',
+          '투표수 실시간 공개 (랭킹)',
+          '투표 참여도 배지 부여',
+        ],
+        period: '요청 후 2주간 투표 가능, 이후 보관함 이동',
+      },
+      select: {
+        name: '선정 기준',
+        rules: [
+          '주간 TOP 3 자동 선정',
+          '선정된 요청은 리스트에서 제거',
+          '요청자에게 "아이디어 채택" 배지',
+          '투표자에게 "트렌드세터" 포인트',
+        ],
+        criteria: {
+          minVotes: '최소 20표 이상 (기준 미달 시 다음 주로 이월)',
+          tieBreaker: '동점 시 먼저 요청된 순',
+          categoryBalance: '카테고리당 최대 2개 (다양성 확보)',
+        },
+      },
+      produce: {
+        name: '제작',
+        rules: [
+          '플랫폼이 품질 검증하며 제작',
+          '테스트: 결과 로직 검증 필수',
+          '퀴즈/투표: 빠른 반영 가능',
+          '제작 진행 상황 공개',
+        ],
+        timeline: {
+          '투표': '1~2일',
+          '퀴즈': '3~5일',
+          '토너먼트': '5~7일',
+          '테스트': '1~2주',
+        },
+        status: ['선정됨', '제작 중', '검수 중', '출시 예정', '출시 완료'],
+      },
+      release: {
+        name: '출시',
+        rules: [
+          '"요청자 OOO님의 아이디어" 크레딧 표시',
+          '요청자/투표자에게 푸시 알림',
+          '첫 참여 시 보너스 포인트',
+        ],
+        notifications: {
+          requester: ['채택 시', '제작 시작 시', '출시 시'],
+          voter: ['투표한 요청 채택 시', '출시 시'],
+        },
+      },
+    },
+
+    // 요청 관리 정책
+    requestPolicy: {
+      edit: '제출 후 24시간 내 수정 가능 (투표 시작 전)',
+      cancel: '투표 10표 미만일 때만 취소 가능',
+      report: '부적절한 요청 신고 → 5회 누적 시 자동 숨김',
+      archive: '2주간 투표 20표 미달 → 보관함 이동 (재요청 가능)',
+    },
+
+    // 보상 체계
+    rewards: {
+      requester: [
+        { action: '요청 제출', reward: '+10 포인트' },
+        { action: '요청 채택', reward: '+100 포인트 + "💡 아이디어 뱅크" 배지' },
+        { action: '3회 채택', reward: '"🌱 떠오르는 기획자" 배지' },
+        { action: '10회 채택', reward: '"🎯 콘텐츠 기획자" 배지' },
+        { action: '30회 채택', reward: '"👑 아이디어 킹" 배지' },
+      ],
+      voter: [
+        { action: '투표 참여', reward: '+5 포인트' },
+        { action: '채택된 요청에 투표 (선구안)', reward: '+20 포인트 + "👁️ 트렌드세터" 배지' },
+        { action: '주간 10회 투표', reward: '"🗳️ 여론 주도자" 배지' },
+        { action: '채택 적중 5회 누적', reward: '"🔮 예언자" 배지' },
+      ],
+      participant: [
+        { action: '신규 콘텐츠 첫 참여', reward: '+30 포인트' },
+        { action: '출시 24시간 내 참여', reward: '+60 포인트 (x2) + "⚡ 얼리버드" 배지' },
+        { action: '내가 요청한 콘텐츠 첫 참여', reward: '+50 포인트 + "🎉 꿈을 이룬 자" 배지' },
+      ],
+    },
+
+    // 핵심 지표
+    metrics: {
+      engagement: [
+        { metric: '월간 요청 수', target: '100개+', description: '활발한 아이디어 제안' },
+        { metric: '요청당 평균 투표수', target: '50표+', description: '커뮤니티 관심도' },
+        { metric: '요청 → 채택률', target: '10-20%', description: '품질 필터링' },
+      ],
+      satisfaction: [
+        { metric: '채택 콘텐츠 참여율', target: '일반 대비 2배', description: '사용자가 원한 콘텐츠' },
+        { metric: '요청자 재요청률', target: '50%+', description: '선순환 형성' },
+        { metric: '요청 콘텐츠 공유율', target: '일반 대비 1.5배', description: '"내가 요청한 거" 자랑' },
+      ],
+    },
+
+    // 왜 이 모델인가
+    whyThisModel: {
+      problemWithUGC: [
+        '테스트/퀴즈는 제작 난이도가 높음 (결과 로직, 밸런스)',
+        '품질 낮은 UGC는 플랫폼 신뢰도 저하',
+        '크리에이터 육성 비용 > 직접 제작 비용',
+      ],
+      benefits: [
+        '사용자: 원하는 콘텐츠가 실제로 만들어짐 → 소속감',
+        '플랫폼: 수요 검증된 콘텐츠만 제작 → 효율성',
+        '품질: 플랫폼이 제작하므로 일관된 품질 보장',
+        '바이럴: "내가 요청/투표한 거 나왔다!" → 공유 동기',
+      ],
+    },
+  },
 };
 
 // ============================================================================
