@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## ⚠️ 배포 전 필수 확인
+
+**배포하기 전에 반드시 아래 문서들을 확인하세요:**
+
+- **[COPYRIGHT-GUIDELINES.md](COPYRIGHT-GUIDELINES.md)** - 저작권 가이드라인 및 이미지 사용 제한 사항
+- **[DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md)** - 배포 전/후 필수 체크리스트
+
+## 📁 프로젝트 구조
+
+```
+mbti/
+├── src/                        # 소스 코드
+├── worldcups/                  # 월드컵 데이터 및 리서치
+│   ├── korean-webtoon/        # 한국 웹툰 60편
+│   └── japanese-anime/        # 일본 애니메이션 60편
+├── COPYRIGHT-GUIDELINES.md     # ⚠️ 저작권 가이드라인
+├── DEPLOYMENT-CHECKLIST.md     # ⚠️ 배포 체크리스트
+└── README.md
+```

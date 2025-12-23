@@ -51,6 +51,7 @@ import { TEST_TYPES, SUBJECT_CONFIG } from '@/data/config';
 import CommunityStrategy from './components/CommunityStrategy';
 import ContentSystem from './components/ContentSystem';
 import ProfileSystem from './components/ProfileSystem';
+import IdeaBank from './components/IdeaBank';
 import PostDetailTestStrategy from './components/PostDetailTestStrategy';
 import SocialFeatures from './components/SocialFeatures';
 import RetentionStrategy from './components/RetentionStrategy';
@@ -130,8 +131,10 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       {
         groupLabel: '전략',
         tabs: [
+          { key: 'ideaBank', label: '아이디어 뱅크', icon: <Lightbulb className="w-4 h-4" /> },
+          { key: 'content', label: '콘텐츠 시스템', icon: <Brain className="w-4 h-4" /> },
           { key: 'firstMover', label: '선점 효과', icon: <Zap className="w-4 h-4" /> },
-          { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
+          { key: 'roadmap', label: '로드맵', icon: <ListChecks className="w-4 h-4" /> },
           { key: 'category', label: '카테고리', icon: <Layers className="w-4 h-4" /> },
           { key: 'userStrategy', label: '사용자', icon: <User className="w-4 h-4" /> },
           { key: 'viral', label: '바이럴', icon: <Sparkles className="w-4 h-4" /> },
@@ -3815,6 +3818,7 @@ function ProductFeatures() {
       </div>
 
       {/* Content */}
+      {activeTab === 'ideaBank' && <IdeaBank />}
       {activeTab === 'content' && <ContentSystem />}
       {activeTab === 'social' && <SocialFeatures />}
       {activeTab === 'community' && <CommunityStrategy />}
