@@ -41,6 +41,9 @@ export const STORAGE_KEYS = {
   // 콘텐츠 참여
   CONTENT_PARTICIPATION: 'chemi_content_participation',
 
+  // 사용자 선호도 (개인화 추천)
+  USER_PREFERENCE: 'chemi_user_preference',
+
   // 분석
   ANALYTICS_EVENTS: 'chemi_analytics_events',
   SESSION_TRACKED: 'chemi_session_tracked',

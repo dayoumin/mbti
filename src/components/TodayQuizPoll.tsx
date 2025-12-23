@@ -1,47 +1,146 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Brain, Vote, ChevronRight, CheckCircle, Sparkles } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { ChevronRight, CheckCircle, Sparkles, Brain, Vote } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls';
 import { contentParticipationService } from '@/services/ContentParticipationService';
 import { getParticipationBridge } from '@/services/ParticipationBridge';
+import { userPreferenceService } from '@/services/UserPreferenceService';
+import QuizWidget from './content/QuizWidget';
+import PollWidget from './content/PollWidget';
 import type { KnowledgeQuiz, VSPoll } from '@/data/content/types';
+import type { PollResults, RewardInfo } from './content/useContentParticipation';
 
 interface TodayQuizPollProps {
   onExploreMore?: () => void;
   className?: string;
 }
 
-// 날짜 기반 인덱스 계산 (하루 단위로 변경)
-function getDayIndex(offset = 0): number {
-  const today = new Date();
-  return today.getFullYear() * 1000 + today.getMonth() * 31 + today.getDate() + offset;
+// ============================================================================
+// 시간 기반 로테이션 유틸리티
+// ============================================================================
+
+const ROTATION_HOURS = 6; // 6시간마다 로테이션
+
+/**
+ * 현재 시간대 슬롯 계산 (6시간 단위)
+ * 예: 0-5시 = 슬롯0, 6-11시 = 슬롯1, 12-17시 = 슬롯2, 18-23시 = 슬롯3
+ */
+function getCurrentTimeSlot(): { dateKey: string; slotIndex: number } {
+  const now = new Date();
+  const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const slotIndex = Math.floor(now.getHours() / ROTATION_HOURS);
+  return { dateKey, slotIndex };
 }
 
-// 안 푼 콘텐츠 중 날짜 기반으로 하나 선택
-function selectFromUnanswered<T extends { id: string }>(
-  items: T[],
-  answeredIds: string[],
-  offset = 0
-): T | null {
-  if (items.length === 0) return null;
+/**
+ * 다음 로테이션까지 남은 시간 (밀리초)
+ */
+function getTimeUntilNextRotation(): number {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const nextSlotHour = (Math.floor(currentHour / ROTATION_HOURS) + 1) * ROTATION_HOURS;
 
-  const unanswered = items.filter(item => !answeredIds.includes(item.id));
-  if (unanswered.length > 0) {
-    return unanswered[getDayIndex(offset) % unanswered.length];
+  const nextRotation = new Date(now);
+  if (nextSlotHour >= 24) {
+    // 다음 날 0시
+    nextRotation.setDate(nextRotation.getDate() + 1);
+    nextRotation.setHours(0, 0, 0, 0);
+  } else {
+    nextRotation.setHours(nextSlotHour, 0, 0, 0);
   }
-  return null;
+
+  return nextRotation.getTime() - now.getTime();
 }
 
-// 오늘의 퀴즈 선택
-function getTodayQuiz(answeredIds: string[]): KnowledgeQuiz | null {
-  return selectFromUnanswered(ALL_KNOWLEDGE_QUIZZES, answeredIds, 0);
+/**
+ * Seeded Random Number Generator (Mulberry32)
+ * 같은 시드는 항상 같은 순서의 난수를 생성
+ */
+function seededRandom(seed: number): () => number {
+  return function() {
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
 }
 
-// 오늘의 투표 선택 (퀴즈와 다른 콘텐츠가 나오도록 offset 7)
-function getTodayPoll(votedIds: string[]): VSPoll | null {
-  return selectFromUnanswered(VS_POLLS, votedIds, 7);
+/**
+ * 문자열을 숫자 해시로 변환
+ */
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Seeded Fisher-Yates 셔플 (시드 기반으로 항상 같은 결과)
+ */
+function seededShuffle<T>(array: T[], seed: number): T[] {
+  const shuffled = [...array];
+  const random = seededRandom(seed);
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+/**
+ * 시간대 기반으로 콘텐츠 선택 (같은 시간대 = 같은 콘텐츠)
+ * - 개인화 추천 순위 유지
+ * - 안 푼 것 중에서 시간대 시드로 선택
+ */
+function selectQuizzesForTimeSlot(
+  items: KnowledgeQuiz[],
+  answeredIds: string[],
+  count: number,
+  timeSlotSeed: string
+): KnowledgeQuiz[] {
+  if (items.length === 0) return [];
+
+  // 1. 연령 제한 + 추천 순 정렬
+  const recommended = userPreferenceService.sortQuizzesByRecommendation(items);
+
+  // 2. 안 푼 것만 필터
+  const unanswered = recommended.filter(item => !answeredIds.includes(item.id));
+  if (unanswered.length === 0) return [];
+
+  // 3. 시간대 시드로 결정론적 셔플
+  const seed = hashString(`quiz-${timeSlotSeed}`);
+  const shuffled = seededShuffle(unanswered, seed);
+
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+function selectPollsForTimeSlot(
+  items: VSPoll[],
+  answeredIds: string[],
+  count: number,
+  timeSlotSeed: string
+): VSPoll[] {
+  if (items.length === 0) return [];
+
+  // 1. 연령 제한 + 추천 순 정렬
+  const recommended = userPreferenceService.sortPollsByRecommendation(items);
+
+  // 2. 안 푼 것만 필터
+  const unanswered = recommended.filter(item => !answeredIds.includes(item.id));
+  if (unanswered.length === 0) return [];
+
+  // 3. 시간대 시드로 결정론적 셔플
+  const seed = hashString(`poll-${timeSlotSeed}`);
+  const shuffled = seededShuffle(unanswered, seed);
+
+  return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
 // 기본 participation 데이터 (SSR 안전)
@@ -56,63 +155,131 @@ const DEFAULT_PARTICIPATION = {
   }
 };
 
+// 표시할 콘텐츠 개수
+const QUIZ_COUNT = 2;
+const POLL_COUNT = 2;
+
 export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQuizPollProps) {
   // SSR 안전: 초기값은 빈 데이터로 시작
   const [participation, setParticipation] = useState(DEFAULT_PARTICIPATION);
   const [isClient, setIsClient] = useState(false);
-  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
-  const [pollVote, setPollVote] = useState<'a' | 'b' | null>(null);
-  const [showQuizResult, setShowQuizResult] = useState(false);
-  const [pollStats, setPollStats] = useState({ a: 50, b: 50 });
 
-  // 클라이언트에서만 localStorage 데이터 로드
+  // 현재 시간대 슬롯 (6시간 단위 로테이션)
+  const [timeSlot, setTimeSlot] = useState<{ dateKey: string; slotIndex: number } | null>(null);
+
+  // 현재 보고 있는 퀴즈/투표 인덱스
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+  const [currentPollIndex, setCurrentPollIndex] = useState(0);
+
+  // 퀴즈 상태
+  const [quizStates, setQuizStates] = useState<Record<string, {
+    selectedOption: string | null;
+    showResult: boolean;
+    reward: RewardInfo | null;
+  }>>({});
+
+  // 투표 상태
+  const [pollStates, setPollStates] = useState<Record<string, {
+    selectedOption: 'a' | 'b' | null;
+    results: PollResults;
+    isLoadingStats: boolean;
+    reward: RewardInfo | null;
+  }>>({});
+
+  // 클라이언트에서만 localStorage 데이터 로드 + 시간대 설정
   useEffect(() => {
     setIsClient(true);
     setParticipation(contentParticipationService.getParticipation());
+    setTimeSlot(getCurrentTimeSlot());
+
+    // 다음 로테이션 시간에 자동 업데이트
+    const scheduleNextRotation = () => {
+      const msUntilNext = getTimeUntilNextRotation();
+      return setTimeout(() => {
+        setTimeSlot(getCurrentTimeSlot());
+        // 다음 로테이션도 예약
+        const timerId = scheduleNextRotation();
+        return () => clearTimeout(timerId);
+      }, msUntilNext);
+    };
+
+    const timerId = scheduleNextRotation();
+    return () => clearTimeout(timerId);
   }, []);
 
   // 참여 기록 기반으로 안 푼 퀴즈/투표 선택
   const answeredQuizIds = useMemo(() => participation.quizzes.map(q => q.quizId), [participation.quizzes]);
   const votedPollIds = useMemo(() => participation.polls.map(p => p.pollId), [participation.polls]);
 
-  const todayQuiz = useMemo(() => getTodayQuiz(answeredQuizIds), [answeredQuizIds]);
-  const todayPoll = useMemo(() => getTodayPoll(votedPollIds), [votedPollIds]);
+  // 시간대 시드 생성 (날짜 + 슬롯 인덱스)
+  const timeSlotSeed = useMemo(() => {
+    if (!timeSlot) return '';
+    return `${timeSlot.dateKey}-slot${timeSlot.slotIndex}`;
+  }, [timeSlot]);
 
-  // 퀴즈/투표가 변경되면 상태 리셋 (응답 후 다음 콘텐츠로 전환 시)
-  const todayQuizId = todayQuiz?.id;
-  const todayPollId = todayPoll?.id;
+  // 연령 제한 필터링된 콘텐츠 수 (UX 메시지 구분용)
+  const filteredQuizCount = useMemo(() =>
+    userPreferenceService.sortQuizzesByRecommendation(ALL_KNOWLEDGE_QUIZZES).length,
+    []
+  );
+  const filteredPollCount = useMemo(() =>
+    userPreferenceService.sortPollsByRecommendation(VS_POLLS).length,
+    []
+  );
 
-  useEffect(() => {
-    // 퀴즈가 바뀌면 퀴즈 관련 상태 리셋
-    setQuizAnswer(null);
-    setShowQuizResult(false);
-  }, [todayQuizId]);
+  // 시간대 기반 콘텐츠 선택 (같은 시간대 = 같은 콘텐츠)
+  const todayQuizzes = useMemo(() => {
+    if (!timeSlotSeed) return [];
+    return selectQuizzesForTimeSlot(ALL_KNOWLEDGE_QUIZZES, answeredQuizIds, QUIZ_COUNT, timeSlotSeed);
+  }, [answeredQuizIds, timeSlotSeed]);
 
-  useEffect(() => {
-    // 투표가 바뀌면 투표 관련 상태 리셋
-    setPollVote(null);
-    setPollStats({ a: 50, b: 50 });
-  }, [todayPollId]);
+  const todayPolls = useMemo(() => {
+    if (!timeSlotSeed) return [];
+    return selectPollsForTimeSlot(VS_POLLS, votedPollIds, POLL_COUNT, timeSlotSeed);
+  }, [votedPollIds, timeSlotSeed]);
 
-  // 모든 콘텐츠 완료 여부 (클라이언트에서만 체크)
-  const allQuizzesDone = isClient && todayQuiz === null && ALL_KNOWLEDGE_QUIZZES.length > 0;
-  const allPollsDone = isClient && todayPoll === null && VS_POLLS.length > 0;
+  const currentQuiz = todayQuizzes[currentQuizIndex];
+  const currentPoll = todayPolls[currentPollIndex];
+
+  // 콘텐츠 상태 판별 (연령 제한 접근불가 vs 모두 완료 구분)
+  const allQuizzesDone = isClient && todayQuizzes.length === 0 && filteredQuizCount > 0;
+  const allPollsDone = isClient && todayPolls.length === 0 && filteredPollCount > 0;
+  const noAccessibleQuizzes = isClient && filteredQuizCount === 0 && ALL_KNOWLEDGE_QUIZZES.length > 0;
+  const noAccessiblePolls = isClient && filteredPollCount === 0 && VS_POLLS.length > 0;
 
   // 퀴즈 답변 처리
   const handleQuizAnswer = async (optionId: string) => {
-    if (!todayQuiz || showQuizResult) return;
+    if (!currentQuiz) return;
 
-    const isCorrect = todayQuiz.options.find(o => o.id === optionId)?.isCorrect || false;
-    setQuizAnswer(optionId);
-    setShowQuizResult(true);
+    const quizState = quizStates[currentQuiz.id];
+    if (quizState?.showResult) return;
 
-    contentParticipationService.recordQuizAnswer(todayQuiz.id, optionId, isCorrect);
+    const isCorrect = currentQuiz.options.find(o => o.id === optionId)?.isCorrect || false;
+
+    // 상태 업데이트
+    setQuizStates(prev => ({
+      ...prev,
+      [currentQuiz.id]: {
+        selectedOption: optionId,
+        showResult: true,
+        reward: { points: isCorrect ? 10 : 5, newBadges: [] }
+      }
+    }));
+
+    contentParticipationService.recordQuizAnswer(currentQuiz.id, optionId, isCorrect);
     setParticipation(contentParticipationService.getParticipation());
+
+    // 선호도 기록 (개인화용)
+    userPreferenceService.recordQuizEngagement(
+      currentQuiz.category,
+      [], // 퀴즈는 현재 tags 없음
+      isCorrect,
+      currentQuiz.difficulty
+    );
 
     try {
       const bridge = getParticipationBridge();
-      // questionIndex는 단일 퀴즈이므로 0
-      await bridge.recordQuizAnswer(todayQuiz.id, 0, optionId, isCorrect, todayQuiz.category);
+      await bridge.recordQuizAnswer(currentQuiz.id, 0, optionId, isCorrect, currentQuiz.category);
     } catch (e) {
       console.error('Quiz bridge error:', e);
     }
@@ -120,31 +287,92 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
   // 투표 처리
   const handlePollVote = async (choice: 'a' | 'b') => {
-    if (!todayPoll || pollVote) return;
+    if (!currentPoll) return;
 
-    setPollVote(choice);
+    const pollState = pollStates[currentPoll.id];
+    if (pollState?.selectedOption) return;
 
-    // 가상 통계 업데이트 (실제 API 연동 시 대체)
-    const newStats = choice === 'a'
-      ? { a: Math.min(pollStats.a + 2, 70), b: Math.max(pollStats.b - 2, 30) }
-      : { a: Math.max(pollStats.a - 2, 30), b: Math.min(pollStats.b + 2, 70) };
-    setPollStats(newStats);
+    // 로딩 상태
+    setPollStates(prev => ({
+      ...prev,
+      [currentPoll.id]: {
+        selectedOption: choice,
+        results: { a: 0, b: 0, total: -1 },
+        isLoadingStats: true,
+        reward: null
+      }
+    }));
 
-    contentParticipationService.recordPollVote(todayPoll.id, choice);
+    contentParticipationService.recordPollVote(currentPoll.id, choice);
     setParticipation(contentParticipationService.getParticipation());
+
+    // 선호도 기록 (개인화용)
+    userPreferenceService.recordPollEngagement(
+      currentPoll.category,
+      currentPoll.tags || []
+    );
 
     try {
       const bridge = getParticipationBridge();
-      // pollStats는 undefined로 전달 (서버에서 조회)
-      await bridge.recordPollVote(todayPoll.id, choice, undefined, todayPoll.category);
+      await bridge.recordPollVote(currentPoll.id, choice, undefined, currentPoll.category);
+
+      // 결과 조회
+      const res = await fetch(`/api/poll?pollId=${currentPoll.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        const total = data.total || 1;
+        const aCount = data.a || 0;
+        const bCount = data.b || 0;
+
+        setPollStates(prev => ({
+          ...prev,
+          [currentPoll.id]: {
+            selectedOption: choice,
+            results: {
+              a: Math.round((aCount / total) * 100),
+              b: Math.round((bCount / total) * 100),
+              total
+            },
+            isLoadingStats: false,
+            reward: { points: 5, newBadges: [] }
+          }
+        }));
+      }
     } catch (e) {
       console.error('Poll bridge error:', e);
+      // 에러 시 기본값
+      setPollStates(prev => ({
+        ...prev,
+        [currentPoll.id]: {
+          selectedOption: choice,
+          results: { a: 50, b: 50, total: 1 },
+          isLoadingStats: false,
+          reward: { points: 5, newBadges: [] }
+        }
+      }));
+    }
+  };
+
+  // 다음 퀴즈로 이동
+  const goToNextQuiz = () => {
+    if (currentQuizIndex < todayQuizzes.length - 1) {
+      setCurrentQuizIndex(prev => prev + 1);
+    }
+  };
+
+  // 다음 투표로 이동
+  const goToNextPoll = () => {
+    if (currentPollIndex < todayPolls.length - 1) {
+      setCurrentPollIndex(prev => prev + 1);
     }
   };
 
   const stats = participation.stats;
-  // 클라이언트에서만 활동 기록 표시 (hydration 에러 방지)
   const hasActivity = isClient && (stats.totalQuizAnswered > 0 || stats.totalPollVoted > 0);
+
+  // 현재 퀴즈 상태
+  const currentQuizState = currentQuiz ? quizStates[currentQuiz.id] : null;
+  const currentPollState = currentPoll ? pollStates[currentPoll.id] : null;
 
   return (
     <div className={`bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-4 border border-indigo-100/50 ${className}`}>
@@ -196,64 +424,21 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
           </div>
         )}
 
-        {/* 오늘의 퀴즈 */}
-        {todayQuiz && (
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Brain className="w-4 h-4 text-indigo-500" />
-              <span className="text-xs font-bold text-indigo-600">오늘의 퀴즈</span>
-              {showQuizResult && (
-                <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ml-auto ${
-                  todayQuiz.options.find(o => o.id === quizAnswer)?.isCorrect
-                    ? 'bg-green-100 text-green-600'
-                    : 'bg-red-100 text-red-600'
-                }`}>
-                  {todayQuiz.options.find(o => o.id === quizAnswer)?.isCorrect ? '정답!' : '오답'}
-                </span>
-              )}
-            </div>
-
-            <p className="text-sm font-medium text-slate-700 mb-3 line-clamp-2">
-              {todayQuiz.question}
-            </p>
-
-            <div className="space-y-1.5">
-              {todayQuiz.options.slice(0, 4).map((option) => {
-                const isSelected = quizAnswer === option.id;
-                const isCorrectAnswer = option.isCorrect;
-
-                return (
-                  <button
-                    key={option.id}
-                    onClick={() => handleQuizAnswer(option.id)}
-                    disabled={showQuizResult}
-                    className={`w-full text-left text-xs p-2 rounded-lg transition-all ${
-                      showQuizResult
-                        ? isCorrectAnswer
-                          ? 'bg-green-100 text-green-700 border border-green-200'
-                          : isSelected
-                            ? 'bg-red-100 text-red-700 border border-red-200'
-                            : 'bg-slate-50 text-slate-400'
-                        : 'bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      {showQuizResult && isCorrectAnswer && (
-                        <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
-                      )}
-                      <span className="line-clamp-1">{option.text}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {showQuizResult && todayQuiz.explanation && (
-              <div className="mt-2 p-2 bg-indigo-50 rounded-lg">
-                <p className="text-xs text-indigo-700 line-clamp-2">{todayQuiz.explanation}</p>
-              </div>
-            )}
-          </div>
+        {/* 오늘의 퀴즈 - QuizWidget 사용 */}
+        {currentQuiz && (
+          <QuizWidget
+            quiz={currentQuiz}
+            isAnswered={currentQuizState?.showResult || false}
+            selectedOption={currentQuizState?.selectedOption || null}
+            showResult={currentQuizState?.showResult || false}
+            onAnswer={handleQuizAnswer}
+            remainingCount={todayQuizzes.length - currentQuizIndex - 1}
+            onNext={goToNextQuiz}
+            reward={currentQuizState?.reward}
+            quizAccuracy={stats.totalQuizAnswered > 0
+              ? Math.round((stats.totalCorrect || 0) / stats.totalQuizAnswered * 100)
+              : undefined}
+          />
         )}
 
         {/* 투표 완료 상태 */}
@@ -277,87 +462,19 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
           </div>
         )}
 
-        {/* 오늘의 투표 */}
-        {todayPoll && (
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Vote className="w-4 h-4 text-purple-500" />
-              <span className="text-xs font-bold text-purple-600">오늘의 투표</span>
-            </div>
-
-            <p className="text-sm font-medium text-slate-700 mb-3 line-clamp-2">
-              {todayPoll.question}
-            </p>
-
-            <div className="space-y-2">
-              {/* Option A */}
-              <button
-                onClick={() => handlePollVote('a')}
-                disabled={!!pollVote}
-                className={`w-full text-left p-2 rounded-lg transition-all relative overflow-hidden ${
-                  pollVote
-                    ? pollVote === 'a'
-                      ? 'bg-purple-100 border border-purple-200'
-                      : 'bg-slate-50'
-                    : 'bg-slate-50 hover:bg-purple-50'
-                }`}
-              >
-                {pollVote && (
-                  <div
-                    className="absolute inset-0 bg-purple-200/30 transition-all"
-                    style={{ width: `${pollStats.a}%` }}
-                  />
-                )}
-                <div className="relative flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-xs font-medium">
-                    <span>{todayPoll.optionA.emoji}</span>
-                    <span className={pollVote === 'a' ? 'text-purple-700' : 'text-slate-600'}>
-                      {todayPoll.optionA.text}
-                    </span>
-                  </span>
-                  {pollVote && (
-                    <span className="text-xs font-bold text-purple-600">{pollStats.a}%</span>
-                  )}
-                </div>
-              </button>
-
-              {/* VS */}
-              <div className="flex items-center justify-center">
-                <span className="text-xs font-bold text-slate-300">VS</span>
-              </div>
-
-              {/* Option B */}
-              <button
-                onClick={() => handlePollVote('b')}
-                disabled={!!pollVote}
-                className={`w-full text-left p-2 rounded-lg transition-all relative overflow-hidden ${
-                  pollVote
-                    ? pollVote === 'b'
-                      ? 'bg-pink-100 border border-pink-200'
-                      : 'bg-slate-50'
-                    : 'bg-slate-50 hover:bg-pink-50'
-                }`}
-              >
-                {pollVote && (
-                  <div
-                    className="absolute inset-0 bg-pink-200/30 transition-all"
-                    style={{ width: `${pollStats.b}%` }}
-                  />
-                )}
-                <div className="relative flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-xs font-medium">
-                    <span>{todayPoll.optionB.emoji}</span>
-                    <span className={pollVote === 'b' ? 'text-pink-700' : 'text-slate-600'}>
-                      {todayPoll.optionB.text}
-                    </span>
-                  </span>
-                  {pollVote && (
-                    <span className="text-xs font-bold text-pink-600">{pollStats.b}%</span>
-                  )}
-                </div>
-              </button>
-            </div>
-          </div>
+        {/* 오늘의 투표 - PollWidget 사용 */}
+        {currentPoll && (
+          <PollWidget
+            poll={currentPoll}
+            isVoted={currentPollState?.selectedOption !== null && currentPollState?.selectedOption !== undefined}
+            selectedOption={currentPollState?.selectedOption || null}
+            results={currentPollState?.results || { a: 0, b: 0, total: 0 }}
+            isLoadingStats={currentPollState?.isLoadingStats || false}
+            onVote={handlePollVote}
+            remainingCount={todayPolls.length - currentPollIndex - 1}
+            onNext={goToNextPoll}
+            reward={currentPollState?.reward}
+          />
         )}
       </div>
 

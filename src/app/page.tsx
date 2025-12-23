@@ -30,6 +30,7 @@ import BreedDetailCard from '../components/BreedDetailCard';
 import NextTestRecommendation from '../components/NextTestRecommendation';
 import ContentActions from '../components/ContentActions';
 import TournamentPlay from '../components/TournamentPlay';
+import ResultDistribution from '../components/ResultDistribution';
 import * as Icons from '../components/Icons';
 import type { SubjectKey, ResultLabel, Dimension, SubjectConfig } from '../data/types';
 import type { NavTab } from '../components/nav/types';
@@ -825,6 +826,13 @@ export default function Home() {
                                                         testType={safeMode}
                                                         resultName={finalResult.name}
                                                         resultEmoji={finalResult.emoji}
+                                                    />
+
+                                                    {/* 다른 사람들 분포 보기 */}
+                                                    <ResultDistribution
+                                                        testType={safeMode}
+                                                        myResultName={finalResult.name}
+                                                        className="mt-3"
                                                     />
                                                 </>
                                             )}

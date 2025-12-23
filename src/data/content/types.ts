@@ -67,6 +67,7 @@ export interface KnowledgeQuiz {
   explanation: string;
   difficulty: 1 | 2 | 3;
   source?: string;
+  tags?: string[];  // 개인화 추천용 태그
   meta?: ContentMeta;  // 타겟팅/연령 제한 메타데이터
 }
 
