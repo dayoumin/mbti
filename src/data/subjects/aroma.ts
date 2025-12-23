@@ -3,7 +3,7 @@
 import { SubjectData } from '../types';
 
 export const aromaData: SubjectData = {
-    "title": "나의 아로마 오일 찾기",
+    "title": "아로마 오일 찾기",
     "subtitle": "어떤 향이 나를 힐링해줄까?",
     "themeColor": "bg-green-600",
     "icon": "AromaIcon",

@@ -1,7 +1,7 @@
 import { SubjectData } from '../types';
 
 export const foodData: SubjectData = {
-    title: "나와 닮은 소울 푸드 찾기",
+    title: "소울 푸드 찾기",
     subtitle: "나의 성격과 꼭 닮은 음식은 무엇일까요?",
     themeColor: "bg-[#FFEDD5]",
     icon: "ChefHatIcon",
