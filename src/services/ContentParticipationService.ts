@@ -94,7 +94,9 @@ class ContentParticipationServiceClass {
     };
   }
 
-  // 날짜를 YYYY-MM-DD 형식으로 변환 (로컬 타임존 기준)
+  // 날짜를 YYYY-MM-DD 형식으로 변환
+  // 의도적으로 로컬 타임존 사용: 사용자의 실제 "하루" 기준으로 스트릭 계산
+  // (KST 고정 시 해외 사용자가 자정 전후로 혼란 발생)
   private getDateString(date: Date = new Date()): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

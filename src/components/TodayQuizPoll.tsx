@@ -13,48 +13,90 @@ interface TodayQuizPollProps {
   className?: string;
 }
 
-// 오늘의 퀴즈 선택 (날짜 기반 결정적 선택)
-function getTodayQuiz(): KnowledgeQuiz | null {
-  if (ALL_KNOWLEDGE_QUIZZES.length === 0) return null;
+// 날짜 기반 인덱스 계산 (하루 단위로 변경)
+function getDayIndex(offset = 0): number {
   const today = new Date();
-  const dayIndex = today.getFullYear() * 1000 + today.getMonth() * 31 + today.getDate();
-  return ALL_KNOWLEDGE_QUIZZES[dayIndex % ALL_KNOWLEDGE_QUIZZES.length];
+  return today.getFullYear() * 1000 + today.getMonth() * 31 + today.getDate() + offset;
 }
 
-// 오늘의 투표 선택 (날짜 기반 결정적 선택, 퀴즈와 다른 오프셋)
-function getTodayPoll(): VSPoll | null {
-  if (VS_POLLS.length === 0) return null;
-  const today = new Date();
-  const dayIndex = today.getFullYear() * 1000 + today.getMonth() * 31 + today.getDate() + 7;
-  return VS_POLLS[dayIndex % VS_POLLS.length];
+// 안 푼 콘텐츠 중 날짜 기반으로 하나 선택
+function selectFromUnanswered<T extends { id: string }>(
+  items: T[],
+  answeredIds: string[],
+  offset = 0
+): T | null {
+  if (items.length === 0) return null;
+
+  const unanswered = items.filter(item => !answeredIds.includes(item.id));
+  if (unanswered.length > 0) {
+    return unanswered[getDayIndex(offset) % unanswered.length];
+  }
+  return null;
 }
+
+// 오늘의 퀴즈 선택
+function getTodayQuiz(answeredIds: string[]): KnowledgeQuiz | null {
+  return selectFromUnanswered(ALL_KNOWLEDGE_QUIZZES, answeredIds, 0);
+}
+
+// 오늘의 투표 선택 (퀴즈와 다른 콘텐츠가 나오도록 offset 7)
+function getTodayPoll(votedIds: string[]): VSPoll | null {
+  return selectFromUnanswered(VS_POLLS, votedIds, 7);
+}
+
+// 기본 participation 데이터 (SSR 안전)
+const DEFAULT_PARTICIPATION = {
+  quizzes: [] as { quizId: string }[],
+  polls: [] as { pollId: string }[],
+  stats: {
+    totalQuizAnswered: 0,
+    totalCorrect: 0,
+    totalPollVoted: 0,
+    lastParticipatedAt: null as string | null,
+  }
+};
 
 export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQuizPollProps) {
-  const [participation, setParticipation] = useState(contentParticipationService.getParticipation());
+  // SSR 안전: 초기값은 빈 데이터로 시작
+  const [participation, setParticipation] = useState(DEFAULT_PARTICIPATION);
+  const [isClient, setIsClient] = useState(false);
   const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const [pollVote, setPollVote] = useState<'a' | 'b' | null>(null);
   const [showQuizResult, setShowQuizResult] = useState(false);
   const [pollStats, setPollStats] = useState({ a: 50, b: 50 });
 
-  const todayQuiz = useMemo(() => getTodayQuiz(), []);
-  const todayPoll = useMemo(() => getTodayPoll(), []);
-
-  // 이미 참여한 퀴즈/투표 확인
+  // 클라이언트에서만 localStorage 데이터 로드
   useEffect(() => {
-    if (todayQuiz) {
-      const answered = participation.quizzes.find(q => q.quizId === todayQuiz.id);
-      if (answered) {
-        setQuizAnswer(answered.selectedOption);
-        setShowQuizResult(true);
-      }
-    }
-    if (todayPoll) {
-      const voted = participation.polls.find(p => p.pollId === todayPoll.id);
-      if (voted) {
-        setPollVote(voted.choice);
-      }
-    }
-  }, [participation, todayQuiz, todayPoll]);
+    setIsClient(true);
+    setParticipation(contentParticipationService.getParticipation());
+  }, []);
+
+  // 참여 기록 기반으로 안 푼 퀴즈/투표 선택
+  const answeredQuizIds = useMemo(() => participation.quizzes.map(q => q.quizId), [participation.quizzes]);
+  const votedPollIds = useMemo(() => participation.polls.map(p => p.pollId), [participation.polls]);
+
+  const todayQuiz = useMemo(() => getTodayQuiz(answeredQuizIds), [answeredQuizIds]);
+  const todayPoll = useMemo(() => getTodayPoll(votedPollIds), [votedPollIds]);
+
+  // 퀴즈/투표가 변경되면 상태 리셋 (응답 후 다음 콘텐츠로 전환 시)
+  const todayQuizId = todayQuiz?.id;
+  const todayPollId = todayPoll?.id;
+
+  useEffect(() => {
+    // 퀴즈가 바뀌면 퀴즈 관련 상태 리셋
+    setQuizAnswer(null);
+    setShowQuizResult(false);
+  }, [todayQuizId]);
+
+  useEffect(() => {
+    // 투표가 바뀌면 투표 관련 상태 리셋
+    setPollVote(null);
+    setPollStats({ a: 50, b: 50 });
+  }, [todayPollId]);
+
+  // 모든 콘텐츠 완료 여부 (클라이언트에서만 체크)
+  const allQuizzesDone = isClient && todayQuiz === null && ALL_KNOWLEDGE_QUIZZES.length > 0;
+  const allPollsDone = isClient && todayPoll === null && VS_POLLS.length > 0;
 
   // 퀴즈 답변 처리
   const handleQuizAnswer = async (optionId: string) => {
@@ -101,7 +143,8 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
   };
 
   const stats = participation.stats;
-  const hasActivity = stats.totalQuizAnswered > 0 || stats.totalPollVoted > 0;
+  // 클라이언트에서만 활동 기록 표시 (hydration 에러 방지)
+  const hasActivity = isClient && (stats.totalQuizAnswered > 0 || stats.totalPollVoted > 0);
 
   return (
     <div className={`bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-4 border border-indigo-100/50 ${className}`}>
@@ -132,6 +175,27 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
       {/* 콘텐츠 그리드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* 퀴즈 완료 상태 */}
+        {allQuizzesDone && (
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 shadow-sm border border-green-100">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-green-700">퀴즈 마스터!</span>
+                <p className="text-xs text-green-600">모든 퀴즈를 풀었어요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-green-100">
+              <span className="text-xs text-green-600">
+                {stats.totalQuizAnswered}개 완료 · 정답률 {stats.totalQuizAnswered > 0 ? Math.round((stats.totalCorrect || 0) / stats.totalQuizAnswered * 100) : 0}%
+              </span>
+              <span className="text-lg">🎓</span>
+            </div>
+          </div>
+        )}
+
         {/* 오늘의 퀴즈 */}
         {todayQuiz && (
           <div className="bg-white rounded-xl p-3 shadow-sm">
@@ -192,15 +256,33 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
           </div>
         )}
 
+        {/* 투표 완료 상태 */}
+        {allPollsDone && (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 shadow-sm border border-purple-100">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-purple-500" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-purple-700">투표 완료!</span>
+                <p className="text-xs text-purple-600">모든 투표에 참여했어요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-purple-100">
+              <span className="text-xs text-purple-600">
+                {stats.totalPollVoted}개 완료
+              </span>
+              <span className="text-lg">🗳️</span>
+            </div>
+          </div>
+        )}
+
         {/* 오늘의 투표 */}
         {todayPoll && (
           <div className="bg-white rounded-xl p-3 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Vote className="w-4 h-4 text-purple-500" />
               <span className="text-xs font-bold text-purple-600">오늘의 투표</span>
-              {pollVote && (
-                <span className="text-xs text-slate-400 ml-auto">투표 완료</span>
-              )}
             </div>
 
             <p className="text-sm font-medium text-slate-700 mb-3 line-clamp-2">

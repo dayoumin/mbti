@@ -41,12 +41,35 @@ model: sonnet
 - 콘텐츠 타입 파악 (quiz, scenario, poll, tournament, situation-reaction)
 - 수량 파악
 
-### 2단계: 기존 샘플 확인
+### 2단계: 중복 확인 (필수!)
+
+**⚠️ 콘텐츠 생성 전 해당 카테고리의 기존 데이터만 확인합니다.**
+
+#### 카테고리별 중복 확인 (범위 좁히기)
 ```bash
-# 기존 데이터 구조 확인
-cat src/app/dashboard/data/content-samples.ts
-cat src/app/dashboard/data/tournament-sample.ts
+# 예: cat 카테고리 퀴즈 생성 시
+grep "id:.*cat-quiz" src/app/dashboard/data/content-samples.ts
+grep "category.*cat" src/app/dashboard/data/content-samples.ts
+
+# 예: food 카테고리 투표 생성 시
+grep "id:.*food-poll" src/app/dashboard/data/content-samples.ts
+
+# 토너먼트 확인
+grep "{category}-worldcup" src/app/dashboard/data/tournament-sample.ts
 ```
+
+#### 중복 확인 체크리스트
+| 확인 | 명령어 | 중복 기준 |
+|------|--------|----------|
+| ID 중복 | `grep "{category}-{type}"` | 같은 ID 있으면 중복 |
+| 질문 중복 | question 텍스트 비교 | 80% 이상 유사하면 중복 |
+
+#### 중복 발견 시 처리
+| 상황 | 대응 |
+|------|------|
+| ID 중복 | 번호 변경 (001 → 011) |
+| 질문 중복 | 해당 질문 건너뛰기 |
+| 카테고리 전체 중복 | 사용자에게 "이미 {N}개 있음" 알림 |
 
 ### 3단계: 콘텐츠 생성
 content-generator 스킬의 구조에 따라 생성
@@ -257,6 +280,7 @@ type SituationCategory = 'relationship' | 'work' | 'social' | 'awkward';
 - 에러 무시하고 "완료" 보고
 - 검증 없이 파일 생성만 하고 끝내기
 - 같은 콘텐츠 중복 생성
+- **중복 확인 없이 콘텐츠 생성 시작**
 
 ## 출력 형식
 

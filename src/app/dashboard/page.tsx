@@ -73,7 +73,7 @@ import BusinessStrategy from './components/BusinessStrategy';
 import OperationsSystem from './components/OperationsSystem';
 import FirstMoverStrategy from './components/FirstMoverStrategy';
 import AutomationSystem from './components/AutomationSystem';
-import { getTestIcon } from './config/sidebar';
+import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
 // Types

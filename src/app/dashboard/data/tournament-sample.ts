@@ -272,6 +272,649 @@ export const CAT_BREED_TOURNAMENT: Tournament = {
 };
 
 // ============================================================================
+// 샘플 데이터: 라면 월드컵 16강
+// ============================================================================
+
+export const RAMEN_WORLDCUP_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'shin-ramyun',
+    name: '신라면',
+    emoji: '🔥',
+    description: '매콤하고 깊은 국물 맛의 대한민국 대표 라면',
+    tags: ['매운맛', '소고기', '클래식', '국물'],
+    funFact: '1986년 출시 이후 한국인이 가장 사랑하는 라면 부동의 1위',
+  },
+  {
+    id: 'jin-ramyun',
+    name: '진라면',
+    emoji: '🌶️',
+    description: '칼칼한 매운맛의 정석, 얼큰한 국물이 일품',
+    tags: ['매운맛', '얼큰', '국물', '클래식'],
+    funFact: '순한맛과 매운맛 두 가지 버전으로 선택의 폭이 넓어요',
+  },
+  {
+    id: 'neoguri',
+    name: '너구리',
+    emoji: '🦝',
+    description: '두툼한 면발과 해물 맛 우동스타일 라면',
+    tags: ['해물맛', '우동면', '두툼', '국물'],
+    funFact: '짜파게티와 섞으면 전설의 짜파구리가 완성됩니다',
+  },
+  {
+    id: 'chapagetti',
+    name: '짜파게티',
+    emoji: '🖤',
+    description: '달콤짭짤한 짜장맛 비빔면의 원조',
+    tags: ['짜장맛', '비빔면', '달콤', '클래식'],
+    funFact: '기생충 영화로 짜파구리가 세계적으로 유명해졌어요',
+  },
+  {
+    id: 'buldak',
+    name: '불닭볶음면',
+    emoji: '🔥',
+    description: '극강의 매운맛, 도전 정신을 자극하는 비빔면',
+    tags: ['극매운맛', '비빔면', '도전', '인기'],
+    funFact: '유튜브 챌린지로 전 세계에서 큰 인기를 끌었어요',
+  },
+  {
+    id: 'samyang-ramyun',
+    name: '삼양라면',
+    emoji: '🍜',
+    description: '한국 최초의 라면, 고소하고 담백한 맛',
+    tags: ['원조', '담백', '국물', '클래식'],
+    funFact: '1963년 출시된 대한민국 최초의 라면입니다',
+  },
+  {
+    id: 'ansungtangmyun',
+    name: '안성탕면',
+    emoji: '🥘',
+    description: '얼큰하고 구수한 사골 국물 맛',
+    tags: ['사골맛', '얼큰', '국물', '구수'],
+    funFact: '큼직한 건더기와 구수한 국물이 매력 포인트',
+  },
+  {
+    id: 'tumsae',
+    name: '틈새라면',
+    emoji: '🌾',
+    description: '고소한 쌀국수면발에 담백한 국물',
+    tags: ['쌀국수', '담백', '건강', '국물'],
+    funFact: '쌀로 만든 면발로 쫄깃하고 담백해요',
+  },
+  {
+    id: 'paldo-bibimmyun',
+    name: '팔도비빔면',
+    emoji: '🌶️',
+    description: '달콤 매콤한 비빔 소스의 원조',
+    tags: ['비빔면', '매콤달콤', '원조', '여름'],
+    funFact: '여름철 냉장고에 차갑게 먹으면 최고',
+  },
+  {
+    id: 'cham-kkae',
+    name: '참깨라면',
+    emoji: '🥜',
+    description: '고소한 참깨 향과 담백한 국물',
+    tags: ['참깨', '고소', '담백', '국물'],
+    funFact: '참깨 특유의 고소함이 중독성 있어요',
+  },
+  {
+    id: 'kimchi-ramyun',
+    name: '김치라면',
+    emoji: '🥬',
+    description: '시원한 김치맛이 일품인 얼큰 라면',
+    tags: ['김치맛', '시원', '얼큰', '국물'],
+    funFact: '실제 김치 맛이 느껴지는 새콤한 국물',
+  },
+  {
+    id: 'yeul-ramyun',
+    name: '열라면',
+    emoji: '🌋',
+    description: '강렬한 매운맛과 중독성 있는 국물',
+    tags: ['매운맛', '중독성', '국물', '강렬'],
+    funFact: '매운맛 마니아들이 찾는 숨은 강자',
+  },
+  {
+    id: 'jjawang',
+    name: '짜왕',
+    emoji: '👑',
+    description: '진한 춘장과 고기가 가득한 프리미엄 짜장면',
+    tags: ['짜장맛', '프리미엄', '진한', '비빔면'],
+    funFact: '큼직한 고기와 채소가 들어있는 고급 짜장라면',
+  },
+  {
+    id: 'jin-jjamppong',
+    name: '진짬뽕',
+    emoji: '🦐',
+    description: '얼큰하고 시원한 해물 짬뽕 맛',
+    tags: ['해물맛', '얼큰', '시원', '국물'],
+    funFact: '해물의 시원함과 매콤함이 조화로워요',
+  },
+  {
+    id: 'ottogi-jin-ramyun',
+    name: '오뚜기진라면',
+    emoji: '⚡',
+    description: '칼칼한 국물과 쫄깃한 면발의 조화',
+    tags: ['매운맛', '칼칼', '국물', '클래식'],
+    funFact: '순한맛 버전은 남녀노소 누구나 즐길 수 있어요',
+  },
+  {
+    id: 'sari-gomtang',
+    name: '사리곰탕면',
+    emoji: '🍖',
+    description: '진한 사골 육수의 깊은 맛',
+    tags: ['곰탕맛', '사골', '진한', '국물'],
+    funFact: '24시간 고아낸 사골 국물 맛을 재현했어요',
+  },
+];
+
+export const RAMEN_WORLDCUP: Tournament = {
+  id: 'ramen-worldcup-v1',
+  type: 'worldcup',
+  category: 'food',
+  title: '최애 라면 월드컵',
+  subtitle: '16강',
+  description: '당신의 최애 라면은? 한국 인기 라면 대결!',
+  emoji: '🍜',
+  themeColor: 'bg-red-100',
+
+  contestants: RAMEN_WORLDCUP_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 라면은 {winner}! 🍜 너도 해봐!',
+  },
+};
+
+// ============================================================================
+// 샘플 데이터: 인생 가치관 월드컵 16강
+// ============================================================================
+
+export const VALUES_WORLDCUP_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'money',
+    name: '돈/경제적 안정',
+    emoji: '💰',
+    description: '경제적 자유와 안정된 생활',
+    tags: ['물질', '안정', '현실'],
+    funFact: '돈이 행복을 사진 못하지만, 선택의 자유를 줍니다',
+  },
+  {
+    id: 'love',
+    name: '사랑/연애',
+    emoji: '❤️',
+    description: '설레는 사랑과 낭만적인 관계',
+    tags: ['감정', '관계', '로맨스'],
+    funFact: '사랑은 인생을 풍요롭게 만드는 가장 강력한 감정입니다',
+  },
+  {
+    id: 'family',
+    name: '가족',
+    emoji: '👨‍👩‍👧‍👦',
+    description: '가족과 함께하는 시간과 유대감',
+    tags: ['관계', '안정', '소속감'],
+    funFact: '가족은 선택할 수 없지만, 함께 만들어가는 관계입니다',
+  },
+  {
+    id: 'health',
+    name: '건강',
+    emoji: '💪',
+    description: '건강한 몸과 마음',
+    tags: ['웰빙', '신체', '정신'],
+    funFact: '건강은 모든 것의 기본이자, 가장 큰 자산입니다',
+  },
+  {
+    id: 'freedom',
+    name: '자유',
+    emoji: '🕊️',
+    description: '하고 싶은 것을 할 수 있는 자유',
+    tags: ['독립', '선택', '개인'],
+    funFact: '자유는 책임과 함께 옵니다',
+  },
+  {
+    id: 'honor',
+    name: '명예/인정',
+    emoji: '🏆',
+    description: '타인의 인정과 사회적 성공',
+    tags: ['성취', '사회', '지위'],
+    funFact: '인정받는 것도 중요하지만, 자기 인정이 먼저입니다',
+  },
+  {
+    id: 'friendship',
+    name: '우정',
+    emoji: '👥',
+    description: '깊은 우정과 진실한 친구',
+    tags: ['관계', '소속감', '신뢰'],
+    funFact: '좋은 친구는 인생의 보물입니다',
+  },
+  {
+    id: 'growth',
+    name: '자기계발',
+    emoji: '📚',
+    description: '끊임없이 성장하고 배우기',
+    tags: ['성장', '학습', '발전'],
+    funFact: '매일 1%씩 성장하면 1년 후 37배 더 나아집니다',
+  },
+  {
+    id: 'travel',
+    name: '여행/경험',
+    emoji: '✈️',
+    description: '새로운 곳을 탐험하고 경험하기',
+    tags: ['모험', '경험', '문화'],
+    funFact: '여행은 돈으로 살 수 있는 유일한 자산 중 하나입니다',
+  },
+  {
+    id: 'peace',
+    name: '안정/평화',
+    emoji: '☮️',
+    description: '평온하고 안정된 일상',
+    tags: ['평온', '안정', '휴식'],
+    funFact: '진정한 평화는 마음에서 시작됩니다',
+  },
+  {
+    id: 'challenge',
+    name: '도전/모험',
+    emoji: '🎯',
+    description: '새로운 도전과 스릴',
+    tags: ['모험', '성장', '열정'],
+    funFact: '안전지대를 벗어날 때 진짜 성장이 시작됩니다',
+  },
+  {
+    id: 'creativity',
+    name: '창의성',
+    emoji: '🎨',
+    description: '창조하고 표현하는 즐거움',
+    tags: ['예술', '표현', '독창성'],
+    funFact: '모든 사람은 나름의 창의성을 가지고 있습니다',
+  },
+  {
+    id: 'power',
+    name: '권력/영향력',
+    emoji: '👑',
+    description: '영향력을 행사하고 변화 만들기',
+    tags: ['리더십', '영향력', '변화'],
+    funFact: '큰 권력에는 큰 책임이 따릅니다',
+  },
+  {
+    id: 'hobby',
+    name: '여가/취미',
+    emoji: '🎮',
+    description: '즐기는 취미와 여가 시간',
+    tags: ['휴식', '즐거움', '개인'],
+    funFact: '취미는 일상의 활력소입니다',
+  },
+  {
+    id: 'contribution',
+    name: '사회 공헌',
+    emoji: '🤝',
+    description: '세상을 더 나은 곳으로 만들기',
+    tags: ['봉사', '의미', '나눔'],
+    funFact: '작은 선행도 세상을 바꿀 수 있습니다',
+  },
+  {
+    id: 'faith',
+    name: '신앙/영성',
+    emoji: '🙏',
+    description: '영적 성장과 신념',
+    tags: ['영성', '신념', '내면'],
+    funFact: '믿음은 불확실한 세상에서 방향을 제시합니다',
+  },
+];
+
+export const VALUES_WORLDCUP: Tournament = {
+  id: 'values-worldcup-v1',
+  type: 'worldcup',
+  category: 'personality',
+  title: '인생 가치관 월드컵',
+  subtitle: '16강',
+  description: '당신이 가장 중요하게 생각하는 인생 가치는? 1:1 대결로 찾아보세요!',
+  emoji: '💎',
+  themeColor: 'bg-purple-100',
+
+  contestants: VALUES_WORLDCUP_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최고 가치는 {winner}! 💎 너도 해봐!',
+  },
+};
+
+// ============================================================================
+// 샘플 데이터: 이상형 조건 16강 월드컵
+// ============================================================================
+
+export const IDEALTYPE_CONDITIONS_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'tall-height',
+    name: '키가 큰 사람',
+    emoji: '📏',
+    description: '훤칠한 키, 어디서든 눈에 띄는 존재감',
+    tags: ['외모', '신체', '키'],
+    funFact: '키 큰 사람과 걸으면 든든함이 2배! 높은 곳 물건도 OK',
+  },
+  {
+    id: 'humor',
+    name: '유머 감각 있는 사람',
+    emoji: '😂',
+    description: '재치있는 농담으로 분위기를 밝히는 사람',
+    tags: ['성격', '유머', '재미'],
+    funFact: '웃음은 최고의 약! 스트레스가 눈 녹듯 사라져요',
+  },
+  {
+    id: 'wealth',
+    name: '경제력 있는 사람',
+    emoji: '💰',
+    description: '안정적인 재정으로 미래를 계획할 수 있는 사람',
+    tags: ['경제', '현실', '안정'],
+    funFact: '현실은 사랑만으로 배부를 수 없죠. 든든한 미래 설계!',
+  },
+  {
+    id: 'attractive',
+    name: '잘생긴/예쁜 사람',
+    emoji: '✨',
+    description: '매력적인 외모, 볼수록 설레는 비주얼',
+    tags: ['외모', '비주얼', '매력'],
+    funFact: '보는 것만으로도 기분 좋아지는 마법같은 존재',
+  },
+  {
+    id: 'cooking',
+    name: '요리 잘하는 사람',
+    emoji: '👨‍🍳',
+    description: '맛있는 음식으로 사랑을 표현하는 사람',
+    tags: ['능력', '요리', '생활'],
+    funFact: '집밥이 맛있으면 집이 천국! 외식비도 절약',
+  },
+  {
+    id: 'kind',
+    name: '다정한 사람',
+    emoji: '💕',
+    description: '따뜻한 말과 행동으로 위로를 주는 사람',
+    tags: ['성격', '배려', '따뜻함'],
+    funFact: '힘든 날에 옆에 있어주는 따뜻한 존재가 최고',
+  },
+  {
+    id: 'smart',
+    name: '똑똑한 사람',
+    emoji: '🧠',
+    description: '지적인 대화가 가능한 사람',
+    tags: ['지성', '교양', '대화'],
+    funFact: '깊이 있는 대화는 관계를 더 풍요롭게 만들어요',
+  },
+  {
+    id: 'athletic',
+    name: '운동 잘하는 사람',
+    emoji: '💪',
+    description: '건강한 몸과 활동적인 라이프스타일',
+    tags: ['건강', '운동', '활동'],
+    funFact: '함께 운동하면 커플 운동 인증샷도 찍고 건강도 챙기고!',
+  },
+  {
+    id: 'voice',
+    name: '목소리 좋은 사람',
+    emoji: '🎤',
+    description: '듣기만 해도 기분 좋아지는 목소리',
+    tags: ['매력', '목소리', '감성'],
+    funFact: '전화 통화만으로도 심장이 두근두근',
+  },
+  {
+    id: 'fashion',
+    name: '패션 센스 있는 사람',
+    emoji: '👔',
+    description: '옷을 잘 입고 스타일리시한 사람',
+    tags: ['외모', '센스', '스타일'],
+    funFact: '같이 나가면 자랑스러운 패셔니스타 커플',
+  },
+  {
+    id: 'family',
+    name: '집안 좋은 사람',
+    emoji: '🏠',
+    description: '좋은 가정 환경과 배경',
+    tags: ['현실', '배경', '가정'],
+    funFact: '결혼은 두 집안의 만남. 좋은 가족은 보너스!',
+  },
+  {
+    id: 'animal-lover',
+    name: '동물 좋아하는 사람',
+    emoji: '🐶',
+    description: '동물을 사랑하고 잘 돌보는 사람',
+    tags: ['성격', '동물', '따뜻함'],
+    funFact: '반려동물 키우고 싶다면 필수 조건!',
+  },
+  {
+    id: 'shared-hobby',
+    name: '같은 취미 가진 사람',
+    emoji: '🎮',
+    description: '함께 즐길 수 있는 공통 관심사',
+    tags: ['취미', '공감', '활동'],
+    funFact: '데이트가 곧 취미 활동! 시간 가는 줄 몰라요',
+  },
+  {
+    id: 'responsive',
+    name: '연락 잘하는 사람',
+    emoji: '📱',
+    description: '빠르고 정성스러운 답장',
+    tags: ['소통', '연락', '관심'],
+    funFact: '읽씹 없는 세상! 기다림의 고통 제로',
+  },
+  {
+    id: 'passionate',
+    name: '자기 일에 열정적인 사람',
+    emoji: '🔥',
+    description: '꿈과 목표를 향해 노력하는 사람',
+    tags: ['성격', '열정', '성장'],
+    funFact: '일하는 모습이 멋있는 사람! 서로 응원하는 관계',
+  },
+  {
+    id: 'loyal',
+    name: '나만 바라보는 사람',
+    emoji: '👀',
+    description: '오직 나에게만 집중하는 한결같은 사람',
+    tags: ['성격', '충성', '집중'],
+    funFact: '눈에 나만 보이는 그 사람! 안정감 MAX',
+  },
+];
+
+export const IDEALTYPE_CONDITIONS_WORLDCUP: Tournament = {
+  id: 'idealtype-conditions-worldcup-v1',
+  type: 'worldcup',
+  category: 'love',
+  title: '이상형 조건 월드컵',
+  subtitle: '16강',
+  description: '연애에서 가장 중요한 조건은? 1:1 대결로 찾아보세요!',
+  emoji: '💘',
+  themeColor: 'bg-pink-100',
+
+  contestants: IDEALTYPE_CONDITIONS_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '내가 연애에서 가장 중요하게 생각하는 조건은 {winner}! 💘 너는 뭐야?',
+  },
+};
+
+// ============================================================================
+// 샘플 데이터: MBTI 월드컵 16강
+// ============================================================================
+
+export const MBTI_WORLDCUP_CONTESTANTS: TournamentContestant[] = [
+  // === 분석가 (NT) ===
+  {
+    id: 'intj',
+    name: 'INTJ - 전략가',
+    emoji: '🎯',
+    description: '혼자서도 잘하는 마스터플랜의 설계자',
+    tags: ['내향', '직관', '사고', '판단', '분석가'],
+    funFact: '전체 인구의 2%밖에 안 되는 희귀 유형으로, 독립적이고 전략적인 사고를 가졌어요',
+  },
+  {
+    id: 'intp',
+    name: 'INTP - 논리술사',
+    emoji: '🧪',
+    description: '지적 호기심의 끝판왕, 논리의 천재',
+    tags: ['내향', '직관', '사고', '인식', '분석가'],
+    funFact: '아인슈타인도 INTP! 끊임없이 "왜?"를 질문하는 혁신가예요',
+  },
+  {
+    id: 'entj',
+    name: 'ENTJ - 통솔자',
+    emoji: '👑',
+    description: '타고난 리더, 목표를 향해 돌진하는 지휘관',
+    tags: ['외향', '직관', '사고', '판단', '분석가'],
+    funFact: 'CEO가 가장 많은 유형! 카리스마와 추진력이 넘쳐요',
+  },
+  {
+    id: 'entp',
+    name: 'ENTP - 변론가',
+    emoji: '💡',
+    description: '창의적 토론의 달인, 혁신의 아이콘',
+    tags: ['외향', '직관', '사고', '인식', '분석가'],
+    funFact: '논쟁을 즐기고 새로운 아이디어에 열광하는 발명가 기질이에요',
+  },
+
+  // === 외교관 (NF) ===
+  {
+    id: 'infj',
+    name: 'INFJ - 옹호자',
+    emoji: '🌟',
+    description: '이상주의자이자 완벽주의자, 깊은 통찰의 소유자',
+    tags: ['내향', '직관', '감정', '판단', '외교관'],
+    funFact: '전체 인구의 1%로 가장 희귀한 유형! 높은 공감 능력과 직관력을 가졌어요',
+  },
+  {
+    id: 'infp',
+    name: 'INFP - 중재자',
+    emoji: '🌈',
+    description: '낭만적 몽상가, 내면의 가치를 지키는 수호자',
+    tags: ['내향', '직관', '감정', '인식', '외교관'],
+    funFact: '시적이고 예술적 기질이 강해요. 셰익스피어도 INFP였어요',
+  },
+  {
+    id: 'enfj',
+    name: 'ENFJ - 선도자',
+    emoji: '✨',
+    description: '카리스마 넘치는 멘토, 사람들에게 영감을 주는 리더',
+    tags: ['외향', '직관', '감정', '판단', '외교관'],
+    funFact: '오바마도 ENFJ! 타인의 성장을 돕는 데서 기쁨을 느껴요',
+  },
+  {
+    id: 'enfp',
+    name: 'ENFP - 활동가',
+    emoji: '🎉',
+    description: '에너지 넘치는 자유로운 영혼, 열정의 화신',
+    tags: ['외향', '직관', '감정', '인식', '외교관'],
+    funFact: '궁금한 게 너무 많아서 집중력이... 하지만 그게 매력!',
+  },
+
+  // === 관리자 (SJ) ===
+  {
+    id: 'istj',
+    name: 'ISTJ - 현실주의자',
+    emoji: '📋',
+    description: '책임감의 교과서, 신뢰할 수 있는 실용주의자',
+    tags: ['내향', '감각', '사고', '판단', '관리자'],
+    funFact: '가장 많은 유형 중 하나! 조직의 기둥 역할을 톡톡히 해요',
+  },
+  {
+    id: 'isfj',
+    name: 'ISFJ - 수호자',
+    emoji: '🛡️',
+    description: '헌신적인 보호자, 따뜻한 마음씨의 소유자',
+    tags: ['내향', '감각', '감정', '판단', '관리자'],
+    funFact: '전체 인구의 13%! 조용하지만 세심하게 챙겨주는 스타일이에요',
+  },
+  {
+    id: 'estj',
+    name: 'ESTJ - 경영자',
+    emoji: '📊',
+    description: '효율성의 달인, 체계적인 조직 관리자',
+    tags: ['외향', '감각', '사고', '판단', '관리자'],
+    funFact: '일 잘하는 워커홀릭! 규칙과 질서를 중시해요',
+  },
+  {
+    id: 'esfj',
+    name: 'ESFJ - 집정관',
+    emoji: '💝',
+    description: '인기쟁이 사교왕, 분위기 메이커',
+    tags: ['외향', '감각', '감정', '판단', '관리자'],
+    funFact: '모임의 필수템! 다른 사람 챙기는 걸 좋아하는 따뜻한 사람이에요',
+  },
+
+  // === 탐험가 (SP) ===
+  {
+    id: 'istp',
+    name: 'ISTP - 장인',
+    emoji: '🔧',
+    description: '만능 해결사, 손재주와 논리의 조화',
+    tags: ['내향', '감각', '사고', '인식', '탐험가'],
+    funFact: '기계나 도구 다루는 걸 좋아해요. 침착하고 실용적!',
+  },
+  {
+    id: 'isfp',
+    name: 'ISFP - 모험가',
+    emoji: '🎨',
+    description: '감성 풍부한 예술가, 순간을 즐기는 자유인',
+    tags: ['내향', '감각', '감정', '인식', '탐험가'],
+    funFact: '미적 감각이 뛰어나고 자기만의 스타일이 확실해요',
+  },
+  {
+    id: 'estp',
+    name: 'ESTP - 사업가',
+    emoji: '⚡',
+    description: '행동파 실천가, 위기 상황의 해결사',
+    tags: ['외향', '감각', '사고', '인식', '탐험가'],
+    funFact: '일단 저질러! 에너지 넘치고 순발력이 뛰어나요',
+  },
+  {
+    id: 'esfp',
+    name: 'ESFP - 연예인',
+    emoji: '🎭',
+    description: '타고난 엔터테이너, 모두의 즐거움 제공자',
+    tags: ['외향', '감각', '감정', '인식', '탐험가'],
+    funFact: '파티의 중심! 주목받는 걸 좋아하고 분위기를 띄워요',
+  },
+];
+
+export const MBTI_WORLDCUP: Tournament = {
+  id: 'mbti-worldcup-v1',
+  type: 'worldcup',
+  category: 'personality',
+  title: '최애 MBTI 월드컵',
+  subtitle: '16강',
+  description: '16가지 MBTI 중 당신의 최애는? 성격 유형 대결!',
+  emoji: '🧠',
+  themeColor: 'bg-indigo-100',
+
+  contestants: MBTI_WORLDCUP_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-23',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 MBTI는 {winner}! 🧠 너도 해봐!',
+  },
+};
+
+// ============================================================================
 // 추가 토너먼트 아이디어 (샘플)
 // ============================================================================
 
@@ -312,6 +955,7 @@ export const TOURNAMENT_IDEAS: { category: TournamentCategory; ideas: string[] }
   {
     category: 'love',
     ideas: [
+      '이상형 조건 월드컵 ✅',
       '이상형 MBTI 월드컵',
       '연애 스타일 월드컵 (밀당파 vs 직진파 등)',
       '데이트 코스 월드컵',
@@ -512,13 +1156,35 @@ export const CAT_BREED_VALIDATION = validateTournament(CAT_BREED_TOURNAMENT);
 // Export
 // ============================================================================
 
+// 라면 월드컵 검증 실행
+export const RAMEN_WORLDCUP_VALIDATION = validateTournament(RAMEN_WORLDCUP);
+
+// 인생 가치관 월드컵 검증 실행
+export const VALUES_WORLDCUP_VALIDATION = validateTournament(VALUES_WORLDCUP);
+
+// 이상형 조건 월드컵 검증 실행
+export const IDEALTYPE_CONDITIONS_VALIDATION = validateTournament(IDEALTYPE_CONDITIONS_WORLDCUP);
+
 export const TOURNAMENT_SAMPLE = {
   catBreed: CAT_BREED_TOURNAMENT,
-  contestants: CAT_BREED_CONTESTANTS,
+  ramenWorldcup: RAMEN_WORLDCUP,
+  valuesWorldcup: VALUES_WORLDCUP,
+  idealtypeConditions: IDEALTYPE_CONDITIONS_WORLDCUP,
+  contestants: {
+    catBreed: CAT_BREED_CONTESTANTS,
+    ramen: RAMEN_WORLDCUP_CONTESTANTS,
+    values: VALUES_WORLDCUP_CONTESTANTS,
+    idealtypeConditions: IDEALTYPE_CONDITIONS_CONTESTANTS,
+  },
   ideas: TOURNAMENT_IDEAS,
   template: TOURNAMENT_TEMPLATE,
   contestantTemplate: CONTESTANT_TEMPLATE,
-  validation: CAT_BREED_VALIDATION,
+  validation: {
+    catBreed: CAT_BREED_VALIDATION,
+    ramen: RAMEN_WORLDCUP_VALIDATION,
+    values: VALUES_WORLDCUP_VALIDATION,
+    idealtypeConditions: IDEALTYPE_CONDITIONS_VALIDATION,
+  },
   utils: {
     getRoundName,
     getNextRoundSize,

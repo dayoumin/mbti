@@ -1,40 +1,46 @@
 # 확장 아키텍처 설계
 
 ## 목표
-1. **테스트 기록 저장** - Supabase 연동으로 영구 저장
+1. **테스트 기록 저장** - Turso (LibSQL) 연동으로 영구 저장
 2. **진행 중 네비게이션** - 이전 질문, 다른 테스트로 전환
 3. **통합 인사이트** - 여러 테스트 결과 종합 분석
 
+> **참고**: 이 문서의 SQL 예시는 PostgreSQL 문법으로 작성되어 있으나,
+> 실제 구현은 Turso (SQLite 호환)를 사용합니다.
+> 인증이 필요한 경우 향후 Supabase Auth 등 별도 검토 예정.
+
 ---
 
-## 1. Supabase 스키마 설계
+## 1. DB 스키마 설계 (Turso용 SQLite)
 
 ### 1.1 사용자 ID 모델
 
-**핵심 원칙**: 모든 테이블은 `user_profile_id UUID`로 user_profiles를 참조한다.
+**핵심 원칙**: 모든 테이블은 `user_profile_id`로 user_profiles를 참조한다.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     user_profiles                            │
-│  id (UUID, PK) ◄─────────────────────────────────────────┐  │
+│  id (TEXT, PK) ◄─────────────────────────────────────────┐  │
 │  anonymous_id (TEXT, UNIQUE) - 클라이언트 생성 anon_xxx   │  │
-│  auth_id (UUID, UNIQUE) - Supabase Auth 연동 시           │  │
+│  auth_id (TEXT, UNIQUE) - 외부 Auth 연동 시 (미정)        │  │
 │  device_token (TEXT) - 다기기 지원용 (선택)               │  │
 └──────────────────────────────────────────────────────────┘│  │
                                                             │  │
 ┌─────────────────────────────────────────────────────────┐ │  │
 │ test_results                                            │ │  │
-│ user_profile_id (UUID, FK) ──────────────────────────────┘  │
+│ user_profile_id (TEXT, FK) ──────────────────────────────┘  │
 └─────────────────────────────────────────────────────────┘   │
 ┌─────────────────────────────────────────────────────────┐   │
 │ test_progress                                           │   │
-│ user_profile_id (UUID, FK) ──────────────────────────────────┘
+│ user_profile_id (TEXT, FK) ──────────────────────────────────┘
 └─────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────┐
 │ user_insights                                           │
-│ user_profile_id (UUID, FK, UNIQUE) ──────────────────────────
+│ user_profile_id (TEXT, FK, UNIQUE) ──────────────────────────
 └─────────────────────────────────────────────────────────┘
 ```
+
+> **Turso 참고**: SQLite는 UUID 타입이 없어 TEXT로 저장합니다.
 
 ### 1.2 테이블 구조
 
@@ -1147,30 +1153,27 @@ components/
 1. ✅ 이전 질문으로 돌아가기 - `handleGoBack()` 구현
 2. ✅ 테스트 중단 시 확인 - `handleExit()` 구현
 3. ✅ 진행률 표시 헤더 - `TestHeader.js` 컴포넌트
-4. ⏳ 진행 상태 로컬 저장 - ProgressService (Supabase 연동 시 구현 예정)
+4. ⏳ 진행 상태 로컬 저장 - ProgressService (Turso 연동 시 구현 예정)
 
 **구현 파일:**
 - `components/TestHeader.js` - 뒤로가기, 테스트명, 진행률 표시
 - `App.js` - `answers` 상태, `handleGoBack()`, `handleExit()` 함수
 
-### Phase 2: 기록 저장 ⏳ 대기 (Supabase 연동 필요)
-1. ⏳ Supabase 프로젝트 설정
-2. ⏳ 테이블 생성 (SQL 실행)
-3. ⏳ ResultService.useSupabase() 연동
-4. ⏳ 익명 → 로그인 계정 병합
+### Phase 2: 기록 저장 ✅ Turso 연동 완료
+1. ✅ Turso 프로젝트 설정 - TursoService.ts 구현
+2. ✅ 테이블 생성 - LibSQL 스키마
+3. ✅ ResultService Turso 연동
+4. ⏳ 익명 → 로그인 계정 병합 (인증 시스템 결정 후)
 
-**현재 상태:** Supabase 접근 불가로 인해 대기 중. 스키마 설계 완료.
+**현재 상태:** Turso (LibSQL) 연동 완료. 인증은 향후 검토.
 
-### Phase 3: 통합 인사이트 ✅ 완료 (2025-12-11)
-1. ✅ InsightService 구현 - `services/InsightService.js`
-2. ✅ 인사이트 대시보드 UI - `components/InsightView.js`
-3. ✅ 테스트 간 상관관계 계산 - DIMENSION_CORRELATIONS
-4. ✅ 스마트 추천 로직 - `getRecommendations()`
+### Phase 3: 통합 인사이트 ⏳ 미구현
+1. ⏳ InsightService 구현 - 설계만 완료
+2. ⏳ 인사이트 대시보드 UI
+3. ⏳ 테스트 간 상관관계 계산
+4. ✅ 스마트 추천 로직 - NextActionService로 대체 구현
 
-**구현 파일:**
-- `services/InsightService.js` - 인사이트 생성, 상관관계 계산, 요약 메시지
-- `components/InsightView.js` - 탭 UI (요약/상세/추천)
-- `App.js` - `showInsight` 상태, 인사이트 버튼
+**현재 상태:** InsightService 설계 완료, 구현 대기. NextActionService가 일부 기능 대체.
 
 ### Phase 4: 고급 기능 (선택)
 1. ⏳ 결과 공유 (이미지 생성)
@@ -1184,10 +1187,11 @@ components/
 
 ```
 services/
-├── ResultService.js      # 기존 - localStorage 기반 결과 저장
-├── InsightService.js     # ✅ 신규 - 통합 인사이트 생성
-├── ProgressService.js    # ⏳ 예정 - 진행 상태 관리 (Supabase 연동 시)
-└── supabase.js           # ⏳ 예정 - Supabase 클라이언트
+├── TursoService.ts       # ✅ Turso (LibSQL) 클라이언트
+├── ResultService.ts      # ✅ 결과 저장 (localStorage + Turso)
+├── NextActionService.ts  # ✅ 다음 행동 추천
+├── InsightService.ts     # ⏳ 예정 - 통합 인사이트 생성
+├── ProgressService.ts    # ⏳ 예정 - 진행 상태 관리
 
 components/
 ├── App.js                # ✅ 수정 - 네비게이션 + 인사이트 통합
@@ -1207,14 +1211,10 @@ scripts/
 
 ## 7. 환경 설정
 
-```javascript
-// config/supabase.js
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
-
-// .env (로컬 개발용)
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
+```bash
+# .env.local (Turso 설정)
+TURSO_DATABASE_URL=libsql://your-db.turso.io
+TURSO_AUTH_TOKEN=your-auth-token
 ```
 
 ---
@@ -1224,14 +1224,15 @@ SUPABASE_ANON_KEY=your-anon-key
 ### 완료된 항목 ✅
 1. ~~이 설계 문서 검토 및 피드백~~
 2. ~~Phase 1 (네비게이션) 구현~~ - 2025-12-11 완료
-3. ~~Phase 3 (InsightService) 구현~~ - 2025-12-11 완료
+3. ~~Phase 2 (Turso 연동) 구현~~ - 2025-12-21 완료
 
 ### 현재 대기 중 ⏳
-1. **Supabase 프로젝트 생성 후 연동** - Phase 2 진행 필요
-   - 테이블 생성 (SQL 스크립트 준비됨)
-   - ResultService.useSupabase() 구현
-   - ProgressService 구현 (진행 상태 저장)
+1. **InsightService 구현** - 통합 인사이트 생성 (설계 완료)
+2. **인증 시스템 검토** - 필요시 Supabase Auth 또는 기타 방안
+3. **ProgressService 구현** - 진행 상태 서버 저장
 
 ### 향후 계획
-1. Phase 2 완료 후 ProgressService 구현
-2. Phase 4 고급 기능 검토
+1. InsightService 구현 (통합 인사이트)
+2. ProgressService 구현 (진행 상태 저장)
+3. Phase 4 고급 기능 검토
+4. 인증 필요시 별도 서비스 연동 검토

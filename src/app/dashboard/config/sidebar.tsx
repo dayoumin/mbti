@@ -36,9 +36,6 @@ import {
 } from 'lucide-react';
 import { CHEMI_DATA } from '@/data';
 
-// 테스트 아이콘 유틸 re-export (page.tsx 등에서 사용)
-export { getTestIcon } from '@/utils/testIcons';
-
 // ============================================================================
 // Types
 // ============================================================================

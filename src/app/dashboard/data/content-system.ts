@@ -7,7 +7,7 @@
 // ============================================================================
 
 export type ContentType = 'quiz' | 'poll' | 'qna';
-export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'general';
+export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'food' | 'general';
 export type Frequency = 'once' | 'daily' | 'weekly' | 'seasonal' | 'event';
 
 export interface ContentTypeDefinition {

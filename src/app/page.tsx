@@ -34,7 +34,7 @@ import type { SubjectKey, ResultLabel, Dimension, SubjectConfig } from '../data/
 import type { NavTab } from '../components/nav/types';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
-    Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, Users, MessageSquare,
+    Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, MessageSquare,
     Dog, Cat, Fish, Bird, Bug
 } from 'lucide-react';
 
@@ -825,6 +825,7 @@ export default function Home() {
                                             </button>
                                         )}
 
+                                        {/* 공유 버튼 (핵심 CTA) */}
                                         <div className="w-full mt-6 space-y-3">
                                             <button
                                                 onClick={() => openModal('shareCard')}
@@ -848,35 +849,9 @@ export default function Home() {
                                                 </svg>
                                                 카카오톡으로 공유하기
                                             </button>
-
-                                            <button
-                                                onClick={() => openModal('ranking')}
-                                                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
-                                            >
-                                                <Trophy className="w-5 h-5" />
-                                                내 순위 확인하기
-                                            </button>
-
-                                            <button
-                                                onClick={() => openModal('friendCompare')}
-                                                className="w-full py-3 rounded-xl bg-white/60 hover:bg-white border border-slate-200 text-slate-700 font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-                                            >
-                                                <Users className="w-4 h-4" />
-                                                친구와 비교하기
-                                            </button>
-
-                                            <button
-                                                onClick={() => {
-                                                    setActiveNavTab('talk');
-                                                    openModal('community');
-                                                }}
-                                                className="w-full py-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 font-black text-base flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-                                            >
-                                                <MessageSquare className="w-5 h-5" />
-                                                집사 대화방에서 결과 자랑하기
-                                            </button>
                                         </div>
 
+                                        {/* 다음 행동 추천 (퀴즈/투표/비교/랭킹) */}
                                         <ContentActions
                                             testType={mode}
                                             onQuizClick={() => {
@@ -887,6 +862,8 @@ export default function Home() {
                                                 openModal('contentExplore');
                                                 setActiveNavTab('explore');
                                             }}
+                                            onCompareClick={() => openModal('friendCompare')}
+                                            onRankingClick={() => openModal('ranking')}
                                         />
 
                                         <FriendInvite

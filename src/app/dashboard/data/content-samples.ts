@@ -708,6 +708,90 @@ export const DOG_BREED_POLLS: Poll[] = [
 ];
 
 // ============================================================================
+// 샘플: 음식(Food) VS 투표 7개
+// ============================================================================
+
+export const FOOD_VS_POLLS: Poll[] = [
+  {
+    id: 'food-poll-001',
+    type: 'vs',
+    category: 'food',
+    question: '중식 맛집 단골 메뉴는?',
+    options: [
+      { id: 'a', text: '짜장면', emoji: '🖤' },
+      { id: 'b', text: '짬뽕', emoji: '🌶️' },
+    ],
+    tags: ['중식', '메뉴선택'],
+  },
+  {
+    id: 'food-poll-002',
+    type: 'vs',
+    category: 'food',
+    question: '민트초코, 당신의 선택은?',
+    options: [
+      { id: 'a', text: '사랑해요!', emoji: '💚' },
+      { id: 'b', text: '치약 맛...', emoji: '🚫' },
+    ],
+    tags: ['디저트', '취향'],
+  },
+  {
+    id: 'food-poll-003',
+    type: 'vs',
+    category: 'food',
+    question: '탕수육 소스, 어떻게 먹어요?',
+    options: [
+      { id: 'a', text: '부먹 (부어먹기)', emoji: '🌊' },
+      { id: 'b', text: '찍먹 (찍어먹기)', emoji: '🥢' },
+    ],
+    tags: ['중식', '먹는법'],
+  },
+  {
+    id: 'food-poll-004',
+    type: 'vs',
+    category: 'food',
+    question: '치킨 주문할 때 뭘 시켜요?',
+    options: [
+      { id: 'a', text: '양념치킨', emoji: '🔥' },
+      { id: 'b', text: '후라이드', emoji: '✨' },
+    ],
+    tags: ['치킨', '메뉴선택'],
+  },
+  {
+    id: 'food-poll-005',
+    type: 'vs',
+    category: 'food',
+    question: '피자에 파인애플 올리는 거...?',
+    options: [
+      { id: 'a', text: '찬성! 하와이안 최고', emoji: '🍍' },
+      { id: 'b', text: '반대! 과일은 과일로', emoji: '🙅' },
+    ],
+    tags: ['피자', '토핑'],
+  },
+  {
+    id: 'food-poll-006',
+    type: 'vs',
+    category: 'food',
+    question: '떡볶이 맵기 선호도는?',
+    options: [
+      { id: 'a', text: '매운맛 (신전/엽기)', emoji: '🔥' },
+      { id: 'b', text: '순한맛 (국물/궁중)', emoji: '😌' },
+    ],
+    tags: ['분식', '매운맛'],
+  },
+  {
+    id: 'food-poll-007',
+    type: 'vs',
+    category: 'food',
+    question: '라면 끓일 때 물 양은?',
+    options: [
+      { id: 'a', text: '물 많이 (국물 많이)', emoji: '🌊' },
+      { id: 'b', text: '물 적게 (꾸덕하게)', emoji: '🍜' },
+    ],
+    tags: ['라면', '조리법'],
+  },
+];
+
+// ============================================================================
 // 샘플: 상황별 반응 투표 (연애/이별 5개 + 직장/인간관계 5개)
 // ============================================================================
 
@@ -1113,6 +1197,7 @@ export function validateAllSamples() {
   // 투표 검증
   CAT_VS_POLLS.forEach(p => results.push(validatePoll(p)));
   CAT_CHOICE_POLLS.forEach(p => results.push(validatePoll(p)));
+  FOOD_VS_POLLS.forEach(p => results.push(validatePoll(p)));
 
   // 상황별 반응 투표 검증
   SITUATION_REACTION_POLLS.forEach(sr => results.push(validateSituationReaction(sr)));
@@ -1138,6 +1223,7 @@ export const CONTENT_SAMPLES = {
   vsPolls: CAT_VS_POLLS,
   choicePolls: CAT_CHOICE_POLLS,
   dogBreedPolls: DOG_BREED_POLLS,
+  foodVsPolls: FOOD_VS_POLLS,
   situationReactionPolls: SITUATION_REACTION_POLLS,
   validation: validateAllSamples(),
   utils: {

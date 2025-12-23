@@ -327,7 +327,7 @@ npm run build    # 검증
 3. **폴백**: 아무것도 없으면 마지막 결과 반환
 
 ### 핵심 규칙
-- **`condition: {}`은 사용 금지** - 완전 매칭 대상에서 제외됨
+- **`condition: {}`은 마지막 결과(폴백)에만 허용** - 완전/부분 매칭 실패 시 선택됨
 - **조건 개수가 많을수록 우선** - 더 구체적인 결과가 선택됨
 - **모든 결과 유형은 도달 가능해야 함** - 검증 필수
 
@@ -337,17 +337,17 @@ npm run build    # 검증
 
 > "wine 테스트 추가해줘" → AI가 아래 파일들 모두 수정
 
-### 수정할 파일 목록 (7개)
+### 수정할 파일 목록 (5개)
 
 | 순서 | 파일 | 할 일 |
 |------|------|-------|
 | 1 | `src/data/subjects/{subject}.ts` | 테스트 데이터 생성 (기존 파일 참고) |
 | 2 | `src/data/types.ts` | SubjectKey 유니온에 추가 |
-| 3 | `src/data/config.ts` | SUBJECT_CONFIG에 설정 추가 |
-| 4 | `src/data/index.ts` | import + CHEMI_DATA + SUBJECT_KEYS에 추가 |
-| 5 | `src/components/Icons.js` | {Subject}Icon 컴포넌트 추가 |
-| 6 | `src/app/dashboard/page.tsx` | TEST_ICONS 객체에 아이콘 매핑 추가 |
-| 7 | `scripts/validate-test-data.mjs` | SUBJECTS 배열에 추가 |
+| 3 | `src/data/config.ts` | SUBJECT_CONFIG에 설정 추가 (icon + lucideIcon 필드) |
+| 4 | `src/data/index.ts` | import + CHEMI_DATA에 추가 |
+| 5 | `src/components/Icons.tsx` | {Subject}Icon SVG 컴포넌트 + IconMap에 추가 |
+
+**참고**: 대시보드 아이콘은 config.ts의 `lucideIcon` 필드에서 자동으로 읽어옴 (별도 수정 불필요)
 
 ### 테스트 데이터 구조
 ```typescript
@@ -372,7 +372,7 @@ export const {subject}Data: SubjectData = {
   ],
   resultLabels: [
     // 8-16개 결과
-    // condition에 2-3개 조건 (condition: {} 금지!)
+    // condition에 2-3개 조건 (빈 조건은 마지막 폴백 결과에만)
     { name: "결과명", emoji: "✨", desc: "한줄설명",
       condition: { dim1: "high", dim2: "low" },  // 필수
       mood: "happy", color: "bg-xxx-300",
@@ -390,7 +390,7 @@ npm run build  # 빌드 성공 필수
 ```
 
 ### 핵심 규칙
-- `condition: {}`은 사용 금지 (도달 불가)
+- `condition: {}`은 마지막 결과(폴백)에만 허용
 - 각 결과에 2~3개 조건 권장
 - 질문에 중간 점수(3) 옵션 포함 → MEDIUM 레벨 도달 가능
 - 모든 결과 유형은 도달 가능해야 함

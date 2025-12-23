@@ -1,6 +1,6 @@
 # 진행 상황
 
-> 최종 업데이트: 2025-12-17
+> 최종 업데이트: 2025-12-21
 
 ---
 
@@ -18,10 +18,45 @@
 | **게이미피케이션** | ✅ 완료 (배지/레벨/스트릭) |
 | **SNS 바이럴 전략** | ✅ 문서화 완료 |
 | **Phase 1 공유 기능** | 🔄 진행 예정 |
+| **JS→TSX 마이그레이션** | ✅ 완료 |
+| **Care 탭 리팩토링** | ✅ 완료 |
 
 ---
 
-## 최근 완료 (2025-12-14)
+## 최근 완료 (2025-12-21)
+
+### JS→TSX 마이그레이션
+
+**변경 내용:**
+- ✅ Dashboard.js → Dashboard.tsx 마이그레이션
+- ✅ TypeScript 인터페이스 정의 (StreakData, LevelData, BonusAction 등)
+- ✅ 'use client' 지시어 추가 (Dashboard, nav/types, MyProfile, Sidebar)
+- ✅ SUBJECT_CONFIG에 emoji 필드 추가 (22개 테스트)
+- ✅ DETAIL_TEST_KEYS, MAIN_TEST_KEYS, RANKABLE_TESTS export 추가
+- ✅ camelCase alias exports 추가 (하위 호환성)
+- ✅ SubjectConfig 인터페이스 optional 필드 정리
+
+**검증:**
+- 빌드: `npm run build` 성공
+- 린트: `npm run lint` 통과
+- E2E: responsive 30/30, my-profile 20/33 통과
+
+**리뷰 문서:** [docs/reviews/2024-12-21-tsx-migration.md](reviews/2024-12-21-tsx-migration.md)
+
+### Care 탭 리팩토링
+
+**변경 내용:**
+- ✅ 메인 탭에서 Care 제거 → 프로필 > 동물/라이프 탭으로 이동
+- ✅ CareButtonWithModal 공통 컴포넌트 추출
+- ✅ ESC 키 중첩 처리 (useEscapeKey stopPropagation)
+- ✅ 포커스 트랩 구현 (useFocusTrap)
+- ✅ 접근성 개선 (aria-modal, aria-label)
+
+**리뷰 문서:** [docs/reviews/2024-12-21-care-tab-refactor.md](reviews/2024-12-21-care-tab-refactor.md)
+
+---
+
+## 이전 완료 (2025-12-14)
 
 ### 퀴즈/투표 콘텐츠 시스템
 
@@ -312,3 +347,19 @@
 | `src/services/GamificationService.ts` | 신규 생성 - 게임 통계 서비스 |
 | `src/components/Dashboard.js` | 퀴즈/투표/게이미피케이션 UI 통합 |
 | `src/app/globals.css` | bounce-in, fade-in-up 애니메이션 추가 |
+
+### 2025-12-21
+| 파일 | 변경 |
+|------|------|
+| `src/data/config.ts` | emoji 필드 추가, DETAIL_TEST_KEYS, MAIN_TEST_KEYS, RANKABLE_TESTS export |
+| `src/data/index.ts` | config re-export, camelCase alias 추가 |
+| `src/data/types.ts` | SubjectConfig optional 필드 변경 |
+| `src/components/Dashboard.tsx` | JS→TSX 마이그레이션, 'use client', TypeScript 인터페이스 |
+| `src/components/nav/types.ts` | 'use client' 추가 |
+| `src/components/MyProfile.tsx` | CareButtonWithModal 컴포넌트, ESC 중첩 처리, 포커스 트랩 |
+| `src/components/Sidebar.tsx` | 'use client' 추가 |
+| `src/app/page.tsx` | ActiveModal 타입에서 'care' 제거, 타입 캐스팅 수정 |
+| `tsconfig.json` | scripts exclude 추가 |
+| `tests/e2e/my-profile.test.ts` | 셀렉터 안정성 개선 |
+| `docs/reviews/2024-12-21-tsx-migration.md` | 신규 생성 - TSX 마이그레이션 리뷰 |
+| `docs/reviews/2024-12-21-care-tab-refactor.md` | 신규 생성 - Care 탭 리팩토링 리뷰 |

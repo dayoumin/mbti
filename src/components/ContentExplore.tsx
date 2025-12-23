@@ -22,6 +22,7 @@ import { nextActionService, type NextAction } from '@/services/NextActionService
 import { NextActionInline } from '@/components/NextActionCard';
 import CommentSystem from '@/components/CommentSystem';
 import PopularPolls from '@/components/content/PopularPolls';
+import { getStablePollResults } from '@/components/content/useContentParticipation';
 import { SUBJECT_CONFIG } from '@/data/config';
 import { CHEMI_DATA } from '@/data';
 
@@ -328,12 +329,17 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
   const [showComments, setShowComments] = useState(false);
 
   // props 변경 시 상태 동기화 (방어적 코드)
+  // 참여 기록 리셋 시에도 UI 상태 초기화
   useEffect(() => {
     if (previousAnswer) {
       setSelectedOption(previousAnswer);
       setShowResult(true);
+    } else if (!isAnswered) {
+      // 참여 기록이 리셋된 경우 (예: localStorage 초기화)
+      setSelectedOption(null);
+      setShowResult(false);
     }
-  }, [previousAnswer]);
+  }, [previousAnswer, isAnswered]);
 
   // 다음 액션 추천
   const nextActions = showResult
@@ -508,9 +514,10 @@ interface PollCardProps {
 function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCardProps) {
   const [localVoted, setLocalVoted] = useState<'a' | 'b' | null>(null);
   const [showComments, setShowComments] = useState(false);
+  // total: null=로딩중, -1=API실패, 0=첫투표, >0=실제통계
   const [realStats, setRealStats] = useState<{ a: number; b: number; total: number } | null>(null);
   const voted = previousVote ?? localVoted;
-  // API 실패 또는 0표 시 균등 분포 표시 (가짜 통계 방지)
+  // API 실패(-1) 또는 0표 시 균등 분포 표시 (가짜 통계 방지)
   const hasRealVotes = realStats && realStats.total > 0;
   const results = hasRealVotes ? { a: realStats.a, b: realStats.b } : { a: 50, b: 50 };
 
@@ -529,9 +536,15 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
               b: bOpt?.percentage ?? 50,
               total: data.totalVotes,
             });
+          } else {
+            // API 응답이 비정상인 경우
+            setRealStats({ a: 50, b: 50, total: -1 });
           }
         })
-        .catch(() => {/* 실패 시 fallback 유지 */});
+        .catch(() => {
+          // API 실패 시 명시적으로 실패 상태 설정
+          setRealStats({ a: 50, b: 50, total: -1 });
+        });
     }
   }, [voted, poll.id, realStats]);
 
@@ -630,7 +643,9 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
               ? `${realStats.total.toLocaleString()}명 참여`
               : realStats?.total === 0
                 ? '첫 번째 투표입니다! 🎉'
-                : '통계 로딩 중...'}
+                : realStats?.total === -1
+                  ? '투표가 기록되었습니다'
+                  : '통계 로딩 중...'}
           </span>
         </div>
       )}
