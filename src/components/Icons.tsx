@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export type Mood = 'happy' | 'cool' | 'sad' | 'excited';
+export type Mood = 'happy' | 'cool' | 'sad' | 'excited' | 'calm';
 
 export interface IconProps {
   className?: string;
@@ -459,6 +459,111 @@ export const ChefHatIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-
   </svg>
 );
 
+// 위스키 아이콘 (whiskeySample 테스트용)
+export const WhiskeySampleIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 위스키 잔 */}
+    <path d="M30 35 L35 85 L65 85 L70 35 Z" fill="none" stroke="#4A4A4A" strokeWidth="3" />
+    <path d="M30 35 L70 35" stroke="#4A4A4A" strokeWidth="3" strokeLinecap="round" />
+    {/* 위스키 액체 */}
+    <path d="M33 50 L36 80 L64 80 L67 50 Z" fill="#D97706" opacity="0.8" />
+    {/* 얼음 (큐브 형태) */}
+    <rect x="40" y="55" width="10" height="10" rx="2" fill="white" opacity="0.6" stroke="#CBD5E1" strokeWidth="1" />
+    <rect x="52" y="60" width="8" height="8" rx="2" fill="white" opacity="0.5" stroke="#CBD5E1" strokeWidth="1" />
+    {/* 기포/반짝임 */}
+    <circle cx="45" cy="70" r="1.5" fill="white" opacity="0.4" />
+    <circle cx="55" cy="68" r="1" fill="white" opacity="0.4" />
+    {mood === "happy" && (
+      <g>
+        <circle cx="42" cy="58" r="2" fill="#4A4A4A" />
+        <circle cx="58" cy="58" r="2" fill="#4A4A4A" />
+        <path d="M45 65 Q 50 70 55 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <circle cx="42" cy="58" r="3" fill="#4A4A4A" />
+        <circle cx="58" cy="58" r="3" fill="#4A4A4A" />
+        <path d="M43 65 Q 50 75 57 65" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+        {/* 반짝이 */}
+        <path d="M20 30 L25 35 M30 25 L25 35 M20 40 L25 35" stroke="#FFD700" strokeWidth="2" />
+        <path d="M80 30 L75 35 M70 25 L75 35 M80 40 L75 35" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="35" y="55" width="10" height="5" rx="2" fill="black" />
+        <rect x="55" y="55" width="10" height="5" rx="2" fill="black" />
+        <path d="M47 58 L53 58" stroke="black" strokeWidth="2" />
+        <path d="M45 68 Q 50 68 55 68" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "calm" && (
+      <g>
+        <circle cx="42" cy="58" r="2" fill="#4A4A4A" />
+        <circle cx="58" cy="58" r="2" fill="#4A4A4A" />
+        <path d="M45 66 Q 50 68 55 66" fill="none" stroke="#4A4A4A" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 라면 아이콘 (ramen 테스트용)
+export const RamenIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 그릇 */}
+    <ellipse cx="50" cy="75" rx="40" ry="12" fill="#DC2626" stroke="#4A4A4A" strokeWidth="3" />
+    <path d="M10 75 Q10 55 50 55 Q90 55 90 75" fill="#DC2626" stroke="#4A4A4A" strokeWidth="3" />
+    {/* 국물 */}
+    <ellipse cx="50" cy="60" rx="35" ry="10" fill="#EF4444" opacity="0.6" />
+    {/* 면 */}
+    <path d="M25 58 Q30 50 35 58 Q40 50 45 58" fill="none" stroke="#FEF3C7" strokeWidth="3" />
+    <path d="M45 58 Q50 50 55 58 Q60 50 65 58" fill="none" stroke="#FEF3C7" strokeWidth="3" />
+    <path d="M55 60 Q60 52 65 60 Q70 52 75 60" fill="none" stroke="#FEF3C7" strokeWidth="3" />
+    {/* 계란 반숙 */}
+    <ellipse cx="50" cy="48" rx="10" ry="8" fill="white" stroke="#F59E0B" strokeWidth="2" />
+    <circle cx="50" cy="48" r="4" fill="#F59E0B" />
+    {/* 파 고명 */}
+    <rect x="32" y="52" width="2" height="8" fill="#22C55E" rx="1" />
+    <rect x="38" y="54" width="2" height="6" fill="#22C55E" rx="1" />
+    <rect x="62" y="53" width="2" height="7" fill="#22C55E" rx="1" />
+    {/* 김 */}
+    <rect x="55" y="56" width="8" height="5" fill="#1F2937" opacity="0.8" rx="1" />
+    {/* 김치 */}
+    <ellipse cx="70" cy="58" rx="5" ry="3" fill="#DC2626" opacity="0.9" />
+    {/* 증기 */}
+    {mood === "happy" && (
+      <g>
+        <path d="M35 42 Q38 32 35 22" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+        <path d="M50 40 Q53 30 50 20" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+        <path d="M65 42 Q68 32 65 22" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <path d="M30 42 Q34 28 30 14" fill="none" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
+        <path d="M45 40 Q49 26 45 12" fill="none" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
+        <path d="M55 40 Q59 26 55 12" fill="none" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
+        <path d="M70 42 Q74 28 70 14" fill="none" stroke="#D1D5DB" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
+        {/* 불꽃 효과 */}
+        <path d="M15 70 L20 75 M25 68 L20 75 M15 80 L20 75" stroke="#FF6B00" strokeWidth="2" />
+        <path d="M85 70 L80 75 M75 68 L80 75 M85 80 L80 75" stroke="#FF6B00" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <path d="M50 40 Q53 30 50 20" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+      </g>
+    )}
+    {(mood === "calm" || mood === "sad") && (
+      <g>
+        <path d="M45 42 Q47 35 45 28" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
+        <path d="M55 42 Q57 35 55 28" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
+      </g>
+    )}
+  </svg>
+);
+
 // 아이콘 맵핑 (동적 렌더링용)
 export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   HumanIcon,
@@ -471,6 +576,8 @@ export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   PetMatchIcon,
   CoffeeIcon,
   ChefHatIcon,
+  WhiskeySampleIcon,
+  RamenIcon,
 };
 
 export const getIcon = (iconName: string): React.ComponentType<IconProps> => {

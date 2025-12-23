@@ -1,7 +1,7 @@
 // 케미 테스트 타입 정의
 
-// Level은 constants.ts에서 정의됨
-import type { Level } from './constants';
+// Level은 config에서 정의됨
+import type { Level } from '@/config';
 export type { Level };
 
 export interface Answer {
@@ -158,7 +158,7 @@ export interface SubjectConfig {
 export type SubjectKey =
   | 'human' | 'cat' | 'dog' | 'rabbit' | 'hamster'
   | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'tea' | 'conflictStyle'
-  | 'fruit' | 'alcohol' | 'bread' | 'perfume' | 'aroma' | 'food'
+  | 'fruit' | 'alcohol' | 'bread' | 'perfume' | 'aroma' | 'food' | 'whiskeySample' | 'ramen'
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 

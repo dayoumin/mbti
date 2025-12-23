@@ -40,6 +40,7 @@ import {
   Fish,
   Bird,
   Bug,
+  Soup,
   Layers,
   User,
   PieChart,
@@ -84,6 +85,8 @@ import CareSystem from './components/CareSystem';
 import DemographicsDashboard from './components/DemographicsDashboard';
 import BusinessStrategy from './components/BusinessStrategy';
 import OperationsSystem from './components/OperationsSystem';
+import FirstMoverStrategy from './components/FirstMoverStrategy';
+import AutomationSystem from './components/AutomationSystem';
 
 // ============================================================================
 // Types
@@ -141,6 +144,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       {
         groupLabel: '전략',
         tabs: [
+          { key: 'firstMover', label: '선점 효과', icon: <Zap className="w-4 h-4" /> },
           { key: 'roadmap', label: '로드맵', icon: <Lightbulb className="w-4 h-4" /> },
           { key: 'category', label: '카테고리', icon: <Layers className="w-4 h-4" /> },
           { key: 'userStrategy', label: '사용자', icon: <User className="w-4 h-4" /> },
@@ -184,6 +188,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <Wrench className="w-5 h-5" />,
     subTabs: [
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
+      { key: 'automation', label: '자동화', icon: <Zap className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
@@ -221,6 +226,9 @@ const TEST_ICONS: Partial<Record<SubjectKey, React.ReactNode>> = {
   bread: <Croissant className="w-5 h-5" />,
   perfume: <Sparkle className="w-5 h-5" />,
   aroma: <Leaf className="w-5 h-5" />,
+  food: <Coffee className="w-5 h-5" />,
+  whiskeySample: <Wine className="w-5 h-5" />,
+  ramen: <Soup className="w-5 h-5" />,
   // petMatch 세부 테스트
   dogBreed: <Dog className="w-5 h-5" />,
   catBreed: <Cat className="w-5 h-5" />,
@@ -487,6 +495,7 @@ export default function DashboardPage() {
           {/* 개요 - TODO */}
           {activeCategory === 'overview' && activeSubTab === 'todos' && <TodoManagement />}
           {/* 기획 */}
+          {activeCategory === 'planning' && activeSubTab === 'firstMover' && <FirstMoverStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
           {activeCategory === 'planning' && activeSubTab === 'category' && <CategoryStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'userStrategy' && <UserStrategy />}
@@ -507,6 +516,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'business' && <BusinessStrategy />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
+          {activeCategory === 'devtools' && activeSubTab === 'automation' && <AutomationSystem />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}

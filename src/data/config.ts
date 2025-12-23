@@ -198,6 +198,34 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         checkColor: "text-orange-600",
         analysisButtonText: "🍴 상세 입맛 분석 보기"
     },
+    whiskeySample: {
+        testType: "matching",
+        icon: "WhiskeySampleIcon",
+        emoji: "🥃",
+        label: "위스키",
+        intro: ["나에게 맞는 위스키는?", "내 취향의 위스키 찾기", "위스키 입문 가이드"],
+        resultFormat: "matching",
+        deepButtonText: "위스키 취향",
+        matchPointsTitle: "🥃 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 소개", guide: "🍷 즐기는 법" },
+        tabActiveColor: "bg-amber-100 border-amber-500",
+        checkColor: "text-amber-700",
+        analysisButtonText: "🥃 상세 취향 분석 보기"
+    },
+    ramen: {
+        testType: "matching",
+        icon: "RamenIcon",
+        emoji: "🍜",
+        label: "라면",
+        intro: ["나에게 맞는 라면은?", "오늘 뭐 끓이지?", "내 취향의 라면 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "라면 취향",
+        matchPointsTitle: "🍜 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 소개", guide: "🍲 맛있게 먹는 법" },
+        tabActiveColor: "bg-red-100 border-red-500",
+        checkColor: "text-red-600",
+        analysisButtonText: "🍜 상세 취향 분석 보기"
+    },
     // 세부 테스트
     dogBreed: {
         testType: "matching",
