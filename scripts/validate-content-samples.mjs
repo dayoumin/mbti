@@ -430,87 +430,58 @@ function main() {
 
   // 2. 퀴즈 검증
   if (contentData.quizzes) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}🧠 퀴즈 검증 (${contentData.quizzes.length}개)${colors.reset}`);
     for (const quiz of contentData.quizzes) {
       const result = validateQuiz(quiz);
       results.push(result);
-      if (verbose && !jsonOutput) {
-        printResult(result);
-      }
     }
   }
 
   // 3. 시나리오 검증
   if (contentData.scenario) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}📖 시나리오 퀴즈 검증${colors.reset}`);
     const result = validateScenario(contentData.scenario);
     results.push(result);
-    if (verbose && !jsonOutput) {
-      printResult(result);
-    }
   }
 
   // 4. VS 투표 검증
   if (contentData.vsPolls) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}⚔️ VS 투표 검증 (${contentData.vsPolls.length}개)${colors.reset}`);
     for (const poll of contentData.vsPolls) {
       const result = validatePoll(poll);
       results.push(result);
-      if (verbose && !jsonOutput) {
-        printResult(result);
-      }
     }
   }
 
   // 5. Choice 투표 검증
   if (contentData.choicePolls) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}📊 Choice 투표 검증 (${contentData.choicePolls.length}개)${colors.reset}`);
     for (const poll of contentData.choicePolls) {
       const result = validatePoll(poll);
       results.push(result);
-      if (verbose && !jsonOutput) {
-        printResult(result);
-      }
     }
   }
 
   // 6. 강아지 품종 투표 검증
   if (contentData.dogBreedPolls) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}🐕 강아지 품종 투표 검증 (${contentData.dogBreedPolls.length}개)${colors.reset}`);
     for (const poll of contentData.dogBreedPolls) {
       const result = validatePoll(poll);
       results.push(result);
-      if (verbose && !jsonOutput) {
-        printResult(result);
-      }
     }
   }
 
   // 7. 상황별 반응 투표 검증
   if (contentData.situationReactionPolls) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}🎭 상황별 반응 투표 검증 (${contentData.situationReactionPolls.length}개)${colors.reset}`);
     for (const sr of contentData.situationReactionPolls) {
       const result = validateSituationReaction(sr);
       results.push(result);
-      if (verbose && !jsonOutput) {
-        printResult(result);
-      }
     }
   }
 
   // 8. 토너먼트 검증
   const tournament = loadTournamentSamples();
   if (tournament) {
-    if (!jsonOutput) console.log(`\n${colors.cyan}🏆 토너먼트 검증${colors.reset}`);
     const result = validateTournament(tournament);
     results.push(result);
-    if (verbose && !jsonOutput) {
-      printResult(result);
-    }
   }
 
-  // 9. 글로벌 중복 ID 체크
-  if (!jsonOutput) console.log(`\n${colors.cyan}🔍 글로벌 ID 중복 검사${colors.reset}`);
+  // 9. 글로벌 중복 ID 체크 (verbose 출력 전에 수행)
   const allIds = results.map(r => r.id).filter(Boolean);
   const duplicateIds = allIds.filter((id, idx) => allIds.indexOf(id) !== idx);
   if (duplicateIds.length > 0) {
@@ -524,16 +495,45 @@ function main() {
         }
       });
     }
-    if (!jsonOutput) {
-      console.log(`  ${colors.red}✗ 중복 ID 발견: ${uniqueDuplicates.join(', ')}${colors.reset}`);
+  }
+
+  // 10. verbose 모드 상세 출력 (글로벌 검증 완료 후)
+  if (verbose && !jsonOutput) {
+    if (contentData.quizzes) {
+      console.log(`\n${colors.cyan}🧠 퀴즈 검증 (${contentData.quizzes.length}개)${colors.reset}`);
+      results.filter(r => r.type === 'quiz').forEach(r => printResult(r));
     }
-  } else {
-    if (!jsonOutput && verbose) {
+
+    if (contentData.scenario) {
+      console.log(`\n${colors.cyan}📖 시나리오 퀴즈 검증${colors.reset}`);
+      results.filter(r => r.type === 'scenario').forEach(r => printResult(r));
+    }
+
+    if (contentData.vsPolls || contentData.choicePolls || contentData.dogBreedPolls) {
+      const pollResults = results.filter(r => r.type === 'poll');
+      console.log(`\n${colors.cyan}📊 투표 검증 (${pollResults.length}개)${colors.reset}`);
+      pollResults.forEach(r => printResult(r));
+    }
+
+    if (contentData.situationReactionPolls) {
+      console.log(`\n${colors.cyan}🎭 상황별 반응 투표 검증 (${contentData.situationReactionPolls.length}개)${colors.reset}`);
+      results.filter(r => r.type === 'situation-reaction').forEach(r => printResult(r));
+    }
+
+    if (tournament) {
+      console.log(`\n${colors.cyan}🏆 토너먼트 검증${colors.reset}`);
+      results.filter(r => r.type === 'tournament').forEach(r => printResult(r));
+    }
+
+    console.log(`\n${colors.cyan}🔍 글로벌 ID 중복 검사${colors.reset}`);
+    if (duplicateIds.length > 0) {
+      console.log(`  ${colors.red}✗ 중복 ID 발견: ${[...new Set(duplicateIds)].join(', ')}${colors.reset}`);
+    } else {
       console.log(`  ${colors.green}✓ 중복 ID 없음${colors.reset}`);
     }
   }
 
-  // 10. 결과 요약
+  // 11. 결과 요약
   const summary = {
     total: results.length,
     valid: results.filter(r => r.isValid).length,
@@ -551,7 +551,6 @@ function main() {
   if (jsonOutput) {
     console.log(JSON.stringify({ summary, results }, null, 2));
     process.exit(summary.invalid > 0 ? 1 : 0);
-    return;
   }
 
   // 콘솔 출력 요약
