@@ -3,6 +3,38 @@
 
 import type { SubjectConfig, SubjectKey } from './types';
 
+// ========== 16유형 (성격 유형) 정의 ==========
+// 참고: "MBTI"라는 단어 사용 금지 - "성격 유형" 또는 "16유형"으로 표현
+
+export const PERSONALITY_TYPES = [
+    'ENFP', 'ENFJ', 'ENTP', 'ENTJ',
+    'ESFP', 'ESFJ', 'ESTP', 'ESTJ',
+    'INFP', 'INFJ', 'INTP', 'INTJ',
+    'ISFP', 'ISFJ', 'ISTP', 'ISTJ',
+] as const;
+
+export type PersonalityType = typeof PERSONALITY_TYPES[number];
+
+// 16유형 한글 설명 (UI 표시용)
+export const PERSONALITY_TYPE_LABELS: Record<PersonalityType, { name: string; emoji: string; shortDesc: string }> = {
+    ENFP: { name: '재기발랄한 활동가', emoji: '🦋', shortDesc: '열정적이고 창의적인' },
+    ENFJ: { name: '정의로운 사회운동가', emoji: '🌟', shortDesc: '따뜻하고 이타적인' },
+    ENTP: { name: '뜨거운 논쟁을 즐기는 변론가', emoji: '⚡', shortDesc: '영리하고 호기심 많은' },
+    ENTJ: { name: '대담한 통솔자', emoji: '👑', shortDesc: '대담하고 결단력 있는' },
+    ESFP: { name: '자유로운 영혼의 연예인', emoji: '🎉', shortDesc: '사교적이고 즉흥적인' },
+    ESFJ: { name: '사교적인 외교관', emoji: '💝', shortDesc: '배려심 깊고 사교적인' },
+    ESTP: { name: '모험을 즐기는 사업가', emoji: '🏄', shortDesc: '에너지 넘치고 현실적인' },
+    ESTJ: { name: '엄격한 관리자', emoji: '📋', shortDesc: '체계적이고 실용적인' },
+    INFP: { name: '열정적인 중재자', emoji: '🌈', shortDesc: '이상적이고 공감 능력 높은' },
+    INFJ: { name: '선의의 옹호자', emoji: '🔮', shortDesc: '통찰력 있고 원칙적인' },
+    INTP: { name: '논리적인 사색가', emoji: '🧠', shortDesc: '분석적이고 객관적인' },
+    INTJ: { name: '용의주도한 전략가', emoji: '♟️', shortDesc: '독립적이고 전략적인' },
+    ISFP: { name: '호기심 많은 예술가', emoji: '🎨', shortDesc: '온화하고 감성적인' },
+    ISFJ: { name: '용감한 수호자', emoji: '🛡️', shortDesc: '헌신적이고 성실한' },
+    ISTP: { name: '만능 재주꾼', emoji: '🔧', shortDesc: '논리적이고 융통성 있는' },
+    ISTJ: { name: '청렴결백한 논리주의자', emoji: '📚', shortDesc: '신뢰할 수 있고 철저한' },
+};
+
 // 테스트 타입 정의
 export const TEST_TYPES = {
     personality: {

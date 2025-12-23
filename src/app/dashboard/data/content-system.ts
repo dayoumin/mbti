@@ -238,6 +238,14 @@ interface ScenarioResult {
         difficulty: 1,
         impact: 2,
       },
+      {
+        id: 'situation-reaction',
+        name: '상황별 반응 투표',
+        description: '상황 제시 → 여러 반응 중 투표 → 성격별 통계',
+        frequency: 'daily',
+        difficulty: 2,
+        impact: 5,
+      },
     ],
     examples: [
       // 반려동물
@@ -254,6 +262,11 @@ interface ScenarioResult {
       { category: 'plant', title: '물주기 앱 쓰시나요?', description: 'VS 투표', type: 'vs' },
       { category: 'lifestyle', title: '아침형 vs 저녁형?', description: 'VS 투표', type: 'vs' },
       { category: 'lifestyle', title: '재택 vs 출근?', description: 'VS 투표', type: 'vs' },
+      // 상황별 반응 투표
+      { category: 'love', title: '3년 사귄 연인이 "거리 두자"고 하면?', description: '상황 반응 투표 + MBTI별 통계', type: 'situation-reaction' },
+      { category: 'love', title: '전 애인이 새벽에 "잘 지내?" 하면?', description: '상황 반응 투표 + 성격별 분석', type: 'situation-reaction' },
+      { category: 'personality', title: '상사가 내 아이디어를 무시하면?', description: '직장 상황 반응 투표', type: 'situation-reaction' },
+      { category: 'personality', title: '동료가 내 공로를 가로채면?', description: '직장 상황 반응 투표', type: 'situation-reaction' },
     ],
     dataStructure: `interface Poll {
   id: string;
@@ -272,12 +285,36 @@ interface ScenarioResult {
   segmentResults?: {
     [resultType: string]: { optionId: string; count: number }[];
   };
-}`,
+}
+
+// 상황별 반응 투표 전용
+interface SituationReaction {
+  id: string;
+  type: 'situation-reaction';
+  category: 'relationship' | 'work' | 'social' | 'awkward';
+  situation: string;           // 상황 설명
+  question: string;            // "이럴 때 나는?"
+  options: {
+    id: string;
+    text: string;
+    emoji: string;
+    tag: ReactionTag;          // 반응 유형 분류
+  }[];
+  personalityMapping?: {       // 성격별 예상 반응 (MBTI/테스트 결과 연동)
+    [personalityType: string]: string;  // optionId
+  };
+  totalVotes?: number;
+  tags: string[];
+}
+
+type ReactionTag = 'cool' | 'emotional' | 'rational' | 'avoidant' | 'confrontational' | 'humorous' | 'caring' | 'passive';`,
     features: [
       '실시간 참여자 수 표시',
       '결과 공개 타이밍 제어 (즉시/시간 후/인원 달성)',
       '성격 유형별 결과 세그먼트',
       '시간별 트렌드 변화',
+      '상황별 반응: MBTI/성격별 통계 비교',
+      '상황별 반응: "ENFP는 60%가 A 선택" 인사이트',
     ],
     retention: {
       daily: ['"오늘의 투표" 1개', '투표 결과 알림'],

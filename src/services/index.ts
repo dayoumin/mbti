@@ -16,3 +16,4 @@ export type { PollStats, QuizStats, FeedbackComment } from './TursoService';
 export type { NextAction } from './NextActionService';
 export type { PollVoteResult, QuizAnswerResult, ParticipationSummary } from './ParticipationBridge';
 export type { InviteCode, FriendConnection, TestComparison } from './FriendService';
+export type { UserProfileSettings, MyProfileData } from './ProfileService';

@@ -77,7 +77,10 @@
       "Bash(del \"d:\\\\Projects\\\\MBTI\\\\.next\\\\lock\")",
       "Bash(git status:*)",
       "Bash(xargs:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(del \"d:\\\\Project\\\\MBTI\\\\.next\\\\lock\")"
     ],
     "deny": [],
     "ask": []

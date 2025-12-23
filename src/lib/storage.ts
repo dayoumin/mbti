@@ -49,6 +49,9 @@ export const STORAGE_KEYS = {
   FRIENDS: 'chemi_friends',
   INVITE_CODES: 'chemi_invite_codes',
   PENDING_INVITES: 'chemi_pending_invites',
+
+  // 사용자 프로필 설정 (직접 입력/선택한 정보)
+  USER_PROFILE_SETTINGS: 'chemi_user_profile_settings',
 } as const;
 
 export type StorageKey = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];

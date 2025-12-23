@@ -259,6 +259,121 @@ const TEST_TYPES = [
   },
 ];
 
+// =============================================================================
+// 콘텐츠 검증 데이터
+// =============================================================================
+
+interface ValidationItem {
+  type: 'quiz' | 'scenario' | 'poll' | 'situation-reaction' | 'tournament';
+  label: string;
+  icon: string;
+  color: string;
+  items: { category: string; count: number }[];
+  validationRules: { rule: string; severity: 'error' | 'warning' }[];
+}
+
+const CONTENT_VALIDATION_DATA: ValidationItem[] = [
+  {
+    type: 'quiz',
+    label: '지식 퀴즈',
+    icon: '🧠',
+    color: '#7aa2ff',
+    items: [
+      { category: 'cat', count: 10 },
+    ],
+    validationRules: [
+      { rule: 'id 필수', severity: 'error' },
+      { rule: 'question 필수', severity: 'error' },
+      { rule: 'options 최소 2개', severity: 'error' },
+      { rule: 'knowledge 타입: isCorrect 1개 필수', severity: 'error' },
+      { rule: 'explanation 권장', severity: 'warning' },
+      { rule: 'tags 권장', severity: 'warning' },
+    ],
+  },
+  {
+    type: 'scenario',
+    label: '시나리오 퀴즈',
+    icon: '📖',
+    color: '#ff6b9d',
+    items: [
+      { category: 'cat', count: 1 },
+    ],
+    validationRules: [
+      { rule: 'questions 최소 3개', severity: 'error' },
+      { rule: 'results 최소 2개', severity: 'error' },
+      { rule: '점수 범위 연속성', severity: 'warning' },
+      { rule: '최대 점수 일치', severity: 'warning' },
+    ],
+  },
+  {
+    type: 'poll',
+    label: '투표',
+    icon: '📊',
+    color: '#55e6c1',
+    items: [
+      { category: 'cat (vs)', count: 10 },
+      { category: 'cat (choice)', count: 5 },
+      { category: 'dog (breed)', count: 10 },
+    ],
+    validationRules: [
+      { rule: 'VS 타입: 정확히 2개 옵션', severity: 'error' },
+      { rule: 'choice 타입: 3-6개 옵션 권장', severity: 'warning' },
+      { rule: 'tags 권장', severity: 'warning' },
+    ],
+  },
+  {
+    type: 'situation-reaction',
+    label: '상황별 반응',
+    icon: '🎭',
+    color: '#ffd166',
+    items: [
+      { category: 'relationship', count: 5 },
+      { category: 'work', count: 3 },
+      { category: 'social', count: 1 },
+      { category: 'awkward', count: 1 },
+    ],
+    validationRules: [
+      { rule: 'id-category 일치 필수', severity: 'error' },
+      { rule: 'category 유효값 필수', severity: 'error' },
+      { rule: '옵션별 tag 필수', severity: 'error' },
+      { rule: 'personalityMapping 권장', severity: 'warning' },
+      { rule: 'tags 권장', severity: 'warning' },
+    ],
+  },
+  {
+    type: 'tournament',
+    label: '토너먼트',
+    icon: '🏆',
+    color: '#a29bfe',
+    items: [],
+    validationRules: [
+      { rule: 'contestants >= roundSize', severity: 'error' },
+      { rule: 'roundSize: 4,8,16,32,64', severity: 'error' },
+      { rule: '중복 contestant id 금지', severity: 'error' },
+      { rule: 'description 권장', severity: 'warning' },
+      { rule: 'funFact 권장', severity: 'warning' },
+    ],
+  },
+];
+
+const VALIDATION_COMMANDS = [
+  {
+    cmd: 'node scripts/validate-content-samples.mjs',
+    desc: '전체 콘텐츠 검증',
+    type: 'full',
+  },
+  {
+    cmd: 'node scripts/validate-content-samples.mjs --verbose',
+    desc: '상세 검증 결과',
+    type: 'verbose',
+  },
+  {
+    cmd: 'node scripts/validate-content-samples.mjs --json',
+    desc: 'JSON 형식 출력',
+    type: 'json',
+  },
+];
+
 const CREATION_PROCESS = [
   {
     phase: '1. 계획',
@@ -331,7 +446,7 @@ const RESEARCH_DECISION = {
 // =============================================================================
 
 export default function AutomationSystem() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'agents' | 'skills' | 'workflow' | 'research' | 'process'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'agents' | 'skills' | 'workflow' | 'research' | 'process' | 'validation'>('overview');
 
   const tabs = [
     { key: 'overview', label: '개요', icon: <Layers className="w-4 h-4" /> },
@@ -340,6 +455,7 @@ export default function AutomationSystem() {
     { key: 'workflow', label: '워크플로우', icon: <ArrowRight className="w-4 h-4" /> },
     { key: 'research', label: '리서치 판단', icon: <Search className="w-4 h-4" /> },
     { key: 'process', label: '생성 과정', icon: <BookOpen className="w-4 h-4" /> },
+    { key: 'validation', label: '콘텐츠 검증', icon: <CheckCircle2 className="w-4 h-4" /> },
   ];
 
   return (
@@ -863,6 +979,225 @@ mood: 기분 (평범한 날 ↔ 특별한 날)`}
                 <div key={i} className="flex items-start gap-2 text-sm">
                   <AlertCircle className="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0" />
                   <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Validation Tab */}
+      {activeTab === 'validation' && (
+        <div className="space-y-6">
+          {/* 검증 개요 */}
+          <div className="db-card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold">콘텐츠 검증 시스템</h3>
+                <p className="text-sm opacity-70">퀴즈/투표/토너먼트/상황별 반응 콘텐츠 품질 검증</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-5 gap-4 mt-6">
+              {CONTENT_VALIDATION_DATA.map((item) => {
+                const totalCount = item.items.reduce((sum, i) => sum + i.count, 0);
+                return (
+                  <div
+                    key={item.type}
+                    className="p-4 rounded-xl text-center"
+                    style={{ background: `${item.color}15` }}
+                  >
+                    <span className="text-2xl">{item.icon}</span>
+                    <div className="text-2xl font-bold mt-2" style={{ color: item.color }}>
+                      {totalCount}
+                    </div>
+                    <div className="text-xs opacity-70">{item.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 타입별 상세 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4">타입별 검증 규칙</h3>
+            <div className="space-y-4">
+              {CONTENT_VALIDATION_DATA.map((item) => (
+                <div
+                  key={item.type}
+                  className="p-4 rounded-xl"
+                  style={{ background: 'rgba(0,0,0,0.3)', borderLeft: `3px solid ${item.color}` }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{item.icon}</span>
+                      <div>
+                        <h4 className="font-semibold">{item.label}</h4>
+                        <p className="text-xs opacity-60">
+                          {item.items.length > 0
+                            ? item.items.map(i => `${i.category}: ${i.count}개`).join(' · ')
+                            : '샘플 없음'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="px-2 py-1 rounded text-xs bg-red-500/20 text-red-400">
+                        에러 {item.validationRules.filter(r => r.severity === 'error').length}
+                      </span>
+                      <span className="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400">
+                        경고 {item.validationRules.filter(r => r.severity === 'warning').length}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    {item.validationRules.map((rule, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        {rule.severity === 'error' ? (
+                          <AlertCircle className="w-3 h-3 text-red-400 flex-shrink-0" />
+                        ) : (
+                          <AlertCircle className="w-3 h-3 text-yellow-400 flex-shrink-0" />
+                        )}
+                        <span className="opacity-80">{rule.rule}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 상황별 반응 투표 상세 */}
+          <div className="db-card p-6 bg-gradient-to-r from-yellow-500/10 to-orange-500/10">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">🎭</span>
+              상황별 반응 투표 (Situation-Reaction)
+            </h3>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-sm font-semibold opacity-70 mb-3">카테고리</h4>
+                <div className="space-y-2">
+                  {[
+                    { id: 'relationship', name: '연애/이별', emoji: '💕', desc: '연애, 이별, 썸, 전애인' },
+                    { id: 'work', name: '직장', emoji: '💼', desc: '상사, 동료, 회의, 회식' },
+                    { id: 'social', name: '사회생활', emoji: '👥', desc: '친구 모임, SNS, 파티' },
+                    { id: 'awkward', name: '어색한 순간', emoji: '😅', desc: '민망한 상황, 뻘쭘함' },
+                  ].map((cat) => (
+                    <div
+                      key={cat.id}
+                      className="flex items-center gap-3 p-2 rounded-lg bg-black/20"
+                    >
+                      <span className="text-lg">{cat.emoji}</span>
+                      <div>
+                        <div className="font-medium text-sm">{cat.name}</div>
+                        <div className="text-xs opacity-60">{cat.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold opacity-70 mb-3">반응 태그 (ReactionTag)</h4>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { tag: 'cool', desc: '쿨한' },
+                    { tag: 'emotional', desc: '감정적' },
+                    { tag: 'rational', desc: '이성적' },
+                    { tag: 'avoidant', desc: '회피형' },
+                    { tag: 'confrontational', desc: '대립형' },
+                    { tag: 'humorous', desc: '유머러스' },
+                    { tag: 'caring', desc: '배려형' },
+                    { tag: 'passive', desc: '수동적' },
+                  ].map((t) => (
+                    <span
+                      key={t.tag}
+                      className="px-3 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-400"
+                    >
+                      {t.tag} ({t.desc})
+                    </span>
+                  ))}
+                </div>
+
+                <h4 className="text-sm font-semibold opacity-70 mt-4 mb-2">ID 형식</h4>
+                <code className="text-xs bg-black/30 px-3 py-2 rounded block">
+                  situation-reaction-{'{category}'}-{'{번호}'}
+                </code>
+                <p className="text-xs opacity-60 mt-1">
+                  예: situation-reaction-relationship-001
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 검증 명령어 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Play className="w-5 h-5 text-green-400" />
+              검증 명령어
+            </h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {VALIDATION_COMMANDS.map((cmd) => (
+                <div
+                  key={cmd.type}
+                  className="bg-black/20 rounded-lg p-4"
+                >
+                  <code className="text-sm text-green-400 block mb-2">{cmd.cmd}</code>
+                  <p className="text-xs opacity-60">{cmd.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
+              <h4 className="font-semibold text-blue-400 mb-2">검증 스크립트 2종</h4>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <code className="text-blue-400">validate-test-data.mjs</code>
+                  <p className="text-xs opacity-60 mt-1">성격/매칭 테스트 검증 (src/data/subjects/)</p>
+                </div>
+                <div>
+                  <code className="text-blue-400">validate-content-samples.mjs</code>
+                  <p className="text-xs opacity-60 mt-1">콘텐츠 샘플 검증 (퀴즈/투표/토너먼트)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 검증 플로우 */}
+          <div className="db-card p-6">
+            <h3 className="text-lg font-semibold mb-4">콘텐츠 생성 → 검증 플로우</h3>
+            <div className="flex items-center justify-between">
+              {[
+                { step: '1', title: '콘텐츠 생성', desc: 'content-creator 실행', color: '#7aa2ff' },
+                { step: '2', title: '자체 검증', desc: '팩트체크, 일관성', color: '#55e6c1' },
+                { step: '3', title: '파일 저장', desc: 'content-samples.ts', color: '#ffd166' },
+                { step: '4', title: '스크립트 검증', desc: 'validate-content-samples', color: '#ff6b9d' },
+                { step: '5', title: '빌드 확인', desc: 'npm run build', color: '#a29bfe' },
+              ].map((item, idx, arr) => (
+                <div key={item.step} className="flex items-center">
+                  <div className="text-center">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-2 mx-auto"
+                      style={{ background: `${item.color}20` }}
+                    >
+                      <span className="text-lg font-bold" style={{ color: item.color }}>
+                        {item.step}
+                      </span>
+                    </div>
+                    <p className="text-xs font-medium">{item.title}</p>
+                    <p className="text-xs opacity-60">{item.desc}</p>
+                  </div>
+                  {idx < arr.length - 1 && (
+                    <ArrowRight className="w-4 h-4 opacity-30 mx-2" />
+                  )}
                 </div>
               ))}
             </div>

@@ -12,6 +12,8 @@ import { resultService } from './ResultService';
 import { CHEMI_DATA, SUBJECT_CONFIG, DETAIL_TEST_KEYS } from '@/data';
 import type { SubjectKey } from '@/data/types';
 import { RECOMMENDATION_ORDER } from '@/data/recommendationPolicy';
+import type { PersonalityType } from '@/data/config';
+import { STORAGE_KEYS, LocalStorage } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
@@ -58,6 +60,12 @@ export interface HiddenCombo {
   completedTests: string[];
 }
 
+// 사용자가 직접 입력/선택한 프로필 설정
+export interface UserProfileSettings {
+  personalityType?: PersonalityType;  // 16유형 (선택사항)
+  // 향후 확장: nickname, birthYear, gender 등
+}
+
 export interface MyProfileData {
   // 기본 정보
   userId: string;
@@ -65,6 +73,9 @@ export interface MyProfileData {
   completedTests: number;
   totalTests: number;
   completionRate: number;
+
+  // 사용자 선택 정보
+  personalityType: PersonalityType | null;  // 16유형
 
   // 성격 프로필 (human 테스트)
   personality: {
@@ -250,9 +261,53 @@ function getScoreLevel(score: number): 'LOW' | 'MEDIUM' | 'HIGH' {
 // ========== ProfileService Class ==========
 
 class ProfileServiceClass {
+  // ========== 사용자 프로필 설정 관리 ==========
+
+  /**
+   * 사용자 프로필 설정 조회
+   */
+  getUserSettings(): UserProfileSettings {
+    return LocalStorage.get<UserProfileSettings>(
+      STORAGE_KEYS.USER_PROFILE_SETTINGS,
+      {}
+    );
+  }
+
+  /**
+   * 사용자 프로필 설정 저장
+   */
+  saveUserSettings(settings: Partial<UserProfileSettings>): boolean {
+    const current = this.getUserSettings();
+    const updated = { ...current, ...settings };
+    return LocalStorage.set(STORAGE_KEYS.USER_PROFILE_SETTINGS, updated);
+  }
+
+  /**
+   * 16유형 조회
+   */
+  getPersonalityType(): PersonalityType | null {
+    const settings = this.getUserSettings();
+    return settings.personalityType || null;
+  }
+
+  /**
+   * 16유형 저장
+   */
+  setPersonalityType(type: PersonalityType | null): boolean {
+    if (type === null) {
+      const settings = this.getUserSettings();
+      delete settings.personalityType;
+      return LocalStorage.set(STORAGE_KEYS.USER_PROFILE_SETTINGS, settings);
+    }
+    return this.saveUserSettings({ personalityType: type });
+  }
+
+  // ========== 프로필 데이터 조회 ==========
+
   async getMyProfile(): Promise<MyProfileData> {
     const results = await resultService.getMyResults();
     const allTests = Object.keys(CHEMI_DATA);
+    const userSettings = this.getUserSettings();
 
     // 테스트별 최신 결과 추출
     const latestByType: Record<string, typeof results[0]> = {};
@@ -341,6 +396,9 @@ class ProfileServiceClass {
       completedTests: completedMainTests,
       totalTests: mainTests.length,
       completionRate,
+
+      // 사용자 선택 정보
+      personalityType: userSettings.personalityType || null,
 
       personality,
 
