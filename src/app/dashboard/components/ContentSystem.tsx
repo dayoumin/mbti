@@ -47,6 +47,8 @@ import {
   FOLLOWUP_STRATEGY,
   FollowUpCategory,
   FollowUpElement,
+  CONTENT_DB_MIGRATION,
+  CONTENT_API_ENDPOINTS,
 } from '../data/content-system';
 import { Share2, Link, Bell, ThumbsUp } from 'lucide-react';
 
@@ -65,7 +67,7 @@ const TYPE_ICONS: Record<ContentType, React.ReactNode> = {
 // ============================================================================
 
 export default function ContentSystem() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap' | 'seasonal' | 'followup'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'types' | 'categories' | 'estimates' | 'roadmap' | 'seasonal' | 'followup' | 'database'>('overview');
   const [selectedType, setSelectedType] = useState<ContentType>('quiz');
 
   return (
@@ -80,6 +82,7 @@ export default function ContentSystem() {
           { key: 'estimates', label: '수량 예측', icon: <Calculator className="w-4 h-4" /> },
           { key: 'roadmap', label: '구현 로드맵', icon: <Calendar className="w-4 h-4" /> },
           { key: 'followup', label: '후속 참여', icon: <Share2 className="w-4 h-4" /> },
+          { key: 'database', label: 'DB 현황', icon: <BarChart3 className="w-4 h-4" /> },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -106,6 +109,7 @@ export default function ContentSystem() {
       {activeTab === 'estimates' && <EstimatesTab />}
       {activeTab === 'roadmap' && <RoadmapTab />}
       {activeTab === 'followup' && <FollowUpTab />}
+      {activeTab === 'database' && <DatabaseTab />}
     </div>
   );
 }
@@ -1808,6 +1812,186 @@ function TrendContentSection() {
   priority?: 'high' | 'medium' | 'low';
 }`}
           </pre>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Database Tab
+// ============================================================================
+
+function DatabaseTab() {
+  const migration = CONTENT_DB_MIGRATION;
+  const endpoints = CONTENT_API_ENDPOINTS;
+
+  return (
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="db-card p-4">
+          <div className="text-2xl font-bold text-[var(--db-brand)]">{migration.tables.length}</div>
+          <div className="text-sm text-[var(--db-muted)]">테이블</div>
+        </div>
+        <div className="db-card p-4">
+          <div className="text-2xl font-bold text-[var(--db-brand)]">{migration.views.length}</div>
+          <div className="text-sm text-[var(--db-muted)]">뷰</div>
+        </div>
+        <div className="db-card p-4">
+          <div className="text-2xl font-bold text-green-400">{migration.testCount.service + migration.testCount.api}</div>
+          <div className="text-sm text-[var(--db-muted)]">테스트</div>
+        </div>
+        <div className="db-card p-4">
+          <div className="text-2xl font-bold text-blue-400">{endpoints.length}</div>
+          <div className="text-sm text-[var(--db-muted)]">API 엔드포인트</div>
+        </div>
+      </div>
+
+      {/* Tables */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">테이블 현황</h3>
+        </div>
+        <div className="p-5">
+          <div className="space-y-4">
+            {migration.tables.map((table) => (
+              <div key={table.name} className="bg-black/20 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[var(--db-brand)]">{table.name}</span>
+                    <span className={`px-2 py-0.5 rounded text-xs ${
+                      table.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {table.status}
+                    </span>
+                  </div>
+                  <span className="text-xs text-[var(--db-muted)]">PK: {table.pkType}</span>
+                </div>
+                <p className="text-sm text-[var(--db-muted)] mb-2">{table.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {table.jsonFields.map((field) => (
+                    <span key={field} className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs">
+                      JSON: {field}
+                    </span>
+                  ))}
+                  {table.indexes.map((idx) => (
+                    <span key={idx} className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">
+                      IDX: {idx}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* API Endpoints */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">API 엔드포인트</h3>
+        </div>
+        <div className="p-5">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-[var(--db-muted)]">
+                  <th className="pb-3">Method</th>
+                  <th className="pb-3">Path</th>
+                  <th className="pb-3">설명</th>
+                  <th className="pb-3">인증</th>
+                </tr>
+              </thead>
+              <tbody className="text-[var(--db-text)]">
+                {endpoints.map((ep, i) => (
+                  <tr key={i} className="border-t border-white/5">
+                    <td className="py-2">
+                      <span className={`px-2 py-0.5 rounded text-xs font-mono ${
+                        ep.method === 'GET' ? 'bg-green-500/20 text-green-400' :
+                        ep.method === 'POST' ? 'bg-blue-500/20 text-blue-400' :
+                        ep.method === 'PUT' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-red-500/20 text-red-400'
+                      }`}>
+                        {ep.method}
+                      </span>
+                    </td>
+                    <td className="py-2 font-mono text-xs">{ep.path}</td>
+                    <td className="py-2">{ep.description}</td>
+                    <td className="py-2">
+                      {ep.auth ? (
+                        <span className="text-yellow-400">필요</span>
+                      ) : (
+                        <span className="text-[var(--db-muted)]">-</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Features & Test Commands */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="db-card">
+          <div className="db-card-header px-5 py-4">
+            <h3 className="text-lg font-semibold text-[var(--db-text)]">주요 기능</h3>
+          </div>
+          <div className="p-5">
+            <ul className="space-y-2">
+              {migration.features.map((feature, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm text-[var(--db-muted)]">
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="db-card">
+          <div className="db-card-header px-5 py-4">
+            <h3 className="text-lg font-semibold text-[var(--db-text)]">테스트 명령어</h3>
+          </div>
+          <div className="p-5 space-y-3">
+            <div className="bg-black/30 rounded-lg p-3">
+              <p className="text-xs text-[var(--db-muted)] mb-1">DB 서비스 테스트 ({migration.testCount.service}개)</p>
+              <code className="text-sm text-green-400">node scripts/test-content-service.mjs</code>
+            </div>
+            <div className="bg-black/30 rounded-lg p-3">
+              <p className="text-xs text-[var(--db-muted)] mb-1">API 테스트 ({migration.testCount.api}개)</p>
+              <code className="text-sm text-green-400">CONTENT_API_SECRET=test-secret node scripts/test-content-api.mjs</code>
+            </div>
+            <div className="bg-black/30 rounded-lg p-3">
+              <p className="text-xs text-[var(--db-muted)] mb-1">마이그레이션</p>
+              <code className="text-sm text-green-400">node scripts/run-migration.mjs 001</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Migration Info */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">마이그레이션 정보</h3>
+        </div>
+        <div className="p-5">
+          <div className="flex gap-6 text-sm">
+            <div>
+              <span className="text-[var(--db-muted)]">버전:</span>
+              <span className="ml-2 font-mono text-[var(--db-text)]">{migration.version}</span>
+            </div>
+            <div>
+              <span className="text-[var(--db-muted)]">날짜:</span>
+              <span className="ml-2 text-[var(--db-text)]">{migration.date}</span>
+            </div>
+            <div>
+              <span className="text-[var(--db-muted)]">뷰:</span>
+              <span className="ml-2 font-mono text-[var(--db-text)]">{migration.views.join(', ')}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
