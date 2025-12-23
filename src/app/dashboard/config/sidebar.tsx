@@ -14,15 +14,6 @@ import {
   FileText,
   Lightbulb,
   Sparkles,
-  Heart,
-  HeartHandshake,
-  Cat,
-  Dog,
-  Rabbit,
-  Coffee,
-  Flower2,
-  Brain,
-  Puzzle,
   BarChart3,
   Code2,
   Eye,
@@ -32,26 +23,21 @@ import {
   Globe,
   RefreshCw,
   MessageCircle,
-  Fish,
-  Bird,
-  Bug,
   Layers,
   User,
   PieChart,
   Activity,
   Share2,
-  CupSoda,
-  Apple,
-  Wine,
-  Croissant,
-  Sparkle,
-  Leaf,
   TrendingUp,
   Users,
   PawPrint,
+  Puzzle,
+  Bug,
 } from 'lucide-react';
-import { SubjectKey } from '@/data/types';
 import { CHEMI_DATA } from '@/data';
+
+// 테스트 아이콘 유틸 re-export (page.tsx 등에서 사용)
+export { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
 // Types
@@ -144,32 +130,3 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   },
 ];
 
-// ============================================================================
-// Test Icon Mapping
-// ============================================================================
-
-export const TEST_ICONS: Partial<Record<SubjectKey, React.ReactNode>> = {
-  human: <Brain className="w-5 h-5" />,
-  cat: <Cat className="w-5 h-5" />,
-  dog: <Dog className="w-5 h-5" />,
-  rabbit: <Rabbit className="w-5 h-5" />,
-  hamster: <Puzzle className="w-5 h-5" />,
-  idealType: <Heart className="w-5 h-5" />,
-  plant: <Flower2 className="w-5 h-5" />,
-  petMatch: <Star className="w-5 h-5" />,
-  coffee: <Coffee className="w-5 h-5" />,
-  tea: <CupSoda className="w-5 h-5" />,
-  conflictStyle: <HeartHandshake className="w-5 h-5" />,
-  fruit: <Apple className="w-5 h-5" />,
-  alcohol: <Wine className="w-5 h-5" />,
-  bread: <Croissant className="w-5 h-5" />,
-  perfume: <Sparkle className="w-5 h-5" />,
-  aroma: <Leaf className="w-5 h-5" />,
-  // petMatch 세부 테스트
-  dogBreed: <Dog className="w-5 h-5" />,
-  catBreed: <Cat className="w-5 h-5" />,
-  smallPet: <Puzzle className="w-5 h-5" />,
-  fishType: <Fish className="w-5 h-5" />,
-  birdType: <Bird className="w-5 h-5" />,
-  reptileType: <Bug className="w-5 h-5" />,
-};

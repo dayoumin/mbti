@@ -23,6 +23,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     human: {
         testType: "personality",
         icon: "HumanIcon",
+        lucideIcon: "Brain",
         emoji: "👤",
         label: "사람",
         intro: ["나는 어떤 사람일까?", "나의 숨겨진 성격은?", "친구들이 보는 나는?"],
@@ -32,6 +33,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     cat: {
         testType: "personality",
         icon: "CatFace",
+        lucideIcon: "Cat",
         emoji: "🐱",
         label: "고양이",
         intro: ["철학 냥이?", "보스 냥이?", "인싸 냥이?"],
@@ -41,6 +43,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     dog: {
         testType: "personality",
         icon: "DogFace",
+        lucideIcon: "Dog",
         emoji: "🐶",
         label: "강아지",
         intro: ["규율 멍멍이?", "파티 멍멍이?", "CEO 멍멍이?"],
@@ -50,6 +53,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     rabbit: {
         testType: "personality",
         icon: "RabbitFace",
+        lucideIcon: "Rabbit",
         emoji: "🐰",
         label: "토끼",
         intro: ["탐험가 토끼?", "애교쟁이 토끼?", "독립적인 토끼?"],
@@ -59,6 +63,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     hamster: {
         testType: "personality",
         icon: "HamsterFace",
+        lucideIcon: "Puzzle",
         emoji: "🐹",
         label: "햄스터",
         intro: ["쳇바퀴 마스터?", "수집왕 햄찌?", "인싸 햄찌?"],
@@ -68,6 +73,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     idealType: {
         testType: "matching",
         icon: "HeartIcon",
+        lucideIcon: "Heart",
         emoji: "💘",
         label: "이상형",
         intro: ["나의 이상형은?", "어떤 사람이 맞을까?", "운명의 상대는?"],
@@ -82,6 +88,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     plant: {
         testType: "matching",
         icon: "PlantIcon",
+        lucideIcon: "Flower2",
         emoji: "🌱",
         label: "식물",
         intro: ["나에게 맞는 식물은?", "초보도 키울 수 있을까?", "어떤 식물과 잘 맞을까?"],
@@ -96,6 +103,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     petMatch: {
         testType: "matching",
         icon: "PetMatchIcon",
+        lucideIcon: "Star",
         emoji: "🐾",
         label: "반려동물",
         intro: ["어떤 동물과 잘 맞을까?", "첫 반려동물 고민 중?", "나의 라이프스타일에 맞는 친구는?"],
@@ -110,6 +118,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     coffee: {
         testType: "matching",
         icon: "CoffeeIcon",
+        lucideIcon: "Coffee",
         emoji: "☕",
         label: "커피",
         intro: ["나에게 맞는 커피는?", "오늘 뭐 마시지?", "내 취향의 커피 찾기"],
@@ -124,6 +133,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     tea: {
         testType: "matching",
         icon: "TeaIcon",
+        lucideIcon: "CupSoda",
         emoji: "🍵",
         label: "차",
         intro: ["나에게 맞는 차는?", "오늘의 티타임", "내 취향의 차 찾기"],
@@ -133,6 +143,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     conflictStyle: {
         testType: "personality",
         icon: "ConflictIcon",
+        lucideIcon: "HeartHandshake",
         emoji: "🤝",
         label: "갈등 대처",
         intro: ["나의 갈등 대처 스타일은?", "관계에서 어떻게 소통할까?", "더 나은 관계를 위해"],
@@ -142,6 +153,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     fruit: {
         testType: "matching",
         icon: "FruitIcon",
+        lucideIcon: "Apple",
         emoji: "🍎",
         label: "과일",
         intro: ["나를 과일로 표현하면?", "내 성격과 닮은 과일은?", "오늘의 과일 추천"],
@@ -151,6 +163,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     alcohol: {
         testType: "matching",
         icon: "AlcoholIcon",
+        lucideIcon: "Wine",
         emoji: "🍺",
         label: "술",
         intro: ["나에게 맞는 술은?", "오늘 뭐 마실까?", "내 취향의 술 찾기"],
@@ -160,6 +173,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     bread: {
         testType: "matching",
         icon: "BreadIcon",
+        lucideIcon: "Croissant",
         emoji: "🥐",
         label: "빵",
         intro: ["나를 빵으로 표현하면?", "내 성격과 닮은 빵은?", "오늘의 빵 추천"],
@@ -169,6 +183,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     perfume: {
         testType: "matching",
         icon: "PerfumeIcon",
+        lucideIcon: "Sparkle",
         emoji: "🌸",
         label: "향수",
         intro: ["나에게 맞는 향수는?", "내 분위기와 어울리는 향은?", "시그니처 향 찾기"],
@@ -178,6 +193,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     aroma: {
         testType: "matching",
         icon: "AromaIcon",
+        lucideIcon: "Leaf",
         emoji: "🕯️",
         label: "아로마",
         intro: ["나에게 맞는 아로마는?", "오늘의 힐링 향", "테라피 향 추천"],
@@ -187,6 +203,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     food: {
         testType: "matching",
         icon: "ChefHatIcon",
+        lucideIcon: "UtensilsCrossed",
         emoji: "🍕",
         label: "음식",
         intro: ["나와 닮은 소울 푸드는?", "오늘 뭐 먹지?", "내 성향과 맞는 음식 찾기"],
@@ -201,6 +218,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     whiskeySample: {
         testType: "matching",
         icon: "WhiskeySampleIcon",
+        lucideIcon: "Wine",
         emoji: "🥃",
         label: "위스키",
         intro: ["나에게 맞는 위스키는?", "내 취향의 위스키 찾기", "위스키 입문 가이드"],
@@ -215,6 +233,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     ramen: {
         testType: "matching",
         icon: "RamenIcon",
+        lucideIcon: "Soup",
         emoji: "🍜",
         label: "라면",
         intro: ["나에게 맞는 라면은?", "오늘 뭐 끓이지?", "내 취향의 라면 찾기"],
@@ -230,6 +249,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     dogBreed: {
         testType: "matching",
         icon: "DogFace",
+        lucideIcon: "Dog",
         emoji: "🐕",
         label: "강아지 품종",
         intro: ["어떤 품종이 나와 맞을까?", "운명의 반려견 찾기"],
@@ -239,6 +259,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     catBreed: {
         testType: "matching",
         icon: "CatFace",
+        lucideIcon: "Cat",
         emoji: "🐈",
         label: "고양이 품종",
         intro: ["어떤 품종이 나와 맞을까?", "운명의 반려묘 찾기"],
@@ -248,6 +269,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     smallPet: {
         testType: "matching",
         icon: "HamsterFace",
+        lucideIcon: "Puzzle",
         emoji: "🐹",
         label: "소동물",
         intro: ["어떤 소동물이 나와 맞을까?", "귀여운 친구 찾기"],
@@ -257,6 +279,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     fishType: {
         testType: "matching",
         icon: "FishIcon",
+        lucideIcon: "Fish",
         emoji: "🐠",
         label: "물고기",
         intro: ["어떤 물고기가 나와 맞을까?", "수중 친구 찾기"],
@@ -266,6 +289,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     birdType: {
         testType: "matching",
         icon: "BirdIcon",
+        lucideIcon: "Bird",
         emoji: "🦜",
         label: "새",
         intro: ["어떤 새가 나와 맞을까?", "깃털 친구 찾기"],
@@ -275,6 +299,7 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
     reptileType: {
         testType: "matching",
         icon: "ReptileIcon",
+        lucideIcon: "Bug",
         emoji: "🦎",
         label: "파충류",
         intro: ["어떤 파충류가 나와 맞을까?", "쿨한 친구 찾기"],

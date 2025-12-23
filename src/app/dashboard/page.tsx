@@ -20,12 +20,6 @@ import {
   CheckCircle2,
   Zap,
   Heart,
-  HeartHandshake,
-  Cat,
-  Dog,
-  Rabbit,
-  Coffee,
-  Flower2,
   Brain,
   Puzzle,
   BarChart3,
@@ -37,21 +31,12 @@ import {
   Globe,
   RefreshCw,
   MessageCircle,
-  Fish,
-  Bird,
   Bug,
-  Soup,
   Layers,
   User,
   PieChart,
   Activity,
   Share2,
-  CupSoda,
-  Apple,
-  Wine,
-  Croissant,
-  Sparkle,
-  Leaf,
   Sun,
   Moon,
   ThumbsUp,
@@ -87,6 +72,7 @@ import BusinessStrategy from './components/BusinessStrategy';
 import OperationsSystem from './components/OperationsSystem';
 import FirstMoverStrategy from './components/FirstMoverStrategy';
 import AutomationSystem from './components/AutomationSystem';
+import { getTestIcon } from './config/sidebar';
 
 // ============================================================================
 // Types
@@ -204,39 +190,6 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     ],
   },
 ];
-
-// ============================================================================
-// Test Icon Mapping
-// ============================================================================
-
-const TEST_ICONS: Partial<Record<SubjectKey, React.ReactNode>> = {
-  human: <Brain className="w-5 h-5" />,
-  cat: <Cat className="w-5 h-5" />,
-  dog: <Dog className="w-5 h-5" />,
-  rabbit: <Rabbit className="w-5 h-5" />,
-  hamster: <Puzzle className="w-5 h-5" />,
-  idealType: <Heart className="w-5 h-5" />,
-  plant: <Flower2 className="w-5 h-5" />,
-  petMatch: <Star className="w-5 h-5" />,
-  coffee: <Coffee className="w-5 h-5" />,
-  tea: <CupSoda className="w-5 h-5" />,
-  conflictStyle: <HeartHandshake className="w-5 h-5" />,
-  fruit: <Apple className="w-5 h-5" />,
-  alcohol: <Wine className="w-5 h-5" />,
-  bread: <Croissant className="w-5 h-5" />,
-  perfume: <Sparkle className="w-5 h-5" />,
-  aroma: <Leaf className="w-5 h-5" />,
-  food: <Coffee className="w-5 h-5" />,
-  whiskeySample: <Wine className="w-5 h-5" />,
-  ramen: <Soup className="w-5 h-5" />,
-  // petMatch 세부 테스트
-  dogBreed: <Dog className="w-5 h-5" />,
-  catBreed: <Cat className="w-5 h-5" />,
-  smallPet: <Puzzle className="w-5 h-5" />,
-  fishType: <Fish className="w-5 h-5" />,
-  birdType: <Bird className="w-5 h-5" />,
-  reptileType: <Bug className="w-5 h-5" />,
-};
 
 // ============================================================================
 // Dashboard Component
@@ -587,7 +540,7 @@ function OverviewSummary() {
                 className="db-callout hover:scale-[1.01] transition-transform duration-200"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[var(--db-brand)]">{TEST_ICONS[key]}</span>
+                  <span className="text-[var(--db-brand)]">{getTestIcon(key)}</span>
                   <div>
                     <h3 className="font-medium text-[var(--db-text)]">{data.title}</h3>
                     <p className="text-xs text-[var(--db-muted)]">{data.subtitle}</p>
@@ -761,7 +714,7 @@ function TestSelector({ selectedTest, onSelectTest }: TestSelectorProps) {
                 isSelected ? 'active' : ''
               }`}
             >
-              {TEST_ICONS[key]}
+              {getTestIcon(key)}
               {data.title}
             </button>
           );
@@ -807,7 +760,7 @@ function TestList({ selectedTest, onSelectTest }: TestSelectorProps) {
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
                   style={{ background: 'rgba(122, 162, 255, 0.15)' }}
                 >
-                  <span className="text-[var(--db-brand)]">{TEST_ICONS[key]}</span>
+                  <span className="text-[var(--db-brand)]">{getTestIcon(key)}</span>
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-[var(--db-text)] mb-1">{data.title}</h3>
@@ -842,7 +795,7 @@ function TestDetail({ selectedTest, onSelectTest }: TestSelectorProps) {
             className="w-14 h-14 rounded-xl flex items-center justify-center"
             style={{ background: 'rgba(122, 162, 255, 0.15)' }}
           >
-            <span className="text-[var(--db-brand)]">{TEST_ICONS[selectedTest]}</span>
+            <span className="text-[var(--db-brand)]">{getTestIcon(selectedTest)}</span>
           </div>
           <div>
             <h2 className="text-xl font-bold text-[var(--db-text)]">{data.title}</h2>

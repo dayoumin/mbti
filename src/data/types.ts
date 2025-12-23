@@ -143,6 +143,7 @@ export interface TestType {
 export interface SubjectConfig {
   testType: string;
   icon: string;
+  lucideIcon?: string;  // 대시보드용 lucide-react 아이콘명
   emoji?: string;
   label: string;
   intro?: string[];
