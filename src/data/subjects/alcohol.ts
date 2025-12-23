@@ -3,7 +3,7 @@
 import { SubjectData } from '../types';
 
 export const alcoholData: SubjectData = {
-    "title": "나의 술 찾기",
+    "title": "오늘 밤 한 잔 테스트",
     "subtitle": "어떤 술이 나와 맞을까?",
     "themeColor": "bg-purple-700",
     "icon": "AlcoholIcon",

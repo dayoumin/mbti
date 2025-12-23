@@ -3,7 +3,7 @@
 import { SubjectData } from '../types';
 
 export const breadData: SubjectData = {
-    "title": "나의 빵 찾기",
+    "title": "딱 맞는 빵 찾기",
     "subtitle": "어떤 빵이 나와 맞을까?",
     "themeColor": "bg-amber-600",
     "icon": "BreadIcon",

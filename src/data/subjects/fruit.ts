@@ -3,7 +3,7 @@
 import { SubjectData } from '../types';
 
 export const fruitData: SubjectData = {
-    "title": "나의 과일 찾기",
+    "title": "과일 취향 테스트",
     "subtitle": "어떤 과일이 나와 맞을까?",
     "themeColor": "bg-orange-500",
     "icon": "FruitIcon",

@@ -4,7 +4,7 @@
 import type { SubjectData } from '../types';
 
 export const ramenData: SubjectData = {
-  "title": "나의 라면 찾기",
+  "title": "라면 취향 테스트",
   "subtitle": "어떤 라면이 나와 맞을까?",
   "themeColor": "bg-red-600",
   "icon": "RamenIcon",
