@@ -3783,7 +3783,7 @@ function FeedbackAnalysis() {
 // ============================================================================
 
 function ProductFeatures() {
-  const [activeTab, setActiveTab] = useState<'content' | 'social' | 'community' | 'retention' | 'personalization' | 'marketing' | 'operations'>('content');
+  const [activeTab, setActiveTab] = useState<'ideaBank' | 'content' | 'social' | 'community' | 'retention' | 'personalization' | 'marketing' | 'operations'>('content');
 
   const tabs = [
     { key: 'content' as const, label: '콘텐츠 시스템', icon: <Layers className="w-4 h-4" /> },

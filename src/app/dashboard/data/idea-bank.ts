@@ -868,6 +868,7 @@ export const THEMES: Theme[] = [
         id: 'drama-balance-game',
         category: 'balance-game',
         title: '드라마/영화 밸런스 게임',
+        description: '드라마/영화 관련 양자택일 밸런스 게임',
         status: 'idea',
         viral: {
           potential: 'high',
@@ -935,6 +936,7 @@ export const THEMES: Theme[] = [
         id: 'sports-tier-vote',
         category: 'tier-vote',
         title: '축구팀 티어 투표',
+        description: '세계 축구팀 순위/티어 투표',
         status: 'idea',
         viral: {
           potential: 'high',
@@ -998,6 +1000,7 @@ export const THEMES: Theme[] = [
         id: 'travel-checklist',
         category: 'checklist',
         title: '평생 가봐야 할 여행지 100',
+        description: '가봐야 할 여행지 체크리스트',
         status: 'idea',
         viral: {
           potential: 'high',
@@ -1176,6 +1179,7 @@ export const THEMES: Theme[] = [
         id: 'cars-worldcup',
         category: 'worldcup',
         title: '드림카 월드컵',
+        description: '내 드림카 이상형 월드컵',
         status: 'idea',
         viral: {
           potential: 'medium',
@@ -1235,6 +1239,7 @@ export const THEMES: Theme[] = [
         id: 'fashion-tier-vote',
         category: 'tier-vote',
         title: '패션 브랜드 티어 투표',
+        description: '패션 브랜드 순위/티어 투표',
         status: 'idea',
         viral: {
           potential: 'medium',
@@ -1294,6 +1299,7 @@ export const THEMES: Theme[] = [
         id: 'pets-balance-game',
         category: 'balance-game',
         title: '반려동물 밸런스 게임',
+        description: '반려동물 관련 양자택일 밸런스 게임',
         status: 'idea',
         viral: {
           potential: 'high',
@@ -1359,6 +1365,7 @@ export const THEMES: Theme[] = [
         id: 'brands-worldcup',
         category: 'worldcup',
         title: '라면 월드컵',
+        description: '최애 라면 이상형 월드컵',
         status: 'idea',
         viral: {
           potential: 'high',
@@ -1418,6 +1425,7 @@ export const THEMES: Theme[] = [
         id: 'webtoon-tier-vote',
         category: 'tier-vote',
         title: '웹툰 티어 투표',
+        description: '웹툰 순위/티어 투표',
         status: 'idea',
         viral: {
           potential: 'high',
@@ -1479,6 +1487,7 @@ export const THEMES: Theme[] = [
         id: 'youtubers-worldcup',
         category: 'worldcup',
         title: '유튜버 월드컵',
+        description: '최애 유튜버 이상형 월드컵',
         status: 'idea',
         viral: {
           potential: 'high',
