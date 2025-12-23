@@ -1862,6 +1862,83 @@ export function getUpcomingSeasonalContent(days: number = 14, date: Date = new D
 }
 
 // ============================================================================
+// DB 마이그레이션 현황 (2024-12-23)
+// ============================================================================
+
+export interface DbTable {
+  name: string;
+  description: string;
+  pkType: 'TEXT' | 'INTEGER';
+  jsonFields: string[];
+  indexes: string[];
+  status: 'active' | 'planned';
+}
+
+export interface DbMigration {
+  version: string;
+  date: string;
+  tables: DbTable[];
+  views: string[];
+  testCount: { service: number; api: number };
+  features: string[];
+}
+
+export const CONTENT_DB_MIGRATION: DbMigration = {
+  version: '001',
+  date: '2024-12-23',
+  tables: [
+    {
+      name: 'quizzes',
+      description: '지식/상황/성격 기반 퀴즈',
+      pkType: 'TEXT',
+      jsonFields: ['options', 'tags'],
+      indexes: ['category', 'type', 'status'],
+      status: 'active',
+    },
+    {
+      name: 'scenario_quizzes',
+      description: '여러 문제 → 종합 등급 (집사력 테스트 등)',
+      pkType: 'TEXT',
+      jsonFields: ['questions', 'results'],
+      indexes: ['category', 'status'],
+      status: 'active',
+    },
+    {
+      name: 'polls',
+      description: 'VS/선택/랭킹/스케일 투표',
+      pkType: 'TEXT',
+      jsonFields: ['options', 'tags'],
+      indexes: ['category', 'type', 'status'],
+      status: 'active',
+    },
+    {
+      name: 'tournaments',
+      description: '월드컵/브래킷 토너먼트',
+      pkType: 'TEXT',
+      jsonFields: ['contestants', 'result_config'],
+      indexes: ['category', 'status'],
+      status: 'active',
+    },
+  ],
+  views: ['v_quiz_stats', 'v_poll_stats'],
+  testCount: { service: 45, api: 58 },
+  features: [
+    'DB 우선 조회, 코드 폴백',
+    'Soft delete (status = hidden)',
+    'API 인증 (세션 + Bearer 토큰)',
+    '페이지네이션 (limit/offset)',
+  ],
+};
+
+export const CONTENT_API_ENDPOINTS = [
+  { method: 'GET', path: '/api/content?type=quiz', description: '목록 조회', auth: false },
+  { method: 'GET', path: '/api/content?type=quiz&id=xxx', description: '단일 조회', auth: false },
+  { method: 'POST', path: '/api/content', description: '생성 (관리자)', auth: true },
+  { method: 'PUT', path: '/api/content', description: '수정 (관리자)', auth: true },
+  { method: 'DELETE', path: '/api/content?type=quiz&id=xxx', description: '삭제 (관리자)', auth: true },
+];
+
+// ============================================================================
 // 통합 Export
 // ============================================================================
 
@@ -1885,6 +1962,9 @@ export const CONTENT_SYSTEM = {
   followUpStrategy: FOLLOWUP_STRATEGY,
   followUpCategories: FOLLOWUP_CATEGORIES,
   followUpRoadmap: FOLLOWUP_ROADMAP,
+  // DB 마이그레이션
+  dbMigration: CONTENT_DB_MIGRATION,
+  apiEndpoints: CONTENT_API_ENDPOINTS,
 };
 
 export default CONTENT_SYSTEM;
