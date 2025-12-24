@@ -155,6 +155,11 @@ export interface ChoicePoll {
     text: string;
     emoji?: string;
   }[];
+  /**
+   * 복수 선택 허용 여부
+   * - true: 여러 옵션 선택 가능 (POST 시 optionIds 배열 또는 allowMultiple: true 전달)
+   * - false/undefined: 단일 선택만 (기존 동작)
+   */
   allowMultiple?: boolean;
   tags?: string[];
   meta?: ContentMeta;  // 타겟팅/연령 제한 메타데이터

@@ -7,7 +7,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ALL_KNOWLEDGE_QUIZZES, RABBIT_KNOWLEDGE_QUIZZES, PLANT_KNOWLEDGE_QUIZZES } from '../src/data/content/quizzes';
-import { VS_POLLS } from '../src/data/content/polls';
+import { VS_POLLS, CHOICE_POLLS } from '../src/data/content/polls';
 
 describe('퀴즈 데이터 유효성', () => {
   describe('전체 퀴즈 검증', () => {
@@ -197,5 +197,68 @@ describe('콘텐츠 분포', () => {
 
   it('총 투표 수가 25개 이상이어야 함', () => {
     expect(VS_POLLS.length).toBeGreaterThanOrEqual(25);
+  });
+});
+
+describe('Choice Poll 데이터 유효성', () => {
+  describe('전체 Choice Poll 검증', () => {
+    it('모든 투표에 필수 필드가 있어야 함', () => {
+      CHOICE_POLLS.forEach(poll => {
+        expect(poll.id).toBeDefined();
+        expect(poll.category).toBeDefined();
+        expect(poll.question).toBeDefined();
+        expect(poll.options).toBeDefined();
+        expect(poll.options.length).toBeGreaterThanOrEqual(2);
+      });
+    });
+
+    it('각 옵션에 id와 text가 있어야 함', () => {
+      CHOICE_POLLS.forEach(poll => {
+        poll.options.forEach(option => {
+          expect(option.id).toBeDefined();
+          expect(option.text).toBeDefined();
+        });
+      });
+    });
+
+    it('옵션 id가 a~h 범위 내에 있어야 함', () => {
+      const validIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      CHOICE_POLLS.forEach(poll => {
+        poll.options.forEach(option => {
+          expect(validIds).toContain(option.id);
+        });
+      });
+    });
+
+    it('옵션 id가 poll 내에서 고유해야 함', () => {
+      CHOICE_POLLS.forEach(poll => {
+        const optionIds = poll.options.map(o => o.id);
+        const uniqueIds = [...new Set(optionIds)];
+        expect(optionIds.length).toBe(uniqueIds.length);
+      });
+    });
+
+    it('투표 ID가 고유해야 함', () => {
+      const ids = CHOICE_POLLS.map(p => p.id);
+      const uniqueIds = [...new Set(ids)];
+      expect(ids.length).toBe(uniqueIds.length);
+    });
+
+    it('옵션 개수가 2~8개 범위여야 함', () => {
+      CHOICE_POLLS.forEach(poll => {
+        expect(poll.options.length).toBeGreaterThanOrEqual(2);
+        expect(poll.options.length).toBeLessThanOrEqual(8);
+      });
+    });
+  });
+
+  describe('allowMultiple 필드 검증', () => {
+    it('allowMultiple은 boolean이거나 undefined여야 함', () => {
+      CHOICE_POLLS.forEach(poll => {
+        if (poll.allowMultiple !== undefined) {
+          expect(typeof poll.allowMultiple).toBe('boolean');
+        }
+      });
+    });
   });
 });

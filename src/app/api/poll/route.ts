@@ -92,24 +92,84 @@ export async function POST(request: NextRequest) {
     }
 
     // 기존: 투표 응답 저장
-    const { deviceId, pollId, optionId } = body;
+    // optionIds: 복수 선택 (allowMultiple), optionId: 단일 선택 (하위 호환)
+    const { deviceId, pollId, optionId, optionIds, allowMultiple } = body;
 
-    if (!deviceId || !pollId || !optionId) {
+    if (!deviceId || !pollId) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: deviceId, pollId' },
         { status: 400 }
       );
     }
 
-    // UPSERT: 기존 투표가 있으면 무시
-    await query(
-      `INSERT INTO poll_responses (device_id, poll_id, option_id)
-       VALUES (?, ?, ?)
-       ON CONFLICT(device_id, poll_id) DO NOTHING`,
-      [deviceId, pollId, optionId]
-    );
+    // optionId 또는 optionIds 중 하나는 필수
+    const selectedOptions: string[] = optionIds
+      ? (Array.isArray(optionIds) ? optionIds : [optionIds])
+      : (optionId ? [optionId] : []);
 
-    return NextResponse.json({ success: true });
+    if (selectedOptions.length === 0) {
+      return NextResponse.json(
+        { error: 'Missing required field: optionId or optionIds' },
+        { status: 400 }
+      );
+    }
+
+    // optionId 검증: pollId prefix로 타입 자동 추론 (클라이언트 입력에 의존하지 않음)
+    const validVsOptions = ['a', 'b'];
+    const validChoiceOptions = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+    // pollId가 'choice-'로 시작하면 Choice Poll
+    const isChoicePoll = pollId.startsWith('choice-');
+    const validOptions = isChoicePoll ? validChoiceOptions : validVsOptions;
+
+    // 모든 선택된 옵션 검증
+    for (const opt of selectedOptions) {
+      if (!validOptions.includes(opt)) {
+        return NextResponse.json(
+          { error: `Invalid optionId '${opt}' for ${isChoicePoll ? 'choice' : 'vs'} poll. Must be one of: ${validOptions.join(', ')}` },
+          { status: 400 }
+        );
+      }
+    }
+
+    // VS Poll은 항상 단일 선택
+    if (!isChoicePoll && selectedOptions.length > 1) {
+      return NextResponse.json(
+        { error: 'VS poll only allows single option selection' },
+        { status: 400 }
+      );
+    }
+
+    // allowMultiple이 아닌 경우 기존 투표 확인 후 차단
+    if (!allowMultiple) {
+      const existingVote = await query(
+        `SELECT option_id FROM poll_responses WHERE device_id = ? AND poll_id = ? LIMIT 1`,
+        [deviceId, pollId]
+      );
+      if (existingVote.rows.length > 0) {
+        return NextResponse.json({
+          success: false,
+          error: 'Already voted',
+          existingVote: existingVote.rows[0].option_id,
+        });
+      }
+    }
+
+    // 투표 저장 (각 옵션별로)
+    // UNIQUE(device_id, poll_id, option_id)로 같은 옵션 중복 방지
+    for (const opt of selectedOptions) {
+      await query(
+        `INSERT INTO poll_responses (device_id, poll_id, option_id)
+         VALUES (?, ?, ?)
+         ON CONFLICT(device_id, poll_id, option_id) DO NOTHING`,
+        [deviceId, pollId, opt]
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      savedOptions: selectedOptions,
+    });
   } catch (error) {
     console.error('[Poll API] POST error:', error);
     return NextResponse.json(
@@ -253,39 +313,61 @@ export async function GET(request: NextRequest) {
 
     // Choice Poll (다중 선택: a, b, c, d, e...)
     if (pollType === 'choice') {
-      // 옵션 개수 파라미터 (기본 5개: a~e)
-      const optionCount = parseInt(request.nextUrl.searchParams.get('optionCount') || '5');
+      // 옵션 개수 파라미터 (기본 5개: a~e, 최소 2개, 최대 8개)
+      const optionCountParam = parseInt(request.nextUrl.searchParams.get('optionCount') || '5');
+      const optionCount = Number.isNaN(optionCountParam)
+        ? 5  // NaN이면 기본값 5
+        : Math.max(2, Math.min(8, optionCountParam));  // 2~8 범위로 제한
       const allOptionIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].slice(0, optionCount);
 
-      // 퍼센트 계산 (반올림 오차 보정)
-      let remainingPercent = 100;
-      const options = allOptionIds.map((optionId, idx) => {
+      // 퍼센트 계산 (Largest Remainder Method - 합계 정확히 100% 보장)
+      const rawPercentages = allOptionIds.map(optionId => {
         const count = optionMap.get(optionId) ?? 0;
-        let percentage: number;
-
-        if (totalVotes === 0) {
-          percentage = 0;
-        } else if (idx === allOptionIds.length - 1) {
-          // 마지막 옵션은 남은 퍼센트 할당 (합계 100% 보장)
-          percentage = Math.max(0, remainingPercent);
-        } else {
-          percentage = Math.round((count / totalVotes) * 100);
-          remainingPercent -= percentage;
-        }
-
-        return { optionId, count, percentage };
+        return {
+          optionId,
+          count,
+          raw: totalVotes > 0 ? (count / totalVotes) * 100 : 0,
+        };
       });
 
-      // 현재 사용자 투표 여부 확인
-      let userVote: string | null = null;
+      // 1단계: 각각 floor 적용
+      const floored = rawPercentages.map(p => ({
+        ...p,
+        percentage: Math.floor(p.raw),
+        remainder: p.raw - Math.floor(p.raw),
+      }));
+
+      // 2단계: 부족분 계산 후 remainder가 큰 순서대로 +1
+      const floorSum = floored.reduce((sum, p) => sum + p.percentage, 0);
+      const shortage = totalVotes > 0 ? 100 - floorSum : 0;
+
+      // remainder 큰 순서로 정렬 (원본 인덱스 유지)
+      const sortedByRemainder = floored
+        .map((p, idx) => ({ ...p, originalIdx: idx }))
+        .sort((a, b) => b.remainder - a.remainder);
+
+      // 상위 shortage개에 +1
+      for (let i = 0; i < shortage; i++) {
+        sortedByRemainder[i].percentage += 1;
+      }
+
+      // 원래 순서로 복원
+      sortedByRemainder.sort((a, b) => a.originalIdx - b.originalIdx);
+
+      const options = sortedByRemainder.map(p => ({
+        optionId: p.optionId,
+        count: p.count,
+        percentage: p.percentage,
+      }));
+
+      // 현재 사용자 투표 여부 확인 (복수 선택 지원)
+      let userVotes: string[] = [];
       if (deviceId) {
         const userVoteResult = await query(
           `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ?`,
           [pollId, deviceId]
         );
-        if (userVoteResult.rows.length > 0) {
-          userVote = userVoteResult.rows[0].option_id as string;
-        }
+        userVotes = userVoteResult.rows.map(row => row.option_id as string);
       }
 
       return NextResponse.json({
@@ -293,7 +375,8 @@ export async function GET(request: NextRequest) {
         pollType: 'choice',
         totalVotes,
         options,
-        userVote,
+        userVotes,  // 복수 선택: 배열로 반환
+        userVote: userVotes[0] ?? null,  // 하위 호환: 첫 번째 투표
       });
     }
 
