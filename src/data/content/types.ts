@@ -1,4 +1,30 @@
 // ============================================================================
+// 팩트 참조 타입
+// ============================================================================
+
+/**
+ * 팩트 필요 카테고리 (수의학/식물학/식품 등 정확도 필요)
+ */
+export type FactRequiredCategory =
+  | 'cat' | 'dog' | 'rabbit' | 'hamster'  // 반려동물
+  | 'plant'                                // 식물
+  | 'coffee' | 'alcohol';                  // 식품/음료
+
+/**
+ * 팩트 ID 패턴: {category}-fact-{번호}
+ * 예: cat-fact-001, dog-fact-002, plant-fact-003
+ */
+export type FactId = `${FactRequiredCategory}-fact-${string}`;
+
+/**
+ * 팩트 참조 정보
+ */
+export interface FactReference {
+  factId: FactId;           // 팩트 ID
+  verifiedDate?: string;    // 검증일 (YYYY-MM-DD)
+}
+
+// ============================================================================
 // 콘텐츠 카테고리 통합 타입
 // ============================================================================
 
@@ -89,9 +115,10 @@ export interface KnowledgeQuiz {
   }[];
   explanation: string;
   difficulty: 1 | 2 | 3;
-  source?: string;
-  tags?: string[];  // 개인화 추천용 태그
-  meta?: ContentMeta;  // 타겟팅/연령 제한 메타데이터
+  source?: string;              // 레거시: 일반 출처 문자열
+  factRef?: FactReference;      // 신규: 팩트 DB 참조 (정확도 필요 콘텐츠)
+  tags?: string[];              // 개인화 추천용 태그
+  meta?: ContentMeta;           // 타겟팅/연령 제한 메타데이터
 }
 
 // ============================================================================

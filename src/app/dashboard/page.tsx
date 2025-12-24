@@ -75,6 +75,7 @@ import FirstMoverStrategy from './components/FirstMoverStrategy';
 import AutomationSystem from './components/AutomationSystem';
 import GlobalExpansion from './components/GlobalExpansion';
 import DemographicTester from './components/DemographicTester';
+import FactManager from './components/FactManager';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -181,6 +182,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'automation', label: '자동화', icon: <Zap className="w-4 h-4" /> },
+      { key: 'facts', label: '팩트 DB', icon: <FileText className="w-4 h-4" /> },
       { key: 'demographicTest', label: '연령 테스터', icon: <User className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
@@ -478,6 +480,7 @@ export default function DashboardPage() {
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'automation' && <AutomationSystem />}
+          {activeCategory === 'devtools' && activeSubTab === 'facts' && <FactManager />}
           {activeCategory === 'devtools' && activeSubTab === 'demographicTest' && <DemographicTester />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}

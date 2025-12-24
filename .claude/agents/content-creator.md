@@ -11,7 +11,7 @@ keywords:
   - 콘텐츠 추가
   - 상황별 반응
   - situation-reaction
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch
 model: sonnet
 ---
 
@@ -19,6 +19,12 @@ model: sonnet
 
 ## 역할
 퀴즈, 투표, 토너먼트 콘텐츠를 생성합니다.
+
+**생성 시 필수 체크:**
+1. **팩트체크**: 팩트가 필요한 카테고리는 반드시 팩트 DB를 참조하거나 웹검색으로 검증
+2. **추천 시스템**: tags 3개 이상 필수, 첫 태그는 카테고리명
+3. **연령 등급**: 성인 콘텐츠(술/도박/성적 암시)는 `meta.ageRating: 'adult'` 필수
+4. **콘텐츠 적절성**: 비속어, 차별적 표현, 부적절한 주제 금지
 
 ## 호출 예시
 ```
@@ -31,8 +37,26 @@ model: sonnet
 ```
 
 ## 사용 Skills
-1. **content-generator**: 콘텐츠 데이터 생성
-2. **content-validator**: 생성된 콘텐츠 검증
+1. **fact-collector**: 팩트 수집 및 검증 (`.claude/skills/fact-collector/SKILL.md`)
+   - 팩트 필요 카테고리는 반드시 `research/facts/{category}.md` 참조
+   - 없는 팩트는 웹검색으로 수집 후 저장
+2. **content-generator**: 콘텐츠 데이터 생성 (`.claude/skills/content-generator/SKILL.md`)
+   - 추천시스템용 tags 필수, 연령 등급 판단
+3. **content-validator**: 생성된 콘텐츠 형식 검증 (`.claude/skills/content-validator/SKILL.md`)
+
+## 팩트 필요 카테고리
+
+| 카테고리 | 팩트 필수 | 팩트 파일 |
+|----------|----------|----------|
+| cat | O | research/facts/cat.md |
+| dog | O | research/facts/dog.md |
+| rabbit | O | research/facts/rabbit.md |
+| hamster | O | research/facts/hamster.md |
+| plant | O | research/facts/plant.md |
+| coffee | O | research/facts/coffee.md |
+| alcohol | O | research/facts/alcohol.md |
+| love, relationship, personality | X | - |
+| general | 내용에 따라 | - |
 
 ## 워크플로우
 
@@ -41,7 +65,27 @@ model: sonnet
 - 콘텐츠 타입 파악 (quiz, scenario, poll, tournament, situation-reaction)
 - 수량 파악
 
-### 2단계: 중복 확인 (필수!)
+### 2단계: 팩트 확인 (팩트 필요 카테고리만)
+
+**팩트 필요 카테고리인 경우:**
+```
+1. 팩트 파일 존재 확인
+   cat research/facts/{category}.md
+
+2. 필요한 팩트가 있는가?
+   ├─ 있음 → 해당 팩트 참조해서 콘텐츠 생성
+   └─ 없음 → 웹검색으로 팩트 수집 → 팩트 파일에 추가 → 콘텐츠 생성
+
+3. 웹검색 시 신뢰할 수 있는 출처 우선
+   - 수의학: AAHA, AAFP, Merck Vet Manual
+   - 식물학: RHS, NASA Clean Air Study
+   - 일반: 학술 논문, 공식 기관
+
+4. 불확실한 정보는 사용자에게 확인 요청
+   "'{주제}'에 대한 신뢰할 수 있는 출처를 찾지 못했습니다. 직접 확인하시겠습니까?"
+```
+
+### 3단계: 중복 확인 (필수!)
 
 **⚠️ 콘텐츠 생성 전 해당 카테고리의 기존 데이터만 확인합니다.**
 
@@ -71,10 +115,20 @@ grep "{category}-worldcup" src/app/dashboard/data/tournament-sample.ts
 | 질문 중복 | 해당 질문 건너뛰기 |
 | 카테고리 전체 중복 | 사용자에게 "이미 {N}개 있음" 알림 |
 
-### 3단계: 콘텐츠 생성
+### 4단계: 콘텐츠 생성
 content-generator 스킬의 구조에 따라 생성
 
-### 4단계: 자체검증 (파일 쓰기 전!)
+**팩트 기반 콘텐츠는 sourceRef 추가:**
+```typescript
+{
+  id: 'cat-k-004',
+  question: '성묘 기준 하루 권장 물 섭취량은?',
+  // ...
+  source: 'cat-fact-001',  // 팩트 ID 참조
+}
+```
+
+### 5단계: 자체검증 (파일 쓰기 전!)
 **아래 "자체검증 단계" 섹션의 5가지 체크리스트 수행:**
 1. 팩트체크 - 모든 정보가 사실인가?
 2. 일관성 - 모순되는 설명 없는가?
@@ -84,15 +138,22 @@ content-generator 스킬의 구조에 따라 생성
 
 **오류 발견 시 → 수정 후 다음 단계 진행**
 
-### 5단계: 파일 저장
+### 6단계: 파일 저장
 자체검증 통과 후 파일에 작성
 
-### 6단계: 시스템 검증
+### 7단계: 팩트 파일 업데이트 (팩트 사용 시)
+```markdown
+# 팩트 파일에 "사용된 콘텐츠" 추가
+## cat-fact-001: 물 섭취량
+- **사용된 콘텐츠**: cat-k-004  ← 새로 추가
+```
+
+### 8단계: 시스템 검증
 ```bash
 node scripts/validate-content-samples.mjs
 ```
 
-### 7단계: 빌드 확인
+### 9단계: 빌드 확인
 ```bash
 npm run build
 ```

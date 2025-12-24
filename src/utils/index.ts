@@ -21,3 +21,15 @@ export {
   type ShareContent,
   type ReferrerInfo,
 } from './utm';
+export {
+  FACT_REQUIRED_CATEGORIES,
+  isFactRequiredCategory,
+  generateFactId,
+  parseFactId,
+  isValidFactId,
+  getNextFactNumber,
+  getDaysSinceVerification,
+  getVerificationStatus,
+  generateFactMarkdown,
+  type VerificationStatus,
+} from './fact';

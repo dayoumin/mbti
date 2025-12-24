@@ -67,6 +67,7 @@ export interface RoadmapPhase {
     details?: string;
   }[];
   deliverables: string[];
+  notes?: string;  // 추가 참고사항 (MVP 관련 등)
 }
 
 // ============================================================================
@@ -905,6 +906,34 @@ export const IMPLEMENTATION_ROADMAP: RoadmapPhase[] = [
       { name: '개인정보 보호 설정', status: 'pending' },
     ],
     deliverables: ['UserProfilingService.ts', '세그먼트 API'],
+  },
+  {
+    phase: 7,
+    title: '추천 시스템 Phase 2: 협업 필터링',
+    status: 'later',
+    description: '사용자 행동 패턴 기반 추천 (유튜브/넷플릭스 스타일)',
+    tasks: [
+      { name: 'Turso DB에 참여 이력 테이블 추가', status: 'pending', details: 'user_content_participation 테이블' },
+      { name: '유사 사용자 군집 알고리즘 구현', status: 'pending', details: '참여 패턴 유사도 계산' },
+      { name: '"이 퀴즈 푼 사람들이 좋아한" 추천', status: 'pending', details: '협업 필터링 로직' },
+      { name: '태그 기반 + 협업 필터링 하이브리드', status: 'pending', details: '70% 태그 + 30% 협업' },
+      { name: '추천 정확도 A/B 테스트', status: 'pending' },
+    ],
+    deliverables: ['CollaborativeFilteringService.ts', '하이브리드 추천 알고리즘'],
+  },
+  {
+    phase: 8,
+    title: '콘텐츠 품질 관리: 사람 검수 프로세스',
+    status: 'later',
+    description: 'AI 생성 콘텐츠의 사람 검수 워크플로우 (MVP 이후, 패턴 안정화 시 검토)',
+    tasks: [
+      { name: '콘텐츠 검수 큐 시스템', status: 'pending', details: 'AI 생성 → 검수 대기 → 승인/반려 상태 관리' },
+      { name: '검수자 대시보드 UI', status: 'pending', details: '팩트체크, 연령등급, 적절성 확인 화면' },
+      { name: '자동 검수 규칙 학습', status: 'pending', details: '검수 결과 패턴 분석 → AI 생성 규칙 개선' },
+      { name: '검수 불필요 콘텐츠 자동 승인', status: 'pending', details: '패턴 안정화 후 저위험 콘텐츠 자동 통과' },
+    ],
+    deliverables: ['ContentReviewService.ts', '검수 대시보드', '자동 승인 규칙'],
+    notes: '⚠️ MVP에서는 AI 자동 검증만 사용. 바이럴 우선이므로 검수로 인한 지연 최소화. 문제 패턴 발견 시 도입 검토.',
   },
 ];
 
