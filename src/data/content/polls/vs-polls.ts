@@ -352,6 +352,141 @@ export const VS_POLLS: VSPoll[] = [
     optionB: { id: 'b', text: '화이트/모던', emoji: '⬜' },
     tags: ['식물', '인테리어'],
   },
+
+  // ==========================================================================
+  // 추가 바이럴/라이프스타일
+  // ==========================================================================
+  {
+    id: 'vs-viral-006',
+    category: 'lifestyle',
+    question: '짜장면 vs 짬뽕?',
+    optionA: { id: 'a', text: '짜장면', emoji: '🍝' },
+    optionB: { id: 'b', text: '짬뽕', emoji: '🍜' },
+    tags: ['음식', '중식'],
+  },
+  {
+    id: 'vs-viral-007',
+    category: 'lifestyle',
+    question: '치킨은?',
+    optionA: { id: 'a', text: '후라이드', emoji: '🍗' },
+    optionB: { id: 'b', text: '양념', emoji: '🔥' },
+    tags: ['음식', '치킨'],
+  },
+  {
+    id: 'vs-viral-008',
+    category: 'lifestyle',
+    question: '라면 끓일 때 물 먼저?',
+    optionA: { id: 'a', text: '물 먼저 끓이고 면', emoji: '💧' },
+    optionB: { id: 'b', text: '면과 물 동시에', emoji: '🍜' },
+    tags: ['음식', '라면'],
+  },
+  {
+    id: 'vs-viral-009',
+    category: 'lifestyle',
+    question: '계란 프라이 익힘 정도?',
+    optionA: { id: 'a', text: '반숙', emoji: '🍳' },
+    optionB: { id: 'b', text: '완숙', emoji: '🥚' },
+    tags: ['음식', '계란'],
+  },
+  {
+    id: 'vs-viral-010',
+    category: 'lifestyle',
+    question: '소주 vs 맥주?',
+    optionA: { id: 'a', text: '소주', emoji: '🍶' },
+    optionB: { id: 'b', text: '맥주', emoji: '🍺' },
+    tags: ['술', '음료'],
+    meta: { minAge: '20s' },  // 단순 선호 비교, isAdultOnly 아님
+  },
+  {
+    id: 'vs-life-006',
+    category: 'lifestyle',
+    question: '쇼핑 스타일은?',
+    optionA: { id: 'a', text: '오프라인 매장', emoji: '🏬' },
+    optionB: { id: 'b', text: '온라인 쇼핑', emoji: '📱' },
+    tags: ['라이프스타일', '쇼핑'],
+  },
+  {
+    id: 'vs-life-007',
+    category: 'lifestyle',
+    question: '여행 스타일은?',
+    optionA: { id: 'a', text: '계획 빡빡하게', emoji: '📋' },
+    optionB: { id: 'b', text: '즉흥 여행', emoji: '🎲' },
+    tags: ['라이프스타일', '여행'],
+  },
+  {
+    id: 'vs-life-008',
+    category: 'lifestyle',
+    question: '운동 시간대는?',
+    optionA: { id: 'a', text: '아침 운동', emoji: '🌅' },
+    optionB: { id: 'b', text: '저녁 운동', emoji: '🌙' },
+    tags: ['라이프스타일', '운동'],
+  },
+  {
+    id: 'vs-life-009',
+    category: 'lifestyle',
+    question: '휴일에 뭐해?',
+    optionA: { id: 'a', text: '밖에 나가기', emoji: '🚗' },
+    optionB: { id: 'b', text: '집에서 쉬기', emoji: '🛋️' },
+    tags: ['라이프스타일', '휴식'],
+  },
+  {
+    id: 'vs-life-010',
+    category: 'lifestyle',
+    question: '영화 볼 때?',
+    optionA: { id: 'a', text: '영화관', emoji: '🎬' },
+    optionB: { id: 'b', text: '넷플릭스/OTT', emoji: '📺' },
+    tags: ['라이프스타일', '영화'],
+  },
+
+  // ==========================================================================
+  // 연령 제한 판단 모호 케이스 (Ambiguous Age Cases)
+  // ==========================================================================
+  {
+    id: 'vs-ambiguous-001',
+    category: 'lifestyle',
+    question: '더 좋아하는 건?',
+    optionA: { id: 'a', text: '커피', emoji: '☕' },
+    optionB: { id: 'b', text: '술', emoji: '🍺' },
+    tags: ['취향', '기호품'],
+    // meta 없음 - 단순 선호도 조사, 섭취 전제 아님
+  },
+  {
+    id: 'vs-ambiguous-002',
+    category: 'love',
+    question: '첫 데이트 비용은?',
+    optionA: { id: 'a', text: '더치페이', emoji: '💰' },
+    optionB: { id: 'b', text: '한 사람이 내기', emoji: '💳' },
+    tags: ['연애', '데이트'],
+    // meta 없음 - 10대도 경험 가능한 일반적 연애 상황
+  },
+  {
+    id: 'vs-ambiguous-003',
+    category: 'lifestyle',
+    question: '야근 후 회식 제안',
+    optionA: { id: 'a', text: '참석한다 (팀워크)', emoji: '🍻' },
+    optionB: { id: 'b', text: '정중히 거절 (휴식)', emoji: '🏠' },
+    tags: ['직장', '회식'],
+    meta: { minAge: '20s' },  // 직장생활 맥락, isAdultOnly 아님
+  },
+  {
+    id: 'vs-ambiguous-004',
+    category: 'lifestyle',
+    question: '한 달 지출 중 더 큰 건?',
+    optionA: { id: 'a', text: 'OTT 구독료', emoji: '📺' },
+    optionB: { id: 'b', text: '술값', emoji: '🍺' },
+    tags: ['소비', '라이프스타일'],
+    meta: { minAge: '20s' },
+    // meta 있음 (minAge만) - 술 소비 비교이지만 강제 성인 전용은 아님
+  },
+  {
+    id: 'vs-ambiguous-005',
+    category: 'love',
+    question: '하루 종일 연락 없는 연인',
+    optionA: { id: 'a', text: '먼저 연락한다', emoji: '📱' },
+    optionB: { id: 'b', text: '연락 올 때까지 기다린다', emoji: '⏳' },
+    tags: ['연애', '연락'],
+    // meta 없음 - 10대도 경험하는 보편적 연애 고민
+  },
 ];
 
 export default VS_POLLS;

@@ -73,6 +73,7 @@ import BusinessStrategy from './components/BusinessStrategy';
 import OperationsSystem from './components/OperationsSystem';
 import FirstMoverStrategy from './components/FirstMoverStrategy';
 import AutomationSystem from './components/AutomationSystem';
+import ContentReview from './components/ContentReview';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -474,6 +475,7 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'automation' && <AutomationSystem />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
+          {activeCategory === 'devtools' && activeSubTab === 'contentReview' && <ContentReview />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
           {/* 참고 */}

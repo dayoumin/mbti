@@ -64,5 +64,6 @@ export const WORK_REACTIONS: SituationReaction[] = [
       'ENTP': 'd',
     },
     tags: ['직장', '회식', '술자리'],
+    meta: { minAge: '20s' },  // 직장생활 맥락, isAdultOnly 아님
   },
 ];

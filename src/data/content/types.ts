@@ -11,6 +11,8 @@ export type ContentCategory =
   | 'plant' | 'coffee' | 'lifestyle' | 'alcohol'
   // 심리/관계
   | 'personality' | 'love' | 'relationship'
+  // 운세/점술
+  | 'fortune' | 'zodiac' | 'tarot'
   // 일반
   | 'general';
 
@@ -27,6 +29,15 @@ import type { AgeGroup, Gender } from '@/services/DemographicService';
 export type { AgeGroup, Gender };
 
 /**
+ * 콘텐츠 검수 상태
+ * - pending: 검수 대기 (노출 안됨)
+ * - approved: 승인됨 (노출됨)
+ * - rejected: 거부됨 (노출 안됨)
+ * - 없으면 기본값은 approved (기존 콘텐츠 호환)
+ */
+export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+
+/**
  * 콘텐츠 메타데이터 - 퀴즈, 투표, 테스트 생성 시 포함
  */
 export interface ContentMeta {
@@ -39,8 +50,12 @@ export interface ContentMeta {
   targetAges?: AgeGroup[];     // 타겟 연령대 (예: ['20s', '30s'])
 
   // 콘텐츠 속성
-  isAdultOnly?: boolean;       // 성인 전용 (술 등)
+  isAdultOnly?: boolean;       // 성인 전용 (19금 콘텐츠만)
   isSensitive?: boolean;       // 민감한 주제 (정치, 종교 등 - 필터링용)
+
+  // 검수 상태
+  reviewStatus?: ReviewStatus; // 검수 상태 (없으면 approved)
+  reviewNote?: string;         // 검수 메모
 
   // 추천/노출 가중치
   priority?: number;           // 우선순위 (높을수록 먼저 노출, 기본 0)
@@ -179,6 +194,83 @@ export interface SituationReaction {
 export type QuizContent = KnowledgeQuiz | ScenarioQuiz;
 export type PollContent = VSPoll | ChoicePoll | SituationReaction;
 
+// ============================================================================
+// 운세 콘텐츠 (Fortune Content)
+// ============================================================================
+
+export type ZodiacSign =
+  | 'rat' | 'ox' | 'tiger' | 'rabbit' | 'dragon' | 'snake'
+  | 'horse' | 'goat' | 'monkey' | 'rooster' | 'dog' | 'pig';
+
+export type Constellation =
+  | 'aries' | 'taurus' | 'gemini' | 'cancer' | 'leo' | 'virgo'
+  | 'libra' | 'scorpio' | 'sagittarius' | 'capricorn' | 'aquarius' | 'pisces';
+
+/**
+ * 12지신 띠별 운세
+ */
+export interface ZodiacFortune {
+  id: string;
+  sign: ZodiacSign;
+  name: string;           // 한글명 (쥐, 소, 호랑이...)
+  emoji: string;
+  years: number[];        // 해당 띠 연도 (예: [1996, 2008, 2020])
+
+  // 2025년 을사년 운세
+  yearly: {
+    year: number;         // 2025
+    theme: string;        // 핵심 테마 (예: "은밀한 성장")
+    message: string;      // 운세 메시지
+    keywords: string[];   // 키워드 3개
+    luckyColor?: string;
+    luckyNumber?: number;
+  };
+
+  // 기본 성격 (투표/퀴즈용)
+  personality: {
+    traits: string[];     // 성격 키워드 3-5개
+    strengths: string[];  // 장점 2-3개
+    growth: string[];     // 성장 포인트 2-3개 (부정표현 X)
+  };
+
+  meta?: ContentMeta;
+}
+
+/**
+ * 별자리 투표 게임
+ */
+export interface ZodiacPoll {
+  id: string;
+  type: 'zodiac-poll';
+  category: 'zodiac';
+  question: string;       // "좀비 아포칼립스에서 살아남을 별자리는?"
+  scenario?: string;      // 상황 설명 (선택)
+  options: {
+    id: string;
+    sign: Constellation | ZodiacSign;
+    text: string;         // "전갈자리 (독종)"
+    emoji: string;
+    reason?: string;      // 왜 이 별자리인지 (결과 해설용)
+  }[];
+  explanation?: string;   // 결과 후 점성학적 해설
+  tags?: string[];
+  meta?: ContentMeta;
+}
+
+/**
+ * 오늘의 운세 메시지 템플릿
+ */
+export interface DailyFortuneMessage {
+  id: string;
+  category: 'general' | 'love' | 'money' | 'work' | 'health';
+  tone: 'positive' | 'cautious' | 'encouraging';
+  message: string;
+  advice?: string;
+  luckyItem?: string;
+}
+
+export type FortuneContent = ZodiacFortune | ZodiacPoll | DailyFortuneMessage;
+
 // 메타데이터가 있는 콘텐츠 타입
 export type ContentWithMeta = { meta?: ContentMeta };
 
@@ -248,15 +340,28 @@ export function isContentTargeted<T extends ContentWithMeta>(
 }
 
 /**
+ * 콘텐츠가 검수 승인되었는지 확인
+ * - reviewStatus 없으면 기본값 approved (기존 콘텐츠 호환)
+ */
+export function isContentApproved<T extends ContentWithMeta>(content: T): boolean {
+  const status = content.meta?.reviewStatus;
+  // undefined = approved (기존 콘텐츠 호환)
+  return status === undefined || status === 'approved';
+}
+
+/**
  * 콘텐츠 목록을 연령/성별 기준으로 필터링
  */
 export function filterContentByDemographic<T extends ContentWithMeta>(
   contents: T[],
   ageGroup?: AgeGroup,
   gender?: Gender,
-  options?: { includeNonTargeted?: boolean }
+  options?: { includeNonTargeted?: boolean; includePending?: boolean }
 ): T[] {
   return contents.filter(content => {
+    // 0. 검수 상태 체크 (기본: 승인된 콘텐츠만)
+    if (!options?.includePending && !isContentApproved(content)) return false;
+
     // 1. 연령 제한 체크 (필수)
     if (!isContentAllowedForAge(content, ageGroup)) return false;
 
@@ -271,6 +376,13 @@ export function filterContentByDemographic<T extends ContentWithMeta>(
 
     return true;
   });
+}
+
+/**
+ * 검수 대기 중인 콘텐츠 필터
+ */
+export function filterPendingContent<T extends ContentWithMeta>(contents: T[]): T[] {
+  return contents.filter(content => content.meta?.reviewStatus === 'pending');
 }
 
 /**

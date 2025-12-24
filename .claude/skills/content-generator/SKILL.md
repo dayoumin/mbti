@@ -241,14 +241,74 @@ node scripts/validate-content-samples.mjs
 | 타입 | 파일 위치 |
 |-----|----------|
 | 퀴즈 | `src/data/content/quizzes/{category}.ts` |
-| 투표 | `src/data/content/polls/{category}.ts` |
-| 상황별 반응 | `src/data/content/situation-reactions/{category}.ts` (미구현) |
+| 투표 | `src/data/content/polls/vs-polls.ts`, `choice-polls.ts` |
+| 상황별 반응 | `src/data/content/situation-reactions/{category}.ts` |
 
 ### 대시보드 샘플용 (문서화/검증용)
 | 타입 | 파일 위치 |
 |-----|----------|
 | 샘플 | `src/app/dashboard/data/content-samples.ts` |
 | 토너먼트 샘플 | `src/app/dashboard/data/tournament-sample.ts` |
+
+## 검수 상태 설정 (중요!)
+
+**모호한 연령 제한이 필요한 콘텐츠는 검수 대기 상태로 생성:**
+
+```typescript
+{
+  meta: {
+    reviewStatus: 'pending',  // 검수 대기 (노출 안됨)
+  }
+}
+```
+
+| 상황 | reviewStatus | 노출 |
+|------|-------------|------|
+| 명확한 콘텐츠 | 생략 (자동 approved) | 즉시 |
+| 연령 제한 모호 | `'pending'` | 인간 검수 후 |
+| 명확한 19금 | `'approved'` + `isAdultOnly` | 즉시 (성인만) |
+
+## 연령 제한 설정 (ContentMeta)
+
+콘텐츠 생성 시 연령 제한이 필요하면 `meta` 필드 추가:
+
+```typescript
+{
+  // 콘텐츠 데이터...
+  meta: {
+    reviewStatus: 'pending',     // 모호한 경우 검수 대기
+    isAdultOnly: true,           // 성인 전용 (19금만)
+    minAge: '20s',               // 최소 연령 ('10s' | '20s' | '30s' | '40s+')
+    allowedAges: ['20s', '30s'], // 허용 연령 목록
+    isSensitive: true,           // 민감 주제
+  }
+}
+```
+
+**⚠️ 내용 기반 판단 (키워드 매칭 아님)**
+- 콘텐츠의 실제 맥락과 의도를 파악하여 설정
+- 단순 키워드 포함 여부로 판단하지 않음
+
+**isAdultOnly 적용 기준 (엄격함):**
+✅ 적용해야 함:
+- 성적 내용, 야한 농담
+- 부부 관계, 19금 주제
+- 음주 행동/상태 묘사 ("취하면...", "술에 취해서...")
+
+❌ 적용하지 않음:
+- 소주 vs 맥주 (단순 선호 비교)
+- 회식 참석 여부 (직장 상황)
+- 술값 지출 비교 (소비 패턴)
+
+**minAge 적용 기준:**
+- 음주 관련 선호 → `minAge: '20s'`
+- 직장/회식 맥락 → `minAge: '20s'`
+- 연애/결혼 주제 → `minAge: '20s'`
+
+**판단 기준 요약:**
+- 19금 콘텐츠인가? → `isAdultOnly: true`
+- 20대 이상만 공감 가능한가? → `minAge: '20s'`
+- 논쟁적이거나 불편할 수 있는가? → `isSensitive`
 
 ## 품질 체크리스트
 
@@ -257,6 +317,7 @@ node scripts/validate-content-samples.mjs
 - [ ] category 유효
 - [ ] 필수 필드 모두 있음
 - [ ] 빌드 에러 없음
+- [ ] 연령 제한 필요 시 meta 설정
 
 ### 퀴즈
 - [ ] 정답 1개만 isCorrect: true
