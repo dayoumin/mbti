@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     for (const opt of selectedOptions) {
       if (!validOptions.includes(opt)) {
         return NextResponse.json(
-          { error: `Invalid optionId '${opt}' for ${isChoicePoll ? 'choice' : 'vs'} poll. Must be one of: ${validOptions.join(', ')}` },
+          { error: `Invalid optionId: ${opt}` },
           { status: 400 }
         );
       }
@@ -288,8 +288,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // pollType 파라미터: 'vs' (기본) 또는 'choice' (다중 선택)
-    const pollType = request.nextUrl.searchParams.get('type') || 'vs';
+    // pollType: pollId prefix로 자동 추론 (클라이언트 파라미터 불필요)
+    // 하위 호환: type 파라미터도 지원
+    const typeParam = request.nextUrl.searchParams.get('type');
+    const pollType = pollId.startsWith('choice-') ? 'choice' : (typeParam || 'vs');
     const deviceId = request.nextUrl.searchParams.get('deviceId');
 
     const result = await query(

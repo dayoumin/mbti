@@ -417,9 +417,10 @@ function renderChoicePollCard(
   optionsJson: string
 ) {
   // options: [{text, emoji, percent}]
+  // 주의: searchParams.get()이 이미 URL 디코딩을 수행하므로 decodeURIComponent 불필요
   let options: { text: string; emoji: string; percent: number }[] = [];
   try {
-    options = optionsJson ? JSON.parse(decodeURIComponent(optionsJson)) : [];
+    options = optionsJson ? JSON.parse(optionsJson) : [];
   } catch {
     options = [];
   }

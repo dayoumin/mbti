@@ -2,14 +2,27 @@
 // 운세 콘텐츠 통합 export
 // ============================================================================
 
-// 12지신 2025년 운세
+// 12지신 운세 (연도 자동 계산)
 export {
-  ZODIAC_FORTUNES_2025,
-  ZODIAC_2025_THEME,
+  ZODIAC_FORTUNES,
+  ZODIAC_THEME,
+  ZODIAC_PERSONALITIES,
+  getYearInfo,
+  getCurrentYearInfo,
+  getCurrentYearTheme,
+  getZodiacSign,
+  getZodiacFortune,
+  getAllZodiacFortunes,
+  getYearlyFortune,
+  // 하위 호환성
   getZodiacFortuneBySign,
   getZodiacByBirthYear,
   calculateZodiacSign,
-} from './zodiac-2025';
+} from './zodiac';
+
+// 하위 호환성: 기존 ZODIAC_FORTUNES_2025, ZODIAC_2025_THEME 유지
+export { ZODIAC_FORTUNES as ZODIAC_FORTUNES_2025 } from './zodiac';
+export { ZODIAC_THEME as ZODIAC_2025_THEME } from './zodiac';
 
 // 별자리/띠 투표 게임
 export { ZODIAC_POLLS } from './zodiac-polls';
