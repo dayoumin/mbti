@@ -150,6 +150,17 @@ export const TARGET_LANGUAGES: Language[] = [
     reason: '세계 5위 인구, SNS 활성도 높음',
     challenges: ['브라질/포르투갈 차이', '시간대'],
   },
+  {
+    code: 'hi',
+    name: 'Hindi',
+    nativeName: 'हिन्दी',
+    priority: 'low',
+    market: '인도',
+    population: '14억+',
+    internetUsers: '9억+',
+    reason: '세계 최대 인구, 젊은 층 많음, 영어 병행 가능',
+    challenges: ['힌디어 폰트/렌더링', '다양한 지역 언어', '인프라 격차', '낮은 CPM'],
+  },
 ];
 
 // ============================================================================
@@ -293,7 +304,7 @@ export const TRANSLATION_STRATEGY = {
     },
     {
       tier: 'Basic',
-      languages: ['es', 'pt-BR'],
+      languages: ['es', 'pt-BR', 'hi'],
       method: 'AI 번역 (자동)',
       cost: 'Low',
       reason: '테스트 시장, 반응 보고 투자',
@@ -509,6 +520,59 @@ export const GLOBAL_PHASES: GlobalPhase[] = [
       '현지 바이럴 발생',
     ],
   },
+  {
+    id: 'phase-5',
+    title: 'Phase 5: 중남미 & 인도 확장',
+    description: '볼륨 시장 공략 (성공 시)',
+    goals: [
+      '스페인어/포르투갈어/힌디어 지원',
+      '중남미 K-pop 팬덤 활용',
+      '인도 영어+힌디어 이중 전략',
+    ],
+    tasks: [
+      {
+        id: 'latam-translations',
+        name: '중남미 2개국 번역',
+        description: '스페인어, 포르투갈어(브라질) 번역',
+        priority: 'high',
+        status: 'planned',
+        category: 'content',
+        effort: 'large',
+      },
+      {
+        id: 'india-strategy',
+        name: '인도 시장 진입',
+        description: '영어+힌디어 병행, 인도 특화 테스트 검토',
+        priority: 'medium',
+        status: 'planned',
+        category: 'content',
+        effort: 'large',
+      },
+      {
+        id: 'kpop-collab',
+        name: 'K-pop 팬덤 마케팅',
+        description: '중남미 K-pop 커뮤니티 협업',
+        priority: 'medium',
+        status: 'planned',
+        category: 'marketing',
+        effort: 'medium',
+      },
+      {
+        id: 'timezone-optimization',
+        name: '시간대별 콘텐츠 최적화',
+        description: '중남미/인도 시간대 맞춤 SNS 운영',
+        priority: 'low',
+        status: 'planned',
+        category: 'marketing',
+        effort: 'small',
+      },
+    ],
+    successMetrics: [
+      '중남미 사용자 15,000명',
+      '인도 사용자 20,000명',
+      '해외 비율 50% 달성',
+    ],
+  },
 ];
 
 // ============================================================================
@@ -547,6 +611,22 @@ export const MARKET_STRATEGIES: MarketStrategy[] = [
     contentStrategy: '한류 연계, 감성적 접근, K-테스트 브랜딩',
     challenges: ['중국어 변형 관리', '정치적 민감성'],
     opportunities: ['한류 팬덤', '높은 참여도', '지리적 근접성'],
+  },
+  {
+    region: '중남미 (스페인어권/브라질)',
+    languages: ['es', 'pt-BR'],
+    platforms: ['TikTok', 'Instagram', 'Twitter/X'],
+    contentStrategy: 'K-pop 팬덤 공략, 라틴 감성 현지화, 친근한 톤',
+    challenges: ['스페인/중남미 표현 차이', '시간대 분산', '낮은 CPM'],
+    opportunities: ['K-pop 팬덤 강력', '젊은 인구', '바이럴 문화'],
+  },
+  {
+    region: '인도',
+    languages: ['en', 'hi'],
+    platforms: ['Instagram', 'YouTube', 'WhatsApp'],
+    contentStrategy: '영어 우선 + 힌디어 병행, 볼리우드/크리켓 문화 반영',
+    challenges: ['지역 언어 다양성', '인프라 격차', '매우 낮은 CPM'],
+    opportunities: ['세계 최대 인구', '젊은 층 폭발적', 'K-drama 인기 상승'],
   },
 ];
 
@@ -593,6 +673,79 @@ export const TRANSLATION_WORKFLOW = {
 };
 
 // ============================================================================
+// 한류 마케팅 전략
+// ============================================================================
+
+export const HALLYU_MARKETING = {
+  overview: '한류(K-content) 팬덤을 활용한 글로벌 마케팅 전략',
+
+  targetFandoms: [
+    {
+      type: 'K-pop',
+      reach: '전세계 1억+ 팬',
+      regions: ['동남아', '중남미', '유럽', '북미'],
+      strategy: 'MBTI/성격 테스트와 아이돌 연결, 팬덤 공유 유도',
+      examples: ['아이돌 MBTI 맞히기', '나와 닮은 아이돌 찾기', '팬덤 성향 테스트'],
+    },
+    {
+      type: 'K-drama',
+      reach: 'Netflix 등 OTT 통해 급성장',
+      regions: ['일본', '동남아', '인도', '중동'],
+      strategy: '드라마 캐릭터 성격 테스트, 트렌드 활용',
+      examples: ['드라마 캐릭터 테스트', '로맨스 성향 테스트'],
+    },
+    {
+      type: 'K-beauty/Fashion',
+      reach: '글로벌 뷰티 트렌드 주도',
+      regions: ['동남아', '미국', '유럽'],
+      strategy: '뷰티 성향, 스타일 테스트 연계',
+      examples: ['퍼스널컬러 테스트', 'K-beauty 스타일 찾기'],
+    },
+  ],
+
+  tactics: [
+    {
+      name: '팬덤 커뮤니티 침투',
+      description: 'Twitter/X, Reddit, Discord 팬덤 커뮤니티에 테스트 공유',
+      effort: 'low',
+      impact: 'high',
+    },
+    {
+      name: '팬 계정 협업',
+      description: '해외 팬 계정에 테스트 콘텐츠 제공 (무료)',
+      effort: 'medium',
+      impact: 'high',
+    },
+    {
+      name: '트렌드 빠른 반영',
+      description: '새 앨범/드라마 출시 시 관련 테스트 빠르게 제작',
+      effort: 'medium',
+      impact: 'very high',
+    },
+    {
+      name: '다국어 팬 자막/번역',
+      description: '팬들이 자발적으로 번역할 수 있는 구조 마련',
+      effort: 'low',
+      impact: 'medium',
+    },
+  ],
+
+  platforms: [
+    { name: 'Twitter/X', regions: ['일본', '영어권', '중남미'], kpopActivity: 'very high' },
+    { name: 'TikTok', regions: ['전세계'], kpopActivity: 'very high' },
+    { name: 'Instagram', regions: ['전세계'], kpopActivity: 'high' },
+    { name: 'Reddit', regions: ['영어권'], kpopActivity: 'high' },
+    { name: 'Weverse', regions: ['전세계'], kpopActivity: 'very high' },
+  ],
+
+  risks: [
+    '팬덤 간 갈등에 휘말릴 수 있음 → 중립적 콘텐츠 유지',
+    '저작권 이슈 → 공식 이미지 사용 자제, 팬아트/밈 활용',
+    '트렌드 의존성 → 한류 외 로컬 콘텐츠도 병행',
+  ],
+};
+
+// ============================================================================
 // 추가 고려사항 (확대 시 상세화)
 // ============================================================================
 
@@ -609,14 +762,18 @@ export const FUTURE_CONSIDERATIONS = {
     { region: '베트남', app: 'Zalo', priority: 'medium' },
     { region: '인도네시아', app: 'WhatsApp', priority: 'high' },
     { region: '대만', app: 'LINE', priority: 'high' },
+    { region: '인도', app: 'WhatsApp', priority: 'high' },
+    { region: '브라질', app: 'WhatsApp', priority: 'high' },
+    { region: '중남미', app: 'WhatsApp', priority: 'high' },
   ],
 
   // 수익화 (언어별 광고 단가 차이)
   monetization: {
     highCPM: ['en-US', 'ja', 'en-UK', 'en-AU'],  // $5-15 CPM
-    mediumCPM: ['zh-TW', 'ko'],                   // $2-5 CPM
-    lowCPM: ['th', 'vi', 'id', 'pt-BR'],          // $0.5-2 CPM
-    note: '동남아는 볼륨으로 승부, 일본/영어권은 단가로 승부',
+    mediumCPM: ['zh-TW', 'ko', 'es-ES'],          // $2-5 CPM
+    lowCPM: ['th', 'vi', 'id', 'pt-BR', 'es-MX', 'hi'],  // $0.5-2 CPM
+    veryLowCPM: ['hi-IN'],  // $0.1-0.5 CPM (인도는 볼륨으로만 승부)
+    note: '동남아/인도/중남미는 볼륨으로 승부, 일본/영어권은 단가로 승부',
   },
 
   // 법적/규제 이슈
@@ -645,6 +802,7 @@ export const GLOBAL_EXPANSION_STRATEGY = {
   phases: GLOBAL_PHASES,
   markets: MARKET_STRATEGIES,
   workflow: TRANSLATION_WORKFLOW,
+  hallyuMarketing: HALLYU_MARKETING,
   futureConsiderations: FUTURE_CONSIDERATIONS,
 };
 
