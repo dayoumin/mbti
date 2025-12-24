@@ -11,6 +11,7 @@ export const CAT_SCENARIO_QUIZZES: ScenarioQuiz[] = [
     title: '나의 집사 점수는?',
     description: '고양이 집사로서의 능력을 테스트해보세요',
     emoji: '🐱',
+    tags: ['고양이', '집사', '시나리오', '양육', '점수테스트'],
     questions: [
       {
         id: 'q1',

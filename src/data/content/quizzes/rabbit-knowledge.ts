@@ -17,6 +17,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '"빙키(Binky)"는 토끼가 극도로 행복할 때 하는 점프예요! 공중에서 몸을 비틀며 뛰어오르는 귀여운 행동이에요.',
     difficulty: 1,
+    tags: ['토끼', '빙키', '행동', '감정표현', '행복'],
   },
   {
     id: 'rabbit-k-002',
@@ -30,6 +31,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '아이스버그 양상추는 수분이 너무 많고 영양가가 낮아 설사를 유발해요. 로메인이나 버터헤드 상추가 더 좋아요!',
     difficulty: 2,
+    tags: ['토끼', '음식', '위험', '채소', '건강'],
   },
   {
     id: 'rabbit-k-003',
@@ -43,6 +45,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '"덤핑(Thumping)"이라고 해요. 야생에서 위험을 동료에게 알리던 본능이에요. 불만이나 화가 났을 때도 해요!',
     difficulty: 1,
+    tags: ['토끼', '덤핑', '행동', '경고', '감정표현'],
   },
   {
     id: 'rabbit-k-004',
@@ -56,6 +59,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '토끼 이빨은 매달 약 1cm씩 자라요! 그래서 건초를 갈아 먹으며 자연스럽게 마모시켜야 해요.',
     difficulty: 2,
+    tags: ['토끼', '이빨', '신체', '건강', '관리'],
   },
   {
     id: 'rabbit-k-005',
@@ -69,6 +73,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '토끼끼리 서로 그루밍해주는 것처럼, 사람을 핥는 것은 애정과 신뢰의 표현이에요!',
     difficulty: 1,
+    tags: ['토끼', '그루밍', '애정표현', '신뢰', '소통'],
   },
   {
     id: 'rabbit-k-006',
@@ -82,6 +87,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '건초가 식단의 80% 이상을 차지해야 해요! 소화 건강과 이빨 마모에 필수적이에요.',
     difficulty: 1,
+    tags: ['토끼', '건초', '식단', '음식', '건강'],
   },
   {
     id: 'rabbit-k-007',
@@ -95,6 +101,7 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '토끼의 코 씰룩임은 주변 냄새를 맡는 행동이에요. 빠를수록 흥분하거나 관심이 많다는 뜻이에요!',
     difficulty: 1,
+    tags: ['토끼', '코', '행동', '호기심', '감정표현'],
   },
   {
     id: 'rabbit-k-008',
@@ -108,5 +115,6 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '적절한 관리를 받으면 8-12년까지 살 수 있어요. 중성화, 실내 사육, 좋은 식단이 중요해요!',
     difficulty: 2,
+    tags: ['토끼', '수명', '건강', '관리', '중성화'],
   },
 ];

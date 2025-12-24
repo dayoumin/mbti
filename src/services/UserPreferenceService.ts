@@ -11,6 +11,8 @@
 import { STORAGE_KEYS } from '@/lib/storage';
 import { demographicService } from './DemographicService';
 import type { ContentCategory, KnowledgeQuiz, VSPoll } from '@/data/content/types';
+import { isContentAllowedForAge, getKidsBoostFactor } from '@/data/content/types';
+import { contentRecommendationService } from './ContentRecommendationService';
 
 // ============================================================================
 // 타입 정의
@@ -226,6 +228,11 @@ class UserPreferenceServiceClass {
       score += WEIGHTS.freshness;
     }
 
+    // 5. Kids 콘텐츠 부스트 (10대 사용자)
+    const demographic = demographicService.getDemographic();
+    const kidsBoost = getKidsBoostFactor(quiz, demographic?.ageGroup);
+    score *= kidsBoost;
+
     return score;
   }
 
@@ -259,32 +266,142 @@ class UserPreferenceServiceClass {
       score += WEIGHTS.freshness;
     }
 
+    // 4. Kids 콘텐츠 부스트 (10대 사용자)
+    const demographic = demographicService.getDemographic();
+    const kidsBoost = getKidsBoostFactor(poll, demographic?.ageGroup);
+    score *= kidsBoost;
+
     return score;
   }
 
   /**
    * 퀴즈 목록을 추천 순으로 정렬 (연령 제한 필터링 포함)
+   *
+   * 추천 로직 (Phase 1):
+   * 1. 참여 이력 있으면 → 유사도 기반 추천
+   * 2. 없으면 → 기존 태그/카테고리 참여도 기반
    */
   sortQuizzesByRecommendation(quizzes: KnowledgeQuiz[]): KnowledgeQuiz[] {
-    // 1. 연령 제한 필터링
+    const demographic = demographicService.getDemographic();
+    const ageGroup = demographic?.ageGroup;
+
+    // 1. 연령 제한 필터링 (카테고리 + 개별 콘텐츠 meta)
     const filtered = quizzes.filter(quiz =>
-      demographicService.isCategoryAllowedForAge(quiz.category)
+      demographicService.isCategoryAllowedForAge(quiz.category) &&
+      isContentAllowedForAge(quiz, ageGroup)
     );
 
-    // 2. 추천 점수로 정렬
+    // 2. 참여한 퀴즈 ID 목록
+    const participatedIds = Object.keys(this.data.categoryEngagement).length > 0
+      ? this.getParticipatedQuizIds()
+      : [];
+
+    // 3. 유사도 기반 추천 (참여 이력 있을 때)
+    if (participatedIds.length > 0) {
+      const recommended = contentRecommendationService.getRecommendedQuizzes(
+        participatedIds,
+        filtered,
+        filtered.length
+      );
+
+      if (recommended.length > 0) {
+        // 유사도 추천 + 나머지
+        const recommendedIds = new Set(recommended.map(r => r.content.id));
+        const remaining = filtered.filter(q => !recommendedIds.has(q.id));
+
+        // 유사도 순 + 기존 점수 순
+        return [
+          ...recommended.map(r => r.content),
+          ...remaining.sort((a, b) => this.getQuizScore(b) - this.getQuizScore(a))
+        ];
+      }
+    }
+
+    // 4. 기본: 기존 점수로 정렬
     return [...filtered].sort((a, b) => this.getQuizScore(b) - this.getQuizScore(a));
   }
 
   /**
+   * 참여한 퀴즈 ID 목록 반환 (ContentParticipationService에서 가져오기)
+   * 참고: 실제 ID는 localStorage에서 직접 로드
+   */
+  private getParticipatedQuizIds(): string[] {
+    if (typeof window === 'undefined') return [];
+
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.CONTENT_PARTICIPATION);
+      if (stored) {
+        const data = JSON.parse(stored);
+        return (data.quizzes || []).map((q: { quizId: string }) => q.quizId);
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  }
+
+  /**
+   * 참여한 투표 ID 목록 반환
+   */
+  private getParticipatedPollIds(): string[] {
+    if (typeof window === 'undefined') return [];
+
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.CONTENT_PARTICIPATION);
+      if (stored) {
+        const data = JSON.parse(stored);
+        return (data.polls || []).map((p: { pollId: string }) => p.pollId);
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  }
+
+  /**
    * 투표 목록을 추천 순으로 정렬 (연령 제한 필터링 포함)
+   *
+   * 추천 로직 (Phase 1):
+   * 1. 참여 이력 있으면 → 유사도 기반 추천
+   * 2. 없으면 → 기존 태그/카테고리 참여도 기반
    */
   sortPollsByRecommendation(polls: VSPoll[]): VSPoll[] {
-    // 1. 연령 제한 필터링
+    const demographic = demographicService.getDemographic();
+    const ageGroup = demographic?.ageGroup;
+
+    // 1. 연령 제한 필터링 (카테고리 + 개별 콘텐츠 meta)
     const filtered = polls.filter(poll =>
-      demographicService.isCategoryAllowedForAge(poll.category)
+      demographicService.isCategoryAllowedForAge(poll.category) &&
+      isContentAllowedForAge(poll, ageGroup)
     );
 
-    // 2. 추천 점수로 정렬
+    // 2. 참여한 투표 ID 목록
+    const participatedIds = Object.keys(this.data.categoryEngagement).length > 0
+      ? this.getParticipatedPollIds()
+      : [];
+
+    // 3. 유사도 기반 추천 (참여 이력 있을 때)
+    if (participatedIds.length > 0) {
+      const recommended = contentRecommendationService.getRecommendedPolls(
+        participatedIds,
+        filtered,
+        filtered.length
+      );
+
+      if (recommended.length > 0) {
+        // 유사도 추천 + 나머지
+        const recommendedIds = new Set(recommended.map(r => r.content.id));
+        const remaining = filtered.filter(p => !recommendedIds.has(p.id));
+
+        // 유사도 순 + 기존 점수 순
+        return [
+          ...recommended.map(r => r.content),
+          ...remaining.sort((a, b) => this.getPollScore(b) - this.getPollScore(a))
+        ];
+      }
+    }
+
+    // 4. 기본: 기존 점수로 정렬
     return [...filtered].sort((a, b) => this.getPollScore(b) - this.getPollScore(a));
   }
 

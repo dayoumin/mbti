@@ -7,6 +7,7 @@ import { VS_POLLS } from '@/data/content/polls';
 import { contentParticipationService } from '@/services/ContentParticipationService';
 import { getParticipationBridge } from '@/services/ParticipationBridge';
 import { userPreferenceService } from '@/services/UserPreferenceService';
+import { demographicService } from '@/services/DemographicService';
 import QuizWidget from './content/QuizWidget';
 import PollWidget from './content/PollWidget';
 import type { KnowledgeQuiz, VSPoll } from '@/data/content/types';
@@ -217,26 +218,41 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
     return `${timeSlot.dateKey}-slot${timeSlot.slotIndex}`;
   }, [timeSlot]);
 
+  // 연령 변경 감지용 상태 (프로필 업데이트 시 재계산 트리거)
+  const [ageVersion, setAgeVersion] = useState(0);
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      setAgeVersion(v => v + 1);
+      userPreferenceService.reload(); // 선호도 데이터도 리로드
+    };
+
+    window.addEventListener('chemi:profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('chemi:profileUpdated', handleProfileUpdate);
+  }, []);
+
   // 연령 제한 필터링된 콘텐츠 수 (UX 메시지 구분용)
+  // 참여 기록 변경 또는 연령 변경 시 재계산
   const filteredQuizCount = useMemo(() =>
     userPreferenceService.sortQuizzesByRecommendation(ALL_KNOWLEDGE_QUIZZES).length,
-    []
+    [participation.quizzes.length, ageVersion]
   );
   const filteredPollCount = useMemo(() =>
     userPreferenceService.sortPollsByRecommendation(VS_POLLS).length,
-    []
+    [participation.polls.length, ageVersion]
   );
 
   // 시간대 기반 콘텐츠 선택 (같은 시간대 = 같은 콘텐츠)
+  // ageVersion 변경 시에도 재선택 (연령 필터링 반영)
   const todayQuizzes = useMemo(() => {
     if (!timeSlotSeed) return [];
     return selectQuizzesForTimeSlot(ALL_KNOWLEDGE_QUIZZES, answeredQuizIds, QUIZ_COUNT, timeSlotSeed);
-  }, [answeredQuizIds, timeSlotSeed]);
+  }, [answeredQuizIds, timeSlotSeed, ageVersion]);
 
   const todayPolls = useMemo(() => {
     if (!timeSlotSeed) return [];
     return selectPollsForTimeSlot(VS_POLLS, votedPollIds, POLL_COUNT, timeSlotSeed);
-  }, [votedPollIds, timeSlotSeed]);
+  }, [votedPollIds, timeSlotSeed, ageVersion]);
 
   const currentQuiz = todayQuizzes[currentQuizIndex];
   const currentPoll = todayPolls[currentPollIndex];
@@ -246,6 +262,11 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
   const allPollsDone = isClient && todayPolls.length === 0 && filteredPollCount > 0;
   const noAccessibleQuizzes = isClient && filteredQuizCount === 0 && ALL_KNOWLEDGE_QUIZZES.length > 0;
   const noAccessiblePolls = isClient && filteredPollCount === 0 && VS_POLLS.length > 0;
+
+  // 연령 미설정 vs 10대(미성년자) 구분 (ageVersion 변경 시 재평가)
+  const hasAgeSet = useMemo(() => isClient && demographicService.hasAgeGroup(), [isClient, ageVersion]);
+  const demographic = useMemo(() => isClient ? demographicService.getDemographic() : null, [isClient, ageVersion]);
+  const isMinor = demographic?.ageGroup === '10s';
 
   // 퀴즈 답변 처리
   const handleQuizAnswer = async (optionId: string) => {
@@ -272,7 +293,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
     // 선호도 기록 (개인화용)
     userPreferenceService.recordQuizEngagement(
       currentQuiz.category,
-      [], // 퀴즈는 현재 tags 없음
+      currentQuiz.tags || [],
       isCorrect,
       currentQuiz.difficulty
     );
@@ -424,6 +445,69 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
           </div>
         )}
 
+        {/* 연령 제한으로 퀴즈 접근 불가 - 연령 미설정 시 */}
+        {noAccessibleQuizzes && !hasAgeSet && (
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 shadow-sm border border-amber-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                <Brain className="w-5 h-5 text-amber-500" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-amber-700">더 많은 퀴즈가 기다려요!</span>
+                <p className="text-xs text-amber-600">연령대를 설정하면 맞춤 퀴즈를 볼 수 있어요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-100">
+              <span className="text-xs text-amber-600">
+                테스트 완료 후 설정할 수 있어요
+              </span>
+              <span className="text-lg">🔓</span>
+            </div>
+          </div>
+        )}
+
+        {/* 연령 제한으로 퀴즈 접근 불가 - 10대(미성년자) */}
+        {noAccessibleQuizzes && hasAgeSet && isMinor && (
+          <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 shadow-sm border border-sky-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
+                <Brain className="w-5 h-5 text-sky-500" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-sky-700">다른 퀴즈를 즐겨보세요!</span>
+                <p className="text-xs text-sky-600">성격/동물 퀴즈가 준비되어 있어요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-sky-100">
+              <span className="text-xs text-sky-600">
+                다양한 재미있는 퀴즈가 있어요
+              </span>
+              <span className="text-lg">🎯</span>
+            </div>
+          </div>
+        )}
+
+        {/* 연령 제한으로 퀴즈 접근 불가 - 성인이지만 콘텐츠 없음 */}
+        {noAccessibleQuizzes && hasAgeSet && !isMinor && (
+          <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-4 shadow-sm border border-slate-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                <Brain className="w-5 h-5 text-slate-400" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-600">퀴즈 준비 중</span>
+                <p className="text-xs text-slate-500">새로운 퀴즈가 곧 추가돼요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+              <span className="text-xs text-slate-500">
+                다양한 퀴즈를 준비하고 있어요
+              </span>
+              <span className="text-lg">📚</span>
+            </div>
+          </div>
+        )}
+
         {/* 오늘의 퀴즈 - QuizWidget 사용 */}
         {currentQuiz && (
           <QuizWidget
@@ -456,6 +540,69 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-purple-100">
               <span className="text-xs text-purple-600">
                 {stats.totalPollVoted}개 완료
+              </span>
+              <span className="text-lg">🗳️</span>
+            </div>
+          </div>
+        )}
+
+        {/* 연령 제한으로 투표 접근 불가 - 연령 미설정 시 */}
+        {noAccessiblePolls && !hasAgeSet && (
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 shadow-sm border border-amber-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                <Vote className="w-5 h-5 text-amber-500" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-amber-700">더 많은 투표가 기다려요!</span>
+                <p className="text-xs text-amber-600">연령대를 설정하면 맞춤 투표를 볼 수 있어요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-100">
+              <span className="text-xs text-amber-600">
+                테스트 완료 후 설정할 수 있어요
+              </span>
+              <span className="text-lg">🔓</span>
+            </div>
+          </div>
+        )}
+
+        {/* 연령 제한으로 투표 접근 불가 - 10대(미성년자) */}
+        {noAccessiblePolls && hasAgeSet && isMinor && (
+          <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 shadow-sm border border-sky-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
+                <Vote className="w-5 h-5 text-sky-500" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-sky-700">다른 투표를 즐겨보세요!</span>
+                <p className="text-xs text-sky-600">재미있는 성격/취향 투표가 있어요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-sky-100">
+              <span className="text-xs text-sky-600">
+                친구들과 비교해보세요
+              </span>
+              <span className="text-lg">🎯</span>
+            </div>
+          </div>
+        )}
+
+        {/* 연령 제한으로 투표 접근 불가 - 성인이지만 콘텐츠 없음 */}
+        {noAccessiblePolls && hasAgeSet && !isMinor && (
+          <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-4 shadow-sm border border-slate-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                <Vote className="w-5 h-5 text-slate-400" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-600">투표 준비 중</span>
+                <p className="text-xs text-slate-500">새로운 투표가 곧 추가돼요</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+              <span className="text-xs text-slate-500">
+                다양한 투표를 준비하고 있어요
               </span>
               <span className="text-lg">🗳️</span>
             </div>

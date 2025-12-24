@@ -9,6 +9,7 @@ export { contentParticipationService } from './ContentParticipationService';
 export { gamificationService } from './GamificationService';
 export { participationBridge } from './ParticipationBridge';
 export { friendService } from './FriendService';
+export { contentRecommendationService } from './ContentRecommendationService';
 
 // Types
 export type { RankingVote, RankingStats, CategorySummary, SeasonSummary, SeasonType } from './RankingService';

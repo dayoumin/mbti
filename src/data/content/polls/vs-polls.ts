@@ -47,6 +47,7 @@ export const VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '믿으니까 상관 없음', emoji: '🤝' },
     optionB: { id: 'b', text: '절대 안 됨', emoji: '🛑' },
     tags: ['연애', '질투'],
+    meta: { minAge: '20s', isAdultOnly: true },
   },
 
   // ==========================================================================

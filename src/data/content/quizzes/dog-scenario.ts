@@ -11,6 +11,7 @@ export const DOG_SCENARIO_QUIZZES: ScenarioQuiz[] = [
     title: '나의 견주력 테스트',
     description: '강아지와 얼마나 잘 통하는지 알아보세요',
     emoji: '🐕',
+    tags: ['강아지', '견주', '시나리오', '양육', '점수테스트'],
     questions: [
       {
         id: 'q1',
