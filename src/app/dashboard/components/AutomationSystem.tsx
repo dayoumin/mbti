@@ -172,6 +172,12 @@ const SKILL_SYSTEMS: SkillSystem[] = [
     color: 'cyan',
     skills: [
       {
+        name: 'fact-collector',
+        description: '팩트 수집 및 검증',
+        role: 'research/facts/*.md 파일 관리, 웹검색으로 팩트 수집/검증',
+        triggers: ['팩트 필요 카테고리 콘텐츠 생성', '팩트 검증 요청'],
+      },
+      {
         name: 'content-generator',
         description: '콘텐츠 데이터 생성',
         role: '퀴즈/투표/토너먼트 TypeScript 코드 생성',
@@ -180,7 +186,7 @@ const SKILL_SYSTEMS: SkillSystem[] = [
       {
         name: 'content-validator',
         description: '콘텐츠 검증',
-        role: 'validate-content-samples.mjs + npm build, 에러 리포트',
+        role: 'validate-content-samples.mjs + npm build, 에러 리포트 (팩트 참조 검증 포함)',
         triggers: ['콘텐츠 생성 후', '콘텐츠 수정 후'],
       },
     ],
@@ -714,9 +720,17 @@ docs/test-creation/
               </pre>
               <pre className="bg-black/30 rounded-lg p-4 text-sm">
 {`content-creator (Subagent)
+├── fact-collector (Skill) ← 팩트 필요 카테고리
 ├── content-generator (Skill)
 └── content-validator (Skill)`}
               </pre>
+            </div>
+            <div className="mt-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 text-sm">
+              <div className="font-medium text-blue-400 mb-1">팩트 필요 카테고리</div>
+              <code className="text-xs">cat, dog, rabbit, hamster, plant, coffee, alcohol</code>
+              <p className="text-xs opacity-60 mt-1">
+                이 카테고리의 지식 퀴즈는 반드시 fact-collector 스킬을 통해 팩트를 수집/참조해야 합니다.
+              </p>
             </div>
           </div>
         </div>

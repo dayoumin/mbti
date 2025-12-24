@@ -46,6 +46,9 @@ const colors = {
 // 유효한 카테고리 목록
 const VALID_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'love', 'personality', 'lifestyle', 'food', 'general', 'work'];
 
+// 팩트 필요 카테고리 목록 (지식 퀴즈는 팩트 참조 필수)
+const FACT_REQUIRED_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'coffee', 'alcohol'];
+
 // 연령 등급은 AI가 생성 시점에 판단하여 meta에 추가
 // 검증 스크립트는 meta 필드 형식만 확인 (키워드 감지 제거 - false positive 방지)
 
@@ -70,6 +73,20 @@ function validateQuiz(quiz) {
     if (correctCount > 1) errors.push('정답은 1개만 가능');
 
     if (!quiz.explanation) warnings.push('explanation 권장');
+
+    // 팩트 필요 카테고리 지식 퀴즈는 팩트 참조 필수
+    if (FACT_REQUIRED_CATEGORIES.includes(quiz.category)) {
+      const hasFactRef = quiz.source || quiz.factRef;
+      if (!hasFactRef) {
+        errors.push(`팩트 필요 카테고리(${quiz.category}) 지식 퀴즈는 source 또는 factRef 필수`);
+      } else if (quiz.factRef && quiz.factRef.factId) {
+        // factRef 형식 검증
+        const factIdPattern = /^[a-z]+-fact-\d{3}$/;
+        if (!factIdPattern.test(quiz.factRef.factId)) {
+          warnings.push(`factRef.factId 형식 오류: ${quiz.factRef.factId} (권장: {category}-fact-{000})`);
+        }
+      }
+    }
   }
 
   if (!quiz.difficulty || ![1, 2, 3].includes(quiz.difficulty)) {
@@ -92,6 +109,7 @@ function validateQuiz(quiz) {
   return {
     type: 'quiz',
     id: quiz.id,
+    category: quiz.category,  // 팩트 검증용
     isValid: errors.length === 0,
     errors,
     warnings,
@@ -565,12 +583,27 @@ function main() {
     }
   }
 
-  // 11. 결과 요약
+  // 11. 팩트 참조 통계 계산
+  const factRequiredQuizzes = results.filter(r =>
+    r.type === 'quiz' &&
+    r.category &&
+    FACT_REQUIRED_CATEGORIES.includes(r.category)
+  );
+  const factMissingQuizzes = factRequiredQuizzes.filter(r =>
+    r.errors.some(e => e.includes('팩트 필요 카테고리'))
+  );
+
+  // 12. 결과 요약
   const summary = {
     total: results.length,
     valid: results.filter(r => r.isValid).length,
     invalid: results.filter(r => !r.isValid).length,
     withWarnings: results.filter(r => r.warnings.length > 0).length,
+    factCheck: {
+      required: factRequiredQuizzes.length,
+      missing: factMissingQuizzes.length,
+      covered: factRequiredQuizzes.length - factMissingQuizzes.length,
+    },
     byType: {
       quiz: results.filter(r => r.type === 'quiz'),
       scenario: results.filter(r => r.type === 'scenario'),
@@ -606,6 +639,18 @@ function main() {
   console.log(`${colors.green}유효: ${summary.valid}${colors.reset}`);
   console.log(`${colors.red}무효: ${summary.invalid}${colors.reset}`);
   console.log(`${colors.yellow}경고 있음: ${summary.withWarnings}${colors.reset}`);
+
+  // 팩트 참조 통계
+  if (summary.factCheck.required > 0) {
+    console.log(`\n=== 📚 팩트 참조 검증 ===`);
+    console.log(`팩트 필요 카테고리 퀴즈: ${summary.factCheck.required}개`);
+    if (summary.factCheck.missing === 0) {
+      console.log(`${colors.green}✓ 팩트 참조 있음: ${summary.factCheck.covered}개 (100%)${colors.reset}`);
+    } else {
+      console.log(`${colors.green}✓ 팩트 참조 있음: ${summary.factCheck.covered}개${colors.reset}`);
+      console.log(`${colors.red}✗ 팩트 참조 없음: ${summary.factCheck.missing}개${colors.reset}`);
+    }
+  }
 
   // 에러/경고 목록
   const errorItems = results.filter(r => !r.isValid);

@@ -263,12 +263,81 @@ d:\Projects\MBTI\
 
 ---
 
-## 8. 변경 요약 (v2)
+## 8. 팩트 참조 강제 검증 시스템 (v3 신규!)
 
-| 항목 | v1 (초기) | v2 (현재) |
-|------|----------|----------|
-| 팩트 데이터 소스 | 하드코딩 | MD 파일 파싱 API |
-| 타입 안전성 | `string` | `FactId` Template Literal |
-| ID 생성 | 수동 | 자동 (`generateFactId`) |
-| 검증 상태 | UI만 | 유틸리티 함수 제공 |
-| 마크다운 생성 | 수동 | `generateFactMarkdown` |
+### 8.1 문제 인식
+
+> "팩트체크 대상인데 skill을 사용 안 하는 경우를 어떻게 감지하나?"
+
+기존 시스템은 fact-collector 스킬 사용을 **문서화**만 했지, **강제하지 않았습니다**.
+
+### 8.2 해결책: 다중 레이어 검증
+
+| 레이어 | 위치 | 역할 |
+|--------|------|------|
+| 1. 스킬 문서 | `.claude/skills/content-validator/SKILL.md` | AI에게 규칙 안내 |
+| 2. 검증 스크립트 | `scripts/validate-content-samples.mjs` | 자동 검출 |
+| 3. 대시보드 | `AutomationSystem.tsx` | 시각화 및 모니터링 |
+
+### 8.3 검증 스크립트 변경
+
+```javascript
+// validate-content-samples.mjs
+const FACT_REQUIRED_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'coffee', 'alcohol'];
+
+// 지식 퀴즈(knowledge)만 팩트 검증
+if (quiz.type === 'knowledge' && FACT_REQUIRED_CATEGORIES.includes(quiz.category)) {
+  if (!quiz.source && !quiz.factRef) {
+    errors.push(`팩트 필요 카테고리(${quiz.category}) 지식 퀴즈는 source 또는 factRef 필수`);
+  }
+}
+```
+
+### 8.4 검증 결과 출력
+
+```
+=== 📚 팩트 참조 검증 ===
+팩트 필요 카테고리 퀴즈: 15개
+✓ 팩트 참조 있음: 12개 ✅
+✗ 팩트 참조 없음: 3개 ❌
+
+=== ❌ 에러 목록 ===
+[quiz] cat-quiz-001: 팩트 필요 카테고리(cat) 지식 퀴즈는 source 또는 factRef 필수
+```
+
+### 8.5 대시보드 개선
+
+`AutomationSystem.tsx`의 Skills 탭에서:
+- fact-collector 스킬 추가
+- Subagent ↔ Skill 관계도에 팩트 필요 카테고리 안내 추가
+
+---
+
+## 9. 변경 요약 (v3)
+
+| 항목 | v1 (초기) | v2 | v3 (현재) |
+|------|----------|-----|----------|
+| 팩트 데이터 소스 | 하드코딩 | MD 파일 파싱 API | 동일 |
+| 타입 안전성 | `string` | `FactId` Template Literal | 동일 |
+| ID 생성 | 수동 | 자동 (`generateFactId`) | 동일 |
+| 검증 상태 | UI만 | 유틸리티 함수 | 동일 |
+| **팩트 참조 강제** | ❌ | ❌ | ✅ 검증 스크립트 |
+| **미사용 감지** | ❌ | ❌ | ✅ 에러로 표시 |
+| **대시보드 시각화** | ❌ | 일부 | ✅ 완료 |
+
+---
+
+## 10. 추가 리뷰 요청 사항 (v3)
+
+### 10.1 팩트 참조 강제 정책
+- 지식 퀴즈에만 강제하는 것이 맞는가?
+- 시나리오 퀴즈, 투표에도 팩트 참조가 필요한 경우가 있는가?
+
+### 10.2 검증 시점
+- 현재: 검증 스크립트 실행 시 (수동)
+- 개선 필요: 빌드 시 자동 검증? CI/CD 통합?
+
+### 10.3 경고 vs 에러
+- 현재: 팩트 미참조 = 에러
+- 레거시 콘텐츠에는 너무 엄격한가?
+- 신규 콘텐츠만 에러, 기존은 경고로 분리?

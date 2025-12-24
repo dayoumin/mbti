@@ -17,6 +17,64 @@ node scripts/validate-content-samples.mjs
 
 ## 검증 항목
 
+### 0. 팩트 참조 검증 (팩트 필요 카테고리) ⚠️ 중요!
+
+**팩트 필요 카테고리**: `cat`, `dog`, `rabbit`, `hamster`, `plant`, `coffee`, `alcohol`
+
+이 카테고리의 **지식 퀴즈**는 반드시 팩트 참조가 필요합니다.
+
+| 항목 | 에러/경고 | 기준 |
+|------|----------|------|
+| source/factRef 누락 | **에러** | 팩트 필요 카테고리 지식 퀴즈는 팩트 참조 필수 |
+| factRef 형식 오류 | 에러 | `{category}-fact-{000}` 형식 |
+| 팩트 파일 미존재 | 경고 | `research/facts/{category}.md` 권장 |
+
+**검증 로직:**
+```javascript
+const FACT_REQUIRED_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'coffee', 'alcohol'];
+
+// 지식 퀴즈(knowledge)만 팩트 검증
+if (quiz.type === 'knowledge' && FACT_REQUIRED_CATEGORIES.includes(quiz.category)) {
+  if (!quiz.source && !quiz.factRef) {
+    errors.push('팩트 필요 카테고리 지식 퀴즈는 source 또는 factRef 필수');
+  }
+}
+```
+
+**팩트 참조 방법:**
+```typescript
+// 방법 1: source 필드 (간단)
+{
+  id: 'cat-k-001',
+  question: '고양이 정상 체온은?',
+  source: 'cat-fact-001',  // 팩트 ID 직접 참조
+}
+
+// 방법 2: factRef 필드 (상세)
+{
+  id: 'cat-k-001',
+  question: '고양이 정상 체온은?',
+  factRef: {
+    factId: 'cat-fact-001',
+    verifiedDate: '2024-12-24'
+  }
+}
+```
+
+**검증 출력 형식:**
+```
+## 팩트 참조 검증
+
+✅ cat-k-001: source='cat-fact-001' 참조됨
+❌ cat-k-002: 팩트 필요 카테고리인데 source/factRef 없음
+⚠️ dog-k-001: source='dog-fact-999' 팩트 파일에서 ID 미확인
+
+=== 팩트 참조 요약 ===
+팩트 필요 카테고리 퀴즈: 15개
+- 팩트 참조 있음: 12개 ✅
+- 팩트 참조 없음: 3개 ❌ (에러)
+```
+
 ### 1. 공통 검증
 
 | 항목 | 에러/경고 | 기준 |
