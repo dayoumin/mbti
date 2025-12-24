@@ -76,6 +76,7 @@ import AutomationSystem from './components/AutomationSystem';
 import GlobalExpansion from './components/GlobalExpansion';
 import DemographicTester from './components/DemographicTester';
 import FactManager from './components/FactManager';
+import ContentReview from './components/ContentReview';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -187,6 +188,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
+      { key: 'contentReview', label: '콘텐츠 검수', icon: <CheckCircle2 className="w-4 h-4" /> },
     ],
   },
   {
@@ -483,6 +485,7 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'facts' && <FactManager />}
           {activeCategory === 'devtools' && activeSubTab === 'demographicTest' && <DemographicTester />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
+          {activeCategory === 'devtools' && activeSubTab === 'contentReview' && <ContentReview />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
           {/* 참고 */}

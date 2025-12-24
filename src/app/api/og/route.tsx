@@ -52,6 +52,9 @@ export async function GET(request: NextRequest) {
     const percentA = searchParams.get('percentA') || '';
     const percentB = searchParams.get('percentB') || '';
 
+    // Choice Poll용 파라미터 (JSON 배열)
+    const optionsJson = searchParams.get('options') || '';
+
     // 타입별 렌더링
     if (type === 'result') {
       return renderResultCard(size, theme, result, emoji, desc);
@@ -59,6 +62,10 @@ export async function GET(request: NextRequest) {
 
     if (type === 'poll') {
       return renderPollCard(size, question, optionA, optionB, emojiA, emojiB, percentA, percentB);
+    }
+
+    if (type === 'choice-poll') {
+      return renderChoicePollCard(size, question, optionsJson);
     }
 
     // 기본: 홈 OG 이미지
@@ -380,6 +387,145 @@ function renderPollCard(
             borderRadius: '999px',
             color: 'white',
             fontSize: '24px',
+            fontWeight: 'bold',
+          }}
+        >
+          나도 투표하기
+        </div>
+
+        {/* 브랜드 */}
+        <p
+          style={{
+            position: 'absolute',
+            bottom: '24px',
+            fontSize: '18px',
+            color: '#9CA3AF',
+          }}
+        >
+          chemi-test.vercel.app
+        </p>
+      </div>
+    ),
+    { ...size }
+  );
+}
+
+// Choice Poll 카드 이미지 (다중 선택)
+function renderChoicePollCard(
+  size: { width: number; height: number },
+  question: string,
+  optionsJson: string
+) {
+  // options: [{text, emoji, percent}]
+  // 주의: searchParams.get()이 이미 URL 디코딩을 수행하므로 decodeURIComponent 불필요
+  let options: { text: string; emoji: string; percent: number }[] = [];
+  try {
+    options = optionsJson ? JSON.parse(optionsJson) : [];
+  } catch {
+    options = [];
+  }
+
+  const hasResults = options.some(o => o.percent > 0);
+  const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)',
+          fontFamily: 'sans-serif',
+          padding: '40px',
+        }}
+      >
+        {/* 배지 */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '24px',
+          }}
+        >
+          <span
+            style={{
+              background: '#6366F1',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '999px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+            }}
+          >
+            선택 투표
+          </span>
+        </div>
+
+        {/* 질문 */}
+        <h1
+          style={{
+            fontSize: '42px',
+            fontWeight: 'bold',
+            color: '#1F2937',
+            marginBottom: '32px',
+            textAlign: 'center',
+            maxWidth: '90%',
+          }}
+        >
+          {question || '당신의 선택은?'}
+        </h1>
+
+        {/* 선택지 목록 */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            width: '80%',
+            maxWidth: '600px',
+          }}
+        >
+          {options.slice(0, 5).map((opt, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '16px 24px',
+                background: 'white',
+                borderRadius: '16px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              }}
+            >
+              <span style={{ fontSize: '32px', marginRight: '16px' }}>
+                {opt.emoji || '📌'}
+              </span>
+              <span style={{ fontSize: '22px', fontWeight: '600', color: '#1F2937', flex: 1 }}>
+                {opt.text}
+              </span>
+              {hasResults && (
+                <span style={{ fontSize: '20px', fontWeight: 'bold', color: colors[idx % colors.length] }}>
+                  {opt.percent}%
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div
+          style={{
+            marginTop: '32px',
+            padding: '14px 36px',
+            background: '#6366F1',
+            borderRadius: '999px',
+            color: 'white',
+            fontSize: '22px',
             fontWeight: 'bold',
           }}
         >

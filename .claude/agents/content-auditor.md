@@ -134,6 +134,9 @@ node scripts/validate-content-samples.mjs
 | dog | 8 | 10 | 0 | 18 |
 | plant | 5 | 5 | 0 | 10 |
 | ... | ... | ... | ... | ... |
+
+## 사용 도구
+content-auditor (콘텐츠 품질 점검 에이전트)
 ```
 
 ## 상세 점검 모드
@@ -182,6 +185,110 @@ node scripts/validate-content-samples.mjs
 - 불완전한 분석으로 "점검 완료" 보고
 - 파싱 에러 무시하고 다음 콘텐츠 진행
 - 실제 점검 없이 추정값 보고
+
+## 연령 제한 점검
+
+콘텐츠의 연령 제한 설정 확인:
+
+| 필드 | 확인 사항 |
+|------|----------|
+| `isAdultOnly` | 성인 전용 콘텐츠에 설정되어 있는지 |
+| `minAge` | 연령 제한 필요 콘텐츠에 설정 |
+| `isSensitive` | 민감 주제 표시 여부 |
+
+**⚠️ 내용 기반 검증 (키워드 매칭 아님)**
+- 단순 키워드("술", "연애") 포함 여부로 판단하지 않음
+- 콘텐츠의 실제 맥락과 의도를 파악하여 검증
+
+**isAdultOnly 적용 기준 (엄격함):**
+✅ 적용해야 함:
+- 성적 내용, 야한 농담
+- 부부 관계, 19금 주제
+- 음주 행동/상태 묘사 ("취하면...", "술에 취해서...")
+
+❌ 적용하지 않음:
+- 소주 vs 맥주 (단순 선호 비교)
+- 회식 참석 여부 (직장 상황)
+- 술값 지출 비교 (소비 패턴)
+
+**minAge 적용 기준:**
+- 음주 관련 선호 → `minAge: '20s'`
+- 직장/회식 맥락 → `minAge: '20s'`
+- 연애/결혼 주제 → `minAge: '20s'`
+
+**검증 기준 요약:**
+- 19금 콘텐츠인가? → `isAdultOnly: true`
+- 20대 이상만 공감 가능한가? → `minAge: '20s'`
+- 논쟁적이거나 불편할 수 있는가? → `isSensitive`
+
+**참고**: `isKidsOnly` (아동 전용) 필드는 현재 없음.
+
+## 검수 후보 등록
+
+연령 제한이 필요할 수 있는 콘텐츠를 발견하면 대시보드 검수 시스템에 등록합니다.
+
+### 검수 후보 등록 절차
+
+1. **후보 발견**: 점검 중 연령 제한 meta가 필요해 보이는 콘텐츠 발견
+2. **데이터 파일에 추가**: `src/app/dashboard/data/content-review.ts`의 `CONTENT_REVIEW_ITEMS` 배열에 추가
+3. **사람 검수 대기**: 대시보드에서 사람이 검토 후 승인/수정/거부
+
+### 등록 형식
+
+```typescript
+// src/app/dashboard/data/content-review.ts
+CONTENT_REVIEW_ITEMS.push({
+  id: 'review-{timestamp}',           // 고유 ID
+  contentId: 'vs-viral-010',          // 원본 콘텐츠 ID
+  contentType: 'poll',                // 콘텐츠 타입
+  contentPath: 'src/data/content/polls/vs-polls.ts',
+  reviewType: 'age-restriction',      // 검수 유형
+
+  aiSuggestion: {
+    field: 'meta.isAdultOnly',        // 제안 필드
+    currentValue: undefined,          // 현재 값
+    suggestedValue: true,             // 제안 값
+    reason: '음주 행동 묘사 포함',      // 이유
+    confidence: 'medium',             // 확신도
+  },
+
+  contentSummary: {
+    question: '소주 vs 맥주?',
+    options: ['소주', '맥주'],
+    tags: ['술', '음료'],
+  },
+
+  status: 'pending',                  // 대기 상태
+  createdAt: new Date().toISOString(),
+  createdBy: 'content-auditor',       // 생성자
+});
+```
+
+### 검수 후보 기준
+
+| 상황 | 등록 여부 | 이유 |
+|------|----------|------|
+| 명확한 19금 | 바로 수정 | 등록 불필요, 즉시 수정 |
+| 모호한 성인 콘텐츠 | 등록 | 사람 판단 필요 |
+| 연령대 맥락 | 등록 | minAge 결정 필요 |
+| 정확성 의심 | 등록 | 사실 확인 필요 |
+
+### 출력 형식 (검수 후보 발견 시)
+
+```
+📋 검수 후보 발견
+
+## 대시보드에 등록된 검수 후보
+| 콘텐츠 ID | 타입 | 제안 | 확신도 |
+|-----------|------|------|--------|
+| vs-viral-010 | 연령 제한 | isAdultOnly: true | 중간 |
+| choice-work-001 | 연령 제한 | minAge: '20s' | 높음 |
+
+## 다음 단계
+1. 대시보드 > 개발 > 콘텐츠 검수에서 확인
+2. 사람이 검토 후 승인/수정/거부
+3. 승인된 항목은 자동으로 파일에 적용
+```
 
 ## 자동 수정 제안
 

@@ -33,6 +33,7 @@ import {
   PawPrint,
   Puzzle,
   Bug,
+  Shield,
 } from 'lucide-react';
 import { CHEMI_DATA } from '@/data';
 
@@ -112,6 +113,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
+      { key: 'contentReview', label: '콘텐츠 검수', icon: <Shield className="w-4 h-4" /> },
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
     ],

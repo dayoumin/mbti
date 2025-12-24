@@ -7,11 +7,12 @@
 // 2. 투표가 많아지면: cat-polls.ts, dog-polls.ts 등으로 분리 후 POLL_REGISTRY에 추가
 // ============================================================================
 
-import type { ContentCategory, VSPoll } from '../types';
+import type { ContentCategory, VSPoll, ChoicePoll } from '../types';
 
 // --- 투표 데이터 import ---
 import { VS_POLLS as VS_POLLS_DATA } from './vs-polls';
 import { KIDS_VS_POLLS } from './kids-polls';
+import { CHOICE_POLLS as CHOICE_POLLS_DATA } from './choice-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -28,6 +29,7 @@ const POLL_REGISTRY: VSPoll[][] = [
 // ============================================================================
 
 export const VS_POLLS: VSPoll[] = POLL_REGISTRY.flat();
+export const CHOICE_POLLS: ChoicePoll[] = CHOICE_POLLS_DATA;
 
 // 기존 export 유지 (직접 접근용)
 export { VS_POLLS as default };
@@ -54,6 +56,11 @@ export function getRandomPoll(category?: ContentCategory): VSPoll | undefined {
 /** 태그별 투표 조회 */
 export function getPollsByTag(tag: string): VSPoll[] {
   return VS_POLLS.filter(p => p.tags?.includes(tag));
+}
+
+/** Choice Poll ID로 조회 */
+export function getChoicePollById(pollId: string): ChoicePoll | undefined {
+  return CHOICE_POLLS.find(p => p.id === pollId);
 }
 
 // ============================================================================

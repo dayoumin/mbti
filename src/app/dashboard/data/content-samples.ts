@@ -1004,6 +1004,46 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     },
     tags: ['어색함', '뒷담화', '마주침'],
   },
+  {
+    id: 'situation-reaction-awkward-002',
+    type: 'situation-reaction',
+    category: 'awkward',
+    situation: '엘리베이터에서 눈 마주친 사람이 인사했는데 나만 못 들은 척 무시했다. 1층에서 같이 내린다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '뒤늦게 "아 죄송해요 못 들었어요!" 웃으며 해명', emoji: '😅', tag: 'cool' },
+      { id: 'b', text: '어떡해... 지금 말하기엔 늦었고... (그냥 빨리 걸음)', emoji: '😰', tag: 'emotional' },
+      { id: 'c', text: '이어폰 끼고 있었어요~ 하고 자연스럽게 넘김', emoji: '😌', tag: 'rational' },
+      { id: 'd', text: 'ㅋㅋ 못 들었는데 뭐 어쩔 (당당하게 걸어감)', emoji: '😎', tag: 'humorous' },
+    ],
+    personalityMapping: {
+      'ESFJ': 'a',
+      'INFP': 'b',
+      'ISTJ': 'c',
+      'ENTP': 'd',
+    },
+    tags: ['어색함', '인사', '실수'],
+  },
+  {
+    id: 'situation-reaction-awkward-003',
+    type: 'situation-reaction',
+    category: 'awkward',
+    situation: '공공 화장실에서 큰일 보는 중 휴지가 없다는 걸 깨달았다. 옆 칸에 사람이 있다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '저기... 죄송한데 휴지 좀 주실 수 있을까요? (정중하게 요청)', emoji: '🙏', tag: 'rational' },
+      { id: 'b', text: '으아아... 어떡해... (물로 해결하려고 시도)', emoji: '😱', tag: 'emotional' },
+      { id: 'c', text: '휴지 좀 주세요~ (대놓고 크게 말함)', emoji: '😂', tag: 'humorous' },
+      { id: 'd', text: '(사람 나갈 때까지 조용히 기다림)', emoji: '🤐', tag: 'avoidant' },
+    ],
+    personalityMapping: {
+      'ESTJ': 'a',
+      'ISFJ': 'b',
+      'ENFP': 'c',
+      'INTP': 'd',
+    },
+    tags: ['어색함', '화장실', '긴급상황'],
+  },
 ];
 
 // ============================================================================

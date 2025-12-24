@@ -80,7 +80,8 @@
       "Bash(tasklist:*)",
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
-      "Bash(del \"d:\\\\Project\\\\MBTI\\\\.next\\\\lock\")"
+      "Bash(del \"d:\\\\Project\\\\MBTI\\\\.next\\\\lock\")",
+      "Bash(npx vitest run:*)"
     ],
     "deny": [],
     "ask": []

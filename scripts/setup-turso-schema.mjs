@@ -43,6 +43,9 @@ const schemas = [
   )`,
 
   // 투표 응답
+  // UNIQUE(device_id, poll_id, option_id): allowMultiple 투표 지원
+  // - 일반 투표: 앱 로직에서 1개만 저장하도록 제어
+  // - allowMultiple 투표: 여러 옵션 저장 가능, 같은 옵션 중복 방지
   `CREATE TABLE IF NOT EXISTS poll_responses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     device_id TEXT NOT NULL,
@@ -50,7 +53,7 @@ const schemas = [
     poll_id TEXT NOT NULL,
     option_id TEXT NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
-    UNIQUE(device_id, poll_id)
+    UNIQUE(device_id, poll_id, option_id)
   )`,
 
   // 퀴즈 응답 (사용자당 문제당 1회만 저장)

@@ -293,8 +293,8 @@ npm run build
 | 타입 | 파일 위치 |
 |-----|----------|
 | 퀴즈 | `src/data/content/quizzes/{category}.ts` |
-| 투표 | `src/data/content/polls/{category}.ts` |
-| 상황별 반응 | `src/data/content/situation-reactions/{category}.ts` (미구현) |
+| 투표 | `src/data/content/polls/vs-polls.ts`, `choice-polls.ts` |
+| 상황별 반응 | `src/data/content/situation-reactions/{category}.ts` |
 
 ### 대시보드 샘플용 (문서화/검증용)
 | 타입 | 파일 위치 |
@@ -336,6 +336,24 @@ npm run build
 - 회식 일반: 회식 참석, 회식 메뉴 (음주 언급 없음)
 - 그레이존: "소주 vs 맥주 취향" → all (바이럴 잘 됨)
 
+### 검수 상태 설정
+
+**모호한 연령 제한이 필요한 콘텐츠는 검수 대기 상태로 생성:**
+
+```typescript
+{
+  meta: {
+    reviewStatus: 'pending',  // 검수 대기 (노출 안됨)
+  }
+}
+```
+
+| 상황 | reviewStatus | 노출 |
+|------|-------------|------|
+| 명확한 콘텐츠 | 생략 (자동 approved) | 즉시 |
+| 연령 제한 모호 | `'pending'` | 인간 검수 후 |
+| 명확한 19금 | `'approved'` + `isAdultOnly` | 즉시 (성인만) |
+
 ### meta 필드 추가 방법
 
 ```typescript
@@ -346,7 +364,7 @@ npm run build
   // ...
   meta: {
     ageRating: 'adult',
-    ageRestrictionReason: 'alcohol'  // 'alcohol' | 'gambling' | 'sexual' | 'violence'
+    ageRestrictionReason: 'alcohol'  // 'alcohol' | 'gambling'
   }
 }
 
@@ -423,6 +441,7 @@ tags: ['퀴즈', '투표']                     // 콘텐츠 유형 (의미 없�
 - [ ] **tags 3개 이상 (추천 시스템 필수!)**
 - [ ] **연령 등급 적절 (성인 주제면 meta 추가)**
 - [ ] 빌드 에러 없음
+- [ ] 연령 제한 필요 시 meta 설정
 
 ### 퀴즈
 - [ ] 정답 1개만 isCorrect: true

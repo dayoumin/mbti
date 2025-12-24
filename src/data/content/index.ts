@@ -23,10 +23,14 @@ export * from './community';
 // Explore (팁, Q&A, 투표, 퀴즈, 토론)
 export * from './explore';
 
+// Fortune (운세 콘텐츠)
+export * from './fortune';
+
 // 통합 통계
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from './quizzes';
 import { VS_POLLS } from './polls';
 import { ALL_SITUATION_REACTIONS } from './situation-reactions';
+import { ZODIAC_FORTUNES_2025, ZODIAC_POLLS, CONSTELLATIONS, ALL_DAILY_MESSAGES, LUCKY_TIPS } from './fortune';
 import type { ContentCategory, SituationCategory } from './types';
 
 export const CONTENT_STATS = {
@@ -34,7 +38,12 @@ export const CONTENT_STATS = {
   scenarioQuizzes: ALL_SCENARIO_QUIZZES.length,
   vsPolls: VS_POLLS.length,
   situationReactions: ALL_SITUATION_REACTIONS.length,
-  total: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length + VS_POLLS.length + ALL_SITUATION_REACTIONS.length,
+  zodiacFortunes: ZODIAC_FORTUNES_2025.length,
+  zodiacPolls: ZODIAC_POLLS.length,
+  constellations: CONSTELLATIONS.length,
+  dailyMessages: ALL_DAILY_MESSAGES.length,
+  luckyTips: LUCKY_TIPS.length,
+  total: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length + VS_POLLS.length + ALL_SITUATION_REACTIONS.length + ZODIAC_FORTUNES_2025.length + ZODIAC_POLLS.length + CONSTELLATIONS.length + ALL_DAILY_MESSAGES.length + LUCKY_TIPS.length,
 };
 
 // 카테고리별 콘텐츠 수 조회
