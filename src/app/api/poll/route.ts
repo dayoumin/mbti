@@ -96,10 +96,10 @@ export async function POST(request: NextRequest) {
     // optionIds: 복수 선택 (allowMultiple), optionId: 단일 선택 (하위 호환)
     const { deviceId, pollId, optionId, optionIds, allowMultiple: clientAllowMultiple } = body;
 
-    // 필수 필드 체크 (pollId.startsWith 호출 전에 먼저 검증)
-    if (!deviceId || !pollId) {
+    // 필수 필드 체크 + 타입 검증 (pollId.startsWith 호출 전에 먼저 검증)
+    if (!deviceId || !pollId || typeof pollId !== 'string') {
       return NextResponse.json(
-        { error: 'Missing required fields: deviceId, pollId' },
+        { error: 'Missing required fields: deviceId, pollId (string)' },
         { status: 400 }
       );
     }

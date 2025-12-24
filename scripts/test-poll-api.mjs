@@ -14,9 +14,53 @@ console.log('Poll API 로직 테스트');
 console.log('='.repeat(60));
 
 // ============================================================================
+// 테스트 0: 필수 필드 검증 (회귀 테스트)
+// ============================================================================
+console.log('\n[테스트 0] 필수 필드 검증 - pollId/deviceId 타입 체크\n');
+
+function validateRequiredFields(deviceId, pollId) {
+  // 필수 필드 체크 + 타입 검증
+  if (!deviceId || !pollId || typeof pollId !== 'string') {
+    return { success: false, error: 'Missing required fields: deviceId, pollId (string)', status: 400 };
+  }
+  return { success: true };
+}
+
+const requiredFieldTests = [
+  { name: 'pollId 누락', deviceId: 'user-1', pollId: undefined, expected: false },
+  { name: 'pollId null', deviceId: 'user-1', pollId: null, expected: false },
+  { name: 'pollId 빈 문자열', deviceId: 'user-1', pollId: '', expected: false },
+  { name: 'pollId 숫자 (truthy but not string)', deviceId: 'user-1', pollId: 123, expected: false },
+  { name: 'pollId 객체 (truthy but not string)', deviceId: 'user-1', pollId: { id: 'x' }, expected: false },
+  { name: 'deviceId 누락', deviceId: undefined, pollId: 'vs-test-001', expected: false },
+  { name: '정상 케이스', deviceId: 'user-1', pollId: 'vs-test-001', expected: true },
+  { name: 'Choice Poll 정상', deviceId: 'user-1', pollId: 'choice-test-001', expected: true },
+];
+
+let passed = 0;
+let failed = 0;
+
+requiredFieldTests.forEach(({ name, deviceId, pollId, expected }) => {
+  const result = validateRequiredFields(deviceId, pollId);
+  const isPass = result.success === expected;
+  const status = isPass ? '✅' : '❌';
+
+  if (isPass) {
+    passed++;
+  } else {
+    failed++;
+  }
+
+  console.log(`${status} ${name}: pollId=${JSON.stringify(pollId)} → success=${result.success} (expected: ${expected})`);
+});
+
+console.log(`\n결과: ${passed}/${passed + failed} 통과`);
+
+// ============================================================================
 // 테스트 1: optionId 검증 로직
 // ============================================================================
-console.log('\n[테스트 1] optionId 검증 - pollId prefix 기반 타입 추론\n');
+console.log('\n' + '='.repeat(60));
+console.log('[테스트 1] optionId 검증 - pollId prefix 기반 타입 추론\n');
 
 function validateOptionId(pollId, optionId) {
   const validVsOptions = ['a', 'b'];
@@ -44,8 +88,8 @@ const validationTests = [
   { pollId: 'user-123456', optionId: 'c', expected: false },
 ];
 
-let passed = 0;
-let failed = 0;
+passed = 0;
+failed = 0;
 
 validationTests.forEach(({ pollId, optionId, expected }) => {
   const result = validateOptionId(pollId, optionId);
