@@ -18,6 +18,25 @@ export type ContentCategory =
 export type CommunityCategory = ContentCategory;
 
 // ============================================================================
+// 연령 등급 시스템 (단순화)
+// ============================================================================
+
+/**
+ * 콘텐츠 연령 등급 (단순 3단계)
+ * - all: 전체 이용가 (기본값)
+ * - kids: 어린이 특화 (12세 이하 추천, 10대에게 부스트)
+ * - adult: 성인 전용 (20세 이상, 술/도박 등)
+ */
+export type AgeRating = 'all' | 'kids' | 'adult';
+
+/**
+ * 연령 제한 사유 (투명성을 위해)
+ */
+export type AgeRestrictionReason =
+  | 'alcohol'      // 주류 관련
+  | 'gambling';    // 도박 관련
+
+// ============================================================================
 // 콘텐츠 메타데이터 (타겟팅, 연령 제한 등)
 // ============================================================================
 
@@ -30,7 +49,11 @@ export type { AgeGroup, Gender };
  * 콘텐츠 메타데이터 - 퀴즈, 투표, 테스트 생성 시 포함
  */
 export interface ContentMeta {
-  // 연령 제한 (없으면 전체 연령)
+  // ========== 연령 등급 (신규 - 권장) ==========
+  ageRating?: AgeRating;              // 연령 등급 (기본: 'all')
+  ageRestrictionReason?: AgeRestrictionReason;  // 제한 사유
+
+  // ========== 레거시 연령 제한 (하위 호환) ==========
   minAge?: AgeGroup;           // 최소 연령 (예: '20s' = 20대 이상)
   allowedAges?: AgeGroup[];    // 허용 연령 목록 (더 세밀한 제어)
 
@@ -39,7 +62,7 @@ export interface ContentMeta {
   targetAges?: AgeGroup[];     // 타겟 연령대 (예: ['20s', '30s'])
 
   // 콘텐츠 속성
-  isAdultOnly?: boolean;       // 성인 전용 (술 등)
+  isAdultOnly?: boolean;       // 성인 전용 (술 등) - ageRating: 'adult'와 동일
   isSensitive?: boolean;       // 민감한 주제 (정치, 종교 등 - 필터링용)
 
   // 추천/노출 가중치
@@ -83,6 +106,7 @@ export interface ScenarioQuiz {
   emoji: string;
   questions: ScenarioQuestion[];
   results: ScenarioResult[];
+  tags?: string[];  // 개인화 추천용 태그
   meta?: ContentMeta;  // 타겟팅/연령 제한 메타데이터
 }
 
@@ -187,10 +211,21 @@ export type ContentWithMeta = { meta?: ContentMeta };
 // 메타데이터 기반 필터링 유틸리티
 // ============================================================================
 
-const AGE_ORDER: AgeGroup[] = ['10s', '20s', '30s', '40s+'];
+const AGE_ORDER: AgeGroup[] = ['~9', '10s', '20s', '30s', '40s+'];
+
+/**
+ * 미성년자인지 확인 (~9 또는 10대)
+ */
+export function isMinor(ageGroup?: AgeGroup): boolean {
+  return ageGroup === '~9' || ageGroup === '10s';
+}
 
 /**
  * 콘텐츠가 해당 연령에 적합한지 확인
+ *
+ * 필터링 로직 (단순):
+ * - adult 콘텐츠: 미성년자(~9, 10대) 차단, 연령 미확인 시에도 차단
+ * - kids/all 콘텐츠: 모두 허용
  */
 export function isContentAllowedForAge<T extends ContentWithMeta>(
   content: T,
@@ -201,25 +236,45 @@ export function isContentAllowedForAge<T extends ContentWithMeta>(
   // 메타데이터 없으면 전체 허용
   if (!meta) return true;
 
-  // 성인 전용 콘텐츠 체크
-  if (meta.isAdultOnly) {
-    if (!ageGroup || ageGroup === '10s') return false;
+  // 1. ageRating: 'adult' 또는 isAdultOnly 체크
+  const isAdult = meta.ageRating === 'adult' || meta.isAdultOnly;
+  if (isAdult) {
+    // 미성년자이거나 연령 미확인 → 차단
+    if (!ageGroup || isMinor(ageGroup)) return false;
   }
 
-  // 최소 연령 체크 (안전 우선: minAge 있으면 연령 확인 필수)
+  // 2. 레거시: 최소 연령 체크
   if (meta.minAge) {
-    if (!ageGroup) return false; // 연령 미확인 시 차단
+    if (!ageGroup) return false;
     const minIndex = AGE_ORDER.indexOf(meta.minAge);
     const userIndex = AGE_ORDER.indexOf(ageGroup);
     if (userIndex < minIndex) return false;
   }
 
-  // 허용 연령 목록 체크
+  // 3. 레거시: 허용 연령 목록 체크
   if (meta.allowedAges && meta.allowedAges.length > 0) {
     if (!ageGroup || !meta.allowedAges.includes(ageGroup)) return false;
   }
 
   return true;
+}
+
+/**
+ * Kids 콘텐츠 부스트 계수 반환
+ * - 10세 미만(~9)에게만 kids 콘텐츠 우선 노출
+ */
+export function getKidsBoostFactor<T extends ContentWithMeta>(
+  content: T,
+  ageGroup?: AgeGroup
+): number {
+  const meta = content.meta;
+
+  // kids 콘텐츠 + 10세 미만 사용자 → 30% 부스트
+  if (meta?.ageRating === 'kids' && ageGroup === '~9') {
+    return 1.3;
+  }
+
+  return 1.0;
 }
 
 /**

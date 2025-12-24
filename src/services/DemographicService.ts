@@ -11,7 +11,7 @@ import { STORAGE_KEYS } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
 
-export type AgeGroup = '10s' | '20s' | '30s' | '40s+';
+export type AgeGroup = '~9' | '10s' | '20s' | '30s' | '40s+';
 export type Gender = 'male' | 'female' | 'other';
 
 export interface DemographicData {
@@ -23,6 +23,7 @@ export interface DemographicData {
 
 // 연령대 라벨
 export const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
+  '~9': '10세 미만',
   '10s': '10대',
   '20s': '20대',
   '30s': '30대',
@@ -51,6 +52,7 @@ interface GenderDistribution {
 }
 
 interface AgeDistribution {
+  '~9': GenderDistribution;
   '10s': GenderDistribution;
   '20s': GenderDistribution;
   '30s': GenderDistribution;
@@ -159,7 +161,7 @@ const DEMOGRAPHIC_KEY = STORAGE_KEYS.DEMOGRAPHIC;
 // ========== 타입 가드 ==========
 
 // 유효한 값 배열 (API 검증용으로도 export)
-export const VALID_AGE_GROUPS: readonly AgeGroup[] = ['10s', '20s', '30s', '40s+'];
+export const VALID_AGE_GROUPS: readonly AgeGroup[] = ['~9', '10s', '20s', '30s', '40s+'];
 export const VALID_GENDERS: readonly Gender[] = ['male', 'female', 'other'];
 
 function isValidAgeGroup(value: unknown): value is AgeGroup {
@@ -371,6 +373,7 @@ class DemographicServiceClass {
   ): ContentCategory[] {
     // 연령대별 기본 추천 (공통)
     const ageBasedCategories: Record<AgeGroup, ContentCategory[]> = {
+      '~9': ['cat', 'dog', 'rabbit', 'hamster', 'personality'],  // 어린이: 동물 중심
       '10s': ['personality', 'love', 'cat', 'dog', 'rabbit', 'hamster'],
       '20s': ['love', 'personality', 'coffee', 'cat', 'dog', 'lifestyle'],
       '30s': ['coffee', 'plant', 'lifestyle', 'cat', 'dog', 'relationship'],
@@ -379,6 +382,10 @@ class DemographicServiceClass {
 
     // 성별에 따른 가중치 조정
     const genderAdjustments: Record<AgeGroup, Partial<Record<Gender, ContentCategory[]>>> = {
+      '~9': {
+        male: ['dog', 'cat', 'rabbit', 'hamster', 'personality'],
+        female: ['cat', 'rabbit', 'hamster', 'dog', 'personality'],
+      },
       '10s': {
         male: ['dog', 'personality', 'cat', 'love', 'rabbit'],
         female: ['cat', 'love', 'personality', 'rabbit', 'hamster'],

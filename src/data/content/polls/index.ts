@@ -11,6 +11,7 @@ import type { ContentCategory, VSPoll } from '../types';
 
 // --- 투표 데이터 import ---
 import { VS_POLLS as VS_POLLS_DATA } from './vs-polls';
+import { KIDS_VS_POLLS } from './kids-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -18,6 +19,7 @@ import { VS_POLLS as VS_POLLS_DATA } from './vs-polls';
 
 const POLL_REGISTRY: VSPoll[][] = [
   VS_POLLS_DATA,
+  KIDS_VS_POLLS,
   // 투표 분리 시 여기에 추가 (예: CAT_POLLS, DOG_POLLS)
 ];
 

@@ -6,7 +6,7 @@
 // Types
 // ============================================================================
 
-export type ContentType = 'quiz' | 'poll' | 'qna';
+export type ContentType = 'quiz' | 'poll' | 'qna' | 'system';
 export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'food' | 'work' | 'money' | 'general';
 export type Frequency = 'once' | 'daily' | 'weekly' | 'seasonal' | 'event';
 
@@ -649,6 +649,29 @@ export const CONTENT_ROADMAP: ContentRoadmapPhase[] = [
       { type: 'quiz', subType: 'chemi', priority: 'high', description: '케미 퀴즈 (친구 초대)' },
       { type: 'qna', subType: 'ask', priority: 'medium', description: 'Q&A 시스템 기본' },
       { type: 'poll', subType: 'scale', priority: 'low', description: '척도 투표' },
+    ],
+  },
+  {
+    id: 'phase-4',
+    name: '장기 (3-6개월)',
+    duration: '3-6개월',
+    items: [
+      { type: 'system', subType: 'trending', priority: 'high', description: '시대 화두/트렌드 콘텐츠 시스템 (시즌, 이슈, 밈)' },
+      { type: 'system', subType: 'recommendation', priority: 'high', description: '추천 알고리즘 고도화 (협업 필터링, 유사도)' },
+      { type: 'system', subType: 'viral-stats', priority: 'medium', description: '바이럴 콘텐츠 통계 (참여율, 공유율, 재참여)' },
+      { type: 'system', subType: 'revival', priority: 'medium', description: '인기 콘텐츠 주기적 재노출 시스템' },
+      { type: 'system', subType: 'age-verification', priority: 'low', description: '연령 변경 시 실명인증 (성인 콘텐츠 접근 악용 방지)' },
+    ],
+  },
+  {
+    id: 'phase-deploy',
+    name: '배포/프로덕션',
+    duration: '프로덕션 전환 시',
+    items: [
+      { type: 'system', subType: 'dashboard-auth', priority: 'high', description: '대시보드 관리자 인증 (로그인 필요)' },
+      { type: 'system', subType: 'dev-tools-hide', priority: 'high', description: '개발 도구 프로덕션 숨김 (연령 테스터 등)' },
+      { type: 'system', subType: 'env-config', priority: 'medium', description: '환경변수 기반 기능 토글 (NODE_ENV 활용)' },
+      { type: 'system', subType: 'error-monitoring', priority: 'medium', description: '에러 모니터링 설정 (Sentry 등)' },
     ],
   },
 ];
@@ -1985,6 +2008,219 @@ export const CONTENT_API_ENDPOINTS = [
 ];
 
 // ============================================================================
+// 개인화 추천 시스템 (2024-12-23 구현)
+// ============================================================================
+
+export interface RecommendationWeight {
+  factor: string;
+  weight: number;
+  description: string;
+}
+
+export interface DifficultyRule {
+  accuracyRange: string;
+  difficulty: 1 | 2 | 3;
+  label: string;
+}
+
+export interface AgeRestriction {
+  category: string;
+  minAge: string;
+  reason: string;
+}
+
+export interface RecommendationRoadmapItem {
+  phase: number;
+  status: 'done' | 'planned';
+  feature: string;
+}
+
+export const RECOMMENDATION_SYSTEM = {
+  // 추천 점수 계산 가중치
+  weights: [
+    { factor: 'categoryEngagement', weight: 0.4, description: '카테고리 참여도 - 많이 참여한 카테고리 우선' },
+    { factor: 'tagMatch', weight: 0.3, description: '태그 매칭 - 관심 태그가 포함된 콘텐츠 우선' },
+    { factor: 'difficultyFit', weight: 0.2, description: '난이도 적합성 - 사용자 정답률에 맞는 난이도' },
+    { factor: 'freshness', weight: 0.1, description: '신규 콘텐츠 보너스 - 새 카테고리에 기회 부여' },
+  ] as RecommendationWeight[],
+
+  // 난이도 자동 조정 규칙
+  difficultyRules: [
+    { accuracyRange: '80% 이상', difficulty: 3, label: '어려운 문제' },
+    { accuracyRange: '50-80%', difficulty: 2, label: '중간 난이도' },
+    { accuracyRange: '50% 미만', difficulty: 1, label: '쉬운 문제' },
+  ] as DifficultyRule[],
+
+  // 연령 제한 콘텐츠
+  ageRestrictions: [
+    { category: 'alcohol', minAge: '20대', reason: '주류 관련 콘텐츠는 성인만' },
+  ] as AgeRestriction[],
+
+  // 사용자 선호도 데이터 구조
+  userPreferenceSchema: {
+    categoryEngagement: 'Record<카테고리, { quizCount, pollCount, correctCount, lastEngagedAt }>',
+    tagInterest: 'Record<태그, 참여횟수>',
+    preferredDifficulty: '1 | 2 | 3 (자동 조정)',
+  },
+
+  // 추천 로직 흐름
+  recommendationFlow: [
+    '1. 연령 제한 필터링 (DemographicService)',
+    '2. 추천 점수 계산 (가중치 적용)',
+    '3. 점수순 정렬',
+    '4. 상위 N*2개 선택',
+    '5. 랜덤 셔플 (다양성 확보)',
+    '6. 최종 N개 반환',
+  ],
+
+  // 저장소
+  storage: {
+    key: 'chemi_user_preference',
+    location: 'localStorage',
+    serverSync: false, // 추후 로그인 사용자 동기화 예정
+  },
+
+  // 구현 파일
+  implementedFiles: [
+    'src/services/UserPreferenceService.ts',
+    'src/components/TodayQuizPoll.tsx',
+    'src/services/DemographicService.ts (연령 제한)',
+  ],
+
+  // 콘텐츠 유사도 기반 추천 (Phase 1)
+  similarityRecommendation: {
+    algorithm: 'Jaccard 유사도',
+    formula: '|A ∩ B| / |A ∪ B|',
+    weights: {
+      tagSimilarity: 0.7,    // 태그 교집합/합집합
+      categoryMatch: 0.3,    // 같은 카테고리면 1, 아니면 0
+    },
+    flow: [
+      '1. 사용자 참여 콘텐츠 목록 확인',
+      '2. 각 미참여 콘텐츠와 참여 콘텐츠 간 유사도 계산',
+      '3. 최대 유사도 * 0.7 + 평균 유사도 * 0.3 = 최종 점수',
+      '4. 점수 0.1 이상만 추천',
+      '5. 점수순 정렬 후 상위 N개 반환',
+    ],
+    implementedFiles: [
+      'src/services/ContentRecommendationService.ts',
+    ],
+    testFile: 'scripts/test-recommendation.mjs',
+    serverCost: '$0 (클라이언트 계산)',
+  },
+
+  // tags 필수 규칙
+  tagsRequirement: {
+    minCount: 3,
+    language: '한글',
+    purpose: '추천 시스템 유사도 계산',
+    validation: 'scripts/validate-content-samples.mjs',
+    examples: {
+      good: ['고양이', '품종', '성격', '입양'],
+      bad: ['cat', '퀴즈', '동물'],
+    },
+  },
+
+  // 향후 개선 계획
+  roadmap: [
+    { phase: 1, status: 'done', feature: '카테고리/태그 기반 추천' },
+    { phase: 1, status: 'done', feature: '난이도 자동 조정' },
+    { phase: 1, status: 'done', feature: '연령 제한 필터링' },
+    { phase: 1, status: 'done', feature: '태그 기반 Jaccard 유사도 추천' },
+    { phase: 1, status: 'done', feature: 'tags 필수화 (검증 스크립트)' },
+    { phase: 2, status: 'planned', feature: '서버 사이드 선호도 저장' },
+    { phase: 2, status: 'planned', feature: '협업 필터링 ("이 퀴즈를 푼 사람들이...")' },
+    { phase: 3, status: 'planned', feature: '시간대별 추천 (아침/저녁 콘텐츠)' },
+    { phase: 3, status: 'planned', feature: 'A/B 테스트 기반 가중치 튜닝' },
+  ] as RecommendationRoadmapItem[],
+};
+
+// ============================================================================
+// ============================================================================
+// 콘텐츠 연령 등급 가이드라인
+// ============================================================================
+
+export interface AgeRatingGuide {
+  rating: 'all' | 'kids' | 'adult';
+  description: string;
+  examples: string[];
+  metaExample: string;
+}
+
+export const AGE_RATING_GUIDE: AgeRatingGuide[] = [
+  {
+    rating: 'all',
+    description: '전체 이용가 (기본값). 모든 연령대에 적합한 콘텐츠.',
+    examples: [
+      '일반 동물 퀴즈',
+      '성격 테스트',
+      '취향 투표 (음식, 취미 등)',
+    ],
+    metaExample: `meta: { ageRating: 'all' }  // 생략 가능 (기본값)`,
+  },
+  {
+    rating: 'kids',
+    description: '어린이 특화. 10대 사용자에게 우선 노출 (30% 부스트).',
+    examples: [
+      '귀여운 동물 캐릭터 퀴즈',
+      '간단한 OX 퀴즈',
+      '캐릭터 이름 맞추기',
+      '동물 소리 퀴즈',
+    ],
+    metaExample: `meta: { ageRating: 'kids' }`,
+  },
+  {
+    rating: 'adult',
+    description: '성인 전용. 10대 및 연령 미확인 사용자에게 노출되지 않음.',
+    examples: [
+      '술 관련 콘텐츠 (와인 매칭, 맥주 투표 등)',
+      '도박 관련 콘텐츠',
+    ],
+    metaExample: `meta: { ageRating: 'adult', ageRestrictionReason: 'alcohol' }`,
+  },
+];
+
+/**
+ * 콘텐츠 생성 시 연령 등급 결정 가이드
+ */
+export const AGE_RATING_DECISION_GUIDE = {
+  title: '연령 등급 결정 가이드',
+  description: '콘텐츠 생성 시 아래 기준으로 연령 등급을 결정합니다.',
+  rules: [
+    {
+      condition: '술/주류 관련 콘텐츠',
+      rating: 'adult' as const,
+      reason: 'alcohol',
+    },
+    {
+      condition: '도박/베팅 관련 콘텐츠',
+      rating: 'adult' as const,
+      reason: 'gambling',
+    },
+    {
+      condition: '귀여운 캐릭터/동물 중심 콘텐츠',
+      rating: 'kids' as const,
+      reason: null,
+    },
+    {
+      condition: '단순한 OX 퀴즈, 동물 소리/이름 맞추기',
+      rating: 'kids' as const,
+      reason: null,
+    },
+    {
+      condition: '그 외 일반 콘텐츠',
+      rating: 'all' as const,
+      reason: null,
+    },
+  ],
+  notes: [
+    '연애 관련 콘텐츠는 all 등급 (10대도 관심 있는 주제)',
+    '직장/업무 콘텐츠도 all 등급 (10대에게는 추천 우선순위만 낮춤)',
+    'kids 등급은 10대에게 30% 추천 점수 부스트',
+  ],
+};
+
+// ============================================================================
 // 통합 Export
 // ============================================================================
 
@@ -2011,6 +2247,11 @@ export const CONTENT_SYSTEM = {
   // DB 마이그레이션
   dbMigration: CONTENT_DB_MIGRATION,
   apiEndpoints: CONTENT_API_ENDPOINTS,
+  // 개인화 추천 시스템
+  recommendation: RECOMMENDATION_SYSTEM,
+  // 연령 등급 가이드
+  ageRatingGuide: AGE_RATING_GUIDE,
+  ageRatingDecisionGuide: AGE_RATING_DECISION_GUIDE,
 };
 
 export default CONTENT_SYSTEM;

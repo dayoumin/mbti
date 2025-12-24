@@ -73,6 +73,8 @@ import BusinessStrategy from './components/BusinessStrategy';
 import OperationsSystem from './components/OperationsSystem';
 import FirstMoverStrategy from './components/FirstMoverStrategy';
 import AutomationSystem from './components/AutomationSystem';
+import GlobalExpansion from './components/GlobalExpansion';
+import DemographicTester from './components/DemographicTester';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -167,6 +169,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         groupLabel: '비즈니스',
         tabs: [
           { key: 'business', label: '비즈니스 전략', icon: <TrendingUp className="w-4 h-4" /> },
+          { key: 'global', label: '글로벌 확장', icon: <Globe className="w-4 h-4" /> },
         ],
       },
     ],
@@ -178,6 +181,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     subTabs: [
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'automation', label: '자동화', icon: <Zap className="w-4 h-4" /> },
+      { key: 'demographicTest', label: '연령 테스터', icon: <User className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
@@ -470,9 +474,11 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'demographics' && <DemographicsDashboard />}
           {activeCategory === 'planning' && activeSubTab === 'care' && <CareSystem />}
           {activeCategory === 'planning' && activeSubTab === 'business' && <BusinessStrategy />}
+          {activeCategory === 'planning' && activeSubTab === 'global' && <GlobalExpansion />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'automation' && <AutomationSystem />}
+          {activeCategory === 'devtools' && activeSubTab === 'demographicTest' && <DemographicTester />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}

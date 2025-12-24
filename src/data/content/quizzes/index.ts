@@ -14,6 +14,7 @@ import { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
 import { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
 import { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
 import { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
+import { KIDS_ANIMAL_QUIZZES } from './kids-animals';
 
 // --- 시나리오 퀴즈 import ---
 import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
@@ -28,6 +29,7 @@ const KNOWLEDGE_QUIZ_REGISTRY: KnowledgeQuiz[][] = [
   DOG_KNOWLEDGE_QUIZZES,
   RABBIT_KNOWLEDGE_QUIZZES,
   PLANT_KNOWLEDGE_QUIZZES,
+  KIDS_ANIMAL_QUIZZES,
 ];
 
 const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
@@ -48,6 +50,7 @@ export { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
 export { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
 export { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
 export { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
+export { KIDS_ANIMAL_QUIZZES } from './kids-animals';
 export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 
