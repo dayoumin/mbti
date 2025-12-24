@@ -5,6 +5,7 @@ import {
   Brain,
   BarChart3,
   MessageCircle,
+  Settings,
   ChevronRight,
   Star,
   Clock,
@@ -60,6 +61,7 @@ const TYPE_ICONS: Record<ContentType, React.ReactNode> = {
   quiz: <Brain className="w-5 h-5" />,
   poll: <BarChart3 className="w-5 h-5" />,
   qna: <MessageCircle className="w-5 h-5" />,
+  system: <Settings className="w-5 h-5" />,
 };
 
 // ============================================================================

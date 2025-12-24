@@ -108,6 +108,7 @@ export interface SituationReaction {
   };
   totalVotes?: number;
   tags: string[];
+  meta?: { minAge?: string; isAdultOnly?: boolean };  // 연령 제한 (술 관련 콘텐츠)
 }
 
 export interface Poll {
@@ -961,6 +962,7 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
       'ENTP': 'd',
     },
     tags: ['직장', '회식', '술자리'],
+    meta: { minAge: '20s', isAdultOnly: true },
   },
   {
     id: 'situation-reaction-social-001',

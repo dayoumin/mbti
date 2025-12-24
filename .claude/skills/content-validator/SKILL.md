@@ -26,7 +26,11 @@ node scripts/validate-content-samples.mjs
 | category 유효성 | 에러 | 허용된 값만 |
 | question/title 누락 | 에러 | 필수 |
 | options 최소 개수 | 에러 | 2개 이상 |
-| tags 누락 | 경고 | 권장 |
+| **tags 누락** | **에러** | **필수 (추천 시스템)** |
+| **tags 개수 부족** | **경고** | **3개 이상 권장** |
+| tags 영어 사용 | 경고 | 한글 권장 |
+
+> **연령 등급**: 검증기는 키워드를 감지하지 않음. AI가 생성 시점에 맥락 판단하여 meta 추가. 자세한 규칙은 하단 "연령 등급" 섹션 참조.
 
 ### 2. 퀴즈 검증 (type: 'knowledge')
 
@@ -202,3 +206,66 @@ scripts/validate-content-samples.mjs
 - [ ] 에러 0개
 - [ ] 경고 검토 및 가능하면 수정
 - [ ] 다시 빌드 확인
+
+## 연령 등급 (Age Rating)
+
+### 2단계 검증
+
+| 단계 | 담당 | 방식 |
+|------|------|------|
+| 1. 스크립트 | `validate-content-samples.mjs` | 형식만 체크 (키워드 감지 안 함) |
+| 2. AI 검증 | content-validator 스킬 실행 시 | **맥락 기반** 성인 콘텐츠 체크 |
+
+### AI 검증 규칙 (필수!)
+
+#### ⚠️ 핵심 원칙: 보수적 판정
+```
+애매하면 → all (10대 허용)
+명백한 경우에만 → adult
+```
+
+**이유**: 10대가 콘텐츠 못 보면 안 됨. 바이럴 콘텐츠 차단되면 안 됨.
+
+#### 명백한 adult (이것만 지적)
+- **성적 콘텐츠**: 부부 잠자리, 성인 연애 상황
+- **직접적 음주**: 술 마시기, 취함, 숙취, 술자리
+- **실제 도박**: 베팅, 판돈, 돈 거는 행위
+
+```
+⚠️ "회식에서 술을 마시자" → adult 필요 (직접 음주)
+```
+
+#### all로 유지 (대부분)
+- 언어적 유사: 술래잡기, 와인딩, 칵테일 드레스
+- 음식/미용: 막걸리 빵, 맥주효모
+- 회식 일반: 회식 참석, 회식 메뉴
+- **그레이존**: "소주 vs 맥주 취향" → all (바이럴 우선)
+
+```
+✅ "술래잡기에서 누가 술래?" → all (놀이)
+✅ "소주 vs 맥주 어떤 게 좋아?" → all (가벼운 질문)
+```
+
+### meta 필드 형식
+```typescript
+// 성인용
+meta: { ageRating: 'adult', ageRestrictionReason: 'alcohol' }
+
+// 10대 친화
+meta: { ageRating: 'kids' }
+
+// 일반 (생략 가능)
+// meta 없으면 기본 'all'
+```
+
+### AI 검증 출력 형식
+```
+## 연령 등급 검증
+
+✅ cat-quiz-001: 일반 콘텐츠 (meta 불필요)
+✅ cat-quiz-002: 일반 콘텐츠 (meta 불필요)
+⚠️ situation-reaction-work-003: "회식 술자리" 맥락 → adult 필요
+   현재: meta 없음
+   권장: meta: { ageRating: 'adult', ageRestrictionReason: 'alcohol' }
+✅ situation-reaction-social-001: "술래잡기" → 일반 콘텐츠 (오탐 아님)
+```

@@ -44,7 +44,10 @@ const colors = {
 // ============================================================
 
 // 유효한 카테고리 목록
-const VALID_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'love', 'personality', 'lifestyle', 'food', 'general'];
+const VALID_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'love', 'personality', 'lifestyle', 'food', 'general', 'work'];
+
+// 연령 등급은 AI가 생성 시점에 판단하여 meta에 추가
+// 검증 스크립트는 meta 필드 형식만 확인 (키워드 감지 제거 - false positive 방지)
 
 function validateQuiz(quiz) {
   const errors = [];
@@ -73,7 +76,18 @@ function validateQuiz(quiz) {
     warnings.push('difficulty는 1, 2, 3 중 하나 권장');
   }
 
-  if (!quiz.tags || quiz.tags.length === 0) warnings.push('tags 권장');
+  // tags 필수 검증 (추천 시스템)
+  if (!quiz.tags || quiz.tags.length === 0) {
+    errors.push('tags 필수 (추천 시스템)');
+  } else {
+    if (quiz.tags.length < 3) warnings.push('tags 3개 이상 권장');
+    // 영어 태그 검사
+    const englishTags = quiz.tags.filter(t => /^[a-zA-Z]+$/.test(t));
+    if (englishTags.length > 0) warnings.push(`한글 태그 권장: ${englishTags.join(', ')}`);
+  }
+
+  // 연령 등급은 AI가 생성 시점에 맥락을 판단하여 meta 추가
+  // (키워드 자동 감지 제거 - "술래잡기" 같은 오탐 방지)
 
   return {
     type: 'quiz',
@@ -147,12 +161,21 @@ function validatePoll(poll) {
     if (poll.options?.length > 5) warnings.push('choice 타입은 5개 이하 옵션 권장');
   }
 
-  if (!poll.tags || poll.tags.length === 0) warnings.push('tags 권장');
+  // tags 필수 검증 (추천 시스템)
+  if (!poll.tags || poll.tags.length === 0) {
+    errors.push('tags 필수 (추천 시스템)');
+  } else {
+    if (poll.tags.length < 3) warnings.push('tags 3개 이상 권장');
+    const englishTags = poll.tags.filter(t => /^[a-zA-Z]+$/.test(t));
+    if (englishTags.length > 0) warnings.push(`한글 태그 권장: ${englishTags.join(', ')}`);
+  }
 
   // 이모지 체크
   const hasEmoji = poll.options?.some(o => o.emoji);
   const allEmoji = poll.options?.every(o => o.emoji);
   if (hasEmoji && !allEmoji) warnings.push('일부 옵션에만 emoji 있음');
+
+  // 연령 등급은 AI가 생성 시점에 맥락을 판단하여 meta 추가
 
   return {
     type: 'poll',
@@ -206,7 +229,16 @@ function validateSituationReaction(sr) {
     warnings.push('personalityMapping 권장 (성격별 통계용)');
   }
 
-  if (!sr.tags || sr.tags.length === 0) warnings.push('tags 권장');
+  // tags 필수 검증 (추천 시스템)
+  if (!sr.tags || sr.tags.length === 0) {
+    errors.push('tags 필수 (추천 시스템)');
+  } else {
+    if (sr.tags.length < 3) warnings.push('tags 3개 이상 권장');
+    const englishTags = sr.tags.filter(t => /^[a-zA-Z]+$/.test(t));
+    if (englishTags.length > 0) warnings.push(`한글 태그 권장: ${englishTags.join(', ')}`);
+  }
+
+  // 연령 등급은 AI가 생성 시점에 맥락을 판단하여 meta 추가
 
   return {
     type: 'situation-reaction',

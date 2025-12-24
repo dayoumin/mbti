@@ -44,6 +44,7 @@ export default function DemographicsDashboard() {
 
   // 바 색상
   const ageColors: Record<AgeGroup, string> = {
+    '~9': 'bg-yellow-500',
     '10s': 'bg-pink-500',
     '20s': 'bg-violet-500',
     '30s': 'bg-blue-500',
