@@ -226,7 +226,7 @@ const forbiddenPatterns = [
 ];
 
 let guidelineViolations = 0;
-const contentToCheck = zodiacContent + pollsContent;
+const contentToCheck = zodiacContent + pollsContent + constellationsContent + dailyMessagesContent;
 
 for (const fp of forbiddenPatterns) {
   if (fp.pattern.test(contentToCheck)) {
@@ -250,9 +250,13 @@ console.log('='.repeat(50));
 // 통계 추출 시도
 const fortuneCount = (zodiacContent.match(/id:\s*['"]zodiac-[^'"]+['"]/g) || []).length;
 const pollCount = (pollsContent.match(/id:\s*['"]zodiac-poll-\d+['"]/g) || []).length;
+const constellationCount = (constellationsContent.match(/id:\s*['"]\w+['"]/g) || []).length;
+const dailyMessageCount = (dailyMessagesContent.match(/id:\s*['"][^'"]+['"]/g) || []).length;
 
 console.log(`\n   12지신 운세: ${fortuneCount}개`);
 console.log(`   별자리 투표: ${pollCount}개`);
+console.log(`   황도 12궁: ${constellationCount}개`);
+console.log(`   일일 메시지: ${dailyMessageCount}개`);
 console.log(`\n   에러: ${errors}개`);
 console.log(`   경고: ${warnings}개`);
 

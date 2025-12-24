@@ -380,7 +380,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     rulingPlanet: '토성',
     keywords: ['#현실주의', '#야망가', '#워커홀릭', '#노잼아님'],
     personality: {
-      summary: '성공하고 싶어? 나처럼 해. 감정 표현은 서툴지만 내 사람은 물질(?)로 확실히 챙김.',
+      summary: '성공하고 싶어? 나처럼 해. 감정 표현은 서툴지만 내 사람은 물질(?)로 제대로 챙김.',
       growthPoint: '인생은 성과 그래프가 아니에요. 가끔은 목적 없는 산책이나 멍 때리기가 최고의 전략이 될 수 있어요.',
       year2025Keywords: ['#커리어하이', '#기반다지기', '#워라밸'],
     },
