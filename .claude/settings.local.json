@@ -81,7 +81,8 @@
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
       "Bash(del \"d:\\\\Project\\\\MBTI\\\\.next\\\\lock\")",
-      "Bash(npx vitest run:*)"
+      "Bash(npx vitest run:*)",
+      "Bash(git check-ignore:*)"
     ],
     "deny": [],
     "ask": []
