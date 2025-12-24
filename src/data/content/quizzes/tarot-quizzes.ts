@@ -188,6 +188,36 @@ export const TAROT_KNOWLEDGE_QUIZZES: TarotQuiz[] = [
     points: 20,
     tags: ['Temperance', '균형', '워라밸'],
   },
+  {
+    id: 'tarot-quiz-021',
+    type: 'knowledge',
+    category: 'general',
+    question: 'The Hierophant 카드와 어울리는 현대적 해석은?',
+    options: [
+      { id: 'a', text: '멘토를 찾고 정석 루트 따르기', isCorrect: true },
+      { id: 'b', text: '혼자 독학으로 길 찾기', isCorrect: false },
+      { id: 'c', text: '즉흥적으로 결정하기', isCorrect: false },
+    ],
+    explanation: '튜닝의 끝은 순정이라더니, The Hierophant는 검증된 길과 멘토링을 뜻해요. 혼자 끙끙대지 말고 전문가에게 배우는 게 빠르죠!',
+    difficulty: 2,
+    points: 15,
+    tags: ['The Hierophant', '멘토링', '정석'],
+  },
+  {
+    id: 'tarot-quiz-022',
+    type: 'knowledge',
+    category: 'general',
+    question: 'The World 카드의 상징은?',
+    options: [
+      { id: 'a', text: '시작과 도전', isCorrect: false },
+      { id: 'b', text: '혼란과 불안', isCorrect: false },
+      { id: 'c', text: '완성과 성취', isCorrect: true },
+    ],
+    explanation: '축하합니다! 미션 클리어. The World는 메이저 아르카나 마지막 카드(21번)로 챕터 완성을 의미해요. 더 넓은 세상이 기다려요!',
+    difficulty: 2,
+    points: 15,
+    tags: ['The World', '완성', '성취'],
+  },
 ];
 
 // ============================================================================
