@@ -140,6 +140,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // allowMultiple=false인데 복수 옵션을 보낸 경우 거부
+    if (!allowMultiple && selectedOptions.length > 1) {
+      return NextResponse.json(
+        { error: 'Multiple options not allowed for this poll' },
+        { status: 400 }
+      );
+    }
+
     // allowMultiple이 아닌 경우 기존 투표 확인 후 차단
     if (!allowMultiple) {
       const existingVote = await query(
