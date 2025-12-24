@@ -26,6 +26,10 @@ export const CATEGORY_LABELS: Record<ContentCategory, { name: string; emoji: str
   personality: { name: '성격', emoji: '🧠' },
   love: { name: '연애', emoji: '💕' },
   relationship: { name: '관계', emoji: '💑' },
+  // 운세/점술
+  fortune: { name: '운세', emoji: '🔮' },
+  zodiac: { name: '별자리/띠', emoji: '⭐' },
+  tarot: { name: '타로', emoji: '🃏' },
   // 일반
   general: { name: '일반', emoji: '📚' },
 };
