@@ -8,7 +8,7 @@ export type ContentCategory =
   // 특수동물
   | 'fish' | 'bird' | 'reptile' | 'smallPet'
   // 라이프스타일
-  | 'plant' | 'coffee' | 'lifestyle' | 'alcohol'
+  | 'plant' | 'coffee' | 'food' | 'lifestyle' | 'alcohol'
   // 심리/관계
   | 'personality' | 'love' | 'relationship'
   // 운세/점술
