@@ -275,6 +275,15 @@ function getUserVotes(deviceId, pollId) {
     .map(v => v.optionId);
 }
 
+// allowMultiple=false + 복수 옵션 거부 검증 함수
+function validateMultipleOptionsRejection(selectedOptions, allowMultiple) {
+  // allowMultiple=false인데 복수 옵션을 보낸 경우 거부
+  if (!allowMultiple && selectedOptions.length > 1) {
+    return { success: false, error: 'Multiple options not allowed for this poll' };
+  }
+  return { success: true };
+}
+
 // 테스트 케이스
 const multipleVoteTests = [
   {
@@ -288,6 +297,24 @@ const multipleVoteTests = [
     setup: () => { mockDb = [{ deviceId: 'user-1', pollId: 'choice-test-001', optionId: 'a' }]; },
     action: () => simulateVote('user-1', 'choice-test-001', 'b', false),
     check: (result) => result.success === false && result.error === 'Already voted',
+  },
+  {
+    name: 'allowMultiple=false + optionIds 배열 거부 (High 이슈 수정)',
+    setup: () => { mockDb = []; },
+    action: () => validateMultipleOptionsRejection(['a', 'b', 'c'], false),
+    check: (result) => result.success === false && result.error === 'Multiple options not allowed for this poll',
+  },
+  {
+    name: 'allowMultiple=true + optionIds 배열 허용',
+    setup: () => { mockDb = []; },
+    action: () => validateMultipleOptionsRejection(['a', 'b', 'c'], true),
+    check: (result) => result.success === true,
+  },
+  {
+    name: 'allowMultiple=false + 단일 옵션 허용',
+    setup: () => { mockDb = []; },
+    action: () => validateMultipleOptionsRejection(['a'], false),
+    check: (result) => result.success === true,
   },
   {
     name: '복수 선택: 여러 옵션 동시 저장',

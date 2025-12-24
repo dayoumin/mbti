@@ -215,10 +215,10 @@ export const VS_POLLS: VSPoll[] = [
   {
     id: 'vs-life-002',
     category: 'lifestyle',
-    question: '커피 vs 논커피?',
-    optionA: { id: 'a', text: '아메리카노', emoji: '☕' },
-    optionB: { id: 'b', text: '라떼', emoji: '🥛' },
-    tags: ['커피', '라이프스타일'],
+    question: '커피 타입은?',
+    optionA: { id: 'a', text: '아메리카노 (진하게)', emoji: '☕' },
+    optionB: { id: 'b', text: '라떼 (부드럽게)', emoji: '🥛' },
+    tags: ['커피', '라이프스타일', '음료'],
   },
   {
     id: 'vs-life-003',
@@ -444,11 +444,11 @@ export const VS_POLLS: VSPoll[] = [
   {
     id: 'vs-ambiguous-001',
     category: 'lifestyle',
-    question: '더 좋아하는 건?',
-    optionA: { id: 'a', text: '커피', emoji: '☕' },
-    optionB: { id: 'b', text: '술', emoji: '🍺' },
-    tags: ['취향', '기호품'],
-    // meta 없음 - 단순 선호도 조사, 섭취 전제 아님
+    question: '친구 만나면?',
+    optionA: { id: 'a', text: '카페 가자', emoji: '☕' },
+    optionB: { id: 'b', text: '한잔 하자', emoji: '🍺' },
+    tags: ['취향', '기호품', '사교'],
+    meta: { minAge: '20s' },
   },
   {
     id: 'vs-ambiguous-002',

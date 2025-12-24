@@ -74,9 +74,9 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'b', text: '띠가 더 맞음', emoji: '🐲' },
       { id: 'c', text: '둘 다 맞음', emoji: '🎯' },
       { id: 'd', text: '둘 다 안 맞음', emoji: '❌' },
-      { id: 'e', text: 'MBTI가 젤 맞음', emoji: '🧠' },
+      { id: 'e', text: '혈액형이 더 맞음', emoji: '🩸' },
     ],
-    tags: ['운세', '별자리', '띠', 'MBTI'],
+    tags: ['운세', '별자리', '띠', '혈액형'],
     meta: { minAge: '20s' },
   },
   {

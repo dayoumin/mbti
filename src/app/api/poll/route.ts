@@ -15,6 +15,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/turso';
+import { getChoicePollById } from '@/data/content/polls';
 
 // 투표 상태
 type PollStatus = 'pending' | 'approved' | 'featured' | 'hidden';
@@ -93,14 +94,26 @@ export async function POST(request: NextRequest) {
 
     // 기존: 투표 응답 저장
     // optionIds: 복수 선택 (allowMultiple), optionId: 단일 선택 (하위 호환)
-    const { deviceId, pollId, optionId, optionIds, allowMultiple } = body;
+    const { deviceId, pollId, optionId, optionIds, allowMultiple: clientAllowMultiple } = body;
 
+    // 필수 필드 체크 (pollId.startsWith 호출 전에 먼저 검증)
     if (!deviceId || !pollId) {
       return NextResponse.json(
         { error: 'Missing required fields: deviceId, pollId' },
         { status: 400 }
       );
     }
+
+    // allowMultiple: 서버 측 Choice Poll 설정 우선, 없으면 클라이언트 입력 사용
+    // - Choice Poll: 서버 정의된 allowMultiple 사용 (클라이언트 입력 무시)
+    // - VS Poll / User Poll: 항상 단일 선택 (allowMultiple 무시)
+    let allowMultiple = false;
+    if (pollId.startsWith('choice-')) {
+      const choicePoll = getChoicePollById(pollId);
+      // 서버에 정의된 poll이면 서버 설정 사용, 없으면 클라이언트 입력 허용 (user-created choice poll 대비)
+      allowMultiple = choicePoll ? (choicePoll.allowMultiple ?? false) : (clientAllowMultiple ?? false);
+    }
+    // VS Poll, User Poll은 allowMultiple = false 유지
 
     // optionId 또는 optionIds 중 하나는 필수
     const selectedOptions: string[] = optionIds
@@ -374,7 +387,7 @@ export async function GET(request: NextRequest) {
       let userVotes: string[] = [];
       if (deviceId) {
         const userVoteResult = await query(
-          `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ?`,
+          `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ? ORDER BY created_at ASC`,
           [pollId, deviceId]
         );
         userVotes = userVoteResult.rows.map(row => row.option_id as string);
@@ -403,7 +416,7 @@ export async function GET(request: NextRequest) {
     let userVote: string | null = null;
     if (deviceId) {
       const userVoteResult = await query(
-        `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ?`,
+        `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ? ORDER BY created_at ASC LIMIT 1`,
         [pollId, deviceId]
       );
       if (userVoteResult.rows.length > 0) {

@@ -56,6 +56,11 @@ export function getPollsByTag(tag: string): VSPoll[] {
   return VS_POLLS.filter(p => p.tags?.includes(tag));
 }
 
+/** Choice Poll ID로 조회 */
+export function getChoicePollById(pollId: string): ChoicePoll | undefined {
+  return CHOICE_POLLS.find(p => p.id === pollId);
+}
+
 // ============================================================================
 // 통계
 // ============================================================================
