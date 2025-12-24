@@ -2,9 +2,15 @@
  * Poll API Route
  *
  * POST /api/poll - 투표 저장 또는 사용자 투표 생성
- * GET /api/poll?pollId=xxx - 투표 통계 조회
+ * GET /api/poll?pollId=xxx - VS 투표 통계 조회 (A/B)
+ * GET /api/poll?pollId=xxx&type=choice - Choice 투표 통계 조회 (다중 선택)
+ * GET /api/poll?pollId=xxx&deviceId=xxx - 투표 통계 + 사용자 투표 여부
  * GET /api/poll?action=popular - 인기 투표 목록
  * GET /api/poll?action=my-polls&deviceId=xxx - 사용자 생성 투표 목록
+ *
+ * 댓글/좋아요:
+ * - 댓글: POST/GET /api/comments?targetType=poll&targetId=xxx
+ * - 좋아요: POST/GET /api/likes?targetType=poll&targetId=xxx
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -222,6 +228,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // pollType 파라미터: 'vs' (기본) 또는 'choice' (다중 선택)
+    const pollType = request.nextUrl.searchParams.get('type') || 'vs';
+    const deviceId = request.nextUrl.searchParams.get('deviceId');
+
     const result = await query(
       `SELECT option_id, COUNT(*) as count
        FROM poll_responses
@@ -235,12 +245,59 @@ export async function GET(request: NextRequest) {
       0
     );
 
-    // 항상 a/b 두 옵션을 반환 (없는 옵션은 0으로)
+    // 옵션별 투표 수 집계
     const optionMap = new Map<string, number>();
     for (const row of result.rows) {
       optionMap.set(row.option_id as string, row.count as number);
     }
 
+    // Choice Poll (다중 선택: a, b, c, d, e...)
+    if (pollType === 'choice') {
+      // 옵션 개수 파라미터 (기본 5개: a~e)
+      const optionCount = parseInt(request.nextUrl.searchParams.get('optionCount') || '5');
+      const allOptionIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].slice(0, optionCount);
+
+      // 퍼센트 계산 (반올림 오차 보정)
+      let remainingPercent = 100;
+      const options = allOptionIds.map((optionId, idx) => {
+        const count = optionMap.get(optionId) ?? 0;
+        let percentage: number;
+
+        if (totalVotes === 0) {
+          percentage = 0;
+        } else if (idx === allOptionIds.length - 1) {
+          // 마지막 옵션은 남은 퍼센트 할당 (합계 100% 보장)
+          percentage = Math.max(0, remainingPercent);
+        } else {
+          percentage = Math.round((count / totalVotes) * 100);
+          remainingPercent -= percentage;
+        }
+
+        return { optionId, count, percentage };
+      });
+
+      // 현재 사용자 투표 여부 확인
+      let userVote: string | null = null;
+      if (deviceId) {
+        const userVoteResult = await query(
+          `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ?`,
+          [pollId, deviceId]
+        );
+        if (userVoteResult.rows.length > 0) {
+          userVote = userVoteResult.rows[0].option_id as string;
+        }
+      }
+
+      return NextResponse.json({
+        pollId,
+        pollType: 'choice',
+        totalVotes,
+        options,
+        userVote,
+      });
+    }
+
+    // VS Poll (A/B 투표) - 기존 로직
     const aCount = optionMap.get('a') ?? 0;
     const bCount = optionMap.get('b') ?? 0;
 
@@ -248,6 +305,18 @@ export async function GET(request: NextRequest) {
     // A를 먼저 계산하고, B는 100 - A로 설정
     const aPercent = totalVotes > 0 ? Math.round((aCount / totalVotes) * 100) : 50;
     const bPercent = totalVotes > 0 ? 100 - aPercent : 50;
+
+    // 현재 사용자 투표 여부 확인
+    let userVote: string | null = null;
+    if (deviceId) {
+      const userVoteResult = await query(
+        `SELECT option_id FROM poll_responses WHERE poll_id = ? AND device_id = ?`,
+        [pollId, deviceId]
+      );
+      if (userVoteResult.rows.length > 0) {
+        userVote = userVoteResult.rows[0].option_id as string;
+      }
+    }
 
     const options = [
       {
@@ -264,8 +333,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       pollId,
+      pollType: 'vs',
       totalVotes,
       options,
+      userVote,
     });
   } catch (error) {
     console.error('[Poll API] GET error:', error);

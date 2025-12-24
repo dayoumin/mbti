@@ -22,7 +22,7 @@ export interface ConstellationData {
   personality: {
     summary: string;
     growthPoint: string;
-    year2025Keywords: string[];
+    yearKeywords: string[];  // 올해의 키워드 (연도 무관)
   };
 
   compatibility: {
@@ -58,7 +58,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '생각보다 몸이 먼저 나가는 행동대장. 화낼 땐 불같지만 5분 뒤에 까먹는 쿨내 진동 캐릭터.',
       growthPoint: "브레이크 없는 질주는 위험해요. 가끔은 '일시정지' 버튼을 눌러보는 여유가 필요해요.",
-      year2025Keywords: ['#새로운도전', '#리더십폭발', '#속도조절'],
+      yearKeywords: ['#새로운도전', '#리더십폭발', '#속도조절'],
     },
     compatibility: {
       best: ['leo', 'sagittarius'],
@@ -94,7 +94,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '맛있는 거 먹고 누워있을 때가 제일 행복함. 순해 보이지만 고집 부리기 시작하면 아무도 못 말림.',
       growthPoint: '변화는 무서운 게 아니에요. 익숙한 이불 밖으로 조금만 더 나오면 새로운 행운이 기다려요.',
-      year2025Keywords: ['#재물안정', '#미적감각', '#유연함'],
+      yearKeywords: ['#재물안정', '#미적감각', '#유연함'],
     },
     compatibility: {
       best: ['virgo', 'capricorn'],
@@ -130,7 +130,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '세상 모든 가십은 내 귀로 통한다. 뇌가 2개인 것처럼 멀티태스킹 만렙이지만 금방 질려함.',
       growthPoint: '한 우물만 파는 끈기가 부족할 수 있어요. 얕고 넓은 지식도 좋지만, 하나만 깊게 파보면 어떨까요?',
-      year2025Keywords: ['#네트워킹', '#커뮤니케이션', '#깊이더하기'],
+      yearKeywords: ['#네트워킹', '#커뮤니케이션', '#깊이더하기'],
     },
     compatibility: {
       best: ['libra', 'aquarius'],
@@ -166,7 +166,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '겉은 딱딱해 보여도 속은 순두부. 내 사람 건드리면 집게발 세우지만, 집에 가면 이불 킥 장인.',
       growthPoint: "타인의 감정을 내 것처럼 떠안지 마세요. 감정 쓰레기통이 되지 않도록 '마음의 벽'을 세워도 괜찮아요.",
-      year2025Keywords: ['#내면치유', '#공간꾸미기', '#감정독립'],
+      yearKeywords: ['#내면치유', '#공간꾸미기', '#감정독립'],
     },
     compatibility: {
       best: ['scorpio', 'pisces'],
@@ -202,7 +202,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '내가 가는 길이 곧 런웨이. 칭찬해주면 춤추지만 무시하면 지구 멸망급 분노를 표출함.',
       growthPoint: "무대에서 내려와 관객이 되어보는 연습. 남의 박수를 받기보다 남에게 박수 쳐줄 때 더 빛나요.",
-      year2025Keywords: ['#자존감회복', '#창의력발휘', '#겸손한왕'],
+      yearKeywords: ['#자존감회복', '#창의력발휘', '#겸손한왕'],
     },
     compatibility: {
       best: ['aries', 'sagittarius'],
@@ -238,7 +238,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '남의 티끌은 기가 막히게 찾음. 잔소리는 애정의 다른 표현. 계획 틀어지면 스트레스 받지만 결국 해냄.',
       growthPoint: "완벽하지 않아도 충분히 아름다워요. 스스로에게도 남에게도 '그럴 수 있지' 주문을 외워보세요.",
-      year2025Keywords: ['#디테일완성', '#건강관리', '#자기허용'],
+      yearKeywords: ['#디테일완성', '#건강관리', '#자기허용'],
     },
     compatibility: {
       best: ['taurus', 'capricorn'],
@@ -274,7 +274,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: "싸움 구경은 좋지만 내가 싸우는 건 싫어. 메뉴 고르는 데 1시간 걸리지만 센스는 타고남.",
       growthPoint: "모든 사람을 만족시킬 순 없어요. 가끔은 미움받을 용기로 'NO'라고 말하는 연습이 필요해요.",
-      year2025Keywords: ['#관계재정립', '#균형찾기', '#단호박'],
+      yearKeywords: ['#관계재정립', '#균형찾기', '#단호박'],
     },
     compatibility: {
       best: ['gemini', 'aquarius'],
@@ -310,7 +310,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '한번 찍으면 지구 끝까지 쫓아감. 속을 알 수 없어서 더 끌리는 나쁜 남자/여자 스타일.',
       growthPoint: '의심의 안경을 벗고 믿음을 가져보세요. 마음을 열면 독침 대신 꿀이 흐르는 관계가 될 거예요.',
-      year2025Keywords: ['#변화와재생', '#깊은통찰', '#신뢰회복'],
+      yearKeywords: ['#변화와재생', '#깊은통찰', '#신뢰회복'],
     },
     compatibility: {
       best: ['cancer', 'pisces'],
@@ -346,7 +346,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '인생은 한 번뿐, 내일은 없다. 너무 솔직해서 가끔 남에게 상처 주지만 악의는 1도 없음.',
       growthPoint: '자유도 좋지만 책임감이라는 닻이 필요해요. 디테일을 챙기면 당신의 모험이 더 안전해질 거예요.',
-      year2025Keywords: ['#지적탐구', '#해외운', '#책임감장착'],
+      yearKeywords: ['#지적탐구', '#해외운', '#책임감장착'],
     },
     compatibility: {
       best: ['aries', 'leo'],
@@ -382,7 +382,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '성공하고 싶어? 나처럼 해. 감정 표현은 서툴지만 내 사람은 물질(?)로 제대로 챙김.',
       growthPoint: '인생은 성과 그래프가 아니에요. 가끔은 목적 없는 산책이나 멍 때리기가 최고의 전략이 될 수 있어요.',
-      year2025Keywords: ['#커리어하이', '#기반다지기', '#워라밸'],
+      yearKeywords: ['#커리어하이', '#기반다지기', '#워라밸'],
     },
     compatibility: {
       best: ['taurus', 'virgo'],
@@ -418,7 +418,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: "남들이 '예' 할 때 '아니오' 외치는 뚝심. 쿨해 보이지만 은근히 외로움 탐.",
       growthPoint: '논리적으로 설명되지 않는 감정도 소중해요. 머리보다 가슴이 시키는 대로 움직여보는 건 어떨까요?',
-      year2025Keywords: ['#혁신적사고', '#네트워크확장', '#감정표현'],
+      yearKeywords: ['#혁신적사고', '#네트워크확장', '#감정표현'],
     },
     compatibility: {
       best: ['gemini', 'libra'],
@@ -454,7 +454,7 @@ export const CONSTELLATIONS: ConstellationData[] = [
     personality: {
       summary: '현실 도피 만렙, 상상 속에선 이미 우주 정복. 분위기에 약하고 거절을 못 해서 호구 잡히기 쉬움.',
       growthPoint: '현실 감각이라는 닻을 내리세요. 꿈꾸는 것도 좋지만, 두 발은 땅에 딛고 있어야 멀리 갈 수 있어요.',
-      year2025Keywords: ['#직관력상승', '#예술혼폭발', '#현실직시'],
+      yearKeywords: ['#직관력상승', '#예술혼폭발', '#현실직시'],
     },
     compatibility: {
       best: ['cancer', 'scorpio'],

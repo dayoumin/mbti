@@ -29,7 +29,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
     question: '가장 궁금한 운세는?',
     options: [
       { id: 'a', text: '오늘의 별자리 운세', emoji: '⭐' },
-      { id: 'b', text: '2025년 띠별 운세', emoji: '🐍' },
+      { id: 'b', text: '올해 띠별 운세', emoji: '🐍' },
       { id: 'c', text: '타로 카드 한 장 뽑기', emoji: '🃏' },
       { id: 'd', text: '별자리 궁합 보기', emoji: '💕' },
       { id: 'e', text: '운세 안 봄', emoji: '🙅' },
