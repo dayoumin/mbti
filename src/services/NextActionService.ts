@@ -10,6 +10,17 @@ import {
   pickFirstAvailable,
   RECOMMENDATION_ORDER,
 } from '@/data/recommendationPolicy';
+import {
+  TEST_CONNECTIONS,
+  FORTUNE_CONNECTIONS,
+  CATEGORY_TO_TEST,
+  COMMUNITY_CATEGORY_TO_TEST,
+  CATEGORY_META,
+  TEST_META,
+  getTestConnections,
+  getFortuneConnections,
+  type ContentConnection,
+} from '@/data/contentGraph';
 
 // ============================================================================
 // Types
@@ -21,7 +32,8 @@ export type ContentEndpoint =
   | 'poll_result'
   | 'community_view'
   | 'ranking_view'
-  | 'profile_view';
+  | 'profile_view'
+  | 'fortune_result';  // 운세 결과 추가
 
 export type NextActionType =
   | 'test'
@@ -30,7 +42,8 @@ export type NextActionType =
   | 'community'
   | 'share'
   | 'compare'
-  | 'ranking';
+  | 'ranking'
+  | 'fortune';  // 운세 추가
 
 export type ActionPriority = 'primary' | 'secondary' | 'tertiary';
 
@@ -50,6 +63,7 @@ export interface RecommendationContext {
   contentId?: string;          // 현재 콘텐츠 ID (테스트 타입, 퀴즈 ID 등)
   category?: string;           // 카테고리
   resultKey?: string;          // 결과 키 (테스트 결과 등)
+  fortuneType?: string;        // 운세 타입 (constellation, tarot, zodiac 등)
   // 개인화 정보 (선택적)
   completedTests?: string[];   // 완료한 테스트 목록
   incompleteTests?: string[];  // 미완료 테스트 목록
@@ -58,115 +72,8 @@ export interface RecommendationContext {
   currentHour?: number;        // 현재 시간 (0-23)
 }
 
-// ============================================================================
-// 콘텐츠 연결 데이터
-// ============================================================================
-
-interface ContentConnection {
-  from: string;
-  to: string;
-  type: NextActionType;
-  relevance: number;
-  reason: string;
-}
-
-// 테스트 → 다른 콘텐츠 연결
-const TEST_TO_CONTENT: ContentConnection[] = [
-  // petMatch
-  { from: 'petMatch', to: 'pet', type: 'quiz', relevance: 5, reason: '반려동물 상식 퀴즈' },
-  { from: 'petMatch', to: 'pet', type: 'poll', relevance: 4, reason: '반려동물 투표' },
-  { from: 'petMatch', to: 'dogBreed', type: 'test', relevance: 5, reason: '강아지 품종 찾기' },
-  { from: 'petMatch', to: 'catBreed', type: 'test', relevance: 5, reason: '고양이 품종 찾기' },
-
-  // plant
-  { from: 'plant', to: 'plant', type: 'quiz', relevance: 5, reason: '식물 관리 퀴즈' },
-  { from: 'plant', to: 'plant', type: 'poll', relevance: 4, reason: '식집사 투표' },
-
-  // coffee
-  { from: 'coffee', to: 'lifestyle', type: 'quiz', relevance: 4, reason: '라이프스타일 퀴즈' },
-  { from: 'coffee', to: 'lifestyle', type: 'poll', relevance: 5, reason: '커피 취향 투표' },
-  { from: 'coffee', to: 'plant', type: 'test', relevance: 3, reason: '식물 케미도 알아보기' },
-
-  // idealType
-  { from: 'idealType', to: 'love', type: 'quiz', relevance: 5, reason: '연애 심리 퀴즈' },
-  { from: 'idealType', to: 'love', type: 'poll', relevance: 5, reason: '연애 스타일 투표' },
-  { from: 'idealType', to: 'conflictStyle', type: 'test', relevance: 5, reason: '갈등 대처 스타일' },
-
-  // conflictStyle
-  { from: 'conflictStyle', to: 'love', type: 'quiz', relevance: 4, reason: '관계 심리 퀴즈' },
-  { from: 'conflictStyle', to: 'idealType', type: 'test', relevance: 5, reason: '이상형 테스트' },
-
-  // human
-  { from: 'human', to: 'personality', type: 'quiz', relevance: 5, reason: '성격 유형 퀴즈' },
-  { from: 'human', to: 'personality', type: 'poll', relevance: 4, reason: '성격별 투표' },
-  { from: 'human', to: 'petMatch', type: 'test', relevance: 4, reason: '반려동물 매칭' },
-];
-
-// 퀴즈/투표 카테고리 → 테스트 연결
-const CATEGORY_TO_TEST: Record<string, SubjectKey[]> = {
-  pet: ['petMatch', 'dogBreed', 'catBreed'],
-  cat: ['catBreed', 'petMatch'],
-  dog: ['dogBreed', 'petMatch'],
-  plant: ['plant'],
-  love: ['idealType', 'conflictStyle'],
-  personality: ['human'],
-  lifestyle: ['coffee', 'plant'],
-};
-
-// 카테고리별 메타 정보
-const CATEGORY_META: Record<string, { label: string; icon: string }> = {
-  pet: { label: '반려동물', icon: '🐾' },
-  cat: { label: '고양이', icon: '🐱' },
-  dog: { label: '강아지', icon: '🐕' },
-  rabbit: { label: '토끼', icon: '🐰' },
-  hamster: { label: '햄스터', icon: '🐹' },
-  plant: { label: '식물', icon: '🌱' },
-  love: { label: '연애', icon: '💕' },
-  relationship: { label: '연애', icon: '💕' },
-  personality: { label: '성격', icon: '🧠' },
-  lifestyle: { label: '라이프스타일', icon: '☕' },
-  coffee: { label: '커피', icon: '☕' },
-  general: { label: '일반', icon: '💬' },
-};
-
-// 커뮤니티 카테고리 → 테스트 매핑 (CommunityCategory 지원)
-const COMMUNITY_CATEGORY_TO_TEST: Record<string, SubjectKey[]> = {
-  cat: ['catBreed', 'petMatch'],
-  dog: ['dogBreed', 'petMatch'],
-  rabbit: ['petMatch'],
-  hamster: ['petMatch'],
-  fish: ['petMatch'],
-  bird: ['petMatch'],
-  reptile: ['petMatch'],
-  smallPet: ['petMatch'],
-  plant: ['plant'],
-  coffee: ['coffee'],
-  personality: ['human'],
-  relationship: ['idealType', 'conflictStyle'],
-  general: ['petMatch', 'human'],
-};
-
-// 테스트별 메타 정보
-const TEST_META: Record<string, { label: string; icon: string; category: string }> = {
-  human: { label: '성격 유형', icon: '🧠', category: 'personality' },
-  cat: { label: '고양이 성격', icon: '🐱', category: 'pet' },
-  dog: { label: '강아지 성격', icon: '🐕', category: 'pet' },
-  rabbit: { label: '토끼 성격', icon: '🐰', category: 'pet' },
-  hamster: { label: '햄스터 성격', icon: '🐹', category: 'pet' },
-  petMatch: { label: '반려동물 매칭', icon: '🐾', category: 'pet' },
-  dogBreed: { label: '강아지 품종', icon: '🦮', category: 'pet' },
-  catBreed: { label: '고양이 품종', icon: '🐈', category: 'pet' },
-  idealType: { label: '이상형', icon: '💕', category: 'love' },
-  conflictStyle: { label: '갈등 대처', icon: '🤝', category: 'love' },
-  plant: { label: '반려식물', icon: '🌱', category: 'lifestyle' },
-  coffee: { label: '커피 성향', icon: '☕', category: 'lifestyle' },
-  tea: { label: '차 성향', icon: '🍵', category: 'lifestyle' },
-  fruit: { label: '과일 성향', icon: '🍎', category: 'lifestyle' },
-  alcohol: { label: '술 성향', icon: '🍺', category: 'lifestyle' },
-  bread: { label: '빵 성향', icon: '🍞', category: 'lifestyle' },
-  perfume: { label: '향수 성향', icon: '🌸', category: 'lifestyle' },
-  aroma: { label: '아로마 성향', icon: '🕯️', category: 'lifestyle' },
-};
+// contentGraph에서 import한 데이터 사용
+// TEST_CONNECTIONS, FORTUNE_CONNECTIONS, CATEGORY_TO_TEST 등
 
 // ============================================================================
 // NextActionService
@@ -205,9 +112,92 @@ class NextActionService {
         }
         return this.getProfileActions();
 
+      case 'fortune_result':
+        return this.getFortuneResultActions(context.fortuneType);
+
       default:
         return this.getDefaultActions();
     }
+  }
+
+  /**
+   * 운세 결과 후 다음 액션
+   */
+  private getFortuneResultActions(fortuneType?: string): NextAction[] {
+    const actions: NextAction[] = [];
+
+    if (!fortuneType) {
+      return this.getDefaultActions();
+    }
+
+    // FORTUNE_CONNECTIONS에서 관련 연결 찾기
+    const connections = FORTUNE_CONNECTIONS.filter(c => c.from === fortuneType);
+
+    // 1. 관련 테스트 추천 (Primary)
+    const testConn = connections.find(c => c.type === 'test');
+    if (testConn) {
+      const meta = TEST_META[testConn.to];
+      actions.push({
+        type: 'test',
+        targetId: testConn.to,
+        priority: 'primary',
+        label: meta?.label || '관련 테스트',
+        description: testConn.reason,
+        icon: meta?.icon || '✨',
+        ctaText: '테스트하기',
+      });
+    }
+
+    // 2. 다른 관련 테스트 (Secondary)
+    const otherTestConns = connections.filter(c => c.type === 'test' && c !== testConn);
+    if (otherTestConns.length > 0) {
+      const conn = otherTestConns[0];
+      const meta = TEST_META[conn.to];
+      actions.push({
+        type: 'test',
+        targetId: conn.to,
+        priority: 'secondary',
+        label: meta?.label || '이것도 해보기',
+        description: conn.reason,
+        icon: meta?.icon || '🎯',
+        ctaText: '해보기',
+      });
+    }
+
+    // 3. 관련 퀴즈 (Secondary)
+    const quizConn = connections.find(c => c.type === 'quiz');
+    if (quizConn) {
+      actions.push({
+        type: 'quiz',
+        targetCategory: quizConn.to,
+        priority: 'secondary',
+        label: '관련 퀴즈',
+        description: quizConn.reason,
+        icon: '🧠',
+        ctaText: '퀴즈 풀기',
+      });
+    }
+
+    // 4. 관련 투표 (Tertiary)
+    const pollConn = connections.find(c => c.type === 'poll');
+    if (pollConn) {
+      actions.push({
+        type: 'poll',
+        targetCategory: pollConn.to,
+        priority: 'tertiary',
+        label: '관련 투표',
+        description: pollConn.reason,
+        icon: '📊',
+        ctaText: '투표하기',
+      });
+    }
+
+    // 액션이 없으면 기본값
+    if (actions.length === 0) {
+      return this.getDefaultActions();
+    }
+
+    return actions;
   }
 
   /**
@@ -244,7 +234,7 @@ class NextActionService {
 
     // 3. 관련 콘텐츠 (테스트 기반)
     if (testType) {
-      const connections = TEST_TO_CONTENT.filter(c => c.from === testType);
+      const connections = TEST_CONNECTIONS.filter(c => c.from === testType);
 
       // 관련 투표
       const pollConn = connections.find(c => c.type === 'poll');
@@ -552,6 +542,7 @@ class NextActionService {
 
     // 현재 테스트의 카테고리
     const currentCategory = currentTest ? TEST_META[currentTest]?.category : undefined;
+    const currentCategoryMeta = currentCategory ? CATEGORY_META[currentCategory] : undefined;
 
     const completedMainTests = filterMainTests(completedTests);
     const incompleteMainTests = filterMainTests(incompleteTests);
@@ -564,9 +555,13 @@ class NextActionService {
       incompleteMainTests,
       completedMainTests.length
     );
+    let isSameCategory = false;
 
     if (!recommended && currentCategory) {
       recommended = candidateTests.find(t => TEST_META[t]?.category === currentCategory);
+      if (recommended) {
+        isSameCategory = true;
+      }
     }
 
     // 없으면 우선순위 순
@@ -581,12 +576,22 @@ class NextActionService {
 
     const meta = TEST_META[recommended];
 
+    // 추천 이유 생성
+    let description: string;
+    if (isSameCategory && currentCategoryMeta) {
+      description = `${currentCategoryMeta.label} 테스트가 재밌었다면 이것도!`;
+    } else if (meta?.category && CATEGORY_META[meta.category]) {
+      description = `${CATEGORY_META[meta.category].label} 카테고리 추천 테스트`;
+    } else {
+      description = '아직 안 해본 테스트예요!';
+    }
+
     return {
       type: 'test',
       targetId: recommended,
       priority: 'primary',
       label: meta?.label ? `${meta.label} 테스트` : '다음 테스트',
-      description: '아직 안 해본 테스트예요!',
+      description,
       icon: meta?.icon || '✨',
       ctaText: '테스트하기',
     };
@@ -607,7 +612,7 @@ class NextActionService {
     const recentTest = completedTests[0];
     if (!recentTest) return actions;
 
-    const connections = TEST_TO_CONTENT.filter(c => c.from === recentTest);
+    const connections = TEST_CONNECTIONS.filter(c => c.from === recentTest);
 
     // 관련 퀴즈
     const quizConn = connections.find(c => c.type === 'quiz');

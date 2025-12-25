@@ -10,7 +10,7 @@
  * - "이 퀴즈를 푼 사람들이 좋아한 다른 퀴즈"
  */
 
-import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
+import type { KnowledgeQuiz, VSPoll, ContentCategory, SituationReaction, SituationCategory } from '@/data/content/types';
 
 // ============================================================================
 // 타입 정의
@@ -152,6 +152,35 @@ class ContentRecommendationServiceClass {
   }
 
   /**
+   * 두 상황별 반응 간 유사도 계산
+   */
+  calculateSituationSimilarity(
+    situationA: SituationReaction,
+    situationB: SituationReaction
+  ): ContentSimilarity {
+    // 태그 유사도
+    const tagsA = situationA.tags || [];
+    const tagsB = situationB.tags || [];
+    const tagScore = calculateJaccardSimilarity(tagsA, tagsB);
+
+    // 카테고리 일치 (SituationCategory)
+    const sameCategory = situationA.category === situationB.category;
+    const categoryScore = sameCategory ? 1 : 0;
+
+    // 가중 합산
+    const score =
+      tagScore * this.WEIGHTS.tagSimilarity +
+      categoryScore * this.WEIGHTS.categoryMatch;
+
+    return {
+      contentId: situationB.id,
+      score,
+      matchedTags: getMatchedTags(tagsA, tagsB),
+      sameCategory,
+    };
+  }
+
+  /**
    * 특정 투표와 비슷한 투표 추천
    */
   getSimilarPolls(
@@ -166,6 +195,31 @@ class ContentRecommendationServiceClass {
         const similarity = this.calculatePollSimilarity(targetPoll, poll);
         return {
           content: poll,
+          similarityScore: similarity.score,
+          reason: this.buildReason(similarity),
+        };
+      })
+      .filter(item => item.similarityScore > 0)
+      .sort((a, b) => b.similarityScore - a.similarityScore);
+
+    return scored.slice(0, limit);
+  }
+
+  /**
+   * 특정 상황별 반응과 비슷한 상황 추천
+   */
+  getSimilarSituationReactions(
+    targetSituation: SituationReaction,
+    allSituations: SituationReaction[],
+    limit: number = 5
+  ): RecommendationResult<SituationReaction>[] {
+    const others = allSituations.filter(s => s.id !== targetSituation.id);
+
+    const scored = others
+      .map(situation => {
+        const similarity = this.calculateSituationSimilarity(targetSituation, situation);
+        return {
+          content: situation,
           similarityScore: similarity.score,
           reason: this.buildReason(similarity),
         };
