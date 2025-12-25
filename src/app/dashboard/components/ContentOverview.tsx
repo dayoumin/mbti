@@ -17,13 +17,11 @@ import {
   Clock,
 } from 'lucide-react';
 
-// 콘텐츠 데이터 import
+// 콘텐츠 데이터 import (레지스트리에서 통합 배열 사용 - 타로 포함)
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS, CHOICE_POLLS } from '@/data/content/polls';
 import { ALL_SITUATION_REACTIONS } from '@/data/content/situation-reactions';
 import { ZODIAC_FORTUNES_2025, ZODIAC_POLLS, CONSTELLATIONS, ALL_DAILY_MESSAGES, LUCKY_TIPS } from '@/data/content/fortune';
-import { TAROT_QUIZZES } from '@/data/content/quizzes/tarot-quizzes';
-import { TAROT_POLLS } from '@/data/content/polls/tarot-polls';
 import { CATEGORY_LABELS } from '@/data/content/categories';
 import type { ContentCategory, SituationCategory } from '@/data/content/types';
 
@@ -56,28 +54,26 @@ interface CategoryStats {
 export default function ContentOverview() {
   // 자동 집계 통계
   const stats = useMemo(() => {
-    // 콘텐츠 타입별 통계
+    // 콘텐츠 타입별 통계 (타로는 레지스트리에 통합됨)
     const contentTypes: ContentTypeStats[] = [
       {
         name: '퀴즈',
-        count: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length + TAROT_QUIZZES.length,
+        count: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length,
         icon: <HelpCircle className="w-5 h-5" />,
         color: 'bg-blue-500',
         subTypes: [
           { name: '지식 퀴즈', count: ALL_KNOWLEDGE_QUIZZES.length },
           { name: '시나리오 퀴즈', count: ALL_SCENARIO_QUIZZES.length },
-          { name: '타로 퀴즈', count: TAROT_QUIZZES.length },
         ],
       },
       {
         name: '투표',
-        count: VS_POLLS.length + CHOICE_POLLS.length + TAROT_POLLS.length,
+        count: VS_POLLS.length + CHOICE_POLLS.length,
         icon: <Vote className="w-5 h-5" />,
         color: 'bg-purple-500',
         subTypes: [
           { name: 'VS 투표', count: VS_POLLS.length },
           { name: '선택 투표', count: CHOICE_POLLS.length },
-          { name: '타로 투표', count: TAROT_POLLS.length },
         ],
       },
       {
@@ -107,15 +103,15 @@ export default function ContentOverview() {
     ];
 
     // 카테고리별 통계 (모든 콘텐츠 직접 집계)
-    // 1. 퀴즈 집계 (지식 + 시나리오 + 타로)
-    const allQuizzes = [...ALL_KNOWLEDGE_QUIZZES, ...ALL_SCENARIO_QUIZZES, ...TAROT_QUIZZES];
+    // 1. 퀴즈 집계 (지식 + 시나리오, 타로는 지식 퀴즈에 포함됨)
+    const allQuizzes = [...ALL_KNOWLEDGE_QUIZZES, ...ALL_SCENARIO_QUIZZES];
     const quizByCategory: Record<string, number> = {};
     allQuizzes.forEach(q => {
       quizByCategory[q.category] = (quizByCategory[q.category] || 0) + 1;
     });
 
-    // 2. 투표 집계 (VS + Choice + 타로)
-    const allPolls = [...VS_POLLS, ...CHOICE_POLLS, ...TAROT_POLLS];
+    // 2. 투표 집계 (VS + Choice, 타로는 각각에 포함됨)
+    const allPolls = [...VS_POLLS, ...CHOICE_POLLS];
     const pollByCategory: Record<string, number> = {};
     allPolls.forEach(p => {
       pollByCategory[p.category] = (pollByCategory[p.category] || 0) + 1;
@@ -312,7 +308,7 @@ export default function ContentOverview() {
           <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
             <span className="w-2 h-2 bg-green-500 rounded-full" />
             <span className="font-medium">tarot</span>
-            <span>- 타로 퀴즈 {TAROT_QUIZZES.length}개, 투표 {TAROT_POLLS.length}개</span>
+            <span>- 타로 퀴즈 {ALL_KNOWLEDGE_QUIZZES.filter(q => q.category === 'tarot').length}개, 투표 {VS_POLLS.filter(p => p.category === 'tarot').length + CHOICE_POLLS.filter(p => p.category === 'tarot').length}개</span>
           </div>
         </div>
       </div>

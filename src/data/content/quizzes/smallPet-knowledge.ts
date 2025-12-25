@@ -1,0 +1,242 @@
+// ============================================================================
+// 소동물 지식 퀴즈
+// ============================================================================
+
+import type { KnowledgeQuiz } from '../types';
+
+export const SMALLPET_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
+  // 기니피그 (001-005)
+  {
+    id: 'smallPet-k-001',
+    category: 'smallPet',
+    question: '기니피그의 평균 수명은?',
+    options: [
+      { id: 'a', text: '2~3년', isCorrect: false },
+      { id: 'b', text: '4~7년', isCorrect: true },
+      { id: 'c', text: '10~15년', isCorrect: false },
+      { id: 'd', text: '1년 미만', isCorrect: false },
+    ],
+    explanation: '기니피그의 평균 수명은 4~7년이며, 적절한 관리 시 10년 이상도 가능해요!',
+    difficulty: 1,
+    tags: ['소동물', '기니피그', '수명', '기본정보'],
+    source: 'smallPet-fact-001',
+  },
+  {
+    id: 'smallPet-k-002',
+    category: 'smallPet',
+    question: '기니피그가 체내에서 합성하지 못해 반드시 먹이로 공급해야 하는 영양소는?',
+    options: [
+      { id: 'a', text: '비타민 A', isCorrect: false },
+      { id: 'b', text: '비타민 C', isCorrect: true },
+      { id: 'c', text: '칼슘', isCorrect: false },
+      { id: 'd', text: '철분', isCorrect: false },
+    ],
+    explanation: '기니피그는 체내에서 비타민 C를 합성하지 못해요. 파프리카, 케일 등 비타민 C가 풍부한 채소를 꼭 제공하세요!',
+    difficulty: 2,
+    tags: ['소동물', '기니피그', '영양', '비타민'],
+    source: 'smallPet-fact-002',
+  },
+  {
+    id: 'smallPet-k-003',
+    category: 'smallPet',
+    question: '기니피그 식단에서 건초가 차지해야 하는 비율은?',
+    options: [
+      { id: 'a', text: '30~40%', isCorrect: false },
+      { id: 'b', text: '50~60%', isCorrect: false },
+      { id: 'c', text: '70~80%', isCorrect: true },
+      { id: 'd', text: '90% 이상', isCorrect: false },
+    ],
+    explanation: '건초는 기니피그 전체 식단의 70~80%를 차지해요. 티모시 건초를 24시간 자유급식으로 제공하세요!',
+    difficulty: 2,
+    tags: ['소동물', '기니피그', '먹이', '건초'],
+    source: 'smallPet-fact-003',
+  },
+  {
+    id: 'smallPet-k-004',
+    category: 'smallPet',
+    question: '스위스에서는 기니피그를 몇 마리만 키우는 것이 법으로 금지되어 있을까?',
+    options: [
+      { id: 'a', text: '1마리 (단독사육)', isCorrect: true },
+      { id: 'b', text: '2마리', isCorrect: false },
+      { id: 'c', text: '3마리 이상', isCorrect: false },
+      { id: 'd', text: '제한 없음', isCorrect: false },
+    ],
+    explanation: '기니피그는 무리생활을 하는 동물이에요. 단독사육 시 스트레스와 우울증에 걸릴 수 있어서 스위스에서는 법으로 금지해요!',
+    difficulty: 2,
+    tags: ['소동물', '기니피그', '복수사육', '동물복지'],
+    source: 'smallPet-fact-004',
+  },
+  {
+    id: 'smallPet-k-005',
+    category: 'smallPet',
+    question: '기니피그 건강에 가장 적합한 온도 범위는?',
+    options: [
+      { id: 'a', text: '15~18°C', isCorrect: false },
+      { id: 'b', text: '18~23°C', isCorrect: true },
+      { id: 'c', text: '25~30°C', isCorrect: false },
+      { id: 'd', text: '30°C 이상', isCorrect: false },
+    ],
+    explanation: '기니피그는 18~23°C의 서늘한 환경을 선호해요. 습기와 더위에 약하니 여름철 온도 관리에 특히 주의하세요!',
+    difficulty: 1,
+    tags: ['소동물', '기니피그', '온도', '사육환경'],
+    source: 'smallPet-fact-005',
+  },
+
+  // 친칠라 (006-010)
+  {
+    id: 'smallPet-k-006',
+    category: 'smallPet',
+    question: '친칠라 사육에 가장 적합한 온도는?',
+    options: [
+      { id: 'a', text: '10~15°C', isCorrect: false },
+      { id: 'b', text: '15~20°C', isCorrect: true },
+      { id: 'c', text: '25~30°C', isCorrect: false },
+      { id: 'd', text: '30°C 이상', isCorrect: false },
+    ],
+    explanation: '친칠라는 안데스 고산지대 출신이라 서늘한 기후를 선호해요. 25°C를 넘으면 열사병 위험이 있어요!',
+    difficulty: 2,
+    tags: ['소동물', '친칠라', '온도', '사육환경'],
+    source: 'smallPet-fact-006',
+  },
+  {
+    id: 'smallPet-k-007',
+    category: 'smallPet',
+    question: '친칠라 사육 시 권장 습도는?',
+    options: [
+      { id: 'a', text: '20% 이하', isCorrect: false },
+      { id: 'b', text: '30~40%', isCorrect: true },
+      { id: 'c', text: '60% 이상', isCorrect: false },
+      { id: 'd', text: '습도 상관없음', isCorrect: false },
+    ],
+    explanation: '친칠라는 건조한 환경을 선호해요. 습도 30~40% 유지가 필수이며, 습도가 높으면 곰팡이 질환 위험이 커져요!',
+    difficulty: 2,
+    tags: ['소동물', '친칠라', '습도', '사육환경'],
+    source: 'smallPet-fact-007',
+  },
+  {
+    id: 'smallPet-k-008',
+    category: 'smallPet',
+    question: '친칠라에게 절대 급여하면 안 되는 음식은?',
+    options: [
+      { id: 'a', text: '티모시 건초', isCorrect: false },
+      { id: 'b', text: '과일, 견과류', isCorrect: true },
+      { id: 'c', text: '친칠라 전용 펠렛', isCorrect: false },
+      { id: 'd', text: '알팔파 건초', isCorrect: false },
+    ],
+    explanation: '친칠라는 민감한 소화기관을 가져 과일, 야채, 견과류는 급여 금지예요. 건초 위주의 식단이 필수!',
+    difficulty: 2,
+    tags: ['소동물', '친칠라', '먹이', '금기식품'],
+    source: 'smallPet-fact-008',
+  },
+  {
+    id: 'smallPet-k-009',
+    category: 'smallPet',
+    question: '친칠라의 평균 수명은?',
+    options: [
+      { id: 'a', text: '3~5년', isCorrect: false },
+      { id: 'b', text: '7~9년', isCorrect: false },
+      { id: 'c', text: '10~15년', isCorrect: true },
+      { id: 'd', text: '20년 이상', isCorrect: false },
+    ],
+    explanation: '친칠라는 소동물 중 수명이 긴 편으로, 평균 10~15년 살아요. 잘 키우면 20년 이상도 가능해요!',
+    difficulty: 1,
+    tags: ['소동물', '친칠라', '수명', '기본정보'],
+    source: 'smallPet-fact-009',
+  },
+  {
+    id: 'smallPet-k-010',
+    category: 'smallPet',
+    question: '친칠라의 주식은 무엇일까?',
+    options: [
+      { id: 'a', text: '펠렛 사료', isCorrect: false },
+      { id: 'b', text: '티모시 건초', isCorrect: true },
+      { id: 'c', text: '채소와 과일', isCorrect: false },
+      { id: 'd', text: '씨앗 혼합물', isCorrect: false },
+    ],
+    explanation: '친칠라는 섬유질이 풍부한 티모시 건초를 주식으로 해요. 건초는 항상 제공하고 펠렛은 하루 1회 소량만 급여하세요!',
+    difficulty: 1,
+    tags: ['소동물', '친칠라', '먹이', '건초'],
+    source: 'smallPet-fact-008',
+  },
+
+  // 페럿 (011-013)
+  {
+    id: 'smallPet-k-011',
+    category: 'smallPet',
+    question: '페럿에게 적합한 사료는?',
+    options: [
+      { id: 'a', text: '고양이 사료', isCorrect: false },
+      { id: 'b', text: '페럿 전용 사료', isCorrect: true },
+      { id: 'c', text: '토끼 사료', isCorrect: false },
+      { id: 'd', text: '강아지 사료', isCorrect: false },
+    ],
+    explanation: '페럿은 고양이보다 순수한 육식동물이에요. 고단백 페럿 전용 사료가 필수이며, 고양이 사료는 영양 불균형을 초래할 수 있어요!',
+    difficulty: 2,
+    tags: ['소동물', '페럿', '먹이', '육식'],
+    source: 'smallPet-fact-010',
+  },
+  {
+    id: 'smallPet-k-012',
+    category: 'smallPet',
+    question: '페럿을 반려동물로 키우기 위해 필수적으로 해야 하는 수술은?',
+    options: [
+      { id: 'a', text: '중성화 및 취선제거', isCorrect: true },
+      { id: 'b', text: '발톱 제거', isCorrect: false },
+      { id: 'c', text: '이빨 연마', isCorrect: false },
+      { id: 'd', text: '수술 불필요', isCorrect: false },
+    ],
+    explanation: '페럿은 발정기 교미 불가 시 호르몬 과다로 면역력 저하 위험이 있어요. 취선에서 강한 냄새가 나므로 중성화와 취선제거가 필수예요!',
+    difficulty: 2,
+    tags: ['소동물', '페럿', '수술', '건강관리'],
+    source: 'smallPet-fact-011',
+  },
+  {
+    id: 'smallPet-k-013',
+    category: 'smallPet',
+    question: '페럿은 얼마나 자주 목욕시켜야 할까?',
+    options: [
+      { id: 'a', text: '매일', isCorrect: false },
+      { id: 'b', text: '약 2주 간격', isCorrect: true },
+      { id: 'c', text: '한 달에 한 번', isCorrect: false },
+      { id: 'd', text: '목욕 필요 없음', isCorrect: false },
+    ],
+    explanation: '페럿은 약 2주 간격으로 목욕이 필요해요. 물을 크게 싫어하지 않아서 비교적 얌전하게 목욕해요!',
+    difficulty: 1,
+    tags: ['소동물', '페럿', '목욕', '위생'],
+    source: 'smallPet-fact-012',
+  },
+
+  // 고슴도치 (014-015)
+  {
+    id: 'smallPet-k-014',
+    category: 'smallPet',
+    question: '고슴도치가 동면에 빠질 위험이 있는 온도는?',
+    options: [
+      { id: 'a', text: '25°C 이하', isCorrect: false },
+      { id: 'b', text: '20°C 이하', isCorrect: true },
+      { id: 'c', text: '15°C 이하', isCorrect: false },
+      { id: 'd', text: '10°C 이하', isCorrect: false },
+    ],
+    explanation: '고슴도치는 20°C 이하로 내려가면 동면 위험이 있어요. 17°C 이하에서는 저체온증으로 생명이 위험하니 겨울철 히터 필수!',
+    difficulty: 2,
+    tags: ['소동물', '고슴도치', '온도', '동면'],
+    source: 'smallPet-fact-013',
+  },
+  {
+    id: 'smallPet-k-015',
+    category: 'smallPet',
+    question: '고슴도치의 주식으로 가장 적합한 먹이는?',
+    options: [
+      { id: 'a', text: '채소와 과일', isCorrect: false },
+      { id: 'b', text: '곤충 (밀웜, 귀뚜라미)', isCorrect: true },
+      { id: 'c', text: '견과류', isCorrect: false },
+      { id: 'd', text: '씨앗 혼합물', isCorrect: false },
+    ],
+    explanation: '고슴도치는 육식동물로 곤충(밀웜, 귀뚜라미)이 주식이에요. 고슴도치 전용 사료나 고양이 새끼용 사료도 급여 가능해요!',
+    difficulty: 2,
+    tags: ['소동물', '고슴도치', '먹이', '곤충'],
+    source: 'smallPet-fact-014',
+  },
+];
+
+export default SMALLPET_KNOWLEDGE_QUIZZES;

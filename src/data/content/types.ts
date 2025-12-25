@@ -57,9 +57,9 @@ export interface TimeSensitivityMeta {
  * 팩트 필요 카테고리 (수의학/식물학/식품 등 정확도 필요)
  */
 export type FactRequiredCategory =
-  | 'cat' | 'dog' | 'rabbit' | 'hamster'  // 반려동물
-  | 'plant'                                // 식물
-  | 'coffee' | 'alcohol';                  // 식품/음료
+  | 'cat' | 'dog' | 'rabbit' | 'hamster' | 'bird'  // 반려동물
+  | 'plant'                                         // 식물
+  | 'coffee' | 'alcohol';                           // 식품/음료
 
 /**
  * 팩트 ID 패턴: {category}-fact-{번호}

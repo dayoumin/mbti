@@ -14,6 +14,7 @@ import { VS_POLLS as VS_POLLS_DATA } from './vs-polls';
 import { KIDS_VS_POLLS } from './kids-polls';
 import { CHOICE_POLLS as CHOICE_POLLS_DATA } from './choice-polls';
 import { MONEY_POLLS } from './money-polls';
+import { TAROT_VS_POLLS, TAROT_CHOICE_POLLS } from './tarot-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -22,6 +23,7 @@ import { MONEY_POLLS } from './money-polls';
 const POLL_REGISTRY: VSPoll[][] = [
   VS_POLLS_DATA,
   KIDS_VS_POLLS,
+  TAROT_VS_POLLS,
   // 투표 분리 시 여기에 추가 (예: CAT_POLLS, DOG_POLLS)
 ];
 
@@ -30,7 +32,7 @@ const POLL_REGISTRY: VSPoll[][] = [
 // ============================================================================
 
 export const VS_POLLS: VSPoll[] = POLL_REGISTRY.flat();
-export const CHOICE_POLLS: ChoicePoll[] = [...CHOICE_POLLS_DATA, ...MONEY_POLLS];
+export const CHOICE_POLLS: ChoicePoll[] = [...CHOICE_POLLS_DATA, ...MONEY_POLLS, ...TAROT_CHOICE_POLLS];
 
 // 기존 export 유지 (직접 접근용)
 export { VS_POLLS as default };
