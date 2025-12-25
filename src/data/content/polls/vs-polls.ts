@@ -284,6 +284,48 @@ export const VS_POLLS: VSPoll[] = [
     tags: ['연애', '이벤트'],
   },
 
+  // 연애 초기 (썸/소개팅)
+  {
+    id: 'vs-love-006',
+    category: 'love',
+    question: '첫 만남에서 호감 표현은?',
+    optionA: { id: 'a', text: '확실하게 어필', emoji: '💘' },
+    optionB: { id: 'b', text: '은근슬쩍 신호만', emoji: '👀' },
+    tags: ['연애', '썸', '호감'],
+  },
+  {
+    id: 'vs-love-007',
+    category: 'love',
+    question: '썸 탈 때 연락 주도권은?',
+    optionA: { id: 'a', text: '내가 먼저 자주 연락', emoji: '📲' },
+    optionB: { id: 'b', text: '상대가 연락 오면 답장', emoji: '💬' },
+    tags: ['연애', '썸', '연락'],
+  },
+  {
+    id: 'vs-love-008',
+    category: 'love',
+    question: '고백은 언제?',
+    optionA: { id: 'a', text: '확신 서면 빠르게', emoji: '⚡' },
+    optionB: { id: 'b', text: '충분히 알아본 후', emoji: '🕐' },
+    tags: ['연애', '고백', '타이밍'],
+  },
+  {
+    id: 'vs-love-009',
+    category: 'love',
+    question: '첫 데이트 장소 선택은?',
+    optionA: { id: 'a', text: '카페/산책 (대화 중심)', emoji: '☕' },
+    optionB: { id: 'b', text: '영화/전시 (활동 중심)', emoji: '🎬' },
+    tags: ['연애', '첫데이트', '장소'],
+  },
+  {
+    id: 'vs-love-010',
+    category: 'love',
+    question: '소개팅에서 외모 vs 대화?',
+    optionA: { id: 'a', text: '첫인상(외모) 중요', emoji: '✨' },
+    optionB: { id: 'b', text: '대화 잘 통하면 OK', emoji: '💬' },
+    tags: ['연애', '소개팅', '이상형'],
+  },
+
   // ==========================================================================
   // 라이프스타일
   // ==========================================================================
