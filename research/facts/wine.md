@@ -145,24 +145,30 @@
 
 ### wine-fact-001: 와인의 기본 분류
 - wine-quiz-001 (레드 와인 색 이유)
+- wine-k-001 (레드 와인 색 이유)
 
 ### wine-fact-002: 와인 보관 온도
 - wine-quiz-002 (레드 와인 서빙 온도)
+- wine-k-002 (레드 와인 서빙 온도)
 
 ### wine-fact-003: 타닌 (Tannin)
 - wine-quiz-003 (타닌이란?)
 - wine-quiz-006 (카베르네 소비뇽 특징)
+- wine-k-003 (타닌이란?)
+- wine-k-006 (카베르네 소비뇽 특징)
 
 ### wine-fact-004: 산도 (Acidity)
 - wine-quiz-008 (화이트 와인과 해산물 매칭)
 
 ### wine-fact-005: 바디 (Body)
 - wine-quiz-005 (바디란?)
+- wine-k-005 (바디란?)
 
 ### wine-fact-006: 주요 적포도 품종
 - wine-quiz-006 (카베르네 소비뇽 특징)
 - wine-poll-002 (카베르네 소비뇽 vs 피노 누아)
 - wine-worldcup-v1 (와인 품종 월드컵)
+- wine-k-006 (카베르네 소비뇽 특징)
 
 ### wine-fact-007: 주요 청포도 품종
 - wine-poll-003 (샤도네이 vs 소비뇽 블랑)
@@ -171,16 +177,21 @@
 ### wine-fact-008: 와인과 음식 매칭
 - wine-quiz-008 (화이트 와인과 해산물)
 - wine-poll-005 (와인 페어링 음식)
+- wine-k-008 (화이트 와인과 해산물)
 
 ### wine-fact-009: 와인 산화
 - wine-quiz-004 (눕혀서 보관하는 이유)
 - wine-quiz-009 (산화 증상)
+- wine-k-004 (눕혀서 보관하는 이유)
+- wine-k-009 (산화 증상)
 
 ### wine-fact-010: 디캔팅 (Decanting)
 - wine-quiz-007 (디캔팅 이유)
+- wine-k-007 (디캔팅 이유)
 
 ### wine-fact-011: 빈티지 (Vintage)
 - wine-quiz-010 (빈티지란?)
+- wine-k-010 (빈티지란?)
 
 ### wine-fact-012: 떼루아르 (Terroir)
 - (사용 안 됨)
