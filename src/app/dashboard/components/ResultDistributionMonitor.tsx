@@ -24,15 +24,22 @@ interface TestDistribution {
   testType: string;
   total: number;
   resultCount: number;
+  expectedCount?: number;  // 정의된 결과 수 (미출현 감지용)
   distribution: DistributionItem[];
   alerts: Alert[];
   hasAlerts: boolean;
+}
+
+interface Thresholds {
+  HIGH: number;
+  LOW: number;
 }
 
 interface AllDistributionsResponse {
   totalTests: number;
   totalAlerts: number;
   distributions: TestDistribution[];
+  thresholds?: Thresholds;  // 서버에서 전달한 임계값
 }
 
 // ============================================================================
@@ -53,6 +60,7 @@ export default function ResultDistributionMonitor() {
   const fetchDistributions = async () => {
     try {
       setLoading(true);
+      setError(null);  // 재시도 시 에러 초기화
       const res = await fetch('/api/test-results?type=all-distributions');
       if (!res.ok) throw new Error('Failed to fetch');
       const json = await res.json();
@@ -63,6 +71,9 @@ export default function ResultDistributionMonitor() {
       setLoading(false);
     }
   };
+
+  // 서버 임계값 또는 기본값
+  const thresholds = data?.thresholds ?? { HIGH: 40, LOW: 1 };
 
   const getTestName = (testType: string) => {
     const config = SUBJECT_CONFIG[testType as keyof typeof SUBJECT_CONFIG];
@@ -242,6 +253,7 @@ export default function ResultDistributionMonitor() {
               <div className="mt-4 space-y-2">
                 {dist.distribution.map(item => {
                   const isHigh = item.percentage >= 40;
+                  // API가 소수점 1자리까지 반환하므로 0.1~0.9% 감지 가능
                   const isLow = item.percentage > 0 && item.percentage < 1;
 
                   return (
@@ -310,9 +322,10 @@ export default function ResultDistributionMonitor() {
 
       {/* 푸터 */}
       <div className="p-4 border-t bg-gray-50 text-xs text-gray-500">
-        <p>• 쏠림: 한 결과가 40% 이상 → condition 조건 완화 필요</p>
-        <p>• 희귀: 한 결과가 1% 미만 → 도달 조건 확인 필요</p>
-        <p>• 임계값: HIGH ≥70%, LOW ≤30%, MEDIUM 30~70%</p>
+        <p className="font-medium text-gray-600 mb-1">분포 이상 감지 기준:</p>
+        <p>• 🔴 쏠림: 한 결과가 40% 이상 → condition 조건 완화 필요</p>
+        <p>• 🟡 희귀: 한 결과가 1% 미만 → 도달 조건 확인 필요</p>
+        <p>• ⚫ 미출현: 0% (한 번도 안 나옴) → 조건 불가능 확인</p>
       </div>
     </div>
   );

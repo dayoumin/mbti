@@ -9,6 +9,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/turso';
+import { CHEMI_DATA } from '@/data';
+
+// 이상 감지 임계값 (중앙화 - UI와 공유)
+const THRESHOLDS = {
+  HIGH: 40,  // 40% 이상 = 쏠림
+  LOW: 1,    // 1% 미만 = 희귀
+} as const;
 
 const VALID_AGE_GROUPS = ['10s', '20s', '30s', '40s+'] as const;
 const VALID_GENDERS = ['male', 'female', 'other'] as const;
@@ -213,14 +220,14 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // 총 수 계산
-      const total = results.rows.reduce((sum, row) => sum + (row.count as number), 0);
+      // 총 수 계산 (COUNT 결과를 Number로 강제 변환)
+      const total = results.rows.reduce((sum, row) => sum + Number(row.count), 0);
 
       const distribution = results.rows.map((row, index) => ({
         rank: index + 1,
         resultName: row.result_name as string,
-        count: row.count as number,
-        percentage: total > 0 ? Math.round(((row.count as number) / total) * 100) : 0,
+        count: Number(row.count),
+        percentage: total > 0 ? Math.round((Number(row.count) / total) * 100) : 0,
       }));
 
       return NextResponse.json({
@@ -262,7 +269,7 @@ export async function GET(request: NextRequest) {
         [testType]
       );
 
-      const total = distribution.rows.reduce((sum, row) => sum + (row.count as number), 0);
+      const total = distribution.rows.reduce((sum, row) => sum + Number(row.count), 0);
       let rank = 0;
       let myCount = 0;
       let myPercentage = 0;
@@ -270,7 +277,7 @@ export async function GET(request: NextRequest) {
       distribution.rows.forEach((row, idx) => {
         if (row.result_name === myResultName) {
           rank = idx + 1;
-          myCount = row.count as number;
+          myCount = Number(row.count);
           myPercentage = total > 0 ? Math.round((myCount / total) * 100) : 0;
         }
       });
@@ -301,26 +308,43 @@ export async function GET(request: NextRequest) {
          ORDER BY test_type, count DESC`
       );
 
-      // 테스트별로 그룹화
+      // 테스트별로 그룹화 (COUNT 결과를 Number로 강제 변환)
       const byTest: Record<string, { resultName: string; count: number }[]> = {};
       results.rows.forEach(row => {
         const testType = row.test_type as string;
         if (!byTest[testType]) byTest[testType] = [];
         byTest[testType].push({
           resultName: row.result_name as string,
-          count: row.count as number,
+          count: Number(row.count),
         });
       });
 
-      // 이상 감지 (skew detection)
-      const SKEW_HIGH_THRESHOLD = 40; // 40% 이상이면 쏠림
-      const SKEW_LOW_THRESHOLD = 1;   // 1% 미만이면 도달 안됨
+      // 정의된 결과 후보군 가져오기 (미출현 감지용)
+      const getExpectedResults = (testType: string): string[] => {
+        const data = CHEMI_DATA[testType as keyof typeof CHEMI_DATA];
+        if (!data?.resultLabels) return [];
+        return data.resultLabels.map(r => r.name);
+      };
 
       const distributions = Object.entries(byTest).map(([testType, items]) => {
         const total = items.reduce((sum, item) => sum + item.count, 0);
+        const existingResults = new Set(items.map(item => item.resultName));
+        const expectedResults = getExpectedResults(testType);
 
-        const distribution = items.map((item, idx) => {
-          const percentage = total > 0 ? Math.round((item.count / total) * 100) : 0;
+        // 기존 결과 + 미출현 결과(0%) 병합
+        const allResults = [...items];
+        expectedResults.forEach(name => {
+          if (!existingResults.has(name)) {
+            allResults.push({ resultName: name, count: 0 });
+          }
+        });
+
+        // 정렬: count 내림차순, 0인 것은 맨 뒤
+        allResults.sort((a, b) => b.count - a.count);
+
+        const distribution = allResults.map((item, idx) => {
+          // 희귀 결과 감지를 위해 소수점 1자리까지 유지
+          const percentage = total > 0 ? Math.round((item.count / total) * 1000) / 10 : 0;
           return {
             rank: idx + 1,
             resultName: item.resultName,
@@ -329,14 +353,19 @@ export async function GET(request: NextRequest) {
           };
         });
 
-        // 이상 감지
+        // 이상 감지 (THRESHOLDS 사용)
         const alerts: { type: 'high' | 'low' | 'zero'; resultName: string; percentage: number }[] = [];
         distribution.forEach(d => {
-          if (d.percentage >= SKEW_HIGH_THRESHOLD) {
+          if (d.percentage >= THRESHOLDS.HIGH) {
             alerts.push({ type: 'high', resultName: d.resultName, percentage: d.percentage });
           }
-          if (d.percentage > 0 && d.percentage < SKEW_LOW_THRESHOLD) {
+          // 희귀: 0보다 크고 1% 미만 (0.1% ~ 0.9% 등)
+          if (d.percentage > 0 && d.percentage < THRESHOLDS.LOW) {
             alerts.push({ type: 'low', resultName: d.resultName, percentage: d.percentage });
+          }
+          // 미출현: 정의된 결과인데 0%
+          if (d.count === 0 && expectedResults.includes(d.resultName)) {
+            alerts.push({ type: 'zero', resultName: d.resultName, percentage: 0 });
           }
         });
 
@@ -344,6 +373,7 @@ export async function GET(request: NextRequest) {
           testType,
           total,
           resultCount: distribution.length,
+          expectedCount: expectedResults.length,
           distribution,
           alerts,
           hasAlerts: alerts.length > 0,
@@ -363,6 +393,7 @@ export async function GET(request: NextRequest) {
         totalTests: distributions.length,
         totalAlerts,
         distributions,
+        thresholds: THRESHOLDS, // UI에서 동일 기준 사용
       });
     }
 
