@@ -24,6 +24,7 @@ export const SOCIAL_REACTIONS: SituationReaction[] = [
       'ESTP': 'd',
     },
     tags: ['친구', '모임', '소외감'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-social-002',
@@ -44,5 +45,6 @@ export const SOCIAL_REACTIONS: SituationReaction[] = [
       'ISFP': 'd',
     },
     tags: ['SNS', '친구', '외모'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
 ];

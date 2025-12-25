@@ -24,6 +24,7 @@ export const WORK_REACTIONS: SituationReaction[] = [
       'ISFJ': 'd',
     },
     tags: ['직장', '상사', '무시', '회의'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-work-002',
@@ -44,6 +45,7 @@ export const WORK_REACTIONS: SituationReaction[] = [
       'INTP': 'd',
     },
     tags: ['직장', '동료', '공로가로채기'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-work-003',
@@ -64,6 +66,9 @@ export const WORK_REACTIONS: SituationReaction[] = [
       'ENTP': 'd',
     },
     tags: ['직장', '회식', '술자리'],
-    meta: { minAge: '20s' },  // 직장생활 맥락, isAdultOnly 아님
+    meta: {
+      minAge: '20s',  // 직장생활 맥락, isAdultOnly 아님
+      timeSensitivity: { sensitivity: 'low', sourceYear: 2025 },
+    },
   },
 ];

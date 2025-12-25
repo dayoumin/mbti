@@ -26,6 +26,7 @@ export const RELATIONSHIP_REACTIONS: SituationReaction[] = [
       'ISFJ': 'b',
     },
     tags: ['이별', '연애', '거리두기'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-relationship-002',
@@ -47,6 +48,7 @@ export const RELATIONSHIP_REACTIONS: SituationReaction[] = [
       'ENFJ': 'b',
     },
     tags: ['이별', '연애', '전애인', '새벽연락'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-relationship-003',
@@ -67,6 +69,7 @@ export const RELATIONSHIP_REACTIONS: SituationReaction[] = [
       'ISFP': 'd',
     },
     tags: ['소개팅', '연애', '무례함'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-relationship-004',
@@ -87,6 +90,7 @@ export const RELATIONSHIP_REACTIONS: SituationReaction[] = [
       'ENFJ': 'd',
     },
     tags: ['썸', '연애', '거절'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
   {
     id: 'situation-reaction-relationship-005',
@@ -107,5 +111,6 @@ export const RELATIONSHIP_REACTIONS: SituationReaction[] = [
       'INTP': 'd',
     },
     tags: ['연애', '친구', '갈등'],
+    meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } },
   },
 ];
