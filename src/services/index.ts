@@ -15,6 +15,9 @@ export { contentRecommendationService } from './ContentRecommendationService';
 export { eventBus } from './EventBus';
 export { userActivityService } from './UserActivityService';
 
+// Insight System (Phase 2)
+export { insightService } from './InsightService';
+
 // Types
 export type { RankingVote, RankingStats, CategorySummary, SeasonSummary, SeasonType } from './RankingService';
 export type { PollStats, QuizStats, FeedbackComment } from './TursoService';
