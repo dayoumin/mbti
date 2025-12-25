@@ -30,7 +30,7 @@ const CATEGORY_KEY_LIST = [
   'pet', 'cat', 'dog', 'rabbit', 'hamster',
   'fish', 'bird', 'reptile', 'smallPet',
   'plant', 'coffee', 'food', 'lifestyle', 'alcohol',
-  'beauty',
+  'beauty', 'travel',
   'personality', 'love', 'relationship',
   'money', 'health',
   'fortune', 'zodiac', 'tarot', 'bloodtype',
@@ -67,8 +67,9 @@ export const CATEGORIES: Record<ContentCategory, CategoryInfo> = {
   lifestyle: { name: '라이프스타일', emoji: '🏠' },
   alcohol: { name: '술', emoji: '🍺' },
 
-  // 뷰티/향기
+  // 뷰티/여행
   beauty: { name: '뷰티', emoji: '🌸' },
+  travel: { name: '여행', emoji: '✈️' },
 
   // 심리/관계
   personality: { name: '성격', emoji: '🧠' },

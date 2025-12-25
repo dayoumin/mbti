@@ -16,8 +16,6 @@
 //
 // ============================================================================
 
-import { ContentCategory } from './content-system';
-
 // ============================================================================
 // 퀴즈 타입 정의
 // ============================================================================
@@ -27,11 +25,12 @@ export type QuizDifficulty = 1 | 2 | 3;
 
 /**
  * 일반 퀴즈 (지식/상황/성격 기반)
+ * 대시보드 샘플용 - category는 string으로 다양한 예시 허용
  */
 export interface Quiz {
   id: string;
   type: QuizType;
-  category: ContentCategory;
+  category: string;  // 샘플용 - 다양한 카테고리 예시 허용
   question: string;
   options: {
     id: string;
@@ -51,7 +50,7 @@ export interface Quiz {
  */
 export interface ScenarioQuiz {
   id: string;
-  category: ContentCategory;
+  category: string;  // 샘플용
   title: string;
   subtitle?: string;
   emoji: string;
@@ -114,7 +113,7 @@ export interface SituationReaction {
 export interface Poll {
   id: string;
   type: PollType;
-  category: ContentCategory;
+  category: string;  // 샘플용
   question: string;
   options: {
     id: string;
@@ -709,6 +708,444 @@ export const DOG_BREED_POLLS: Poll[] = [
 ];
 
 // ============================================================================
+// 샘플: 여행 지식 퀴즈 10개
+// ============================================================================
+
+export const TRAVEL_KNOWLEDGE_QUIZZES: Quiz[] = [
+  {
+    id: 'travel-quiz-001',
+    type: 'knowledge',
+    category: 'travel',
+    question: '여권 유효기간은 입국일 기준 최소 몇 개월 남아야 할까요? (대부분의 국가)',
+    options: [
+      { id: 'a', text: '3개월', isCorrect: false },
+      { id: 'b', text: '6개월', isCorrect: true },
+      { id: 'c', text: '12개월', isCorrect: false },
+    ],
+    explanation: '대부분의 국가는 입국일 기준 여권 유효기간이 최소 6개월 이상 남아있어야 합니다. 출발 전 반드시 확인하세요!',
+    difficulty: 1,
+    points: 10,
+    tags: ['travel', '여권', '준비사항'],
+  },
+  {
+    id: 'travel-quiz-002',
+    type: 'knowledge',
+    category: 'travel',
+    question: '시차 적응을 위해 가장 좋은 방법은?',
+    options: [
+      { id: 'a', text: '도착 즉시 현지 시간에 맞춰 생활', isCorrect: true },
+      { id: 'b', text: '낮잠을 충분히 잔다', isCorrect: false },
+      { id: 'c', text: '한국 시간에 맞춰 계속 생활', isCorrect: false },
+    ],
+    explanation: '도착 즉시 현지 시간에 맞춰 식사하고 활동하면 시차 적응이 빨라요. 낮잠은 최대 20분만 권장합니다.',
+    difficulty: 1,
+    points: 10,
+    tags: ['travel', '시차', '건강'],
+  },
+  {
+    id: 'travel-quiz-003',
+    type: 'knowledge',
+    category: 'travel',
+    question: '기내 수하물로 반입 불가능한 것은?',
+    options: [
+      { id: 'a', text: '100ml 이하 화장품', isCorrect: false },
+      { id: 'b', text: '보조배터리', isCorrect: false },
+      { id: 'c', text: '150ml 선크림', isCorrect: true },
+    ],
+    explanation: '액체류는 100ml 이하 용기에 담아야 기내 반입 가능해요. 150ml 용기는 내용물이 적어도 불가능합니다!',
+    difficulty: 2,
+    points: 15,
+    tags: ['travel', '기내수하물', '보안검색'],
+  },
+  {
+    id: 'travel-quiz-004',
+    type: 'knowledge',
+    category: 'travel',
+    question: '해외에서 분실한 여권 재발급은 어디서 하나요?',
+    options: [
+      { id: 'a', text: '현지 경찰서', isCorrect: false },
+      { id: 'b', text: '한국 대사관/영사관', isCorrect: true },
+      { id: 'c', text: '현지 출입국관리소', isCorrect: false },
+    ],
+    explanation: '여권 분실 시 즉시 현지 한국 대사관 또는 영사관에 신고하고 여행증명서나 단수여권을 발급받아야 합니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['travel', '여권', '비상상황'],
+  },
+  {
+    id: 'travel-quiz-005',
+    type: 'knowledge',
+    category: 'travel',
+    question: '비행기 탑승 전 체크인 마감 시간은 보통?',
+    options: [
+      { id: 'a', text: '출발 30분 전', isCorrect: false },
+      { id: 'b', text: '출발 60분 전', isCorrect: true },
+      { id: 'c', text: '출발 120분 전', isCorrect: false },
+    ],
+    explanation: '국제선은 출발 60~90분 전, 국내선은 30~40분 전까지 체크인을 완료해야 해요. 여유 있게 공항에 도착하세요!',
+    difficulty: 1,
+    points: 10,
+    tags: ['travel', '비행기', '체크인'],
+  },
+  {
+    id: 'travel-quiz-006',
+    type: 'knowledge',
+    category: 'travel',
+    question: '로밍 요금 걱정 없이 해외에서 인터넷 쓰는 방법은?',
+    options: [
+      { id: 'a', text: '로밍 켜두고 쓴다', isCorrect: false },
+      { id: 'b', text: 'eSIM 또는 현지 유심 구매', isCorrect: true },
+      { id: 'c', text: '와이파이만 사용', isCorrect: false },
+    ],
+    explanation: 'eSIM이나 현지 유심을 사용하면 저렴하게 데이터를 쓸 수 있어요. 포켓 와이파이도 좋은 선택입니다.',
+    difficulty: 1,
+    points: 10,
+    tags: ['travel', '인터넷', 'eSIM'],
+  },
+  {
+    id: 'travel-quiz-007',
+    type: 'knowledge',
+    category: 'travel',
+    question: '항공권 예약 시 가장 저렴한 시기는?',
+    options: [
+      { id: 'a', text: '출발 1주일 전', isCorrect: false },
+      { id: 'b', text: '출발 2-3개월 전', isCorrect: true },
+      { id: 'c', text: '출발 당일', isCorrect: false },
+    ],
+    explanation: '통계적으로 출발 2-3개월 전에 예약하면 가장 저렴해요. 성수기는 더 일찍 예약하는 게 좋습니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['travel', '항공권', '예약팁'],
+  },
+  {
+    id: 'travel-quiz-008',
+    type: 'knowledge',
+    category: 'travel',
+    question: '해외여행자보험, 언제 가입해야 할까요?',
+    options: [
+      { id: 'a', text: '출발 당일', isCorrect: false },
+      { id: 'b', text: '여행 출발 전날까지', isCorrect: true },
+      { id: 'c', text: '현지 도착 후', isCorrect: false },
+    ],
+    explanation: '여행자보험은 출발 전에 가입해야 공항에서의 사고나 비행 중 문제도 보장받을 수 있어요.',
+    difficulty: 1,
+    points: 10,
+    tags: ['travel', '보험', '준비사항'],
+  },
+  {
+    id: 'travel-quiz-009',
+    type: 'knowledge',
+    category: 'travel',
+    question: '기내 반입 가능한 보조배터리 용량은?',
+    options: [
+      { id: 'a', text: '100Wh 이하', isCorrect: true },
+      { id: 'b', text: '200Wh 이하', isCorrect: false },
+      { id: 'c', text: '제한 없음', isCorrect: false },
+    ],
+    explanation: '보조배터리는 100Wh(약 27,000mAh) 이하만 기내 반입 가능해요. 위탁 수하물로는 절대 불가!',
+    difficulty: 2,
+    points: 15,
+    tags: ['travel', '보조배터리', '기내수하물'],
+  },
+  {
+    id: 'travel-quiz-010',
+    type: 'knowledge',
+    category: 'travel',
+    question: '환전은 언제 하는 게 가장 유리할까요?',
+    options: [
+      { id: 'a', text: '공항에서 출발 직전', isCorrect: false },
+      { id: 'b', text: '현지 시내 환전소', isCorrect: true },
+      { id: 'c', text: '호텔 프론트', isCorrect: false },
+    ],
+    explanation: '일반적으로 현지 시내 환전소가 가장 환율이 좋아요. 공항과 호텔은 수수료가 높습니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['travel', '환전', '팁'],
+  },
+];
+
+// ============================================================================
+// 샘플: 커피 지식 퀴즈 10개
+// ============================================================================
+
+export const COFFEE_KNOWLEDGE_QUIZZES: Quiz[] = [
+  {
+    id: 'coffee-quiz-001',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '에스프레소 1샷의 카페인 함량은?',
+    options: [
+      { id: 'a', text: '약 30-40mg', isCorrect: false },
+      { id: 'b', text: '약 63-77mg', isCorrect: true },
+      { id: 'c', text: '약 100-120mg', isCorrect: false },
+    ],
+    explanation: '에스프레소 1샷은 약 63-77mg의 카페인을 함유해요. 아메리카노는 샷 수에 따라 카페인 함량이 달라집니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '카페인', '에스프레소'],
+  },
+  {
+    id: 'coffee-quiz-002',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '카페인 함량이 더 높은 원두는?',
+    options: [
+      { id: 'a', text: '아라비카', isCorrect: false },
+      { id: 'b', text: '로부스타', isCorrect: true },
+      { id: 'c', text: '비슷하다', isCorrect: false },
+    ],
+    explanation: '로부스타는 약 2.7% 카페인, 아라비카는 약 1.5% 카페인을 함유해요. 로부스타가 거의 2배 많습니다!',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '원두', '카페인', '아라비카', '로부스타'],
+  },
+  {
+    id: 'coffee-quiz-003',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '라이트 로스팅 커피의 특징은?',
+    options: [
+      { id: 'a', text: '쓴맛이 강하고 산미가 낮다', isCorrect: false },
+      { id: 'b', text: '과일향/꽃향이 강하고 산미가 높다', isCorrect: true },
+      { id: 'c', text: '캐러멜향이 강하다', isCorrect: false },
+    ],
+    explanation: '라이트 로스팅(385-410°F)은 과일향/꽃향이 강하고 산미가 높아요. 다크 로스팅일수록 쓴맛이 강해집니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '로스팅', '맛', '산미'],
+  },
+  {
+    id: 'coffee-quiz-004',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '드립 커피에 적합한 분쇄 굵기는?',
+    options: [
+      { id: 'a', text: '아주 곱게 (에스프레소 수준)', isCorrect: false },
+      { id: 'b', text: '중간 (설탕 정도)', isCorrect: true },
+      { id: 'c', text: '굵게 (굵은 소금 정도)', isCorrect: false },
+    ],
+    explanation: '드립 커피는 중간 분쇄가 적합해요. 프렌치 프레스는 굵게, 에스프레소는 아주 곱게 분쇄합니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '드립', '분쇄', '추출'],
+  },
+  {
+    id: 'coffee-quiz-005',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '프렌치 프레스 추출 시간은?',
+    options: [
+      { id: 'a', text: '1-2분', isCorrect: false },
+      { id: 'b', text: '4-5분', isCorrect: true },
+      { id: 'c', text: '10분 이상', isCorrect: false },
+    ],
+    explanation: '프렌치 프레스는 굵게 분쇄한 원두를 4-5분간 침출시켜요. 진하고 풍부한 바디감이 특징입니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '프렌치프레스', '추출', '시간'],
+  },
+  {
+    id: 'coffee-quiz-006',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '커피 로스팅 시 발생하는 화학 반응은?',
+    options: [
+      { id: 'a', text: '산화 반응', isCorrect: false },
+      { id: 'b', text: '마이야르 반응', isCorrect: true },
+      { id: 'c', text: '발효 반응', isCorrect: false },
+    ],
+    explanation: '로스팅 시 아미노산과 당이 반응하여 캐러멜, 견과류, 초콜릿 향을 만드는 마이야르 반응이 일어나요.',
+    difficulty: 3,
+    points: 20,
+    tags: ['coffee', '로스팅', '화학', '마이야르반응'],
+  },
+  {
+    id: 'coffee-quiz-007',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '다크 로스팅과 라이트 로스팅, 카페인이 더 많은 것은?',
+    options: [
+      { id: 'a', text: '다크 로스팅', isCorrect: false },
+      { id: 'b', text: '라이트 로스팅', isCorrect: true },
+      { id: 'c', text: '동일하다', isCorrect: false },
+    ],
+    explanation: '로스팅 온도가 높을수록 카페인이 약간 감소해요. 라이트 로스팅이 다크보다 카페인이 조금 더 많습니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '로스팅', '카페인'],
+  },
+  {
+    id: 'coffee-quiz-008',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '아라비카 원두의 특징은?',
+    options: [
+      { id: 'a', text: '쓴맛이 강하고 카페인 높음', isCorrect: false },
+      { id: 'b', text: '달콤하고 과일향, 산미 높음', isCorrect: true },
+      { id: 'c', text: '맛이 평범하고 저렴함', isCorrect: false },
+    ],
+    explanation: '아라비카는 달콤하고 과일향/꽃향이 나며 산미가 높아요. 설탕 함량이 로부스타의 거의 2배입니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '아라비카', '원두', '맛'],
+  },
+  {
+    id: 'coffee-quiz-009',
+    type: 'knowledge',
+    category: 'coffee',
+    question: 'FDA 권장 하루 카페인 섭취량은? (건강한 성인 기준)',
+    options: [
+      { id: 'a', text: '200mg 이하', isCorrect: false },
+      { id: 'b', text: '400mg 이하', isCorrect: true },
+      { id: 'c', text: '600mg 이하', isCorrect: false },
+    ],
+    explanation: '미국 FDA는 건강한 성인 기준 하루 400mg 이하 카페인 섭취를 권장해요. 아메리카노 약 3-4잔 정도입니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '카페인', '건강', '권장량'],
+  },
+  {
+    id: 'coffee-quiz-010',
+    type: 'knowledge',
+    category: 'coffee',
+    question: '아라비카가 세계 커피 시장에서 차지하는 비율은?',
+    options: [
+      { id: 'a', text: '약 30%', isCorrect: false },
+      { id: 'b', text: '약 50%', isCorrect: false },
+      { id: 'c', text: '약 70%', isCorrect: true },
+    ],
+    explanation: '아라비카는 세계 커피 시장의 약 70%를 차지해요. 스페셜티 커피에 주로 사용되는 고급 원두입니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['coffee', '아라비카', '시장', '통계'],
+  },
+];
+
+// ============================================================================
+// 샘플: 여행 VS 투표 5개
+// ============================================================================
+
+export const TRAVEL_VS_POLLS: Poll[] = [
+  {
+    id: 'travel-poll-001',
+    type: 'vs',
+    category: 'travel',
+    question: '여행 스타일은?',
+    options: [
+      { id: 'a', text: '자유여행 (일정 직접 짜기)', emoji: '🗺️' },
+      { id: 'b', text: '패키지여행 (편하게 따라가기)', emoji: '🚌' },
+    ],
+    tags: ['travel', '여행스타일', '일정'],
+  },
+  {
+    id: 'travel-poll-002',
+    type: 'vs',
+    category: 'travel',
+    question: '여행지 선호는?',
+    options: [
+      { id: 'a', text: '도시 여행 (쇼핑, 카페, 관광)', emoji: '🏙️' },
+      { id: 'b', text: '자연 여행 (등산, 해변, 풍경)', emoji: '🏞️' },
+    ],
+    tags: ['travel', '여행지', '선호도'],
+  },
+  {
+    id: 'travel-poll-003',
+    type: 'vs',
+    category: 'travel',
+    question: '숙소 선택 기준은?',
+    options: [
+      { id: 'a', text: '저렴한 게스트하우스/호스텔', emoji: '🏠' },
+      { id: 'b', text: '편한 호텔', emoji: '🏨' },
+    ],
+    tags: ['travel', '숙소', '예산'],
+  },
+  {
+    id: 'travel-poll-004',
+    type: 'vs',
+    category: 'travel',
+    question: '여행 음식은?',
+    options: [
+      { id: 'a', text: '현지 음식 도전', emoji: '🍜' },
+      { id: 'b', text: '한식당 찾아가기', emoji: '🍚' },
+    ],
+    tags: ['travel', '음식', '현지체험'],
+  },
+  {
+    id: 'travel-poll-005',
+    type: 'vs',
+    category: 'travel',
+    question: '여행 기념품은?',
+    options: [
+      { id: 'a', text: '사진으로만 추억', emoji: '📸' },
+      { id: 'b', text: '기념품 꼭 구매', emoji: '🎁' },
+    ],
+    tags: ['travel', '기념품', '쇼핑'],
+  },
+];
+
+// ============================================================================
+// 샘플: 커피 VS 투표 5개
+// ============================================================================
+
+export const COFFEE_VS_POLLS: Poll[] = [
+  {
+    id: 'coffee-poll-001',
+    type: 'vs',
+    category: 'coffee',
+    question: '커피 취향은?',
+    options: [
+      { id: 'a', text: '아메리카노 (진한 블랙)', emoji: '☕' },
+      { id: 'b', text: '라떼 (부드러운 우유)', emoji: '🥛' },
+    ],
+    tags: ['coffee', '선호도', '아메리카노', '라떼'],
+  },
+  {
+    id: 'coffee-poll-002',
+    type: 'vs',
+    category: 'coffee',
+    question: '원두 선호도는?',
+    options: [
+      { id: 'a', text: '아라비카 (달콤하고 과일향)', emoji: '🍒' },
+      { id: 'b', text: '로부스타 (진하고 쓴맛)', emoji: '🔥' },
+    ],
+    tags: ['coffee', '원두', '아라비카', '로부스타'],
+  },
+  {
+    id: 'coffee-poll-003',
+    type: 'vs',
+    category: 'coffee',
+    question: '로스팅 취향은?',
+    options: [
+      { id: 'a', text: '라이트 (산미 높고 과일향)', emoji: '🍋' },
+      { id: 'b', text: '다크 (쓴맛 강하고 스모키)', emoji: '🔥' },
+    ],
+    tags: ['coffee', '로스팅', '맛', '산미'],
+  },
+  {
+    id: 'coffee-poll-004',
+    type: 'vs',
+    category: 'coffee',
+    question: '커피 온도 선호는?',
+    options: [
+      { id: 'a', text: '뜨거운 커피 (핫)', emoji: '🔥' },
+      { id: 'b', text: '차가운 커피 (아이스)', emoji: '🧊' },
+    ],
+    tags: ['coffee', '온도', '핫', '아이스'],
+  },
+  {
+    id: 'coffee-poll-005',
+    type: 'vs',
+    category: 'coffee',
+    question: '커피 추출 방식 선호는?',
+    options: [
+      { id: 'a', text: '드립 (깔끔하고 부드러움)', emoji: '💧' },
+      { id: 'b', text: '에스프레소 (진하고 농축)', emoji: '⚡' },
+    ],
+    tags: ['coffee', '추출', '드립', '에스프레소'],
+  },
+];
+
+// ============================================================================
 // 샘플: 음식(Food) VS 투표 7개
 // ============================================================================
 
@@ -789,6 +1226,225 @@ export const FOOD_VS_POLLS: Poll[] = [
       { id: 'b', text: '물 적게 (꾸덕하게)', emoji: '🍜' },
     ],
     tags: ['라면', '조리법'],
+  },
+];
+
+// ============================================================================
+// 샘플: 와인(Wine) 지식 퀴즈 10개
+// ============================================================================
+
+export const WINE_KNOWLEDGE_QUIZZES: Quiz[] = [
+  {
+    id: 'wine-quiz-001',
+    type: 'knowledge',
+    category: 'food',
+    question: '레드 와인의 색이 빨간 이유는?',
+    options: [
+      { id: 'a', text: '적포도 과육 색깔', isCorrect: false },
+      { id: 'b', text: '적포도 껍질과 함께 발효', isCorrect: true },
+      { id: 'c', text: '색소 첨가', isCorrect: false },
+    ],
+    explanation: '레드 와인은 적포도 껍질과 함께 발효하여 색소를 추출해요. 과육은 대부분 투명합니다!',
+    difficulty: 1,
+    points: 10,
+    tags: ['wine', '레드와인', '발효', '제조법'],
+  },
+  {
+    id: 'wine-quiz-002',
+    type: 'knowledge',
+    category: 'food',
+    question: '레드 와인의 적정 서빙 온도는?',
+    options: [
+      { id: 'a', text: '6-8°C (아주 차갑게)', isCorrect: false },
+      { id: 'b', text: '15-18°C (약간 서늘)', isCorrect: true },
+      { id: 'c', text: '25°C 이상 (실온)', isCorrect: false },
+    ],
+    explanation: '레드 와인은 15-18°C가 적정 온도예요. 너무 따뜻하면 알코올 냄새가 강해지고, 차가우면 향이 닫혀요.',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '서빙온도', '레드와인'],
+  },
+  {
+    id: 'wine-quiz-003',
+    type: 'knowledge',
+    category: 'food',
+    question: '와인의 "타닌(Tannin)"이란?',
+    options: [
+      { id: 'a', text: '단맛을 내는 성분', isCorrect: false },
+      { id: 'b', text: '떫은맛을 내는 성분', isCorrect: true },
+      { id: 'c', text: '신맛을 내는 성분', isCorrect: false },
+    ],
+    explanation: '타닌은 포도 껍질, 씨, 줄기에서 나오는 폴리페놀로, 입안을 마르게 하는 떫은맛을 내요. 레드 와인에 많습니다!',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '타닌', '성분', '맛'],
+  },
+  {
+    id: 'wine-quiz-004',
+    type: 'knowledge',
+    category: 'food',
+    question: '와인을 눕혀서 보관하는 이유는?',
+    options: [
+      { id: 'a', text: '공간 절약', isCorrect: false },
+      { id: 'b', text: '코르크 건조 방지', isCorrect: true },
+      { id: 'c', text: '와인 맛 향상', isCorrect: false },
+    ],
+    explanation: '코르크가 마르면 공기가 들어가 와인이 산화돼요. 와인에 코르크를 적셔 밀봉 상태를 유지합니다!',
+    difficulty: 1,
+    points: 10,
+    tags: ['wine', '보관법', '코르크'],
+  },
+  {
+    id: 'wine-quiz-005',
+    type: 'knowledge',
+    category: 'food',
+    question: '와인의 "바디(Body)"란 무엇일까요?',
+    options: [
+      { id: 'a', text: '와인의 색 진하기', isCorrect: false },
+      { id: 'b', text: '와인의 무게감, 농도감', isCorrect: true },
+      { id: 'c', text: '와인의 알코올 도수', isCorrect: false },
+    ],
+    explanation: '바디는 와인의 무게감이에요. 풀 바디(진하고 묵직함), 미디엄 바디(중간), 라이트 바디(가볍고 산뜻함)로 나뉩니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '바디', '특성', '용어'],
+  },
+  {
+    id: 'wine-quiz-006',
+    type: 'knowledge',
+    category: 'food',
+    question: '카베르네 소비뇽의 특징은?',
+    options: [
+      { id: 'a', text: '라이트 바디, 체리 향', isCorrect: false },
+      { id: 'b', text: '풀 바디, 높은 타닌, 블랙커런트 향', isCorrect: true },
+      { id: 'c', text: '미디엄 바디, 자두 향', isCorrect: false },
+    ],
+    explanation: '카베르네 소비뇽은 대표적인 풀 바디 레드 와인! 타닌이 높고 블랙커런트, 블랙베리 향이 특징입니다.',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '품종', '카베르네소비뇽', '적포도'],
+  },
+  {
+    id: 'wine-quiz-007',
+    type: 'knowledge',
+    category: 'food',
+    question: '디캔팅(Decanting)을 하는 이유는?',
+    options: [
+      { id: 'a', text: '와인을 차갑게 하려고', isCorrect: false },
+      { id: 'b', text: '산소 접촉으로 향미 개방', isCorrect: true },
+      { id: 'c', text: '와인을 예쁘게 담으려고', isCorrect: false },
+    ],
+    explanation: '디캔팅은 와인을 공기에 노출시켜 향미를 풍부하게 만들어요. 풀 바디 레드나 오래된 와인에 효과적입니다!',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '디캔팅', '서빙', '용어'],
+  },
+  {
+    id: 'wine-quiz-008',
+    type: 'knowledge',
+    category: 'food',
+    question: '화이트 와인과 해산물이 잘 어울리는 이유는?',
+    options: [
+      { id: 'a', text: '색이 잘 어울려서', isCorrect: false },
+      { id: 'b', text: '산도가 비린내를 중화', isCorrect: true },
+      { id: 'c', text: '차갑게 마셔서', isCorrect: false },
+    ],
+    explanation: '화이트 와인의 높은 산도가 해산물의 비린내를 중화시켜 청량하게 만들어줘요. 레몬과 비슷한 원리!',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '페어링', '화이트와인', '음식매칭'],
+  },
+  {
+    id: 'wine-quiz-009',
+    type: 'knowledge',
+    category: 'food',
+    question: '와인 산화의 증상이 아닌 것은?',
+    options: [
+      { id: 'a', text: '색이 갈색으로 변함', isCorrect: false },
+      { id: 'b', text: '식초 냄새가 남', isCorrect: false },
+      { id: 'c', text: '더 달콤해짐', isCorrect: true },
+    ],
+    explanation: '산화된 와인은 갈변되고 식초 냄새가 나며 과일향이 사라져요. 달콤해지는 건 산화 증상이 아닙니다!',
+    difficulty: 2,
+    points: 15,
+    tags: ['wine', '보관', '산화', '품질'],
+  },
+  {
+    id: 'wine-quiz-010',
+    type: 'knowledge',
+    category: 'food',
+    question: '와인 "빈티지(Vintage)"란?',
+    options: [
+      { id: 'a', text: '와인 제조사 이름', isCorrect: false },
+      { id: 'b', text: '포도 수확 연도', isCorrect: true },
+      { id: 'c', text: '와인 숙성 기간', isCorrect: false },
+    ],
+    explanation: '빈티지는 포도 수확 연도예요! 그해 기후에 따라 품질이 달라져서 좋은 빈티지는 가격도 높아요.',
+    difficulty: 1,
+    points: 10,
+    tags: ['wine', '빈티지', '용어'],
+  },
+];
+
+// ============================================================================
+// 샘플: 와인(Wine) VS 투표 5개
+// ============================================================================
+
+export const WINE_VS_POLLS: Poll[] = [
+  {
+    id: 'wine-poll-001',
+    type: 'vs',
+    category: 'food',
+    question: '와인 선호도는?',
+    options: [
+      { id: 'a', text: '레드 와인 (풍부하고 진함)', emoji: '🍷' },
+      { id: 'b', text: '화이트 와인 (산뜻하고 가벼움)', emoji: '🥂' },
+    ],
+    tags: ['wine', '선호도', '레드', '화이트'],
+  },
+  {
+    id: 'wine-poll-002',
+    type: 'vs',
+    category: 'food',
+    question: '적포도 품종 선호는?',
+    options: [
+      { id: 'a', text: '카베르네 소비뇽 (묵직하고 타닌 강함)', emoji: '🔥' },
+      { id: 'b', text: '피노 누아 (가볍고 부드러움)', emoji: '🍓' },
+    ],
+    tags: ['wine', '품종', '적포도', '카베르네', '피노누아'],
+  },
+  {
+    id: 'wine-poll-003',
+    type: 'vs',
+    category: 'food',
+    question: '청포도 품종 선호는?',
+    options: [
+      { id: 'a', text: '샤도네이 (풍성하고 버터 향)', emoji: '🧈' },
+      { id: 'b', text: '소비뇽 블랑 (상큼하고 허브 향)', emoji: '🌿' },
+    ],
+    tags: ['wine', '품종', '청포도', '샤도네이', '소비뇽블랑'],
+  },
+  {
+    id: 'wine-poll-004',
+    type: 'vs',
+    category: 'food',
+    question: '와인 즐기는 스타일은?',
+    options: [
+      { id: 'a', text: '스파클링 (샴페인, 프로세코)', emoji: '🥂' },
+      { id: 'b', text: '스틸 와인 (일반 레드/화이트)', emoji: '🍷' },
+    ],
+    tags: ['wine', '스타일', '스파클링', '샴페인'],
+  },
+  {
+    id: 'wine-poll-005',
+    type: 'vs',
+    category: 'food',
+    question: '와인 페어링 음식은?',
+    options: [
+      { id: 'a', text: '레드 와인 + 스테이크', emoji: '🥩' },
+      { id: 'b', text: '화이트 와인 + 해산물', emoji: '🦞' },
+    ],
+    tags: ['wine', '페어링', '음식매칭'],
   },
 ];
 
@@ -1232,6 +1888,9 @@ export function validateAllSamples() {
 
   // 퀴즈 검증
   CAT_KNOWLEDGE_QUIZZES.forEach(q => results.push(validateQuiz(q)));
+  COFFEE_KNOWLEDGE_QUIZZES.forEach(q => results.push(validateQuiz(q)));
+  TRAVEL_KNOWLEDGE_QUIZZES.forEach(q => results.push(validateQuiz(q)));
+  WINE_KNOWLEDGE_QUIZZES.forEach(q => results.push(validateQuiz(q)));
 
   // 시나리오 검증
   results.push(validateScenario(CAT_BUTLER_SCENARIO));
@@ -1239,7 +1898,10 @@ export function validateAllSamples() {
   // 투표 검증
   CAT_VS_POLLS.forEach(p => results.push(validatePoll(p)));
   CAT_CHOICE_POLLS.forEach(p => results.push(validatePoll(p)));
+  COFFEE_VS_POLLS.forEach(p => results.push(validatePoll(p)));
+  TRAVEL_VS_POLLS.forEach(p => results.push(validatePoll(p)));
   FOOD_VS_POLLS.forEach(p => results.push(validatePoll(p)));
+  WINE_VS_POLLS.forEach(p => results.push(validatePoll(p)));
 
   // 상황별 반응 투표 검증
   SITUATION_REACTION_POLLS.forEach(sr => results.push(validateSituationReaction(sr)));
@@ -1261,11 +1923,17 @@ export function validateAllSamples() {
 
 export const CONTENT_SAMPLES = {
   quizzes: CAT_KNOWLEDGE_QUIZZES,
+  coffeeQuizzes: COFFEE_KNOWLEDGE_QUIZZES,
+  travelQuizzes: TRAVEL_KNOWLEDGE_QUIZZES,
+  wineQuizzes: WINE_KNOWLEDGE_QUIZZES,
   scenario: CAT_BUTLER_SCENARIO,
   vsPolls: CAT_VS_POLLS,
   choicePolls: CAT_CHOICE_POLLS,
   dogBreedPolls: DOG_BREED_POLLS,
+  coffeeVsPolls: COFFEE_VS_POLLS,
+  travelVsPolls: TRAVEL_VS_POLLS,
   foodVsPolls: FOOD_VS_POLLS,
+  wineVsPolls: WINE_VS_POLLS,
   situationReactionPolls: SITUATION_REACTION_POLLS,
   validation: validateAllSamples(),
   utils: {

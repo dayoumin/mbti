@@ -7,7 +7,8 @@
 // ============================================================================
 
 export type TournamentType = 'worldcup' | 'bracket';
-export type TournamentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'food' | 'general';
+// 샘플용 - 다양한 카테고리 허용
+export type TournamentCategory = string;
 export type TournamentStatus = 'draft' | 'active' | 'ended';
 export type RoundSize = 4 | 8 | 16 | 32 | 64;
 
@@ -22,6 +23,7 @@ export interface TournamentContestant {
   description: string;       // 짧은 설명 (1-2줄)
   tags?: string[];           // 검색/필터용 태그
   funFact?: string;          // 재미있는 사실 (결과 화면용)
+  meta?: { isAdultOnly?: boolean };  // 연령 제한 (선택)
 }
 
 /**
@@ -100,6 +102,12 @@ export interface Tournament {
     showWinRate: boolean;    // 승률 표시
     showSegmentComparison: boolean;  // 세그먼트별 비교
     shareMessage: string;    // 공유 메시지 템플릿
+  };
+
+  // 연령 제한 (선택)
+  meta?: {
+    minAge?: string;
+    isAdultOnly?: boolean;
   };
 }
 
@@ -268,6 +276,166 @@ export const CAT_BREED_TOURNAMENT: Tournament = {
     showWinRate: true,
     showSegmentComparison: true,
     shareMessage: '나의 최애 고양이 품종은 {winner}! 🐱 너도 해봐!',
+  },
+};
+
+// ============================================================================
+// 샘플 데이터: 커피 음료 월드컵 16강
+// ============================================================================
+
+export const COFFEE_WORLDCUP_CONTESTANTS: TournamentContestant[] = [
+  {
+    id: 'americano',
+    name: '아메리카노',
+    emoji: '☕',
+    description: '진한 에스프레소에 물을 더한 클래식',
+    tags: ['블랙커피', '에스프레소', '기본', '저칼로리'],
+    funFact: '이름의 유래는 미군들이 진한 에스프레소에 물을 타 마신 것!',
+  },
+  {
+    id: 'latte',
+    name: '카페라떼',
+    emoji: '🥛',
+    description: '부드러운 우유와 에스프레소의 조화',
+    tags: ['우유', '부드러움', '인기', '카페인중간'],
+    funFact: '이탈리아어로 "카페 라떼"는 그냥 "우유 커피"라는 뜻이에요',
+  },
+  {
+    id: 'cappuccino',
+    name: '카푸치노',
+    emoji: '☁️',
+    description: '풍성한 우유 거품이 올라간 이탈리안 스타일',
+    tags: ['우유거품', '진한맛', '이탈리아', '클래식'],
+    funFact: '카푸친 수도사의 갈색 옷에서 이름이 유래했어요',
+  },
+  {
+    id: 'espresso',
+    name: '에스프레소',
+    emoji: '⚡',
+    description: '고압으로 추출한 진한 커피의 원조',
+    tags: ['진함', '소량', '카페인', '이탈리아'],
+    funFact: '30ml의 작은 양에 강렬한 맛과 향이 응축되어 있어요',
+  },
+  {
+    id: 'coldbrew',
+    name: '콜드브루',
+    emoji: '🧊',
+    description: '찬물에 오래 우려낸 부드러운 아이스커피',
+    tags: ['차가움', '부드러움', '여름', '저산미'],
+    funFact: '12-24시간 동안 찬물에 우려내서 산미가 낮고 부드러워요',
+  },
+  {
+    id: 'vanilla-latte',
+    name: '바닐라 라떼',
+    emoji: '🍦',
+    description: '달콤한 바닐라 시럽이 들어간 라떼',
+    tags: ['달콤', '바닐라', '여성인기', '디저트'],
+    funFact: '커피 초보자도 부담 없이 즐길 수 있는 입문용 메뉴!',
+  },
+  {
+    id: 'caramel-macchiato',
+    name: '카라멜 마끼아또',
+    emoji: '🍮',
+    description: '바닐라 시럽, 우유, 에스프레소에 카라멜 소스',
+    tags: ['달콤', '카라멜', '인기', '스타벅스'],
+    funFact: '스타벅스가 만든 창작 메뉴로 전 세계적으로 유명해졌어요',
+  },
+  {
+    id: 'mocha',
+    name: '카페모카',
+    emoji: '🍫',
+    description: '초콜릿과 커피의 달콤쌉싸름한 만남',
+    tags: ['초콜릿', '달콤', '디저트', '겨울'],
+    funFact: '커피와 핫초코의 중간 맛! 디저트 같은 커피예요',
+  },
+  {
+    id: 'flat-white',
+    name: '플랫 화이트',
+    emoji: '🤍',
+    description: '진한 에스프레소와 벨벳 같은 우유 거품',
+    tags: ['호주', '뉴질랜드', '진함', '우유거품'],
+    funFact: '호주와 뉴질랜드에서 유래한 메뉴로, 라떼보다 우유가 적어요',
+  },
+  {
+    id: 'einspanner',
+    name: '아인슈페너',
+    emoji: '🎂',
+    description: '진한 커피 위에 달콤한 휘핑크림',
+    tags: ['비엔나', '휘핑', '달콤', '독특'],
+    funFact: '독일어로 "마차를 모는 사람"이라는 뜻. 빈 커피의 일종이에요',
+  },
+  {
+    id: 'affogato',
+    name: '아포가토',
+    emoji: '🍨',
+    description: '바닐라 아이스크림에 뜨거운 에스프레소를 부어',
+    tags: ['디저트', '아이스크림', '이탈리아', '달콤'],
+    funFact: '이탈리아어로 "빠뜨리다"라는 뜻. 커피인지 디저트인지 애매해요',
+  },
+  {
+    id: 'irish-coffee',
+    name: '아이리시 커피',
+    emoji: '🍀',
+    description: '위스키와 커피, 설탕, 크림의 조합',
+    tags: ['위스키', '술', '성인', '겨울'],
+    funFact: '아일랜드의 국민 음료로, 추운 날 몸을 녹이는 최고의 선택!',
+    meta: { isAdultOnly: true },
+  },
+  {
+    id: 'cafe-con-leche',
+    name: '카페 콘 레체',
+    emoji: '🇪🇸',
+    description: '스페인식 밀크커피, 커피와 우유 1:1',
+    tags: ['스페인', '우유', '아침', '간단'],
+    funFact: '스페인에서 아침에 주로 마시는 전통 커피예요',
+  },
+  {
+    id: 'turkish-coffee',
+    name: '터키시 커피',
+    emoji: '🇹🇷',
+    description: '아주 곱게 간 커피를 끓여낸 중동식',
+    tags: ['터키', '전통', '진함', '독특'],
+    funFact: 'UNESCO 무형문화유산! 찌꺼기로 점을 치는 전통도 있어요',
+  },
+  {
+    id: 'dalgona-coffee',
+    name: '달고나 커피',
+    emoji: '☁️',
+    description: '휘핑한 커피 거품을 우유 위에 올린 한국식',
+    tags: ['한국', '거품', '인스타', '트렌드'],
+    funFact: '코로나19 때 전 세계적으로 유행했던 한국 발 트렌드!',
+  },
+  {
+    id: 'nitro-coldbrew',
+    name: '니트로 콜드브루',
+    emoji: '🍺',
+    description: '질소를 주입한 부드럽고 크리미한 콜드브루',
+    tags: ['질소', '부드러움', '프리미엄', '트렌드'],
+    funFact: '맥주처럼 질소를 넣어 크리미한 거품이 생겨요. 시각적으로도 멋져요!',
+  },
+];
+
+export const COFFEE_WORLDCUP: Tournament = {
+  id: 'coffee-worldcup-v1',
+  type: 'worldcup',
+  category: 'coffee',
+  title: '최애 커피 음료 월드컵',
+  subtitle: '16강',
+  description: '당신의 최애 커피는? 전 세계 인기 커피 대결!',
+  emoji: '☕',
+  themeColor: 'bg-amber-100',
+
+  contestants: COFFEE_WORLDCUP_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2024-12-25',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 커피는 {winner}! ☕ 너도 해봐!',
   },
 };
 
@@ -1635,6 +1803,9 @@ export const CAT_BREED_VALIDATION = validateTournament(CAT_BREED_TOURNAMENT);
 // Export
 // ============================================================================
 
+// 커피 월드컵 검증 실행
+export const COFFEE_WORLDCUP_VALIDATION = validateTournament(COFFEE_WORLDCUP);
+
 // 라면 월드컵 검증 실행
 export const RAMEN_WORLDCUP_VALIDATION = validateTournament(RAMEN_WORLDCUP);
 
@@ -1656,8 +1827,359 @@ export const STRESS_RELIEF_WORLDCUP_VALIDATION = validateTournament(STRESS_RELIE
 // 주말 활동 월드컵 검증 실행
 export const WEEKEND_ACTIVITY_WORLDCUP_VALIDATION = validateTournament(WEEKEND_ACTIVITY_WORLDCUP);
 
+// ============================================================================
+// 샘플 데이터: 여행지 월드컵 16강
+// ============================================================================
+
+export const TRAVEL_DESTINATION_CONTESTANTS: TournamentContestant[] = [
+  // === 아시아 ===
+  {
+    id: 'tokyo',
+    name: '도쿄',
+    emoji: '🗼',
+    description: '최신 트렌드와 전통의 조화, 쇼핑과 먹거리 천국',
+    tags: ['일본', '도시', '쇼핑', '음식', '문화'],
+    funFact: '세계에서 미슐랭 3스타 레스토랑이 가장 많은 도시예요',
+  },
+  {
+    id: 'seoul',
+    name: '서울',
+    emoji: '🏙️',
+    description: 'K-문화의 중심, 24시간 활기찬 대도시',
+    tags: ['한국', '도시', '쇼핑', 'K-pop', '야경'],
+    funFact: '전 세계에서 인터넷 속도가 가장 빠른 도시 중 하나예요',
+  },
+  {
+    id: 'bangkok',
+    name: '방콕',
+    emoji: '🛕',
+    description: '황금빛 사원과 활기찬 야시장, 저렴한 물가',
+    tags: ['태국', '도시', '사원', '야시장', '음식'],
+    funFact: '세계에서 가장 많이 방문하는 도시 1위! (2023년 기준)',
+  },
+  {
+    id: 'singapore',
+    name: '싱가포르',
+    emoji: '🦁',
+    description: '깔끔하고 세련된 도시국가, 다양한 문화 체험',
+    tags: ['싱가포르', '도시', '깔끔', '다문화', '쇼핑'],
+    funFact: '껌을 씹으면 안 되는 나라로 유명해요 (실제론 섭취는 가능, 판매 금지)',
+  },
+
+  // === 유럽 ===
+  {
+    id: 'paris',
+    name: '파리',
+    emoji: '🗼',
+    description: '예술과 낭만의 도시, 에펠탑과 루브르 박물관',
+    tags: ['프랑스', '도시', '예술', '낭만', '유적'],
+    funFact: '루브르 박물관을 다 보려면 약 100일이 걸린다고 해요',
+  },
+  {
+    id: 'london',
+    name: '런던',
+    emoji: '🎡',
+    description: '역사와 현대가 공존하는 영국의 수도',
+    tags: ['영국', '도시', '역사', '박물관', '궁전'],
+    funFact: '세계에서 가장 많은 무료 박물관이 있는 도시예요',
+  },
+  {
+    id: 'rome',
+    name: '로마',
+    emoji: '🏛️',
+    description: '2천년 역사의 야외 박물관, 고대 유적의 보고',
+    tags: ['이탈리아', '도시', '역사', '유적', '음식'],
+    funFact: '콜로세움은 한때 5만 명의 관중을 수용했어요',
+  },
+  {
+    id: 'barcelona',
+    name: '바르셀로나',
+    emoji: '🏖️',
+    description: '가우디 건축과 해변의 완벽한 조합',
+    tags: ['스페인', '도시', '건축', '해변', '축구'],
+    funFact: '사그라다 파밀리아는 1882년부터 건설 중이에요 (완공 예정 2026년)',
+  },
+
+  // === 미주 ===
+  {
+    id: 'new-york',
+    name: '뉴욕',
+    emoji: '🗽',
+    description: '잠들지 않는 도시, 세계의 문화 중심지',
+    tags: ['미국', '도시', '문화', '쇼핑', '뮤지컬'],
+    funFact: '맨해튼에만 800개 이상의 언어가 사용돼요',
+  },
+  {
+    id: 'hawaii',
+    name: '하와이',
+    emoji: '🏝️',
+    description: '에메랄드빛 바다와 화이트 샌드 비치의 낙원',
+    tags: ['미국', '해변', '자연', '휴양', '서핑'],
+    funFact: '세계에서 가장 활동적인 화산 중 하나가 있어요',
+  },
+  {
+    id: 'cancun',
+    name: '칸쿤',
+    emoji: '🏖️',
+    description: '카리브해의 청록빛 바다와 마야 문명',
+    tags: ['멕시코', '해변', '리조트', '유적', '휴양'],
+    funFact: '세계에서 두 번째로 큰 산호초 지대가 있어요',
+  },
+  {
+    id: 'rio',
+    name: '리우데자네이루',
+    emoji: '🎉',
+    description: '삼바와 열정의 카니발, 그리스도상',
+    tags: ['브라질', '도시', '해변', '축제', '문화'],
+    funFact: '세계 최대 규모의 카니발이 열려요 (연간 200만 명 참가)',
+  },
+
+  // === 오세아니아 ===
+  {
+    id: 'sydney',
+    name: '시드니',
+    emoji: '🦘',
+    description: '오페라하우스와 하버 브리지의 절경',
+    tags: ['호주', '도시', '해변', '자연', '현대적'],
+    funFact: '시드니 오페라하우스는 1억 개 이상의 타일로 덮여 있어요',
+  },
+  {
+    id: 'bali',
+    name: '발리',
+    emoji: '🏝️',
+    description: '신들의 섬, 저렴하고 여유로운 휴양',
+    tags: ['인도네시아', '해변', '휴양', '사원', '요가'],
+    funFact: '발리에는 2만 개 이상의 사원이 있어요',
+  },
+  {
+    id: 'auckland',
+    name: '오클랜드',
+    emoji: '🌋',
+    description: '화산과 항구의 도시, 깨끗한 자연',
+    tags: ['뉴질랜드', '도시', '자연', '화산', '해양'],
+    funFact: '세계에서 요트 보유율이 가장 높은 도시예요',
+  },
+
+  // === 중동/아프리카 ===
+  {
+    id: 'dubai',
+    name: '두바이',
+    emoji: '🏜️',
+    description: '사막 위의 미래 도시, 세계 최고층 빌딩',
+    tags: ['UAE', '도시', '쇼핑', '럭셔리', '현대적'],
+    funFact: '부르즈 할리파는 828m로 세계에서 가장 높은 건물이에요',
+  },
+  {
+    id: 'cape-town',
+    name: '케이프타운',
+    emoji: '🦁',
+    description: '테이블 마운틴과 아프리카의 자연',
+    tags: ['남아공', '도시', '자연', '와인', '사파리'],
+    funFact: '세계에서 가장 아름다운 도시 중 하나로 꼽혀요',
+  },
+];
+
+export const TRAVEL_DESTINATION_WORLDCUP: Tournament = {
+  id: 'travel-worldcup-v1',
+  type: 'worldcup',
+  category: 'travel',
+  title: '최애 여행지 월드컵',
+  subtitle: '16강',
+  description: '당신의 버킷리스트 1순위 여행지는? 1:1 대결로 찾아보세요!',
+  emoji: '✈️',
+  themeColor: 'bg-blue-100',
+
+  contestants: TRAVEL_DESTINATION_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2025-12-25',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 여행지는 {winner}! ✈️ 너도 해봐!',
+  },
+};
+
+// 여행지 월드컵 검증 실행
+export const TRAVEL_DESTINATION_WORLDCUP_VALIDATION = validateTournament(TRAVEL_DESTINATION_WORLDCUP);
+
+// ============================================================================
+// 샘플 데이터: 와인 품종 월드컵 16강
+// ============================================================================
+
+export const WINE_WORLDCUP_CONTESTANTS: TournamentContestant[] = [
+  // === 레드 와인 - 풀 바디 ===
+  {
+    id: 'cabernet-sauvignon',
+    name: '카베르네 소비뇽',
+    emoji: '🍷',
+    description: '풀 바디의 대명사, 높은 타닌과 블랙커런트 향',
+    tags: ['레드', '풀바디', '타닌', '보르도'],
+    funFact: '보르도 5대 샤토의 주요 품종으로, 장기 숙성 능력이 뛰어나요',
+  },
+  {
+    id: 'syrah-shiraz',
+    name: '시라/쉬라즈',
+    emoji: '🔥',
+    description: '스파이시한 후추 향과 진한 과일 맛',
+    tags: ['레드', '풀바디', '스파이시', '론'],
+    funFact: '프랑스에서는 시라, 호주에서는 쉬라즈로 불려요',
+  },
+  {
+    id: 'malbec',
+    name: '말벡',
+    emoji: '🇦🇷',
+    description: '아르헨티나의 대표 품종, 블랙베리와 자두 향',
+    tags: ['레드', '풀바디', '과일향', '아르헨티나'],
+    funFact: '프랑스에서 왔지만 아르헨티나에서 세계적인 명성을 얻었어요',
+  },
+  {
+    id: 'zinfandel',
+    name: '진판델',
+    emoji: '🍇',
+    description: '캘리포니아의 보물, 잼 같은 과일 풍미',
+    tags: ['레드', '풀바디', '과일풍미', '미국'],
+    funFact: '캘리포니아에서 가장 오래된 품종 중 하나예요',
+  },
+
+  // === 레드 와인 - 미디엄/라이트 바디 ===
+  {
+    id: 'merlot',
+    name: '메를로',
+    emoji: '🍒',
+    description: '부드러운 타닌, 체리와 자두의 달콤함',
+    tags: ['레드', '미디엄바디', '부드러움', '보르도'],
+    funFact: '카베르네 소비뇽의 완벽한 블렌딩 파트너예요',
+  },
+  {
+    id: 'pinot-noir',
+    name: '피노 누아',
+    emoji: '🍓',
+    description: '섬세하고 우아한 라이트 바디, 체리와 딸기 향',
+    tags: ['레드', '라이트바디', '섬세함', '부르고뉴'],
+    funFact: '재배가 까다로워 "와인의 여왕"으로 불려요',
+  },
+  {
+    id: 'sangiovese',
+    name: '산지오베제',
+    emoji: '🇮🇹',
+    description: '이탈리아의 자존심, 체리와 허브 향',
+    tags: ['레드', '미디엄바디', '산도', '토스카나'],
+    funFact: '키안티 와인의 주요 품종이에요',
+  },
+  {
+    id: 'tempranillo',
+    name: '템프라니요',
+    emoji: '🇪🇸',
+    description: '스페인의 대표 품종, 가죽과 담배 뉘앙스',
+    tags: ['레드', '미디엄바디', '복합미', '리오하'],
+    funFact: '"이른 성숙"이라는 뜻으로, 다른 품종보다 빨리 익어요',
+  },
+
+  // === 화이트 와인 - 풀 바디 ===
+  {
+    id: 'chardonnay',
+    name: '샤도네이',
+    emoji: '🧈',
+    description: '오크 숙성의 버터와 바닐라 향',
+    tags: ['화이트', '풀바디', '버터향', '부르고뉴'],
+    funFact: '가장 다양한 스타일로 만들 수 있는 만능 품종이에요',
+  },
+  {
+    id: 'viognier',
+    name: '비오니에',
+    emoji: '🌼',
+    description: '풍부한 꽃향과 복숭아 아로마',
+    tags: ['화이트', '풀바디', '꽃향', '론'],
+    funFact: '한때 멸종 위기였지만 지금은 인기 품종으로 부활했어요',
+  },
+
+  // === 화이트 와인 - 라이트/미디엄 바디 ===
+  {
+    id: 'sauvignon-blanc',
+    name: '소비뇽 블랑',
+    emoji: '🌿',
+    description: '높은 산도, 풀과 허브의 상큼함',
+    tags: ['화이트', '라이트바디', '산뜻함', '뉴질랜드'],
+    funFact: '뉴질랜드 말보로 지역에서 세계적인 명성을 얻었어요',
+  },
+  {
+    id: 'riesling',
+    name: '리슬링',
+    emoji: '🍑',
+    description: '높은 산도, 꽃과 복숭아 향, 드라이~스위트 다양',
+    tags: ['화이트', '라이트바디', '산도', '독일'],
+    funFact: '당도와 산도를 모두 높게 유지할 수 있는 유일한 품종이에요',
+  },
+  {
+    id: 'pinot-grigio',
+    name: '피노 그리지오',
+    emoji: '🍋',
+    description: '가볍고 산뜻한 이탈리아 스타일',
+    tags: ['화이트', '라이트바디', '가벼움', '이탈리아'],
+    funFact: '프랑스에서는 피노 그리, 이탈리아에서는 피노 그리지오로 불려요',
+  },
+  {
+    id: 'gewurztraminer',
+    name: '게뷔르츠트라미너',
+    emoji: '🌹',
+    description: '향긋한 라이치와 장미 향',
+    tags: ['화이트', '미디엄바디', '향긋함', '알자스'],
+    funFact: '"게뷔르츠"는 독일어로 "향신료"라는 뜻이에요',
+  },
+
+  // === 스파클링 ===
+  {
+    id: 'champagne',
+    name: '샴페인',
+    emoji: '🥂',
+    description: '프랑스 샴파뉴 지역의 최고급 스파클링',
+    tags: ['스파클링', '고급', '축하', '프랑스'],
+    funFact: '샴파뉴 지역에서만 만들어진 것만 샴페인이라 부를 수 있어요',
+  },
+  {
+    id: 'prosecco',
+    name: '프로세코',
+    emoji: '✨',
+    description: '이탈리아의 경쾌한 스파클링, 과일향 가득',
+    tags: ['스파클링', '과일향', '가벼움', '이탈리아'],
+    funFact: '샴페인보다 가벼운 탄산과 과일향으로 일상에 즐기기 좋아요',
+  },
+];
+
+export const WINE_WORLDCUP: Tournament = {
+  id: 'wine-worldcup-v1',
+  type: 'worldcup',
+  category: 'wine',
+  title: '최애 와인 품종 월드컵',
+  subtitle: '16강',
+  description: '당신이 가장 좋아하는 와인 품종은? 레드부터 화이트, 스파클링까지!',
+  emoji: '🍷',
+  themeColor: 'bg-purple-100',
+
+  contestants: WINE_WORLDCUP_CONTESTANTS,
+  roundSize: 16,
+
+  status: 'active',
+  createdAt: '2025-12-25',
+
+  resultConfig: {
+    showRanking: true,
+    showWinRate: true,
+    showSegmentComparison: true,
+    shareMessage: '나의 최애 와인 품종은 {winner}! 🍷 너도 해봐!',
+  },
+};
+
+// 와인 월드컵 검증 실행
+export const WINE_WORLDCUP_VALIDATION = validateTournament(WINE_WORLDCUP);
+
 export const TOURNAMENT_SAMPLE = {
   catBreed: CAT_BREED_TOURNAMENT,
+  coffeeWorldcup: COFFEE_WORLDCUP,
   ramenWorldcup: RAMEN_WORLDCUP,
   valuesWorldcup: VALUES_WORLDCUP,
   idealtypeConditions: IDEALTYPE_CONDITIONS_WORLDCUP,
@@ -1665,8 +2187,11 @@ export const TOURNAMENT_SAMPLE = {
   fridayNightWorldcup: FRIDAY_NIGHT_WORLDCUP,
   stressReliefWorldcup: STRESS_RELIEF_WORLDCUP,
   weekendActivityWorldcup: WEEKEND_ACTIVITY_WORLDCUP,
+  travelDestinationWorldcup: TRAVEL_DESTINATION_WORLDCUP,
+  wineWorldcup: WINE_WORLDCUP,
   contestants: {
     catBreed: CAT_BREED_CONTESTANTS,
+    coffee: COFFEE_WORLDCUP_CONTESTANTS,
     ramen: RAMEN_WORLDCUP_CONTESTANTS,
     values: VALUES_WORLDCUP_CONTESTANTS,
     idealtypeConditions: IDEALTYPE_CONDITIONS_CONTESTANTS,
@@ -1674,12 +2199,15 @@ export const TOURNAMENT_SAMPLE = {
     fridayNight: FRIDAY_NIGHT_CONTESTANTS,
     stressRelief: STRESS_RELIEF_CONTESTANTS,
     weekendActivity: WEEKEND_ACTIVITY_CONTESTANTS,
+    travelDestination: TRAVEL_DESTINATION_CONTESTANTS,
+    wine: WINE_WORLDCUP_CONTESTANTS,
   },
   ideas: TOURNAMENT_IDEAS,
   template: TOURNAMENT_TEMPLATE,
   contestantTemplate: CONTESTANT_TEMPLATE,
   validation: {
     catBreed: CAT_BREED_VALIDATION,
+    coffee: COFFEE_WORLDCUP_VALIDATION,
     ramen: RAMEN_WORLDCUP_VALIDATION,
     values: VALUES_WORLDCUP_VALIDATION,
     idealtypeConditions: IDEALTYPE_CONDITIONS_VALIDATION,
@@ -1687,6 +2215,8 @@ export const TOURNAMENT_SAMPLE = {
     fridayNight: FRIDAY_NIGHT_WORLDCUP_VALIDATION,
     stressRelief: STRESS_RELIEF_WORLDCUP_VALIDATION,
     weekendActivity: WEEKEND_ACTIVITY_WORLDCUP_VALIDATION,
+    travelDestination: TRAVEL_DESTINATION_WORLDCUP_VALIDATION,
+    wine: WINE_WORLDCUP_VALIDATION,
   },
   utils: {
     getRoundName,

@@ -86,6 +86,22 @@ npm run build
 
 ---
 
+## 콘텐츠 타입 (5종)
+
+| 타입 | 분류 | 설명 | 위치 |
+|------|------|------|------|
+| **Test** | 메인 | 성향 테스트 (다차원 분석, 5-15분) | `subjects/*.ts` |
+| **Matching** | 메인 | 궁합 테스트 (2인 호환성) | `subjects/*.ts` (type: matching) |
+| **Quiz** | 참여형 | 지식 퀴즈 (정답 있음, 점수) | `content/quizzes/*.ts` |
+| **Poll** | 참여형 | 투표 (VS, 선택, 정답 없음) | `content/polls/*.ts` |
+| **Reaction** | 스낵 | 상황별 반응 ("이럴 때 나는?") | `content/situation-reactions/*.ts` |
+
+### 콘텐츠 생성
+- **Test/Matching**: `신규 테스트 추가` 섹션 참조
+- **Quiz/Poll/Reaction**: `/content-workflow` 스킬 사용
+
+---
+
 ## 핵심 규칙 (AI 필독)
 
 ### Next.js 앱 (루트)

@@ -8,6 +8,7 @@ import type { SituationReaction, SituationCategory } from '../types';
 import { RELATIONSHIP_REACTIONS } from './relationship';
 import { WORK_REACTIONS } from './work';
 import { SOCIAL_REACTIONS } from './social';
+import { AWKWARD_REACTIONS } from './awkward';
 
 // ============================================================================
 // 전체 상황별 반응 데이터
@@ -17,6 +18,7 @@ export const ALL_SITUATION_REACTIONS: SituationReaction[] = [
   ...RELATIONSHIP_REACTIONS,
   ...WORK_REACTIONS,
   ...SOCIAL_REACTIONS,
+  ...AWKWARD_REACTIONS,
 ];
 
 // ============================================================================
@@ -53,3 +55,4 @@ export const SITUATION_CATEGORY_LABELS: Record<SituationCategory, { name: string
 export { RELATIONSHIP_REACTIONS } from './relationship';
 export { WORK_REACTIONS } from './work';
 export { SOCIAL_REACTIONS } from './social';
+export { AWKWARD_REACTIONS } from './awkward';

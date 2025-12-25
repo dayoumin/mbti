@@ -1,13 +1,88 @@
 // ============================================================================
-// 콘텐츠 시스템 데이터 (퀴즈/투표/Q&A)
+// 콘텐츠 시스템 데이터
 // ============================================================================
 
 // ============================================================================
-// Types
+// 전체 콘텐츠 분류 체계 (5종)
+// ============================================================================
+
+/**
+ * 앱 전체 콘텐츠 타입 (5종)
+ *
+ * | 타입      | 분류   | 설명                          | 위치                              |
+ * |-----------|--------|-------------------------------|-----------------------------------|
+ * | Test      | 메인   | 성향 테스트 (다차원, 5-15분)   | subjects/*.ts                     |
+ * | Matching  | 메인   | 궁합 테스트 (2인 호환성)       | subjects/*.ts (type: matching)    |
+ * | Quiz      | 참여형 | 지식 퀴즈 (정답 있음, 점수)    | content/quizzes/*.ts              |
+ * | Poll      | 참여형 | 투표 (VS, 선택, 정답 없음)     | content/polls/*.ts                |
+ * | Reaction  | 스낵   | 상황별 반응 ("이럴 때 나는?")  | content/situation-reactions/*.ts  |
+ */
+export type AppContentType = 'test' | 'matching' | 'quiz' | 'poll' | 'reaction';
+
+export interface AppContentTypeInfo {
+  id: AppContentType;
+  name: string;
+  category: '메인' | '참여형' | '스낵';
+  description: string;
+  duration: string;
+  location: string;
+  icon: string;
+}
+
+export const APP_CONTENT_TYPES: AppContentTypeInfo[] = [
+  {
+    id: 'test',
+    name: '테스트',
+    category: '메인',
+    description: '성향 테스트 (다차원 분석)',
+    duration: '5-15분',
+    location: 'subjects/*.ts',
+    icon: '🧪',
+  },
+  {
+    id: 'matching',
+    name: '매칭',
+    category: '메인',
+    description: '궁합 테스트 (2인 호환성)',
+    duration: '3-5분',
+    location: 'subjects/*.ts (type: matching)',
+    icon: '💕',
+  },
+  {
+    id: 'quiz',
+    name: '퀴즈',
+    category: '참여형',
+    description: '지식 퀴즈 (정답 있음, 점수)',
+    duration: '30초-2분',
+    location: 'content/quizzes/*.ts',
+    icon: '🧠',
+  },
+  {
+    id: 'poll',
+    name: '투표',
+    category: '참여형',
+    description: '투표 (VS, 선택, 정답 없음)',
+    duration: '10-30초',
+    location: 'content/polls/*.ts',
+    icon: '📊',
+  },
+  {
+    id: 'reaction',
+    name: '상황반응',
+    category: '스낵',
+    description: '상황별 반응 ("이럴 때 나는?")',
+    duration: '10-30초',
+    location: 'content/situation-reactions/*.ts',
+    icon: '💬',
+  },
+];
+
+// ============================================================================
+// 참여형 콘텐츠 상세 타입 (Quiz, Poll, Reaction 세부 정의)
 // ============================================================================
 
 export type ContentType = 'quiz' | 'poll' | 'qna' | 'system';
-export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'love' | 'personality' | 'lifestyle' | 'food' | 'work' | 'money' | 'general';
+export type ContentCategory = 'cat' | 'dog' | 'rabbit' | 'hamster' | 'plant' | 'coffee' | 'wine' | 'love' | 'personality' | 'lifestyle' | 'food' | 'work' | 'money' | 'travel' | 'general';
 export type Frequency = 'once' | 'daily' | 'weekly' | 'seasonal' | 'event';
 
 export interface ContentTypeDefinition {
