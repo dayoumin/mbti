@@ -397,6 +397,21 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         intro: ["나에게 맞는 운동은?", "운동 궁합 찾기"],
         resultFormat: "matching",
         deepButtonText: "운동 매칭"
+    },
+    bloodType: {
+        testType: "matching",
+        icon: "BloodTypeIcon",
+        lucideIcon: "Droplet",
+        emoji: "🩸",
+        label: "혈액형",
+        intro: ["나의 혈액형 성향은?", "혈액형별 특징 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "혈액형 매칭",
+        matchPointsTitle: "🩸 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 특징", guide: "💡 조언" },
+        tabActiveColor: "bg-red-100 border-red-400",
+        checkColor: "text-red-600",
+        analysisButtonText: "🩸 상세 성향 분석 보기"
     }
 };
 

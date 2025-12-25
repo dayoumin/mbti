@@ -18,6 +18,7 @@ import { COFFEE_VS_POLLS } from './coffee-vs-polls';
 import { LOVE_VS_POLLS } from './love-vs-polls';
 import { MONEY_POLLS } from './money-polls';
 import { TAROT_VS_POLLS, TAROT_CHOICE_POLLS } from './tarot-polls';
+import { BLOODTYPE_VS_POLLS } from './bloodtype-vs-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -30,6 +31,7 @@ const POLL_REGISTRY: VSPoll[][] = [
   COFFEE_VS_POLLS,
   LOVE_VS_POLLS,
   TAROT_VS_POLLS,
+  BLOODTYPE_VS_POLLS,
   // 투표 분리 시 여기에 추가 (예: CAT_POLLS, DOG_POLLS)
 ];
 

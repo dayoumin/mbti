@@ -28,6 +28,7 @@ import { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
 import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 import { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 import { RABBIT_SCENARIO_QUIZZES } from './rabbit-scenario';
+import { BLOODTYPE_SCENARIO_QUIZZES } from './bloodtype-scenario';
 
 // ============================================================================
 // 퀴즈 레지스트리 (단일 등록 - 여기에만 추가하면 됨)
@@ -53,6 +54,7 @@ const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
   CAT_SCENARIO_QUIZZES,
   DOG_SCENARIO_QUIZZES,
   RABBIT_SCENARIO_QUIZZES,
+  BLOODTYPE_SCENARIO_QUIZZES,
   // 새 시나리오 퀴즈는 여기에 추가
 ];
 
@@ -80,6 +82,7 @@ export { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
 export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 export { RABBIT_SCENARIO_QUIZZES } from './rabbit-scenario';
+export { BLOODTYPE_SCENARIO_QUIZZES } from './bloodtype-scenario';
 
 // ============================================================================
 // 조회 함수

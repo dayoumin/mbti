@@ -1139,6 +1139,49 @@ export const ExerciseIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb
   </svg>
 );
 
+// 혈액형 아이콘 (bloodType 테스트용)
+export const BloodTypeIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 물방울 모양 */}
+    <path d="M50 15 Q60 25 60 40 Q60 55 50 60 Q40 55 40 40 Q40 25 50 15 Z" fill="#DC2626" stroke="#991B1B" strokeWidth="3" />
+    {/* 하이라이트 */}
+    <ellipse cx="48" cy="30" rx="6" ry="10" fill="#EF4444" opacity="0.6" />
+    <circle cx="46" cy="25" r="3" fill="#FECACA" opacity="0.8" />
+    {mood === "happy" && (
+      <g>
+        {/* A형 */}
+        <text x="43" y="48" fontSize="18" fill="white" fontWeight="bold">A</text>
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        {/* B형 */}
+        <text x="43" y="48" fontSize="18" fill="white" fontWeight="bold">B</text>
+        <path d="M20 20 L25 25 M30 15 L25 25 M20 30 L25 25" stroke="#FFD700" strokeWidth="2" />
+        <path d="M80 20 L75 25 M70 15 L75 25 M80 30 L75 25" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        {/* O형 */}
+        <text x="42" y="48" fontSize="18" fill="white" fontWeight="bold">O</text>
+        <rect x="38" y="20" width="8" height="4" rx="2" fill="black" opacity="0.3" />
+        <rect x="54" y="20" width="8" height="4" rx="2" fill="black" opacity="0.3" />
+      </g>
+    )}
+    {(mood === "calm" || mood === "sad") && (
+      <g>
+        {/* AB형 */}
+        <text x="37" y="48" fontSize="14" fill="white" fontWeight="bold">AB</text>
+      </g>
+    )}
+    {/* 작은 물방울들 */}
+    <ellipse cx="30" cy="70" rx="4" ry="6" fill="#DC2626" opacity="0.7" />
+    <ellipse cx="70" cy="75" rx="3" ry="5" fill="#DC2626" opacity="0.6" />
+    <circle cx="25" cy="85" r="2" fill="#DC2626" opacity="0.5" />
+  </svg>
+);
+
 // 아이콘 맵핑 (동적 렌더링용)
 export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   HumanIcon,
@@ -1166,6 +1209,7 @@ export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   WineIcon,
   TravelIcon,
   ExerciseIcon,
+  BloodTypeIcon,
 };
 
 export const getIcon = (iconName: string): React.ComponentType<IconProps> => {

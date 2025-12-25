@@ -32,8 +32,9 @@ const CATEGORY_KEY_LIST = [
   'plant', 'coffee', 'food', 'lifestyle', 'alcohol',
   'beauty',
   'personality', 'love', 'relationship',
-  'money',
-  'fortune', 'zodiac', 'tarot',
+  'money', 'health',
+  'fortune', 'zodiac', 'tarot', 'bloodtype',
+  'work', 'social', 'awkward',  // 상황반응 카테고리
   'general',
 ] as const;
 
@@ -74,13 +75,20 @@ export const CATEGORIES: Record<ContentCategory, CategoryInfo> = {
   love: { name: '연애', emoji: '💕' },
   relationship: { name: '관계', emoji: '💑' },
 
-  // 돈/경조사
+  // 돈/건강/경조사
   money: { name: '돈/경조사', emoji: '💰' },
+  health: { name: '건강', emoji: '💪' },
 
   // 운세/점술
   fortune: { name: '운세', emoji: '🔮' },
   zodiac: { name: '별자리/띠', emoji: '⭐' },
   tarot: { name: '타로', emoji: '🃏' },
+  bloodtype: { name: '혈액형', emoji: '🩸' },
+
+  // 상황반응
+  work: { name: '직장', emoji: '💼' },
+  social: { name: '모임', emoji: '👥' },
+  awkward: { name: '민망', emoji: '😳' },
 
   // 일반
   general: { name: '일반', emoji: '📚' },
