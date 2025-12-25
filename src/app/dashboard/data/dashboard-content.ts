@@ -90,18 +90,26 @@ export type PollType = 'vs' | 'choice' | 'ranking' | 'scale' | 'situation-reacti
 export type SituationCategory = 'relationship' | 'work' | 'social' | 'awkward';
 export type ReactionTag = 'cool' | 'emotional' | 'rational' | 'avoidant' | 'confrontational' | 'humorous' | 'caring' | 'passive';
 
+export interface SituationReactionOption {
+  id: string;
+  text: string;
+  emoji: string;
+  tag: ReactionTag;          // 반응 유형 태그
+  insightTags?: {            // 인사이트 분석용 태그
+    personality?: string[];
+    decision?: string[];
+    relationship?: string[];
+    lifestyle?: string[];
+  };
+}
+
 export interface SituationReaction {
   id: string;
   type: 'situation-reaction';
   category: SituationCategory;
   situation: string;           // 상황 설명
   question: string;            // 예: "이럴 때 나는?"
-  options: {
-    id: string;
-    text: string;
-    emoji: string;
-    tag: ReactionTag;          // 반응 유형 태그
-  }[];
+  options: SituationReactionOption[];
   personalityMapping?: {        // 성격 유형별 예상 반응 (통계용, MBTI 또는 테스트 결과 기반)
     [personalityType: string]: string;  // personalityType -> optionId
   };
@@ -1227,6 +1235,61 @@ export const FOOD_VS_POLLS: Poll[] = [
     ],
     tags: ['라면', '조리법'],
   },
+  {
+    id: 'food-poll-008',
+    type: 'vs',
+    category: 'food',
+    question: '저녁 메뉴 고를 때 최종 선택은?',
+    options: [
+      { id: 'a', text: '치킨', emoji: '🍗' },
+      { id: 'b', text: '피자', emoji: '🍕' },
+    ],
+    tags: ['배달', '메뉴선택'],
+  },
+  {
+    id: 'food-poll-009',
+    type: 'vs',
+    category: 'food',
+    question: '떡볶이 떡 종류, 당신의 취향은?',
+    options: [
+      { id: 'a', text: '밀떡 (쫄깃한 식감)', emoji: '🌾' },
+      { id: 'b', text: '쌀떡 (부드러운 식감)', emoji: '🍚' },
+    ],
+    tags: ['분식', '식감'],
+  },
+  {
+    id: 'food-poll-010',
+    type: 'vs',
+    category: 'food',
+    question: '크림빵 먹을 때 순서는?',
+    options: [
+      { id: 'a', text: '크림 먼저 (달달한 시작)', emoji: '🍰' },
+      { id: 'b', text: '빵 먼저 (크림은 피날레)', emoji: '🍞' },
+    ],
+    tags: ['디저트', '먹는법'],
+  },
+  {
+    id: 'food-poll-011',
+    type: 'vs',
+    category: 'food',
+    question: '햄버거 치즈의 정석 위치는?',
+    options: [
+      { id: 'a', text: '패티 위 (열로 녹여먹기)', emoji: '⬆️' },
+      { id: 'b', text: '패티 아래 (빵과 조화)', emoji: '⬇️' },
+    ],
+    tags: ['햄버거', '조리법'],
+  },
+  {
+    id: 'food-poll-012',
+    type: 'vs',
+    category: 'food',
+    question: '초밥 간장 찍는 올바른 방법은?',
+    options: [
+      { id: 'a', text: '밥에 찍기 (간장밥)', emoji: '🍚' },
+      { id: 'b', text: '회에 찍기 (일본 에티켓)', emoji: '🍣' },
+    ],
+    tags: ['초밥', '에티켓'],
+  },
 ];
 
 // ============================================================================
@@ -1449,6 +1512,68 @@ export const WINE_VS_POLLS: Poll[] = [
 ];
 
 // ============================================================================
+// 샘플: 육아 VS 투표 (자녀 성별 선호 관련 5개)
+// ============================================================================
+
+export const PARENTING_VS_POLLS: Poll[] = [
+  {
+    id: 'parenting-poll-001',
+    type: 'vs',
+    category: 'parenting',
+    question: '첫째 아이 성별 희망은?',
+    options: [
+      { id: 'a', text: '첫째가 아들이면 좋겠다', emoji: '👦' },
+      { id: 'b', text: '첫째가 딸이면 좋겠다', emoji: '👧' },
+    ],
+    tags: ['육아', 'parenting', '첫째', '자녀성별'],
+  },
+  {
+    id: 'parenting-poll-002',
+    type: 'vs',
+    category: 'parenting',
+    question: '둘 다 같은 성별이라면?',
+    options: [
+      { id: 'a', text: '아들만 둘', emoji: '👦👦' },
+      { id: 'b', text: '딸만 둘', emoji: '👧👧' },
+    ],
+    tags: ['육아', 'parenting', '자녀수', '자녀성별'],
+  },
+  {
+    id: 'parenting-poll-003',
+    type: 'vs',
+    category: 'parenting',
+    question: '외동으로 키운다면?',
+    options: [
+      { id: 'a', text: '외동이라면 아들', emoji: '👦' },
+      { id: 'b', text: '외동이라면 딸', emoji: '👧' },
+    ],
+    tags: ['육아', 'parenting', '외동', '자녀성별'],
+  },
+  {
+    id: 'parenting-poll-004',
+    type: 'vs',
+    category: 'parenting',
+    question: '두 자녀를 둔다면 성별 조합은?',
+    options: [
+      { id: 'a', text: '아들 하나 딸 하나 (남매)', emoji: '👦👧' },
+      { id: 'b', text: '같은 성별 둘', emoji: '👶👶' },
+    ],
+    tags: ['육아', 'parenting', '남매', '자녀성별'],
+  },
+  {
+    id: 'parenting-poll-005',
+    type: 'vs',
+    category: 'parenting',
+    question: '남매 순서 선호는?',
+    options: [
+      { id: 'a', text: '첫째 아들 + 둘째 딸 (오빠-여동생)', emoji: '👦👧' },
+      { id: 'b', text: '첫째 딸 + 둘째 아들 (누나-남동생)', emoji: '👧👦' },
+    ],
+    tags: ['육아', 'parenting', '남매', '출생순서', '자녀성별'],
+  },
+];
+
+// ============================================================================
 // 샘플: 상황별 반응 투표 (연애/이별 5개 + 직장/인간관계 5개)
 // ============================================================================
 
@@ -1461,10 +1586,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '3년 사귄 연인이 갑자기 "우리 잠깐 거리를 두자"고 말했다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '왜? 뭐가 문제야? 바로 따져 물음', emoji: '😠', tag: 'confrontational' },
-      { id: 'b', text: '알겠어... 시간 줄게 (속으로 울면서)', emoji: '😢', tag: 'emotional' },
-      { id: 'c', text: '그래, 나도 생각할 시간 필요했어', emoji: '😌', tag: 'rational' },
-      { id: 'd', text: '연락 먼저 오면 받을게 (읽씹 시작)', emoji: '😎', tag: 'cool' },
+      { id: 'a', text: '왜? 뭐가 문제야? 바로 따져 물음', emoji: '😠', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['relationship-first'] } },
+      { id: 'b', text: '알겠어... 시간 줄게 (속으로 울면서)', emoji: '😢', tag: 'emotional', insightTags: { personality: ['sensitive'], relationship: ['loyal'], decision: ['sentimental'] } },
+      { id: 'c', text: '그래, 나도 생각할 시간 필요했어', emoji: '😌', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], relationship: ['freedom-first'] } },
+      { id: 'd', text: '연락 먼저 오면 받을게 (읽씹 시작)', emoji: '😎', tag: 'cool', insightTags: { personality: ['reserved'], decision: ['practical'], relationship: ['freedom-first'] } },
     ],
     personalityMapping: {
       'ENFP': 'a',
@@ -1483,10 +1608,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '헤어진 전 애인에게서 새벽 2시에 "잘 지내?"라는 카톡이 왔다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '읽씹하고 다음날 "어 잘 지내" 단답', emoji: '😏', tag: 'cool' },
-      { id: 'b', text: '설마... 다시? 심장 쿵쾅거리며 답장', emoji: '💓', tag: 'emotional' },
-      { id: 'c', text: '새벽에 왜 연락해? 할 말 있으면 낮에 해', emoji: '😤', tag: 'confrontational' },
-      { id: 'd', text: '차단은 이럴 때 쓰라고 있는 거지', emoji: '🚫', tag: 'avoidant' },
+      { id: 'a', text: '읽씹하고 다음날 "어 잘 지내" 단답', emoji: '😏', tag: 'cool', insightTags: { personality: ['reserved'], decision: ['practical'], lifestyle: ['night-owl'] } },
+      { id: 'b', text: '설마... 다시? 심장 쿵쾅거리며 답장', emoji: '💓', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+      { id: 'c', text: '새벽에 왜 연락해? 할 말 있으면 낮에 해', emoji: '😤', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['analytical'], lifestyle: ['morning-person'] } },
+      { id: 'd', text: '차단은 이럴 때 쓰라고 있는 거지', emoji: '🚫', tag: 'avoidant', insightTags: { personality: ['independent'], decision: ['practical'], relationship: ['freedom-first'] } },
     ],
     personalityMapping: {
       'ENTJ': 'c',
@@ -1504,10 +1629,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '친구의 소개팅 상대가 첫 만남에서 "저 솔직한 편이에요"라며 외모 지적을 했다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '저도 솔직하게 말할게요. 다신 안 볼게요.', emoji: '💅', tag: 'confrontational' },
-      { id: 'b', text: '네... 하하... (속으로 멘탈 박살)', emoji: '🥲', tag: 'emotional' },
-      { id: 'c', text: '아 그래요? 근데 그건 예의는 아닌 것 같은데', emoji: '🤔', tag: 'rational' },
-      { id: 'd', text: '화장실 다녀올게요 (도주 준비)', emoji: '🏃', tag: 'avoidant' },
+      { id: 'a', text: '저도 솔직하게 말할게요. 다신 안 볼게요.', emoji: '💅', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['freedom-first'] } },
+      { id: 'b', text: '네... 하하... (속으로 멘탈 박살)', emoji: '🥲', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['loyal'] } },
+      { id: 'c', text: '아 그래요? 근데 그건 예의는 아닌 것 같은데', emoji: '🤔', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], relationship: ['selective'] } },
+      { id: 'd', text: '화장실 다녀올게요 (도주 준비)', emoji: '🏃', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['cautious'], relationship: ['selective'] } },
     ],
     personalityMapping: {
       'ESTJ': 'a',
@@ -1524,10 +1649,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '썸 타던 사람이 "우리 그냥 친구로 지내자"고 했다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '응 알겠어! 우리 좋은 친구하자 (마음 접음)', emoji: '🙂', tag: 'rational' },
-      { id: 'b', text: '왜...? 내가 뭘 잘못한 거야...', emoji: '😭', tag: 'emotional' },
-      { id: 'c', text: '아 그래? ㅋㅋ 연락할 일 있나 모르겠네', emoji: '🙄', tag: 'cool' },
-      { id: 'd', text: '혹시 다른 사람 생긴 거야?', emoji: '🕵️', tag: 'confrontational' },
+      { id: 'a', text: '응 알겠어! 우리 좋은 친구하자 (마음 접음)', emoji: '🙂', tag: 'rational', insightTags: { personality: ['resilient'], decision: ['practical'], relationship: ['open'] } },
+      { id: 'b', text: '왜...? 내가 뭘 잘못한 거야...', emoji: '😭', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+      { id: 'c', text: '아 그래? ㅋㅋ 연락할 일 있나 모르겠네', emoji: '🙄', tag: 'cool', insightTags: { personality: ['reserved'], decision: ['practical'], relationship: ['freedom-first'] } },
+      { id: 'd', text: '혹시 다른 사람 생긴 거야?', emoji: '🕵️', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['relationship-first'] } },
     ],
     personalityMapping: {
       'ISTJ': 'a',
@@ -1544,10 +1669,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '연인이 "네 친구 ○○ 좀 별로인 것 같아"라고 내 베프를 험담했다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '왜? 뭐가 별로인데? (방어 태세)', emoji: '🛡️', tag: 'confrontational' },
-      { id: 'b', text: '아... 그래? 뭐 그럴 수도... (어색)', emoji: '😅', tag: 'passive' },
-      { id: 'c', text: '내 친구인데 그렇게 말하면 기분 나빠', emoji: '😤', tag: 'emotional' },
-      { id: 'd', text: '음... 왜 그렇게 생각해? 이유가 뭔데?', emoji: '🤔', tag: 'rational' },
+      { id: 'a', text: '왜? 뭐가 별로인데? (방어 태세)', emoji: '🛡️', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['loyal'] } },
+      { id: 'b', text: '아... 그래? 뭐 그럴 수도... (어색)', emoji: '😅', tag: 'passive', insightTags: { personality: ['reserved'], decision: ['cautious'], relationship: ['balance-seeker'] } },
+      { id: 'c', text: '내 친구인데 그렇게 말하면 기분 나빠', emoji: '😤', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['loyal'] } },
+      { id: 'd', text: '음... 왜 그렇게 생각해? 이유가 뭔데?', emoji: '🤔', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], relationship: ['open'] } },
     ],
     personalityMapping: {
       'ESFP': 'a',
@@ -1556,6 +1681,106 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
       'INTP': 'd',
     },
     tags: ['연애', '친구', '갈등'],
+  },
+  {
+    id: 'situation-reaction-relationship-006',
+    type: 'situation-reaction',
+    category: 'relationship',
+    situation: '썸 타던 사람이 하루 종일 읽씹하다가 밤 11시에 "ㅋㅋㅋ 바빴어" 라고만 보냈다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '나도 내일 읽씹할 거임 (복수 모드)', emoji: '😏', tag: 'cool', insightTags: { personality: ['reserved'], decision: ['practical'], relationship: ['freedom-first'] } },
+      { id: 'b', text: '괜찮아~ 무슨 일 있었어? (천사)', emoji: '😇', tag: 'caring', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+      { id: 'c', text: '하루 종일 바빴으면 이제 자야 되는 거 아니야?', emoji: '🤨', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], relationship: ['selective'] } },
+      { id: 'd', text: '아... 관심 없나... (불안 모드)', emoji: '😰', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+    ],
+    personalityMapping: {
+      'ESTP': 'a',
+      'ENFJ': 'b',
+      'INTJ': 'c',
+      'INFP': 'd',
+    },
+    tags: ['썸', '읽씹', '연락'],
+  },
+  {
+    id: 'situation-reaction-relationship-007',
+    type: 'situation-reaction',
+    category: 'relationship',
+    situation: '좋아하는 사람의 인스타에서 모르는 이성과의 친밀한 사진을 발견했다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '누구야? 물어볼 수도 없고... (밤샘 스토킹)', emoji: '🔍', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], lifestyle: ['night-owl'] } },
+      { id: 'b', text: '아 뭐... 우리 사이도 아니고 (쿨하게 포기)', emoji: '🙄', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], relationship: ['freedom-first'] } },
+      { id: 'c', text: '슬쩍 물어본다 "어제 누구랑 놀았어?"', emoji: '🕵️', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['relationship-first'] } },
+      { id: 'd', text: '나도 다른 사람이랑 사진 올려야지', emoji: '📸', tag: 'avoidant', insightTags: { personality: ['independent'], decision: ['practical'], relationship: ['freedom-first'] } },
+    ],
+    personalityMapping: {
+      'INFP': 'a',
+      'ISTP': 'b',
+      'ENFP': 'c',
+      'ESTP': 'd',
+    },
+    tags: ['썸', 'SNS', '질투'],
+  },
+  {
+    id: 'situation-reaction-relationship-008',
+    type: 'situation-reaction',
+    category: 'relationship',
+    situation: '연인이 데이트 중에 계속 전 애인 얘기를 한다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '야 나랑 있을 때 왜 자꾸 전애 얘기해?', emoji: '😠', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['relationship-first'] } },
+      { id: 'b', text: '아직 못 잊은 건가... (속으로 불안)', emoji: '😔', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+      { id: 'c', text: '그래? 근데 나랑 있을 때는 그 얘기 좀 그만해줄래?', emoji: '😌', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], relationship: ['selective'] } },
+      { id: 'd', text: '그냥 듣는 척하다가 화제 전환', emoji: '🙂', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['cautious'], relationship: ['balance-seeker'] } },
+    ],
+    personalityMapping: {
+      'ENTJ': 'a',
+      'INFP': 'b',
+      'ISTJ': 'c',
+      'ISFJ': 'd',
+    },
+    tags: ['연애', '전애인', '비교'],
+  },
+  {
+    id: 'situation-reaction-relationship-009',
+    type: 'situation-reaction',
+    category: 'relationship',
+    situation: '고백했더니 "고마워... 근데 생각할 시간 좀 줄래?" 라는 답변이 왔다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '응 천천히 생각해봐~ (긍정적 대기)', emoji: '😊', tag: 'rational', insightTags: { personality: ['resilient'], decision: ['practical'], relationship: ['open'] } },
+      { id: 'b', text: '생각이 필요하다는 건 거절 아닌가... (부정적 해석)', emoji: '😞', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+      { id: 'c', text: '언제까지 생각할 건데? 기한 있어?', emoji: '⏰', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['relationship-first'] } },
+      { id: 'd', text: '아 됐어 ㅋㅋ 그냥 잊어줘 (자존심)', emoji: '😎', tag: 'cool', insightTags: { personality: ['independent'], decision: ['practical'], relationship: ['freedom-first'] } },
+    ],
+    personalityMapping: {
+      'ENFJ': 'a',
+      'INFP': 'b',
+      'ESTJ': 'c',
+      'ESTP': 'd',
+    },
+    tags: ['고백', '썸', '거절'],
+  },
+  {
+    id: 'situation-reaction-relationship-010',
+    type: 'situation-reaction',
+    category: 'relationship',
+    situation: '데이트 중인데 연인이 30분째 휴대폰만 보고 있다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '야 나랑 있는데 휴대폰만 보면 어떡해', emoji: '😤', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], relationship: ['relationship-first'] } },
+      { id: 'b', text: '나도 휴대폰 본다 (맞대응)', emoji: '📱', tag: 'cool', insightTags: { personality: ['independent'], decision: ['practical'], relationship: ['freedom-first'] } },
+      { id: 'c', text: '무슨 일 있어? 급한 일이야?', emoji: '🤔', tag: 'caring', insightTags: { personality: ['sensitive'], decision: ['analytical'], relationship: ['relationship-first'] } },
+      { id: 'd', text: '...서운한데 (표정 굳음)', emoji: '😐', tag: 'emotional', insightTags: { personality: ['reserved'], decision: ['sentimental'], relationship: ['relationship-first'] } },
+    ],
+    personalityMapping: {
+      'ENTJ': 'a',
+      'ESTP': 'b',
+      'ENFJ': 'c',
+      'INFP': 'd',
+    },
+    tags: ['연애', '데이트', '휴대폰'],
   },
 
   // ===== 직장/인간관계 상황 5개 =====
@@ -1566,10 +1791,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '팀장이 회의 중 내 아이디어를 대놓고 무시하고 다른 사람 의견만 칭찬했다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '회의 끝나고 팀장 찾아가서 따로 얘기함', emoji: '💬', tag: 'confrontational' },
-      { id: 'b', text: '속으로 삭이고 퇴근 후 친구한테 푸념', emoji: '😮‍💨', tag: 'emotional' },
-      { id: 'c', text: '그냥 결과로 보여주면 되지 뭐', emoji: '💪', tag: 'cool' },
-      { id: 'd', text: '다음부턴 굳이 의견 안 내야지', emoji: '🤐', tag: 'avoidant' },
+      { id: 'a', text: '회의 끝나고 팀장 찾아가서 따로 얘기함', emoji: '💬', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['analytical'], lifestyle: ['career-first'] } },
+      { id: 'b', text: '속으로 삭이고 퇴근 후 친구한테 푸념', emoji: '😮‍💨', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['social'] } },
+      { id: 'c', text: '그냥 결과로 보여주면 되지 뭐', emoji: '💪', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], lifestyle: ['career-first'] } },
+      { id: 'd', text: '다음부턴 굳이 의견 안 내야지', emoji: '🤐', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['cautious'], lifestyle: ['balance-seeker'] } },
     ],
     personalityMapping: {
       'ENTJ': 'a',
@@ -1586,10 +1811,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '동료가 내가 한 일을 자기가 한 것처럼 상사에게 보고했다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '바로 그 자리에서 "그건 제가 한 건데요"', emoji: '✋', tag: 'confrontational' },
-      { id: 'b', text: '증거 모아두고 나중에 상사에게 따로 말함', emoji: '📋', tag: 'rational' },
-      { id: 'c', text: '분하지만... 일단 참고 지켜봄', emoji: '😤', tag: 'emotional' },
-      { id: 'd', text: 'ㅋㅋ 그래 가져가라 관심없다', emoji: '🙄', tag: 'cool' },
+      { id: 'a', text: '바로 그 자리에서 "그건 제가 한 건데요"', emoji: '✋', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], lifestyle: ['career-first'] } },
+      { id: 'b', text: '증거 모아두고 나중에 상사에게 따로 말함', emoji: '📋', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], lifestyle: ['career-first'] } },
+      { id: 'c', text: '분하지만... 일단 참고 지켜봄', emoji: '😤', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['cautious'], lifestyle: ['balance-seeker'] } },
+      { id: 'd', text: 'ㅋㅋ 그래 가져가라 관심없다', emoji: '🙄', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], lifestyle: ['balance-seeker'] } },
     ],
     personalityMapping: {
       'ESTJ': 'a',
@@ -1606,10 +1831,10 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     situation: '회식 자리에서 상사가 "너 요즘 일 많이 힘들지?"라며 술을 계속 권한다.',
     question: '이럴 때 나는?',
     options: [
-      { id: 'a', text: '네~ 감사합니다~ (받으면서 몰래 버림)', emoji: '🍺', tag: 'avoidant' },
-      { id: 'b', text: '죄송한데 저 오늘 컨디션이... (거절)', emoji: '🙏', tag: 'rational' },
-      { id: 'c', text: '아 감동... 팀장님도 한 잔! (케미 모드)', emoji: '🥹', tag: 'emotional' },
-      { id: 'd', text: '네 힘들어요. 일이 너무 많아서요 (직구)', emoji: '💥', tag: 'confrontational' },
+      { id: 'a', text: '네~ 감사합니다~ (받으면서 몰래 버림)', emoji: '🍺', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['practical'], relationship: ['social'] } },
+      { id: 'b', text: '죄송한데 저 오늘 컨디션이... (거절)', emoji: '🙏', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], lifestyle: ['health-conscious'] } },
+      { id: 'c', text: '아 감동... 팀장님도 한 잔! (케미 모드)', emoji: '🥹', tag: 'emotional', insightTags: { personality: ['expressive'], decision: ['sentimental'], relationship: ['social'] } },
+      { id: 'd', text: '네 힘들어요. 일이 너무 많아서요 (직구)', emoji: '💥', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['spontaneous'], lifestyle: ['career-first'] } },
     ],
     personalityMapping: {
       'ISFP': 'a',
@@ -1619,6 +1844,107 @@ export const SITUATION_REACTION_POLLS: SituationReaction[] = [
     },
     tags: ['직장', '회식', '술자리'],
     meta: { minAge: '20s', isAdultOnly: true },
+  },
+  {
+    id: 'situation-reaction-work-004',
+    type: 'situation-reaction',
+    category: 'work',
+    situation: '월요일 아침 9시. 출근길 지하철에서 팀장한테 카톡이 왔다. "오늘 급하게 발표 자료 준비 좀..."',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '네 알겠습니다 (속으로: 오늘 망했다...)', emoji: '😭', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], lifestyle: ['career-first'] } },
+      { id: 'b', text: '분량이 어느 정도인가요? (현실적 대응)', emoji: '🤔', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], lifestyle: ['career-first'] } },
+      { id: 'c', text: '읽씹 후 회사 도착해서 확인 (일단 피함)', emoji: '🙈', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['cautious'], lifestyle: ['balance-seeker'] } },
+      { id: 'd', text: '워라밸이 뭐죠? ㅋㅋ 일해야죠 (체념)', emoji: '💪', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], lifestyle: ['career-first'] } },
+    ],
+    personalityMapping: {
+      'ISFJ': 'a',
+      'ISTJ': 'b',
+      'INFP': 'c',
+      'ESTJ': 'd',
+    },
+    tags: ['직장', '월요병', '급한업무', '출근길']
+  },
+  {
+    id: 'situation-reaction-work-005',
+    type: 'situation-reaction',
+    category: 'work',
+    situation: '퇴근 5분 전 17:55. 상사가 "이거 오늘 안에 좀 부탁해~"라며 급한 업무를 던진다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '네... (속으로: 내일 아침에 하면 안되나요?)', emoji: '🥲', tag: 'passive', insightTags: { personality: ['sensitive'], decision: ['sentimental'], lifestyle: ['balance-seeker'] } },
+      { id: 'b', text: '지금 퇴근 시간인데 내일 해도 될까요? (직구)', emoji: '⏰', tag: 'confrontational', insightTags: { personality: ['expressive'], decision: ['analytical'], lifestyle: ['balance-seeker'] } },
+      { id: 'c', text: '분량 확인하고 야근 각인지 판단부터', emoji: '📊', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], lifestyle: ['career-first'] } },
+      { id: 'd', text: '일단 받고 퇴근, 내일 아침 일찍 출근해서 처리', emoji: '🏃', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], lifestyle: ['morning-person'] } },
+    ],
+    personalityMapping: {
+      'ISFP': 'a',
+      'ENTP': 'b',
+      'INTJ': 'c',
+      'ISTJ': 'd',
+    },
+    tags: ['직장', '야근', '퇴근', '갑자기']
+  },
+  {
+    id: 'situation-reaction-work-006',
+    type: 'situation-reaction',
+    category: 'work',
+    situation: '회의 중 팀장이 갑자기 "이 건에 대해 네 생각은 어때?"라며 나를 지목했다. 회의 흐름을 제대로 못 들었다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '아 제가 놓친 부분이 있는데... 다시 설명해주시겠어요?', emoji: '🙏', tag: 'rational', insightTags: { personality: ['expressive'], decision: ['analytical'], relationship: ['open'] } },
+      { id: 'b', text: '어... 그러니까... (머뭇거리며 아는 척)', emoji: '😅', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['cautious'], relationship: ['selective'] } },
+      { id: 'c', text: '(당황) 네? 아... 좋은 것 같은데요?', emoji: '😰', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['sentimental'], relationship: ['social'] } },
+      { id: 'd', text: '일단 들은 키워드 조합해서 그럴듯하게 대답', emoji: '😎', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['spontaneous'], lifestyle: ['career-first'] } },
+    ],
+    personalityMapping: {
+      'ISTJ': 'a',
+      'ISFP': 'b',
+      'INFP': 'c',
+      'ENTP': 'd',
+    },
+    tags: ['직장', '회의', '지목', '당황']
+  },
+  {
+    id: 'situation-reaction-work-007',
+    type: 'situation-reaction',
+    category: 'work',
+    situation: '점심시간. 팀장이 "오늘 나랑 같이 점심 먹자~"고 제안한다. 나는 원래 혼자 먹는 혼밥파.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '네~ 좋아요! (속으로: 혼밥하고 싶은데...)', emoji: '😊', tag: 'passive', insightTags: { personality: ['reserved'], decision: ['sentimental'], relationship: ['social'] } },
+      { id: 'b', text: '오늘은 볼 일이 있어서... 다음에요! (정중한 거절)', emoji: '🙂', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], lifestyle: ['homebody'] } },
+      { id: 'c', text: '어... 네... (끌려가면서 긴장)', emoji: '😓', tag: 'emotional', insightTags: { personality: ['sensitive'], decision: ['cautious'], relationship: ['selective'] } },
+      { id: 'd', text: '좋아요! 어차피 밥은 먹어야 하는데 뭐', emoji: '🍱', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], relationship: ['open'] } },
+    ],
+    personalityMapping: {
+      'ISFJ': 'a',
+      'INTJ': 'b',
+      'INFP': 'c',
+      'ESTP': 'd',
+    },
+    tags: ['직장', '점심', '상사', '혼밥']
+  },
+  {
+    id: 'situation-reaction-work-008',
+    type: 'situation-reaction',
+    category: 'work',
+    situation: '금요일 저녁 4시. 단톡방에 "오늘 회식합니다~🍺" 공지가 떴다. 나는 오늘 저녁 약속이 있다.',
+    question: '이럴 때 나는?',
+    options: [
+      { id: 'a', text: '약속 취소하고 회식 참석 (눈치 보임)', emoji: '😔', tag: 'passive', insightTags: { personality: ['sensitive'], decision: ['sentimental'], lifestyle: ['career-first'] } },
+      { id: 'b', text: '죄송한데 오늘 약속이 있어서 불참할게요', emoji: '🙏', tag: 'rational', insightTags: { personality: ['independent'], decision: ['analytical'], lifestyle: ['balance-seeker'] } },
+      { id: 'c', text: '읽씹... 나중에 "지금 봤어요!" (도망)', emoji: '🏃', tag: 'avoidant', insightTags: { personality: ['reserved'], decision: ['cautious'], relationship: ['selective'] } },
+      { id: 'd', text: '1차만 얼굴 비추고 약속 가기 (타협)', emoji: '😎', tag: 'cool', insightTags: { personality: ['resilient'], decision: ['practical'], relationship: ['social'] } },
+    ],
+    personalityMapping: {
+      'ISFJ': 'a',
+      'ISTJ': 'b',
+      'INFP': 'c',
+      'ENTP': 'd',
+    },
+    tags: ['직장', '회식', '금요일', '약속'],
+    meta: { minAge: '20s' }
   },
   {
     id: 'situation-reaction-social-001',

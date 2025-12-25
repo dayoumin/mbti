@@ -108,7 +108,9 @@
       "Bash(src/data/content/categories.ts )",
       "Bash(src/data/content/situation-reactions/awkward.ts )",
       "Bash(src/data/content/situation-reactions/index.ts )",
-      "Bash(scripts/test-situation-reactions.ts)"
+      "Bash(scripts/test-situation-reactions.ts)",
+      "Bash(git mv:*)",
+      "Bash(del /f /q \"d:\\\\Projects\\\\MBTI\\\\.next\\\\lock\")"
     ],
     "deny": [],
     "ask": []

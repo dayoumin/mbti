@@ -3,6 +3,13 @@
 // ============================================================================
 
 import type { ContentCategory, CommunityCategory } from './categories';
+import type {
+  PersonalityTag,
+  DecisionTag,
+  RelationshipTag,
+  InterestTag,
+  LifestyleTag,
+} from '@/data/insight/insight-tags';
 
 // 하위 호환을 위한 re-export
 export type { ContentCategory, CommunityCategory };
@@ -239,11 +246,17 @@ export interface ScenarioResult {
 /**
  * 인사이트용 태그 (투표 선택지별)
  * Stage 3 판단 스타일 분석에 사용
+ *
+ * 타입 강제: insight-tags.ts에서 정의된 태그만 사용 가능
+ * - 오타 방지: 'extroverted' OK, 'extroverted_' 컴파일 에러
+ * - 자동완성: IDE에서 가능한 태그 목록 제안
  */
 export interface InsightTags {
-  personality?: string[];   // 성격 태그: extroverted, introverted, expressive 등
-  decision?: string[];      // 판단 태그: practical, emotional, safe, adventurous 등
-  relationship?: string[];  // 관계 태그: supportive, independent, direct, indirect 등
+  personality?: PersonalityTag[];   // 성격 태그: extroverted, introverted, expressive 등
+  decision?: DecisionTag[];         // 판단 태그: practical, emotional, safe, adventurous 등
+  relationship?: RelationshipTag[]; // 관계 태그: supportive, independent, direct, indirect 등
+  interest?: InterestTag[];         // 관심사 태그: interest-cat, interest-dog 등 (Stage 4)
+  lifestyle?: LifestyleTag[];       // 라이프스타일 태그: active, homebody 등 (Stage 4)
 }
 
 export interface VSPollOption {

@@ -25,6 +25,7 @@ import { BIRD_KNOWLEDGE_QUIZZES } from './bird-knowledge';
 import { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
 import { SEASONAL_QUIZZES, CHRISTMAS_QUIZZES, NEWYEAR_QUIZZES } from './seasonal-quizzes';
 import { WINE_KNOWLEDGE_QUIZZES } from './wine-knowledge';
+import { NOSTALGIA_KNOWLEDGE_QUIZZES } from './nostalgia-knowledge';
 
 // --- 시나리오 퀴즈 import ---
 import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
@@ -52,6 +53,7 @@ const KNOWLEDGE_QUIZ_REGISTRY: KnowledgeQuiz[][] = [
   REPTILE_KNOWLEDGE_QUIZZES,
   SEASONAL_QUIZZES,
   WINE_KNOWLEDGE_QUIZZES,
+  NOSTALGIA_KNOWLEDGE_QUIZZES,
 ];
 
 const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
@@ -85,6 +87,7 @@ export { BIRD_KNOWLEDGE_QUIZZES } from './bird-knowledge';
 export { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
 export { SEASONAL_QUIZZES, CHRISTMAS_QUIZZES, NEWYEAR_QUIZZES, createNewYearQuizzes } from './seasonal-quizzes';
 export { WINE_KNOWLEDGE_QUIZZES } from './wine-knowledge';
+export { NOSTALGIA_KNOWLEDGE_QUIZZES } from './nostalgia-knowledge';
 export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 export { RABBIT_SCENARIO_QUIZZES } from './rabbit-scenario';

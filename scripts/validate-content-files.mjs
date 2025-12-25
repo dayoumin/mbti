@@ -42,6 +42,19 @@ function log(msg, color = 'reset') {
 // 팩트 필요 카테고리 (types.ts의 FactRequiredCategory와 동기화)
 const FACT_REQUIRED_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'bird', 'plant', 'coffee', 'alcohol'];
 
+// insightTags 블록에서 태그 개수 세기
+function countInsightTags(insightTagsBlock) {
+  if (!insightTagsBlock) return 0;
+  // 태그 배열들을 찾아서 개수 합산
+  const tagArrays = insightTagsBlock.match(/\[([^\]]*)\]/g) || [];
+  let count = 0;
+  for (const arr of tagArrays) {
+    const tags = arr.match(/['"]([^'"]+)['"]/g) || [];
+    count += tags.length;
+  }
+  return count;
+}
+
 // ============================================================================
 // 콘텐츠 파싱 유틸리티
 // ============================================================================
@@ -116,6 +129,16 @@ function extractQuizzesFromFile(filePath) {
     // factRef
     quiz.hasFactRef = /factRef:\s*\{/.test(block);
 
+    // insightTags (VS 투표용) - optionA, optionB 각각의 태그 개수 추출
+    const optionAMatch = block.match(/optionA:\s*\{[^}]*insightTags:\s*\{([^}]*)\}/s);
+    const optionBMatch = block.match(/optionB:\s*\{[^}]*insightTags:\s*\{([^}]*)\}/s);
+    if (optionAMatch || optionBMatch) {
+      quiz.insightTagCounts = {
+        optionA: countInsightTags(optionAMatch?.[1] || ''),
+        optionB: countInsightTags(optionBMatch?.[1] || ''),
+      };
+    }
+
     quizzes.push(quiz);
   }
 
@@ -153,14 +176,24 @@ function validateQuiz(quiz, fileName, dirPath) {
     // 투표/시나리오는 explanation 없어도 OK
   }
 
-  // 3. tags 체크
+  // 3. tags 체크 (검색용 - 2개 이상이면 OK, 경고 제거)
   if (!quiz.tags || quiz.tags.length === 0) {
     errors.push('tags 없음');
-  } else if (quiz.tags.length < 3) {
-    warnings.push(`tags ${quiz.tags.length}개 (3개 이상 권장)`);
+  }
+  // Note: 일반 tags는 2개도 충분. 중요한 것은 insightTags
+
+  // 4. insightTags 체크 (VS 투표에만 적용 - 각 옵션별 3개 이상 권장)
+  if (isPoll && quiz.insightTagCounts) {
+    const { optionA, optionB } = quiz.insightTagCounts;
+    if (optionA < 3) {
+      warnings.push(`optionA insightTags ${optionA}개 (3개 이상 권장)`);
+    }
+    if (optionB < 3) {
+      warnings.push(`optionB insightTags ${optionB}개 (3개 이상 권장)`);
+    }
   }
 
-  // 4. 팩트 필요 카테고리 source 체크 (지식 퀴즈만!)
+  // 5. 팩트 필요 카테고리 source 체크 (지식 퀴즈만!)
   // 투표나 시나리오는 팩트 참조 불필요
   if (isKnowledgeQuiz && FACT_REQUIRED_CATEGORIES.includes(quiz.category)) {
     if (!quiz.hasSource && !quiz.hasFactRef) {

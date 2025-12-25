@@ -20,9 +20,6 @@ import {
 import {
   INSIGHT_CONCEPT,
   INSIGHT_STAGES,
-  PERSONALITY_TAGS,
-  DECISION_TAGS,
-  RELATIONSHIP_TAGS,
   PSYCHOLOGICAL_EVIDENCE,
   SAMPLE_RULES,
   RULE_PLAN,
@@ -35,12 +32,21 @@ import {
   GAMIFICATION_STRATEGY,
   getUnlockConditionText,
 } from '../data/insight-system';
+import {
+  PERSONALITY_TAGS,
+  DECISION_TAGS,
+  RELATIONSHIP_TAGS,
+  INTEREST_TAGS,
+  LIFESTYLE_TAGS,
+  VALID_INSIGHT_TAGS,
+} from '@/data/insight/insight-tags';
+import { TEST_TAG_MAPPINGS } from '@/data/insight/test-tag-mappings';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-type TabKey = 'overview' | 'stages' | 'tags' | 'rules' | 'roadmap' | 'pricing' | 'matching' | 'metrics';
+type TabKey = 'overview' | 'stages' | 'tags' | 'mappings' | 'service' | 'rules' | 'roadmap' | 'pricing' | 'matching' | 'metrics';
 
 // ============================================================================
 // Main Component
@@ -52,8 +58,10 @@ export default function InsightSystem() {
   const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
     { key: 'overview', label: '개요', icon: <Brain className="w-4 h-4" /> },
     { key: 'stages', label: '7단계 해금', icon: <Layers className="w-4 h-4" /> },
-    { key: 'tags', label: '태그 시스템', icon: <Tag className="w-4 h-4" /> },
-    { key: 'rules', label: '룰 엔진', icon: <Zap className="w-4 h-4" /> },
+    { key: 'tags', label: '태그 SSOT', icon: <Tag className="w-4 h-4" /> },
+    { key: 'mappings', label: '테스트 매핑', icon: <Zap className="w-4 h-4" /> },
+    { key: 'service', label: '서비스 구현', icon: <CheckCircle2 className="w-4 h-4" /> },
+    { key: 'rules', label: '룰 엔진', icon: <Sparkles className="w-4 h-4" /> },
     { key: 'roadmap', label: '로드맵', icon: <Map className="w-4 h-4" /> },
     { key: 'pricing', label: '수익화', icon: <DollarSign className="w-4 h-4" /> },
     { key: 'matching', label: '사람 매칭', icon: <Users className="w-4 h-4" /> },
@@ -84,6 +92,8 @@ export default function InsightSystem() {
       {activeTab === 'overview' && <OverviewTab />}
       {activeTab === 'stages' && <StagesTab />}
       {activeTab === 'tags' && <TagsTab />}
+      {activeTab === 'mappings' && <MappingsTab />}
+      {activeTab === 'service' && <ServiceTab />}
       {activeTab === 'rules' && <RulesTab />}
       {activeTab === 'roadmap' && <RoadmapTab />}
       {activeTab === 'pricing' && <PricingTab />}
@@ -110,6 +120,121 @@ function OverviewTab() {
             <div>
               <h2 className="text-xl font-bold text-[var(--db-text)]">{INSIGHT_CONCEPT.title}</h2>
               <p className="text-[var(--db-muted)]">{INSIGHT_CONCEPT.subtitle}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Simple Explanation - 한눈에 이해하기 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-amber-400" />
+            한눈에 이해하기
+          </h3>
+        </div>
+        <div className="p-5 space-y-6">
+          {/* 비유 설명 */}
+          <div className="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
+            <h4 className="font-semibold text-[var(--db-text)] mb-3">넷플릭스 추천처럼 생각하면 됩니다</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-lg">📺</span>
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--db-text)] font-medium">넷플릭스</p>
+                  <p className="text-sm text-[var(--db-muted)]">여러 영화 시청 → &quot;당신은 로맨스 좋아하네요&quot;</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[var(--db-brand)]/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-lg">🎯</span>
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--db-brand)] font-medium">우리 앱</p>
+                  <p className="text-sm text-[var(--db-muted)]">여러 테스트 완료 → &quot;당신은 감성적인 성향이네요&quot;</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 실제 흐름 예시 */}
+          <div className="p-4 bg-[var(--db-bg)] rounded-xl">
+            <h4 className="font-semibold text-[var(--db-text)] mb-4">실제 작동 예시</h4>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-sm">
+                <span className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">1</span>
+                <span className="text-[var(--db-muted)]">와인 테스트 →</span>
+                <span className="px-2 py-0.5 bg-pink-500/20 text-pink-400 rounded text-xs">&quot;감성파&quot;</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <span className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">2</span>
+                <span className="text-[var(--db-muted)]">커피 테스트 →</span>
+                <span className="px-2 py-0.5 bg-pink-500/20 text-pink-400 rounded text-xs">&quot;분위기파&quot;</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <span className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">3</span>
+                <span className="text-[var(--db-muted)]">연애 테스트 →</span>
+                <span className="px-2 py-0.5 bg-pink-500/20 text-pink-400 rounded text-xs">&quot;로맨티스트&quot;</span>
+              </div>
+              <div className="mt-4 pt-4 border-t border-[var(--db-border)]">
+                <div className="flex items-center gap-3">
+                  <ChevronRight className="w-5 h-5 text-[var(--db-brand)]" />
+                  <span className="text-[var(--db-brand)] font-medium">시스템이 분석</span>
+                </div>
+                <div className="mt-2 ml-8 p-3 bg-[var(--db-brand)]/10 rounded-lg">
+                  <p className="text-[var(--db-text)]">
+                    💡 <strong>인사이트</strong>: &quot;당신은 &apos;감성/분위기&apos; 성향이 강해요!&quot;
+                  </p>
+                  <p className="text-sm text-[var(--db-muted)] mt-1">3개 테스트 모두에서 감성 관련 결과가 나왔어요</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 기술 난이도 */}
+          <div className="p-4 bg-[var(--db-bg)] rounded-xl">
+            <h4 className="font-semibold text-[var(--db-text)] mb-4">구현 난이도 (생각보다 쉬움!)</h4>
+            <div className="space-y-3">
+              {[
+                { step: '결과 저장', desc: '테스트 결과를 DB에 저장', difficulty: 1, status: '이미 있음' },
+                { step: '태그 매핑', desc: '각 결과에 "감성", "논리" 같은 태그 부여', difficulty: 2, status: '보통' },
+                { step: '패턴 분석', desc: '사용자의 태그들을 모아서 패턴 찾기', difficulty: 2, status: '보통' },
+                { step: '인사이트 생성', desc: '"당신은 OO형" 문장 생성', difficulty: 1, status: '쉬움' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded bg-[var(--db-panel)] text-[var(--db-muted)] flex items-center justify-center text-xs">{i + 1}</span>
+                    <div>
+                      <span className="text-[var(--db-text)] text-sm font-medium">{item.step}</span>
+                      <span className="text-[var(--db-muted)] text-xs ml-2">{item.desc}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3].map((star) => (
+                        <span key={star} className={`text-xs ${star <= item.difficulty ? 'text-amber-400' : 'text-[var(--db-border)]'}`}>★</span>
+                      ))}
+                    </div>
+                    <span className={`px-2 py-0.5 rounded text-xs ${
+                      item.status === '이미 있음' ? 'bg-green-500/20 text-green-400' :
+                      item.status === '쉬움' ? 'bg-blue-500/20 text-blue-400' :
+                      'bg-yellow-500/20 text-yellow-400'
+                    }`}>{item.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3 bg-green-500/10 rounded-lg">
+              <p className="text-sm text-green-400">
+                💡 핵심: 결과에 태그 붙이고, 태그 세면 끝!
+              </p>
+              <code className="block mt-2 p-2 bg-[var(--db-panel)] rounded text-xs text-[var(--db-muted)] font-mono overflow-x-auto">
+                {`const userTags = getUserResults().map(r => r.tags).flat();
+const topTag = getMostFrequent(userTags);
+const insight = \`당신은 \${topTag} 성향이 강해요!\`;`}
+              </code>
             </div>
           </div>
         </div>
@@ -160,10 +285,11 @@ function OverviewTab() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <StatCard label="해금 단계" value="7단계" icon={<Layers className="w-5 h-5" />} />
-        <StatCard label="인사이트 룰" value={`${RULE_PLAN.total}개`} icon={<Zap className="w-5 h-5" />} />
-        <StatCard label="태그 종류" value={`${PERSONALITY_TAGS.length + DECISION_TAGS.length + RELATIONSHIP_TAGS.length}개`} icon={<Tag className="w-5 h-5" />} />
+        <StatCard label="인사이트 태그" value={`${VALID_INSIGHT_TAGS.size}개`} icon={<Tag className="w-5 h-5" />} />
+        <StatCard label="테스트 매핑" value={`${Object.keys(TEST_TAG_MAPPINGS).length}개`} icon={<Zap className="w-5 h-5" />} />
+        <StatCard label="인사이트 룰" value={`${RULE_PLAN.total}개`} icon={<Sparkles className="w-5 h-5" />} />
         <StatCard label="로드맵" value={`${IMPLEMENTATION_ROADMAP.length} Phase`} icon={<Map className="w-5 h-5" />} />
       </div>
     </div>
@@ -265,19 +391,73 @@ function StagesTab() {
 
 function TagsTab() {
   const tagGroups = [
-    { name: '성격 태그', tags: PERSONALITY_TAGS, color: 'purple', description: 'Big Five 기반' },
-    { name: '결정 태그', tags: DECISION_TAGS, color: 'blue', description: '투표 선택지용' },
-    { name: '관계 태그', tags: RELATIONSHIP_TAGS, color: 'pink', description: 'TKI 갈등 모델' },
+    { name: '성격 태그 (Personality)', tags: PERSONALITY_TAGS, color: 'purple', description: 'Big Five 기반', emoji: '🧠' },
+    { name: '판단 태그 (Decision)', tags: DECISION_TAGS, color: 'blue', description: '의사결정 스타일', emoji: '⚖️' },
+    { name: '관계 태그 (Relationship)', tags: RELATIONSHIP_TAGS, color: 'pink', description: 'TKI 갈등 모델', emoji: '💬' },
+    { name: '관심사 태그 (Interest)', tags: INTEREST_TAGS, color: 'green', description: '카테고리 자동 추출', emoji: '🗺️' },
+    { name: '라이프스타일 태그 (Lifestyle)', tags: LIFESTYLE_TAGS, color: 'amber', description: '생활 방식', emoji: '🏠' },
   ];
 
   return (
     <div className="space-y-6">
+      {/* SSOT 설명 */}
+      <div className="db-card">
+        <div className="p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-[var(--db-brand)]/20 flex items-center justify-center">
+              <Tag className="w-5 h-5 text-[var(--db-brand)]" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-[var(--db-text)]">단일 소스 원칙 (SSOT)</h3>
+              <p className="text-sm text-[var(--db-muted)]">모든 인사이트 태그는 insight-tags.ts에서 정의</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-[var(--db-brand)]">{VALID_INSIGHT_TAGS.size}</div>
+              <div className="text-xs text-[var(--db-muted)]">전체 태그</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-purple-400">{PERSONALITY_TAGS.length}</div>
+              <div className="text-xs text-[var(--db-muted)]">성격 태그</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-green-400">{INTEREST_TAGS.length}</div>
+              <div className="text-xs text-[var(--db-muted)]">관심사 태그</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-pink-400">{RELATIONSHIP_TAGS.length}</div>
+              <div className="text-xs text-[var(--db-muted)]">관계 태그</div>
+            </div>
+          </div>
+          <div className="mt-4 p-3 bg-green-500/10 rounded-lg">
+            <p className="text-sm text-green-400">
+              <code className="bg-[var(--db-panel)] px-1.5 py-0.5 rounded text-xs">src/data/insight/insight-tags.ts</code>
+              {' '}에서 타입 안전하게 관리
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tag Groups */}
       {tagGroups.map((group) => (
         <div key={group.name} className="db-card">
           <div className="db-card-header px-5 py-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-[var(--db-text)]">{group.name}</h3>
-              <span className="text-sm text-[var(--db-muted)]">{group.description}</span>
+              <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+                <span>{group.emoji}</span>
+                {group.name}
+              </h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-[var(--db-muted)]">{group.description}</span>
+                <span className={`px-2 py-0.5 rounded text-xs ${
+                  group.color === 'purple' ? 'bg-purple-500/20 text-purple-400' :
+                  group.color === 'blue' ? 'bg-blue-500/20 text-blue-400' :
+                  group.color === 'pink' ? 'bg-pink-500/20 text-pink-400' :
+                  group.color === 'green' ? 'bg-green-500/20 text-green-400' :
+                  'bg-amber-500/20 text-amber-400'
+                }`}>{group.tags.length}개</span>
+              </div>
             </div>
           </div>
           <div className="p-5">
@@ -288,15 +468,14 @@ function TagsTab() {
                   className={`px-3 py-1.5 rounded-full text-sm font-medium ${
                     group.color === 'purple' ? 'bg-purple-500/20 text-purple-400' :
                     group.color === 'blue' ? 'bg-blue-500/20 text-blue-400' :
-                    'bg-pink-500/20 text-pink-400'
+                    group.color === 'pink' ? 'bg-pink-500/20 text-pink-400' :
+                    group.color === 'green' ? 'bg-green-500/20 text-green-400' :
+                    'bg-amber-500/20 text-amber-400'
                   }`}
                 >
                   {tag}
                 </span>
               ))}
-            </div>
-            <div className="mt-3 text-sm text-[var(--db-muted)]">
-              총 {group.tags.length}개
             </div>
           </div>
         </div>
@@ -305,7 +484,10 @@ function TagsTab() {
       {/* Psychology Evidence */}
       <div className="db-card">
         <div className="db-card-header px-5 py-4">
-          <h3 className="text-lg font-semibold text-[var(--db-text)]">심리학적 근거</h3>
+          <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+            <BookOpen className="w-5 h-5" />
+            심리학적 근거
+          </h3>
         </div>
         <div className="p-5 space-y-4">
           {Object.entries(PSYCHOLOGICAL_EVIDENCE).map(([key, evidence]) => (
@@ -325,6 +507,322 @@ function TagsTab() {
               )}
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Mappings Tab - 테스트별 태그 매핑 현황
+// ============================================================================
+
+function MappingsTab() {
+  const [selectedTest, setSelectedTest] = useState<string | null>(null);
+  const mappings = Object.entries(TEST_TAG_MAPPINGS);
+
+  return (
+    <div className="space-y-6">
+      {/* 개요 */}
+      <div className="db-card">
+        <div className="p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+              <Zap className="w-5 h-5 text-purple-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-[var(--db-text)]">테스트 → 태그 매핑</h3>
+              <p className="text-sm text-[var(--db-muted)]">각 테스트의 차원 점수를 인사이트 태그로 변환</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-[var(--db-brand)]">{mappings.length}</div>
+              <div className="text-xs text-[var(--db-muted)]">테스트 매핑</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-purple-400">
+                {mappings.filter(([, m]) => m.category === 'personality').length}
+              </div>
+              <div className="text-xs text-[var(--db-muted)]">성격 테스트</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-green-400">
+                {mappings.filter(([, m]) => m.category === 'pet').length}
+              </div>
+              <div className="text-xs text-[var(--db-muted)]">반려동물</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-pink-400">
+                {mappings.filter(([, m]) => m.countsAsRelationship).length}
+              </div>
+              <div className="text-xs text-[var(--db-muted)]">관계 테스트</div>
+            </div>
+          </div>
+          <div className="mt-4 p-3 bg-purple-500/10 rounded-lg">
+            <p className="text-sm text-purple-400">
+              <code className="bg-[var(--db-panel)] px-1.5 py-0.5 rounded text-xs">src/data/insight/test-tag-mappings.ts</code>
+              {' '}에서 관리
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 테스트 목록 */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {mappings.map(([testId, mapping]) => (
+          <button
+            key={testId}
+            onClick={() => setSelectedTest(selectedTest === testId ? null : testId)}
+            className={`db-card p-4 text-left transition-all ${
+              selectedTest === testId ? 'ring-2 ring-[var(--db-brand)]' : ''
+            }`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className={`px-2 py-0.5 rounded text-xs ${
+                mapping.category === 'personality' ? 'bg-purple-500/20 text-purple-400' :
+                mapping.category === 'pet' ? 'bg-green-500/20 text-green-400' :
+                mapping.category === 'relationship' ? 'bg-pink-500/20 text-pink-400' :
+                'bg-blue-500/20 text-blue-400'
+              }`}>
+                {mapping.category}
+              </span>
+              {mapping.countsAsRelationship && (
+                <span className="text-pink-400 text-xs">💕</span>
+              )}
+            </div>
+            <h4 className="font-semibold text-[var(--db-text)]">{testId}</h4>
+            <p className="text-xs text-[var(--db-muted)] mt-1">
+              {Object.keys(mapping.dimensions).length}개 차원
+            </p>
+          </button>
+        ))}
+      </div>
+
+      {/* 선택된 테스트 상세 */}
+      {selectedTest && TEST_TAG_MAPPINGS[selectedTest] && (
+        <div className="db-card">
+          <div className="db-card-header px-5 py-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-[var(--db-text)]">
+                {selectedTest} 테스트 매핑
+              </h3>
+              <span className={`px-2 py-0.5 rounded text-xs ${
+                TEST_TAG_MAPPINGS[selectedTest].countsAsRelationship
+                  ? 'bg-pink-500/20 text-pink-400'
+                  : 'bg-[var(--db-panel)] text-[var(--db-muted)]'
+              }`}>
+                {TEST_TAG_MAPPINGS[selectedTest].countsAsRelationship ? '관계 활동 O' : '관계 활동 X'}
+              </span>
+            </div>
+          </div>
+          <div className="p-5">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--db-border)]">
+                    <th className="text-left py-3 text-[var(--db-muted)]">차원</th>
+                    <th className="text-left py-3 text-[var(--db-muted)]">HIGH (60%+) → 태그</th>
+                    <th className="text-left py-3 text-[var(--db-muted)]">LOW (&lt;40%) → 태그</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(TEST_TAG_MAPPINGS[selectedTest].dimensions).map(([dim, tags]) => (
+                    <tr key={dim} className="border-b border-[var(--db-border)]/50">
+                      <td className="py-3 text-[var(--db-text)] font-medium">{dim}</td>
+                      <td className="py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {tags.high.map(tag => (
+                            <span key={tag} className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded text-xs">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {tags.low.map(tag => (
+                            <span key={tag} className="px-2 py-0.5 bg-red-500/20 text-red-400 rounded text-xs">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 p-3 bg-[var(--db-bg)] rounded-lg">
+              <p className="text-xs text-[var(--db-muted)]">
+                💡 MEDIUM (40-60%)은 중립으로, 태그가 부여되지 않습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// Service Tab - InsightService 구현 상태
+// ============================================================================
+
+function ServiceTab() {
+  const serviceFeatures = [
+    { name: '이벤트 구독', status: 'done', desc: 'EventBus를 통한 test_complete, quiz_solve, poll_vote 이벤트 구독' },
+    { name: '활동 통계', status: 'done', desc: 'testCount, quizCount, pollCount, totalActivities, relationshipActivities 추적' },
+    { name: '태그 집계', status: 'done', desc: '유효한 인사이트 태그만 필터링하여 localStorage 저장' },
+    { name: '스테이지 해금', status: 'done', desc: 'Stage 1-6 해금 조건 체크 및 자동 해금' },
+    { name: 'Stage 1 인사이트', status: 'done', desc: '기본 성향 인사이트 생성 (테스트 결과 + 상위 태그)' },
+    { name: '진행률 계산', status: 'done', desc: '다음 스테이지까지 진행률 및 남은 조건 표시 (음수 방지)' },
+    { name: 'Stage 2 성격 조합', status: 'done', desc: '15개 성격 조합 룰 + matchStage2Rules() 구현 (stage2-rules.ts)' },
+    { name: 'Stage 3 판단 스타일', status: 'done', desc: '4차원 8프로필 + generateDecisionStyleResult() 구현 (stage3-decision-style.ts)' },
+    { name: 'Stage 4 관심사 지도', status: 'done', desc: '6카테고리 7프로필 + generateInterestMapResult() 구현 (stage4-interest-map.ts)' },
+    { name: 'Stage 5 관계 패턴', status: 'pending', desc: '해금 로직만 완료, 인사이트 생성 함수 미구현' },
+    { name: 'Stage 6 숨은 패턴', status: 'pending', desc: '해금 로직만 완료, 인사이트 생성 함수 미구현' },
+    { name: 'Stage 7 AI 분석', status: 'pending', desc: 'Claude API 연동 필요 (유료)' },
+  ];
+
+  const codeExamples = [
+    {
+      title: '태그 추출',
+      code: `// 테스트 결과에서 태그 추출
+const tags = extractTagsFromTestResult(testId, dimensions, dimCounts);
+// → ['extroverted', 'adventurous', 'emotional']`,
+    },
+    {
+      title: '활동 통계 조회',
+      code: `// 사용자 활동 통계
+const stats = insightService.getActivityStats();
+// → { testCount: 3, pollCount: 15, totalActivities: 25 }`,
+    },
+    {
+      title: '스테이지 해금 체크',
+      code: `// Stage 3 해금 여부
+const isUnlocked = insightService.isStageUnlocked(3);
+// → true (pollCount >= 10)`,
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* 구현 상태 요약 */}
+      <div className="db-card">
+        <div className="p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-green-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-[var(--db-text)]">InsightService 구현 상태</h3>
+              <p className="text-sm text-[var(--db-muted)]">Stage 1-4 완료, Stage 5-7 대기</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="p-3 bg-green-500/10 rounded-lg text-center">
+              <div className="text-2xl font-bold text-green-400">
+                {serviceFeatures.filter(f => f.status === 'done').length}
+              </div>
+              <div className="text-xs text-[var(--db-muted)]">완료</div>
+            </div>
+            <div className="p-3 bg-yellow-500/10 rounded-lg text-center">
+              <div className="text-2xl font-bold text-yellow-400">
+                {serviceFeatures.filter(f => f.status === 'partial').length}
+              </div>
+              <div className="text-xs text-[var(--db-muted)]">진행 중</div>
+            </div>
+            <div className="p-3 bg-[var(--db-bg)] rounded-lg text-center">
+              <div className="text-2xl font-bold text-[var(--db-muted)]">
+                {serviceFeatures.filter(f => f.status === 'pending').length}
+              </div>
+              <div className="text-xs text-[var(--db-muted)]">대기</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 기능 목록 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">기능 구현 현황</h3>
+        </div>
+        <div className="p-5 space-y-3">
+          {serviceFeatures.map((feature, i) => (
+            <div key={i} className="flex items-start gap-3 p-3 bg-[var(--db-bg)] rounded-lg">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                feature.status === 'done' ? 'bg-green-500/20' :
+                feature.status === 'partial' ? 'bg-yellow-500/20' :
+                'bg-[var(--db-panel)]'
+              }`}>
+                {feature.status === 'done' ? (
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
+                ) : feature.status === 'partial' ? (
+                  <Zap className="w-4 h-4 text-yellow-400" />
+                ) : (
+                  <Lock className="w-4 h-4 text-[var(--db-muted)]" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-[var(--db-text)]">{feature.name}</span>
+                  <span className={`px-2 py-0.5 rounded text-xs ${
+                    feature.status === 'done' ? 'bg-green-500/20 text-green-400' :
+                    feature.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
+                    'bg-[var(--db-panel)] text-[var(--db-muted)]'
+                  }`}>
+                    {feature.status === 'done' ? '완료' :
+                     feature.status === 'partial' ? '진행 중' : '대기'}
+                  </span>
+                </div>
+                <p className="text-sm text-[var(--db-muted)] mt-1">{feature.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 코드 예시 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">사용 예시</h3>
+        </div>
+        <div className="p-5 space-y-4">
+          {codeExamples.map((example, i) => (
+            <div key={i} className="p-4 bg-[var(--db-bg)] rounded-lg">
+              <h4 className="font-medium text-[var(--db-text)] mb-2">{example.title}</h4>
+              <pre className="p-3 bg-[var(--db-panel)] rounded text-xs text-[var(--db-muted)] overflow-x-auto font-mono">
+                {example.code}
+              </pre>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 파일 위치 */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)]">관련 파일</h3>
+        </div>
+        <div className="p-5">
+          <div className="space-y-2">
+            {[
+              { path: 'src/services/InsightService.ts', desc: '메인 서비스 클래스' },
+              { path: 'src/data/insight/insight-tags.ts', desc: '태그 정의 (SSOT)' },
+              { path: 'src/data/insight/test-tag-mappings.ts', desc: '테스트별 태그 매핑' },
+              { path: 'src/data/insight/stage2-rules.ts', desc: 'Stage 2 성격 조합 룰 15개' },
+              { path: 'src/data/insight/stage3-decision-style.ts', desc: 'Stage 3 판단 스타일 분석' },
+              { path: 'src/data/insight/stage4-interest-map.ts', desc: 'Stage 4 관심사 지도' },
+              { path: 'src/data/gamification/points.ts', desc: '해금 조건 상수 (INSIGHT_UNLOCK)' },
+              { path: 'src/services/EventBus.ts', desc: '이벤트 발행/구독' },
+            ].map((file, i) => (
+              <div key={i} className="flex items-center justify-between p-2 bg-[var(--db-bg)] rounded">
+                <code className="text-xs text-[var(--db-brand)]">{file.path}</code>
+                <span className="text-xs text-[var(--db-muted)]">{file.desc}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

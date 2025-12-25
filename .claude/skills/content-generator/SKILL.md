@@ -144,10 +144,18 @@ interface Poll {
   type: 'vs';
   category: ContentCategory;
   question: string;              // "A vs B, 어떤 게 더 좋아요?"
-  options: [                     // 정확히 2개
-    { id: 'a', text: string, emoji?: string },
-    { id: 'b', text: string, emoji?: string }
-  ];
+  optionA: {
+    id: 'a',
+    text: string,
+    emoji: string,
+    insightTags?: InsightTags    // 인사이트 태그 (Stage 3+)
+  };
+  optionB: {
+    id: 'b',
+    text: string,
+    emoji: string,
+    insightTags?: InsightTags    // 인사이트 태그 (Stage 3+)
+  };
   tags: string[];                // 2-3개
 }
 ```
@@ -156,6 +164,76 @@ interface Poll {
 - 정확히 2개 선택지
 - 질문에 "vs" 포함 권장
 - 양쪽 다 매력적인 선택지
+
+### InsightTags (인사이트용 태그)
+
+**목적**: 사용자 선택에서 성향 분석 데이터 수집 (Stage 3-4)
+
+```typescript
+interface InsightTags {
+  personality?: PersonalityTag[];   // 성격 태그
+  decision?: DecisionTag[];         // 판단 스타일 태그
+  relationship?: RelationshipTag[]; // 관계 패턴 태그
+  interest?: InterestTag[];         // 관심사 태그 (Stage 4)
+  lifestyle?: LifestyleTag[];       // 라이프스타일 태그 (Stage 4)
+}
+```
+
+**태그 유효값 (SSOT: `src/data/insight/insight-tags.ts`)**
+
+| 카테고리 | 유효 태그 |
+|---------|----------|
+| personality | `extroverted`, `introverted`, `logical`, `emotional`, `planned`, `spontaneous`, `structured`, `independent`, `supportive`, `expressive`, `reserved` 등 |
+| decision | `practical`, `sentimental`, `adventurous`, `safe`, `cautious`, `solo`, `together`, `direct`, `indirect`, `present-focused`, `future-focused` |
+| relationship | `competing`, `avoiding`, `accommodating`, `collaborating`, `compromising`, `close-bonding`, `space-needing`, `assertive`, `diplomatic` |
+| interest | `interest-cat`, `interest-dog`, `interest-plant`, `interest-coffee`, `interest-love` 등 (category에서 자동 추가됨) |
+| lifestyle | `active`, `homebody`, `frugal`, `splurger`, `morning-person`, `night-owl`, `creative`, `consuming` |
+
+**insightTags 적용 대상:**
+- love 카테고리: 필수! (연애 스타일 분석)
+- lifestyle 카테고리: 권장 (성향 분석)
+- 기타 카테고리: 선택 (관심사는 category에서 자동 추가)
+
+**예시:**
+```typescript
+{
+  id: 'vs-love-style-001',
+  category: 'love',
+  question: '연애 스타일은?',
+  optionA: {
+    id: 'a',
+    text: '밀당 (설렘 중요)',
+    emoji: '🎭',
+    insightTags: { decision: ['indirect'], personality: ['emotional'] },
+  },
+  optionB: {
+    id: 'b',
+    text: '직진 (솔직함 중요)',
+    emoji: '🚀',
+    insightTags: { decision: ['direct', 'practical'] },
+  },
+  tags: ['love', 'relationship', '연애스타일'],
+}
+```
+
+**주의:**
+- 태그값은 반드시 insight-tags.ts에 정의된 값만 사용!
+- 오타 입력 시 **컴파일 에러** 발생 (타입 강제)
+- `interest-*` 태그는 category에서 자동 추가되므로 수동 입력 불필요
+
+**insightTags 최소 3개 규칙 (인사이트 품질 보장):**
+```typescript
+// ✅ 올바른 예 (3개 이상)
+insightTags: { decision: ['adventurous', 'sentimental'], personality: ['expressive'] }
+insightTags: { personality: ['planned', 'structured'], lifestyle: ['morning-person'] }
+
+// ❌ 경고 발생 (2개만)
+insightTags: { decision: ['safe'], personality: ['reserved'] }  // 2개 → 경고
+
+// 합산 기준:
+// - 모든 카테고리의 태그를 합산하여 3개 이상
+// - decision: 2개 + personality: 1개 = 3개 ✅
+```
 
 ### 4. 선택 투표 (Choice Poll)
 

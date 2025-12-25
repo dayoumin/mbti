@@ -443,8 +443,24 @@ class InsightServiceClass {
       };
     });
 
-    // 상위 태그 추출
-    const dominantTags = this.getTopTags(5);
+    // 테스트 결과에서 추출한 태그만 집계 (퀴즈/투표 태그 제외)
+    // Stage 1은 "기본 성향"으로 테스트 기반 분석
+    const testTagCounts: Record<string, number> = {};
+    for (const result of formattedResults) {
+      for (const tag of result.tags) {
+        testTagCounts[tag] = (testTagCounts[tag] || 0) + 1;
+      }
+    }
+
+    const total = Object.values(testTagCounts).reduce((sum, c) => sum + c, 0);
+    const dominantTags = Object.entries(testTagCounts)
+      .map(([tag, count]) => ({
+        tag,
+        count,
+        percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
 
     return {
       stage: 1,
@@ -458,6 +474,17 @@ class InsightServiceClass {
   // ========================================================================
   // 진행률 계산
   // ========================================================================
+
+  /**
+   * remaining 메시지 생성 (음수 방지)
+   */
+  private formatRemaining(label: string, needed: number, current: number): string {
+    const diff = needed - current;
+    if (diff <= 0) {
+      return '완료!';
+    }
+    return `${label} ${diff}개 더`;
+  }
 
   /**
    * 다음 스테이지까지 진행률
@@ -474,11 +501,12 @@ class InsightServiceClass {
 
     // Stage 1 미해금
     if (maxUnlocked === 0) {
+      const needed = INSIGHT_UNLOCK.STAGE_1.tests;
       return {
         currentStage: 0,
         nextStage: 1,
-        progress: Math.min(100, (stats.testCount / INSIGHT_UNLOCK.STAGE_1.tests) * 100),
-        remaining: `테스트 ${INSIGHT_UNLOCK.STAGE_1.tests - stats.testCount}개 더`,
+        progress: Math.min(100, (stats.testCount / needed) * 100),
+        remaining: this.formatRemaining('테스트', needed, stats.testCount),
       };
     }
 
@@ -489,7 +517,7 @@ class InsightServiceClass {
         currentStage: 1,
         nextStage: 2,
         progress: Math.min(100, (stats.testCount / needed) * 100),
-        remaining: `테스트 ${needed - stats.testCount}개 더`,
+        remaining: this.formatRemaining('테스트', needed, stats.testCount),
       };
     }
 
@@ -500,7 +528,7 @@ class InsightServiceClass {
         currentStage: 2,
         nextStage: 3,
         progress: Math.min(100, (stats.pollCount / needed) * 100),
-        remaining: `투표 ${needed - stats.pollCount}개 더`,
+        remaining: this.formatRemaining('투표', needed, stats.pollCount),
       };
     }
 
@@ -511,7 +539,7 @@ class InsightServiceClass {
         currentStage: 3,
         nextStage: 4,
         progress: Math.min(100, (stats.totalActivities / needed) * 100),
-        remaining: `활동 ${needed - stats.totalActivities}개 더`,
+        remaining: this.formatRemaining('활동', needed, stats.totalActivities),
       };
     }
 
@@ -522,7 +550,7 @@ class InsightServiceClass {
         currentStage: 4,
         nextStage: 5,
         progress: Math.min(100, (stats.relationshipActivities / needed) * 100),
-        remaining: `관계 활동 ${needed - stats.relationshipActivities}개 더`,
+        remaining: this.formatRemaining('관계 활동', needed, stats.relationshipActivities),
       };
     }
 
@@ -533,7 +561,7 @@ class InsightServiceClass {
         currentStage: 5,
         nextStage: 6,
         progress: Math.min(100, (stats.totalActivities / needed) * 100),
-        remaining: `활동 ${needed - stats.totalActivities}개 더`,
+        remaining: this.formatRemaining('활동', needed, stats.totalActivities),
       };
     }
 
@@ -578,10 +606,11 @@ class InsightServiceClass {
 
     const tagCounts = this.getTagCounts();
 
-    // 의사결정 관련 태그가 있는지 확인
+    // 의사결정 관련 태그가 있는지 확인 (모든 DECISION_TAGS 포함)
     const decisionTags = [
       'practical', 'sentimental', 'adventurous', 'safe', 'cautious',
       'solo', 'together', 'direct', 'indirect',
+      'present-focused', 'future-focused',
     ];
     const hasDecisionTags = decisionTags.some(tag => tagCounts[tag] > 0);
 
