@@ -7,6 +7,7 @@ export type { UserGameStats };
 import type { SubjectKey } from '../data/types';
 import { BADGES, getBadgeById } from '../data/gamification/badges';
 import { getLevelByPoints, getPointsToNextLevel, DAILY_MISSIONS } from '../data/gamification/levels';
+import { POINTS } from '../data/gamification/points';
 import { STORAGE_KEYS } from '@/lib/storage';
 
 // SubjectKey 또는 category에서 ExpertSubject 추출 (전문가 트랙 대상)
@@ -287,7 +288,7 @@ class GamificationService {
     const todayActivity = this.getOrCreateTodayActivity();
     todayActivity.testsCompleted++;
 
-    const points = 20; // 테스트 완료 포인트
+    const points = POINTS.TEST_COMPLETE;
     this.stats.totalPoints += points;
 
     this.updateStreak();
@@ -331,7 +332,7 @@ class GamificationService {
       todayActivity.quizzesCorrect++;
     }
 
-    const points = isCorrect ? 10 : 2; // 정답 10점, 오답 2점
+    const points = isCorrect ? POINTS.QUIZ_CORRECT : POINTS.QUIZ_WRONG;
     this.stats.totalPoints += points;
 
     this.updateStreak();
@@ -366,7 +367,7 @@ class GamificationService {
     const todayActivity = this.getOrCreateTodayActivity();
     todayActivity.pollsVoted++;
 
-    const points = 5; // 투표 포인트
+    const points = POINTS.POLL_VOTE;
     this.stats.totalPoints += points;
 
     this.updateStreak();
@@ -469,7 +470,7 @@ class GamificationService {
       return { points: 0, streakUpdated: false, newBadges: [] };
     }
 
-    const points = 5; // 일일 방문 포인트
+    const points = POINTS.DAILY_VISIT;
     this.stats.totalPoints += points;
 
     this.updateStreak();
@@ -487,7 +488,7 @@ class GamificationService {
   recordAnswerWrite(): { points: number; newBadges: string[] } {
     this.stats.community.answersWritten++;
 
-    const points = 10;
+    const points = POINTS.ANSWER_WRITE;
     this.stats.totalPoints += points;
 
     this.updateStreak(); // 커뮤니티 활동도 스트릭에 반영
@@ -501,7 +502,7 @@ class GamificationService {
   recordAnswerAdopted(): { points: number; newBadges: string[] } {
     this.stats.community.answersAdopted++;
 
-    const points = 50; // 채택은 높은 점수
+    const points = POINTS.ANSWER_ADOPTED;
     this.stats.totalPoints += points;
 
     const newBadges = this.checkBadges();
@@ -515,7 +516,7 @@ class GamificationService {
   recordLikeReceived(): { points: number; newBadges: string[] } {
     this.stats.community.likesReceived++;
 
-    const points = 5;
+    const points = POINTS.LIKE_RECEIVED;
     this.stats.totalPoints += points;
 
     const newBadges = this.checkBadges();
@@ -538,7 +539,7 @@ class GamificationService {
   recordPostWrite(): { points: number; newBadges: string[] } {
     this.stats.community.postsWritten++;
 
-    const points = 5;
+    const points = POINTS.POST_WRITE;
     this.stats.totalPoints += points;
 
     this.updateStreak(); // 커뮤니티 활동도 스트릭에 반영
@@ -552,7 +553,7 @@ class GamificationService {
   recordCommentWrite(): { points: number; newBadges: string[] } {
     this.stats.community.commentsWritten++;
 
-    const points = 2;
+    const points = POINTS.COMMENT_WRITE;
     this.stats.totalPoints += points;
 
     this.updateStreak(); // 커뮤니티 활동도 스트릭에 반영
@@ -606,7 +607,7 @@ class GamificationService {
       duel.totalQuestions += options.questionsCount;
     }
 
-    const points = options.won ? 15 : 5; // 승리 15점, 패배 5점 (참여 보상)
+    const points = options.won ? POINTS.DUEL_WIN : POINTS.DUEL_LOSE;
     this.stats.totalPoints += points;
 
     this.updateStreak();

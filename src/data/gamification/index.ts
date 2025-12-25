@@ -11,6 +11,9 @@ export * from './badges';
 // Levels
 export * from './levels';
 
+// Points (포인트 설정)
+export * from './points';
+
 // 통합 통계
 import { BADGES } from './badges';
 import { LEVELS, DAILY_MISSIONS } from './levels';

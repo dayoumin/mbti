@@ -106,6 +106,34 @@ npm run build
 
 ---
 
+### 단일 소스 원칙 (Single Source of Truth)
+
+**설정값은 한 곳에서만 정의하고, 나머지는 참조한다.**
+
+| 카테고리 | 단일 소스 위치 | 참조하는 곳 |
+|----------|---------------|------------|
+| 포인트 설정 | `src/data/gamification/points.ts` | GamificationService, UI |
+| 해금 조건 | `src/app/dashboard/data/insight-system.ts` | InsightService, UI |
+| 테스트 설정 | `src/data/config.ts` | 모든 테스트 관련 코드 |
+| 이벤트 타입 | `src/services/AnalyticsService.ts` | dashboard/data/analytics-system.ts |
+
+**하드코딩 금지 예시:**
+```typescript
+// 나쁜 예 - 하드코딩
+const points = 20; // 테스트 완료 포인트
+
+// 좋은 예 - 설정 참조
+import { POINTS } from '@/data/gamification/points';
+const points = POINTS.TEST_COMPLETE;
+```
+
+**신규 설정값 추가 시:**
+1. 단일 소스 파일에 추가
+2. 참조하는 곳에서 import
+3. 절대 값을 복사해서 하드코딩하지 않음
+
+---
+
 ## 콘텐츠 타입 (5종)
 
 | 타입 | 분류 | 설명 | 위치 |

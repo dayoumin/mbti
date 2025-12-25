@@ -11,6 +11,10 @@ import { getUTMForAnalytics } from '@/utils';
 import { STORAGE_KEYS } from '@/lib/storage';
 
 // ========== 타입 정의 ==========
+// 이벤트 네이밍 규칙:
+// - 분석용 이벤트: {대상}_{동사} 형식 (test_start, quiz_complete 등)
+// - 게이미피케이션/인사이트 트리거: UserActivityEvent로 별도 관리 예정
+// - dashboard/data/analytics-system.ts와 동기화 유지
 
 export type EventType =
   | 'recommendation_view'    // 추천 카드 노출

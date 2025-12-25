@@ -41,11 +41,18 @@ export const INSIGHT_CONCEPT = {
 // 2. 7단계 점진적 해금 시스템
 // ============================================================================
 
+// 구조화된 해금 조건 (동적 렌더링용, points.ts의 INSIGHT_UNLOCK과 동기화)
+export interface UnlockCondition {
+  type: 'tests' | 'polls' | 'activities' | 'relationshipActivities' | 'stage' | 'paid';
+  requiredCount?: number;
+  requiredStage?: number;
+}
+
 export interface InsightStage {
   id: number;
   name: string;
   emoji: string;
-  unlockCondition: string;
+  unlockCondition: UnlockCondition;  // 구조화된 조건 (로직용)
   analysisMethod: 'aggregation' | 'rule-matching' | 'ai-generation';
   cost: 'free' | 'paid';
   description: string;
@@ -53,12 +60,32 @@ export interface InsightStage {
   nudgeMessage: string; // 다음 단계 유도
 }
 
+// 해금 조건 텍스트 생성 헬퍼 (UI 렌더링용)
+export function getUnlockConditionText(condition: UnlockCondition): string {
+  switch (condition.type) {
+    case 'tests':
+      return `테스트 ${condition.requiredCount}개`;
+    case 'polls':
+      return `투표 ${condition.requiredCount}개`;
+    case 'activities':
+      return `활동 ${condition.requiredCount}개`;
+    case 'relationshipActivities':
+      return `관계 활동 ${condition.requiredCount}개`;
+    case 'stage':
+      return `Stage ${condition.requiredStage} 해금`;
+    case 'paid':
+      return `Stage 6 해금 + 결제`;
+    default:
+      return '';
+  }
+}
+
 export const INSIGHT_STAGES: InsightStage[] = [
   {
     id: 1,
     name: '기본 성향',
     emoji: '📊',
-    unlockCondition: '테스트 1개',
+    unlockCondition: { type: 'tests', requiredCount: 1 },
     analysisMethod: 'aggregation',
     cost: 'free',
     description: '첫 테스트 결과와 차원별 점수',
@@ -69,7 +96,7 @@ export const INSIGHT_STAGES: InsightStage[] = [
     id: 2,
     name: '성격 조합',
     emoji: '🔮',
-    unlockCondition: '테스트 3개',
+    unlockCondition: { type: 'tests', requiredCount: 3 },
     analysisMethod: 'rule-matching',
     cost: 'free',
     description: '여러 테스트 결과를 조합한 복합 성격 분석',
@@ -80,7 +107,7 @@ export const INSIGHT_STAGES: InsightStage[] = [
     id: 3,
     name: '판단 스타일',
     emoji: '⚖️',
-    unlockCondition: '투표 10개',
+    unlockCondition: { type: 'polls', requiredCount: 10 },
     analysisMethod: 'aggregation',
     cost: 'free',
     description: '실용 vs 감성, 안전 vs 모험 등 결정 패턴',
@@ -91,7 +118,7 @@ export const INSIGHT_STAGES: InsightStage[] = [
     id: 4,
     name: '관심사 지도',
     emoji: '🗺️',
-    unlockCondition: '활동 15개',
+    unlockCondition: { type: 'activities', requiredCount: 15 },
     analysisMethod: 'aggregation',
     cost: 'free',
     description: '카테고리별 참여 비율 시각화',
@@ -102,7 +129,7 @@ export const INSIGHT_STAGES: InsightStage[] = [
     id: 5,
     name: '관계 패턴',
     emoji: '💬',
-    unlockCondition: '관계 활동 10개',
+    unlockCondition: { type: 'relationshipActivities', requiredCount: 10 },
     analysisMethod: 'rule-matching',
     cost: 'free',
     description: '표현 스타일, 갈등 대처 방식 분석',
@@ -113,7 +140,7 @@ export const INSIGHT_STAGES: InsightStage[] = [
     id: 6,
     name: '숨은 패턴',
     emoji: '🔍',
-    unlockCondition: '활동 30개',
+    unlockCondition: { type: 'activities', requiredCount: 30 },
     analysisMethod: 'rule-matching',
     cost: 'free',
     description: '테스트 간 모순, 시간대별 패턴 발견',
@@ -124,7 +151,7 @@ export const INSIGHT_STAGES: InsightStage[] = [
     id: 7,
     name: 'AI 종합 분석',
     emoji: '🤖',
-    unlockCondition: 'Stage 6 해금 + 결제',
+    unlockCondition: { type: 'paid', requiredStage: 6 },
     analysisMethod: 'ai-generation',
     cost: 'paid',
     description: 'Claude AI가 생성하는 맞춤형 성격 리포트',

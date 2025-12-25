@@ -33,6 +33,7 @@ import {
   PEOPLE_MATCHING_SYSTEM,
   RELATIONSHIP_MATCH,
   GAMIFICATION_STRATEGY,
+  getUnlockConditionText,
 } from '../data/insight-system';
 
 // ============================================================================
@@ -213,7 +214,7 @@ function StagesTab() {
             <h4 className="font-semibold text-[var(--db-text)] mb-1">
               Stage {stage.id}: {stage.name}
             </h4>
-            <p className="text-sm text-[var(--db-muted)]">{stage.unlockCondition}</p>
+            <p className="text-sm text-[var(--db-muted)]">{getUnlockConditionText(stage.unlockCondition)}</p>
             <div className="mt-3 flex items-center gap-2">
               <span className={`px-2 py-0.5 rounded text-xs ${
                 stage.analysisMethod === 'aggregation' ? 'bg-blue-500/20 text-blue-400' :
