@@ -488,6 +488,90 @@ export const VS_POLLS: VSPoll[] = [
     tags: ['연애', '연락'],
     // meta 없음 - 10대도 경험하는 보편적 연애 고민
   },
+
+  // ==========================================================================
+  // 연애/사랑 추가
+  // ==========================================================================
+  {
+    id: 'vs-love-006',
+    category: 'love',
+    question: '사랑의 언어는?',
+    optionA: { id: 'a', text: '선물/깜짝 이벤트', emoji: '🎁' },
+    optionB: { id: 'b', text: '함께하는 시간', emoji: '⏰' },
+    tags: ['연애', '표현'],
+  },
+  {
+    id: 'vs-love-007',
+    category: 'love',
+    question: '연애 공개 여부는?',
+    optionA: { id: 'a', text: '공개연애 (SNS, 주변에 알림)', emoji: '📢' },
+    optionB: { id: 'b', text: '비공개 (조용히)', emoji: '🤫' },
+    tags: ['연애', '사생활'],
+  },
+  {
+    id: 'vs-love-008',
+    category: 'love',
+    question: '기념일 챙기는 스타일?',
+    optionA: { id: 'a', text: '백일, 200일 다 챙김', emoji: '📅' },
+    optionB: { id: 'b', text: '큰 기념일만 (1주년 등)', emoji: '🎂' },
+    tags: ['연애', '기념일'],
+  },
+  {
+    id: 'vs-love-009',
+    category: 'love',
+    question: '스킨십 편한 정도는?',
+    optionA: { id: 'a', text: '애정표현 자주 (손잡기, 안기)', emoji: '💑' },
+    optionB: { id: 'b', text: '은근하게 (가끔)', emoji: '🤝' },
+    tags: ['연애', '스킨십'],
+  },
+  {
+    id: 'vs-love-010',
+    category: 'love',
+    question: '연애 초반에 미래 이야기?',
+    optionA: { id: 'a', text: '빨리 이야기 (결혼, 계획)', emoji: '💍' },
+    optionB: { id: 'b', text: '천천히 (지금에 집중)', emoji: '🌸' },
+    tags: ['연애', '미래'],
+  },
+  {
+    id: 'vs-love-011',
+    category: 'love',
+    question: '전애인 사진/선물 보관?',
+    optionA: { id: 'a', text: '다 버림 (깨끗하게)', emoji: '🗑️' },
+    optionB: { id: 'b', text: '추억으로 남김', emoji: '📦' },
+    tags: ['연애', '과거'],
+  },
+  {
+    id: 'vs-love-012',
+    category: 'love',
+    question: 'SNS 커플 인증?',
+    optionA: { id: 'a', text: '자주 올림 (프사, 스토리)', emoji: '📷' },
+    optionB: { id: 'b', text: '안 올림 (우리끼리)', emoji: '🔒' },
+    tags: ['연애', 'SNS'],
+  },
+  {
+    id: 'vs-love-013',
+    category: 'love',
+    question: '애칭 부르는 거?',
+    optionA: { id: 'a', text: '좋아함 (자기야, 오빠/언니)', emoji: '💕' },
+    optionB: { id: 'b', text: '이름이 편함', emoji: '📛' },
+    tags: ['연애', '호칭'],
+  },
+  {
+    id: 'vs-love-014',
+    category: 'love',
+    question: '싸운 뒤 화해 방식?',
+    optionA: { id: 'a', text: '대화로 풀기', emoji: '💬' },
+    optionB: { id: 'b', text: '시간 지나면 자연스럽게', emoji: '⏳' },
+    tags: ['연애', '갈등'],
+  },
+  {
+    id: 'vs-love-015',
+    category: 'love',
+    question: '애인 친구들과의 관계?',
+    optionA: { id: 'a', text: '친하게 지냄 (같이 만남)', emoji: '👥' },
+    optionB: { id: 'b', text: '적당한 거리 유지', emoji: '🚪' },
+    tags: ['연애', '인간관계'],
+  },
 ];
 
 export default VS_POLLS;

@@ -42,11 +42,30 @@ function log(msg, color = 'reset') {
 // ============================================================================
 function runFormatValidation() {
   log('\n═══════════════════════════════════════════════════════', 'blue');
-  log('📋 1단계: 형식 검증', 'bold');
+  log('📋 1단계: 형식 검증 (샘플 데이터)', 'bold');
   log('═══════════════════════════════════════════════════════', 'blue');
 
   try {
     execSync('node scripts/validate-content-samples.mjs', {
+      cwd: projectRoot,
+      stdio: 'inherit'
+    });
+    return { success: true, errors: 0 };
+  } catch (e) {
+    return { success: false, errors: 1 };
+  }
+}
+
+// ============================================================================
+// 1.5. 실제 콘텐츠 파일 이중 검증
+// ============================================================================
+function runContentFilesValidation() {
+  log('\n═══════════════════════════════════════════════════════', 'blue');
+  log('🔍 1.5단계: 콘텐츠 파일 이중 검증', 'bold');
+  log('═══════════════════════════════════════════════════════', 'blue');
+
+  try {
+    execSync('node scripts/validate-content-files.mjs', {
       cwd: projectRoot,
       stdio: 'inherit'
     });
@@ -289,12 +308,16 @@ async function main() {
 
   const results = {
     format: { success: true, errors: 0 },
+    contentFiles: { success: true, errors: 0 },
     ageRating: { success: true, errors: 0 },
     tags: { success: true, errors: 0 },
   };
 
-  // 1. 형식 검증
+  // 1. 형식 검증 (샘플 데이터)
   results.format = runFormatValidation();
+
+  // 1.5. 콘텐츠 파일 이중 검증
+  results.contentFiles = runContentFilesValidation();
 
   // 2. 연령 등급 검증
   results.ageRating = runAgeRatingValidation();
@@ -307,11 +330,12 @@ async function main() {
   log('║                    최종 결과                          ║', 'bold');
   log('╚═══════════════════════════════════════════════════════╝', 'bold');
 
-  const totalErrors = results.format.errors + results.ageRating.errors + results.tags.errors;
+  const totalErrors = results.format.errors + results.contentFiles.errors + results.ageRating.errors + results.tags.errors;
 
-  log(`\n1. 형식 검증: ${results.format.success ? '✅ 통과' : '❌ 실패'}`, results.format.success ? 'green' : 'red');
-  log(`2. 연령 등급: ${results.ageRating.success ? '✅ 통과' : '❌ 실패'}`, results.ageRating.success ? 'green' : 'red');
-  log(`3. 태그 품질: ${results.tags.success ? '✅ 통과' : '❌ 실패'}`, results.tags.success ? 'green' : 'red');
+  log(`\n1. 형식 검증 (샘플): ${results.format.success ? '✅ 통과' : '❌ 실패'}`, results.format.success ? 'green' : 'red');
+  log(`2. 콘텐츠 이중검증: ${results.contentFiles.success ? '✅ 통과' : '❌ 실패'}`, results.contentFiles.success ? 'green' : 'red');
+  log(`3. 연령 등급: ${results.ageRating.success ? '✅ 통과' : '❌ 실패'}`, results.ageRating.success ? 'green' : 'red');
+  log(`4. 태그 품질: ${results.tags.success ? '✅ 통과' : '❌ 실패'}`, results.tags.success ? 'green' : 'red');
 
   if (totalErrors === 0) {
     log('\n🎉 모든 검증 통과!', 'green');

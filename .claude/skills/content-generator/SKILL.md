@@ -478,21 +478,106 @@ tags: ['퀴즈', '투표']                     // 콘텐츠 유형 (의미 없�
     - 고양이 간식 투표 (tags: ['고양이', '간식', '먹이'])
 ```
 
+## 자체 점검 (생성 직후)
+
+**생성 후 파일 저장 전 아래 체크리스트 확인:**
+
+### 체크리스트
+
+```
+□ ID가 기존과 중복되지 않는가?
+□ 정답이 실제로 맞는가?
+□ 수치/단위가 정확한가?
+□ 팩트 파일(source)과 일치하는가?
+□ 오타가 없는가?
+□ tags가 3개 이상인가?
+```
+
+### 오류 발견 시
+
+즉시 수정 후 저장
+
+### 빌드 검증
+
+```bash
+npm run build
+```
+
+**상세 검증은 content-auditor 에이전트가 담당** (2차 검증)
+
+## index.ts 등록 (단일 등록 방식)
+
+### 퀴즈 등록 (QUIZ_REGISTRY)
+
+```typescript
+// src/data/content/quizzes/index.ts
+// 1. import 추가
+import { {CATEGORY}_KNOWLEDGE_QUIZZES } from './{category}-knowledge';
+
+// 2. QUIZ_REGISTRY에 한 줄 추가
+const QUIZ_REGISTRY = {
+  // 기존...
+  {category}: {
+    knowledge: {CATEGORY}_KNOWLEDGE_QUIZZES,
+    scenario: {CATEGORY}_SCENARIO_QUIZZES,  // 있으면
+  },
+};
+
+// 3. export 블록에 추가
+export {
+  // 기존...
+  {CATEGORY}_KNOWLEDGE_QUIZZES,
+};
+```
+
+### 투표 등록 (분리 시)
+
+```typescript
+// src/data/content/polls/index.ts
+// 분리 전: vs-polls.ts에 직접 추가
+// 분리 후: POLL_REGISTRY에 추가
+```
+
+## 완료 보고 형식
+
+```
+✅ {콘텐츠 유형} {N}개 생성 완료
+
+## 생성된 콘텐츠
+- {id-001}: {제목/질문}
+- {id-002}: {제목/질문}
+...
+
+## 자체 검증 결과
+- ID 중복: 없음 ✅
+- 팩트 참조: {N}개 모두 참조됨 ✅
+- 빌드: 성공 ✅
+- 콘텐츠 검증: 에러 0, 경고 N개
+
+## 저장 위치
+- {파일 경로}
+
+## index.ts 등록
+- QUIZ_REGISTRY에 추가됨 ✅
+```
+
 ## 품질 체크리스트
 
 ### 공통
 - [ ] id 형식 정확
+- [ ] **id 중복 없음 (기존 ID 확인 필수!)**
 - [ ] category 유효
 - [ ] 필수 필드 모두 있음
 - [ ] **tags 3개 이상 (추천 시스템 필수!)**
 - [ ] **연령 등급 적절 (성인 주제면 meta 추가)**
 - [ ] 빌드 에러 없음
-- [ ] 연령 제한 필요 시 meta 설정
+- [ ] **index.ts에 등록됨**
 
 ### 퀴즈
 - [ ] 정답 1개만 isCorrect: true
 - [ ] explanation 있음
 - [ ] tags 3개 이상 (필수!)
+- [ ] **팩트 필요 카테고리는 source 있음**
 
 ### 시나리오
 - [ ] 점수 범위 연속

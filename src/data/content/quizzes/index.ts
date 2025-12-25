@@ -4,7 +4,7 @@
 //
 // 새 퀴즈 추가 방법:
 // 1. {category}-knowledge.ts 또는 {category}-scenario.ts 파일 생성
-// 2. 아래 QUIZ_REGISTRY에 한 줄 추가
+// 2. 아래 QUIZ_REGISTRY에 한 줄 추가 (import + 등록 + export 자동)
 // ============================================================================
 
 import type { ContentCategory, KnowledgeQuiz, ScenarioQuiz } from '../types';
@@ -13,46 +13,78 @@ import type { ContentCategory, KnowledgeQuiz, ScenarioQuiz } from '../types';
 import { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
 import { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
 import { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
+import { HAMSTER_KNOWLEDGE_QUIZZES } from './hamster-knowledge';
 import { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
+import { COFFEE_KNOWLEDGE_QUIZZES } from './coffee-knowledge';
 import { KIDS_ANIMAL_QUIZZES } from './kids-animals';
 
 // --- 시나리오 퀴즈 import ---
 import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 import { DOG_SCENARIO_QUIZZES } from './dog-scenario';
+import { RABBIT_SCENARIO_QUIZZES } from './rabbit-scenario';
 
 // ============================================================================
-// 퀴즈 레지스트리 (새 퀴즈는 여기에 추가)
+// 퀴즈 레지스트리 (단일 등록 - 여기에만 추가하면 됨)
 // ============================================================================
 
-const KNOWLEDGE_QUIZ_REGISTRY: KnowledgeQuiz[][] = [
+/**
+ * 퀴즈 레지스트리 - 새 퀴즈는 여기에 한 줄만 추가
+ *
+ * 구조: { [카테고리]: { knowledge?: 배열, scenario?: 배열 } }
+ * - import 후 여기에 추가하면 ALL_* 배열과 개별 export 모두 자동 처리
+ */
+const QUIZ_REGISTRY = {
+  cat: {
+    knowledge: CAT_KNOWLEDGE_QUIZZES,
+    scenario: CAT_SCENARIO_QUIZZES,
+  },
+  dog: {
+    knowledge: DOG_KNOWLEDGE_QUIZZES,
+    scenario: DOG_SCENARIO_QUIZZES,
+  },
+  rabbit: {
+    knowledge: RABBIT_KNOWLEDGE_QUIZZES,
+    scenario: RABBIT_SCENARIO_QUIZZES,
+  },
+  hamster: {
+    knowledge: HAMSTER_KNOWLEDGE_QUIZZES,
+  },
+  plant: {
+    knowledge: PLANT_KNOWLEDGE_QUIZZES,
+  },
+  coffee: {
+    knowledge: COFFEE_KNOWLEDGE_QUIZZES,
+  },
+  // 특수 카테고리
+  _kids: {
+    knowledge: KIDS_ANIMAL_QUIZZES,
+  },
+} as const;
+
+// ============================================================================
+// 통합 배열 (레지스트리에서 자동 생성)
+// ============================================================================
+
+export const ALL_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = Object.values(QUIZ_REGISTRY)
+  .flatMap(entry => entry.knowledge ?? []);
+
+export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = Object.values(QUIZ_REGISTRY)
+  .flatMap(entry => ('scenario' in entry ? entry.scenario : undefined))
+  .filter((q): q is ScenarioQuiz => q !== undefined);
+
+// 개별 퀴즈 배열 export (필요시 직접 접근용)
+export {
   CAT_KNOWLEDGE_QUIZZES,
   DOG_KNOWLEDGE_QUIZZES,
   RABBIT_KNOWLEDGE_QUIZZES,
+  HAMSTER_KNOWLEDGE_QUIZZES,
   PLANT_KNOWLEDGE_QUIZZES,
+  COFFEE_KNOWLEDGE_QUIZZES,
   KIDS_ANIMAL_QUIZZES,
-];
-
-const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
   CAT_SCENARIO_QUIZZES,
   DOG_SCENARIO_QUIZZES,
-  // 새 시나리오 퀴즈는 여기에 추가 (예: RABBIT_SCENARIO_QUIZZES)
-];
-
-// ============================================================================
-// 통합 배열 (자동 생성)
-// ============================================================================
-
-export const ALL_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = KNOWLEDGE_QUIZ_REGISTRY.flat();
-export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = SCENARIO_QUIZ_REGISTRY.flat();
-
-// 개별 퀴즈 배열도 export (필요시 직접 접근용)
-export { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
-export { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
-export { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
-export { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
-export { KIDS_ANIMAL_QUIZZES } from './kids-animals';
-export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
-export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
+  RABBIT_SCENARIO_QUIZZES,
+};
 
 // ============================================================================
 // 조회 함수
@@ -89,6 +121,26 @@ export function getRandomScenarioQuiz(category?: ContentCategory): ScenarioQuiz 
 // ============================================================================
 // 검증 함수
 // ============================================================================
+
+/** 지식 퀴즈 검증 */
+export function validateKnowledgeQuiz(quiz: KnowledgeQuiz): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  // 정답 개수 확인
+  const correctCount = quiz.options.filter(o => o.isCorrect).length;
+  if (correctCount !== 1) {
+    errors.push(`정답이 ${correctCount}개 (1개여야 함)`);
+  }
+
+  // 옵션 개수 확인
+  if (quiz.options.length < 2 || quiz.options.length > 5) {
+    errors.push(`옵션이 ${quiz.options.length}개 (2-5개 권장)`);
+  }
+
+  // ID 중복은 validateAllQuizzes에서 체크
+
+  return { valid: errors.length === 0, errors };
+}
 
 /** 시나리오 퀴즈 점수 범위 검증 */
 export function validateScenarioQuizScores(quiz: ScenarioQuiz): { valid: boolean; errors: string[] } {
@@ -130,6 +182,46 @@ export function validateScenarioQuizScores(quiz: ScenarioQuiz): { valid: boolean
   return { valid: errors.length === 0, errors };
 }
 
+/** 전체 퀴즈 검증 (ID 중복 체크 포함) */
+export function validateAllQuizzes(): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  // ID 중복 체크 - 지식 퀴즈
+  const knowledgeIds = new Set<string>();
+  ALL_KNOWLEDGE_QUIZZES.forEach(q => {
+    if (knowledgeIds.has(q.id)) {
+      errors.push(`지식 퀴즈 ID 중복: ${q.id}`);
+    }
+    knowledgeIds.add(q.id);
+  });
+
+  // ID 중복 체크 - 시나리오 퀴즈
+  const scenarioIds = new Set<string>();
+  ALL_SCENARIO_QUIZZES.forEach(q => {
+    if (scenarioIds.has(q.id)) {
+      errors.push(`시나리오 퀴즈 ID 중복: ${q.id}`);
+    }
+    scenarioIds.add(q.id);
+  });
+
+  // 개별 퀴즈 검증
+  ALL_KNOWLEDGE_QUIZZES.forEach(q => {
+    const result = validateKnowledgeQuiz(q);
+    if (!result.valid) {
+      errors.push(`[${q.id}] ${result.errors.join(', ')}`);
+    }
+  });
+
+  ALL_SCENARIO_QUIZZES.forEach(q => {
+    const result = validateScenarioQuizScores(q);
+    if (!result.valid) {
+      errors.push(`[${q.id}] ${result.errors.join(', ')}`);
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
+}
+
 // ============================================================================
 // 통계
 // ============================================================================
@@ -155,4 +247,6 @@ export const QUIZ_STATS = {
       return counts;
     },
   },
+  /** 레지스트리에 등록된 카테고리 목록 */
+  registeredCategories: Object.keys(QUIZ_REGISTRY).filter(k => !k.startsWith('_')),
 };

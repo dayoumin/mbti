@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/validate-content-files.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "playwright test"
+    "test": "playwright test",
+    "validate": "node scripts/validate-all-content.mjs",
+    "validate:content": "node scripts/validate-content-files.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",
