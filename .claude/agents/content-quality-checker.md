@@ -1,6 +1,6 @@
 ---
-name: content-auditor
-description: 기존 퀴즈/투표/토너먼트 품질 점검. 전체 콘텐츠 스캔, 문제점 발견, 개선 우선순위 정리. "콘텐츠 품질 점검해줘"
+name: content-quality-checker
+description: 기존 퀴즈/투표/토너먼트 품질 점검 (2중 검증). 전체 콘텐츠 스캔, 문제점 발견, 개선 우선순위 정리. "콘텐츠 품질 점검해줘"
 keywords:
   - 콘텐츠 점검
   - 퀴즈 검증
@@ -25,7 +25,8 @@ model: sonnet
 ```
 
 ## 사용 Skills
-- **content-validator**: 콘텐츠 검증
+- **content-audit-rules**: 품질 점검 규칙 (`.claude/skills/content-audit-rules/SKILL.md`)
+- **content-validator**: 콘텐츠 형식 검증
 
 ## 점검 프로세스
 

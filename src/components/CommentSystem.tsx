@@ -25,7 +25,7 @@ export interface Comment {
 }
 
 export interface CommentSystemProps {
-  targetType: 'poll' | 'quiz' | 'test_result' | 'ranking';
+  targetType: 'poll' | 'quiz' | 'test_result' | 'ranking' | 'situation';
   targetId: string;
   /** 작성자 배지 (예: "🐱 도도한 집사") */
   userBadge?: string;

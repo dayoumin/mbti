@@ -336,15 +336,8 @@ function TestResultRankingMini({ onOpenRanking }: { onOpenRanking: () => void })
 // 세부 반려동물 테스트 섹션
 // ============================================================================
 
-// petMatch 결과 → 세부 테스트 키 매핑
-const PET_RESULT_TO_DETAIL_TEST: Record<string, SubjectKey[]> = {
-  '강아지': ['dogBreed'],
-  '고양이': ['catBreed'],
-  '소동물': ['smallPet'],
-  '물고기': ['fishType'],
-  '새': ['birdType'],
-  '파충류': ['reptileType'],
-};
+// petMatch 결과 → 세부 테스트 키 매핑 (contentGraph에서 import)
+import { RESULT_TO_DETAIL_TEST } from '@/data/contentGraph';
 
 function DetailTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -359,7 +352,7 @@ function DetailTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) =>
         if (petMatchResult) {
           setHasPetMatchResult(true);
           // 결과명으로 추천 테스트 키 찾기
-          const recommended = PET_RESULT_TO_DETAIL_TEST[petMatchResult.resultKey] || [];
+          const recommended = RESULT_TO_DETAIL_TEST[petMatchResult.resultKey] || [];
           setRecommendedTestKeys(recommended);
         }
       } catch (e) {

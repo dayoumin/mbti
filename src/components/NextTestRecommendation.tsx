@@ -112,7 +112,7 @@ export default function NextTestRecommendation({
                         <div className="flex-1 min-w-0">
                             <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
                             <p className="text-xs text-slate-400 truncate">
-                                {recommendation.reason === 'new' ? '아직 안 해본 테스트예요!' : data.subtitle}
+                                {recommendation.description || (recommendation.reason === 'new' ? '아직 안 해본 테스트예요!' : data.subtitle)}
                             </p>
                         </div>
                         <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all flex-shrink-0">

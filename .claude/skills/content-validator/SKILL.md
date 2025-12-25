@@ -404,7 +404,74 @@ scripts/validate-content-samples.mjs
 - [ ] 에러 0개
 - [ ] 경고 검토 및 가능하면 수정
 - [ ] 연령 제한 설정 적절성 확인
+- [ ] **시간 민감도 설정 적절성 확인**
 - [ ] 다시 빌드 확인
+
+## 시간 민감도 검증 (Time Sensitivity)
+
+금액/수치/트렌드 기반 콘텐츠는 `meta.timeSensitivity` 설정 필수!
+
+### 검증 항목
+
+| 항목 | 에러/경고 | 기준 |
+|------|----------|------|
+| timeSensitivity 누락 | **경고** | 금액/트렌드 콘텐츠인데 없음 |
+| sourceYear 누락 | **에러** | timeSensitivity 있는데 연도 없음 |
+| sensitivity 무효 | 에러 | high/medium/low/none 중 하나 |
+| validUntil 형식 | 에러 | YYYY-MM 형식이 아님 |
+| 만료된 콘텐츠 | **경고** | validUntil이 현재 날짜 이전 |
+| 검토 필요 | **경고** | 유효기간 6개월 이내 |
+
+### 민감도 레벨 기준
+
+| 레벨 | 유효기간 | 적용 콘텐츠 |
+|------|---------|------------|
+| `high` | 2년 | 축의금, 선물 가격, 연봉, 물가, 통계 수치 |
+| `medium` | 3년 | MZ 인식, 선호도, 유행어, 트렌드 |
+| `low` | 4년 | 밸런스게임, 상황별 반응, 에티켓 |
+| `none` | 무기한 | 동물 지식, MBTI, 성격, 과학적 사실 |
+
+### AI 검증 규칙
+
+**시간 민감도가 필요한지 판단:**
+```
+질문/상황에 포함된 키워드 체크:
+- 금액 관련: 만원, 얼마, 평균, 가격 → high 권장
+- 트렌드 관련: MZ, 요즘, 최근, 세대 → medium 권장
+- 상황 관련: 이럴 때, 어떻게 → low 권장
+- 지식/사실: 특성, 원리, 효과 → none (생략 가능)
+```
+
+### 검증 출력 형식
+
+```
+## 시간 민감도 검증
+
+✅ cat-quiz-001: 동물 지식 → timeSensitivity 불필요
+✅ money-quiz-001: timeSensitivity='high', sourceYear=2025 → 유효 (2027-12까지)
+⚠️ money-poll-002: 금액 관련 질문인데 timeSensitivity 없음
+   권장: meta: { timeSensitivity: { sensitivity: 'high', sourceYear: 2025 } }
+⚠️ trend-poll-001: 유효기간 임박 (2025-06까지, 검토 필요)
+❌ money-quiz-003: 만료됨 (2024-12, 노출 중지 권장)
+
+=== 시간 민감도 요약 ===
+시간 민감 콘텐츠: 15개
+- 유효: 10개 ✅
+- 검토 필요: 3개 ⚠️
+- 만료됨: 2개 ❌
+- 설정 누락: 0개
+```
+
+### 자동 수정 제안
+
+만료된 콘텐츠 발견 시:
+```
+❌ money-quiz-003: 만료됨 (sourceYear: 2023, sensitivity: high)
+
+권장 조치:
+1. 최신 데이터로 업데이트 후 sourceYear 변경
+2. 또는 콘텐츠 삭제/비활성화
+```
 
 ## 연령 등급 (Age Rating)
 

@@ -1,6 +1,6 @@
 ---
-name: content-auditor
-description: 기존 퀴즈/투표/토너먼트 품질 점검. 전체 콘텐츠 스캔, 문제점 발견, 개선 우선순위 정리. "콘텐츠 품질 점검해줘"
+name: content-audit-rules
+description: 콘텐츠 품질 점검 규칙. 연령 등급, 태그, 형식 검사 기준 정의. content-quality-checker Agent가 참조.
 allowed-tools: Read, Bash, Grep, Glob
 ---
 

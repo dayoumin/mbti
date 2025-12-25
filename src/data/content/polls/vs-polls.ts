@@ -93,6 +93,46 @@ export const VS_POLLS: VSPoll[] = [
     optionB: { id: 'b', text: '두부모래', emoji: '🟫' },
     tags: ['용품', '고양이'],
   },
+  {
+    id: 'vs-cat-006',
+    category: 'cat',
+    question: '고양이 중성화 시기, 언제가 나을까?',
+    optionA: { id: 'a', text: '생후 4-6개월 (첫 발정 전)', emoji: '🐱' },
+    optionB: { id: 'b', text: '생후 1년 이후 (충분히 성장 후)', emoji: '🐈' },
+    tags: ['중성화', '고양이', '건강'],
+  },
+  {
+    id: 'vs-cat-007',
+    category: 'cat',
+    question: '중성화 수술 전 금식, 어떻게?',
+    optionA: { id: 'a', text: '12시간 금식 (안전하게)', emoji: '🌙' },
+    optionB: { id: 'b', text: '4-6시간 금식 (최신 가이드)', emoji: '⏰' },
+    tags: ['중성화', '고양이', '수술준비'],
+  },
+  {
+    id: 'vs-cat-008',
+    category: 'cat',
+    question: '중성화 후 넥카라, 어떻게 하시나요?',
+    optionA: { id: 'a', text: '깔때기 넥카라 (확실한 차단)', emoji: '🔵' },
+    optionB: { id: 'b', text: '도넛형 넥쿠션 (편안함)', emoji: '🍩' },
+    tags: ['중성화', '고양이', '수술관리'],
+  },
+  {
+    id: 'vs-cat-009',
+    category: 'cat',
+    question: '중성화 후 사료 바꾸시나요?',
+    optionA: { id: 'a', text: '중성화 전용 사료로', emoji: '🥫' },
+    optionB: { id: 'b', text: '기존 사료 유지 + 양 조절', emoji: '🥣' },
+    tags: ['중성화', '고양이', '사료', '체중관리'],
+  },
+  {
+    id: 'vs-cat-010',
+    category: 'cat',
+    question: '중성화 후 성격 변화, 어떻게 느끼셨나요?',
+    optionA: { id: 'a', text: '많이 변했어요', emoji: '🔄' },
+    optionB: { id: 'b', text: '거의 안 변했어요', emoji: '😺' },
+    tags: ['중성화', '고양이', '행동변화'],
+  },
 
   // ==========================================================================
   // 강아지
@@ -136,6 +176,48 @@ export const VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '노즈워크', emoji: '👃' },
     optionB: { id: 'b', text: '터그 놀이', emoji: '🪢' },
     tags: ['놀이', '강아지'],
+  },
+
+  // 강아지 - 중성화 관련 (vs-dog-006 ~ 010)
+  {
+    id: 'vs-dog-006',
+    category: 'dog',
+    question: '강아지 중성화 시기, 어떻게 하셨나요?',
+    optionA: { id: 'a', text: '생후 6-9개월 (조기)', emoji: '🐶' },
+    optionB: { id: 'b', text: '돌 이후 (성장 완료 후)', emoji: '🐕' },
+    tags: ['중성화', '강아지', '수술', '시기', '건강'],
+  },
+  {
+    id: 'vs-dog-007',
+    category: 'dog',
+    question: '중성화 수술 전 금식, 어떻게 하셨나요?',
+    optionA: { id: 'a', text: '자정부터 엄격 금식', emoji: '🚫' },
+    optionB: { id: 'b', text: '저녁밥은 조금 줌', emoji: '🥄' },
+    tags: ['중성화', '강아지', '금식', '수술준비', '마취'],
+  },
+  {
+    id: 'vs-dog-008',
+    category: 'dog',
+    question: '중성화 후 넥카라, 어떻게 하시나요?',
+    optionA: { id: 'a', text: '깔때기 넥카라 (안전 중시)', emoji: '🔔' },
+    optionB: { id: 'b', text: '부드러운 넥쿠션', emoji: '☁️' },
+    tags: ['중성화', '강아지', '넥카라', '수술관리', '회복'],
+  },
+  {
+    id: 'vs-dog-009',
+    category: 'dog',
+    question: '중성화 후 사료 바꾸시나요?',
+    optionA: { id: 'a', text: '중성화 전용 사료로', emoji: '🥫' },
+    optionB: { id: 'b', text: '기존 사료, 양만 조절', emoji: '⚖️' },
+    tags: ['중성화', '강아지', '사료', '체중관리', '건강'],
+  },
+  {
+    id: 'vs-dog-010',
+    category: 'dog',
+    question: '중성화 후 행동 변화, 어떻게 느끼셨나요?',
+    optionA: { id: 'a', text: '확실히 차분해짐', emoji: '😌' },
+    optionB: { id: 'b', text: '별 차이 못 느낌', emoji: '🤷' },
+    tags: ['중성화', '강아지', '행동변화', '마운팅', '성격'],
   },
 
   // ==========================================================================
@@ -200,6 +282,48 @@ export const VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '깜짝 서프라이즈', emoji: '🎁' },
     optionB: { id: 'b', text: '계획된 이벤트', emoji: '📅' },
     tags: ['연애', '이벤트'],
+  },
+
+  // 연애 초기 (썸/소개팅)
+  {
+    id: 'vs-love-006',
+    category: 'love',
+    question: '첫 만남에서 호감 표현은?',
+    optionA: { id: 'a', text: '확실하게 어필', emoji: '💘' },
+    optionB: { id: 'b', text: '은근슬쩍 신호만', emoji: '👀' },
+    tags: ['연애', '썸', '호감'],
+  },
+  {
+    id: 'vs-love-007',
+    category: 'love',
+    question: '썸 탈 때 연락 주도권은?',
+    optionA: { id: 'a', text: '내가 먼저 자주 연락', emoji: '📲' },
+    optionB: { id: 'b', text: '상대가 연락 오면 답장', emoji: '💬' },
+    tags: ['연애', '썸', '연락'],
+  },
+  {
+    id: 'vs-love-008',
+    category: 'love',
+    question: '고백은 언제?',
+    optionA: { id: 'a', text: '확신 서면 빠르게', emoji: '⚡' },
+    optionB: { id: 'b', text: '충분히 알아본 후', emoji: '🕐' },
+    tags: ['연애', '고백', '타이밍'],
+  },
+  {
+    id: 'vs-love-009',
+    category: 'love',
+    question: '첫 데이트 장소 선택은?',
+    optionA: { id: 'a', text: '카페/산책 (대화 중심)', emoji: '☕' },
+    optionB: { id: 'b', text: '영화/전시 (활동 중심)', emoji: '🎬' },
+    tags: ['연애', '첫데이트', '장소'],
+  },
+  {
+    id: 'vs-love-010',
+    category: 'love',
+    question: '소개팅에서 외모 vs 대화?',
+    optionA: { id: 'a', text: '첫인상(외모) 중요', emoji: '✨' },
+    optionB: { id: 'b', text: '대화 잘 통하면 OK', emoji: '💬' },
+    tags: ['연애', '소개팅', '이상형'],
   },
 
   // ==========================================================================
@@ -493,7 +617,7 @@ export const VS_POLLS: VSPoll[] = [
   // 연애/사랑 추가
   // ==========================================================================
   {
-    id: 'vs-love-006',
+    id: 'vs-love-016',
     category: 'love',
     question: '사랑의 언어는?',
     optionA: { id: 'a', text: '선물/깜짝 이벤트', emoji: '🎁' },
@@ -501,7 +625,7 @@ export const VS_POLLS: VSPoll[] = [
     tags: ['연애', '표현'],
   },
   {
-    id: 'vs-love-007',
+    id: 'vs-love-017',
     category: 'love',
     question: '연애 공개 여부는?',
     optionA: { id: 'a', text: '공개연애 (SNS, 주변에 알림)', emoji: '📢' },
@@ -509,7 +633,7 @@ export const VS_POLLS: VSPoll[] = [
     tags: ['연애', '사생활'],
   },
   {
-    id: 'vs-love-008',
+    id: 'vs-love-018',
     category: 'love',
     question: '기념일 챙기는 스타일?',
     optionA: { id: 'a', text: '백일, 200일 다 챙김', emoji: '📅' },
@@ -517,7 +641,7 @@ export const VS_POLLS: VSPoll[] = [
     tags: ['연애', '기념일'],
   },
   {
-    id: 'vs-love-009',
+    id: 'vs-love-019',
     category: 'love',
     question: '스킨십 편한 정도는?',
     optionA: { id: 'a', text: '애정표현 자주 (손잡기, 안기)', emoji: '💑' },
@@ -525,7 +649,7 @@ export const VS_POLLS: VSPoll[] = [
     tags: ['연애', '스킨십'],
   },
   {
-    id: 'vs-love-010',
+    id: 'vs-love-020',
     category: 'love',
     question: '연애 초반에 미래 이야기?',
     optionA: { id: 'a', text: '빨리 이야기 (결혼, 계획)', emoji: '💍' },

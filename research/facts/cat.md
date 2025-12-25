@@ -61,3 +61,53 @@
 - **검증일**: 2024-12-24
 - **사용된 콘텐츠**: cat-k-005
 - **비고**: 스트레스 감소 및 배변 문제 예방
+
+---
+
+## cat-fact-007: 중성화 수술 전 금식 시간
+- **값**: 성묘 4-6시간, 새끼 고양이 1-2시간 (물은 제한 없음)
+- **출처**: AAFP Feline Anesthesia Guidelines, AAHA
+- **URL**: https://journals.sagepub.com/doi/10.1177/1098612X18781391
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: cat-k-013, vs-cat-006, vs-cat-007
+- **비고**: 과거 12시간 금식 권장했으나 최신 가이드라인 변경, 저혈당 위험 감소
+
+---
+
+## cat-fact-008: 중성화 수술 후 회복 기간
+- **값**: 수컷 2-3일, 암컷 10-14일
+- **출처**: Animal Humane Society, Veterinary Post-Op Guidelines
+- **URL**: https://www.animalhumanesociety.org/resource/spayneuter-post-surgical-care-and-recovery-instructions
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: cat-k-014
+- **비고**: 암컷은 복부 절개로 회복 시간 더 김
+
+---
+
+## cat-fact-009: 중성화 후 넥카라(E-collar) 착용 기간
+- **값**: 10-14일
+- **출처**: SAFE Care Clinic, Veterinary Post-Op Guidelines
+- **URL**: https://www.safehavenforcats.org/safe-care-spay-neuter-clinic/post-surgery/
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: cat-k-015, vs-cat-008
+- **비고**: 핥는 행동이 가장 흔한 합병증 원인
+
+---
+
+## cat-fact-010: 중성화 후 행동 변화
+- **값**: 스프레이 거의 소멸, 공격성/영역 행동 유의미 감소, 활동량 30% 감소
+- **출처**: MDPI - Neutering Effects on Social Behaviour (2019), Frontiers in Veterinary Science (2025)
+- **URL**: https://www.mdpi.com/2076-2615/9/12/1105
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: cat-k-016, vs-cat-010
+- **비고**: 성격(유전/초기 경험)은 변하지 않음, 호르몬 관련 행동만 감소
+
+---
+
+## cat-fact-011: 중성화 후 체중 증가 위험
+- **값**: 중성화 후 대사율 감소로 비만 위험 증가
+- **출처**: Veterinary Nutrition Studies, Multiple Sources
+- **URL**: https://www.catster.com/cat-health-care/
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: cat-k-017, vs-cat-009
+- **비고**: 활동량 30% 감소 + 대사율 저하, 칼로리 조절 필요

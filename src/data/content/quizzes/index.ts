@@ -17,6 +17,12 @@ import { HAMSTER_KNOWLEDGE_QUIZZES } from './hamster-knowledge';
 import { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
 import { COFFEE_KNOWLEDGE_QUIZZES } from './coffee-knowledge';
 import { KIDS_ANIMAL_QUIZZES } from './kids-animals';
+import { LOVE_KNOWLEDGE_QUIZZES } from './love-knowledge';
+import { FISH_KNOWLEDGE_QUIZZES } from './fish-knowledge';
+import { TAROT_KNOWLEDGE_QUIZZES } from './tarot-quizzes';
+import { SMALLPET_KNOWLEDGE_QUIZZES } from './smallPet-knowledge';
+import { BIRD_KNOWLEDGE_QUIZZES } from './bird-knowledge';
+import { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
 
 // --- 시나리오 퀴즈 import ---
 import { CAT_SCENARIO_QUIZZES } from './cat-scenario';
@@ -27,53 +33,7 @@ import { RABBIT_SCENARIO_QUIZZES } from './rabbit-scenario';
 // 퀴즈 레지스트리 (단일 등록 - 여기에만 추가하면 됨)
 // ============================================================================
 
-/**
- * 퀴즈 레지스트리 - 새 퀴즈는 여기에 한 줄만 추가
- *
- * 구조: { [카테고리]: { knowledge?: 배열, scenario?: 배열 } }
- * - import 후 여기에 추가하면 ALL_* 배열과 개별 export 모두 자동 처리
- */
-const QUIZ_REGISTRY = {
-  cat: {
-    knowledge: CAT_KNOWLEDGE_QUIZZES,
-    scenario: CAT_SCENARIO_QUIZZES,
-  },
-  dog: {
-    knowledge: DOG_KNOWLEDGE_QUIZZES,
-    scenario: DOG_SCENARIO_QUIZZES,
-  },
-  rabbit: {
-    knowledge: RABBIT_KNOWLEDGE_QUIZZES,
-    scenario: RABBIT_SCENARIO_QUIZZES,
-  },
-  hamster: {
-    knowledge: HAMSTER_KNOWLEDGE_QUIZZES,
-  },
-  plant: {
-    knowledge: PLANT_KNOWLEDGE_QUIZZES,
-  },
-  coffee: {
-    knowledge: COFFEE_KNOWLEDGE_QUIZZES,
-  },
-  // 특수 카테고리
-  _kids: {
-    knowledge: KIDS_ANIMAL_QUIZZES,
-  },
-} as const;
-
-// ============================================================================
-// 통합 배열 (레지스트리에서 자동 생성)
-// ============================================================================
-
-export const ALL_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = Object.values(QUIZ_REGISTRY)
-  .flatMap(entry => entry.knowledge ?? []);
-
-export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = Object.values(QUIZ_REGISTRY)
-  .flatMap(entry => ('scenario' in entry ? entry.scenario : undefined))
-  .filter((q): q is ScenarioQuiz => q !== undefined);
-
-// 개별 퀴즈 배열 export (필요시 직접 접근용)
-export {
+const KNOWLEDGE_QUIZ_REGISTRY: KnowledgeQuiz[][] = [
   CAT_KNOWLEDGE_QUIZZES,
   DOG_KNOWLEDGE_QUIZZES,
   RABBIT_KNOWLEDGE_QUIZZES,
@@ -81,10 +41,45 @@ export {
   PLANT_KNOWLEDGE_QUIZZES,
   COFFEE_KNOWLEDGE_QUIZZES,
   KIDS_ANIMAL_QUIZZES,
+  LOVE_KNOWLEDGE_QUIZZES,
+  FISH_KNOWLEDGE_QUIZZES,
+  TAROT_KNOWLEDGE_QUIZZES,
+  SMALLPET_KNOWLEDGE_QUIZZES,
+  BIRD_KNOWLEDGE_QUIZZES,
+  REPTILE_KNOWLEDGE_QUIZZES,
+];
+
+const SCENARIO_QUIZ_REGISTRY: ScenarioQuiz[][] = [
   CAT_SCENARIO_QUIZZES,
   DOG_SCENARIO_QUIZZES,
   RABBIT_SCENARIO_QUIZZES,
-};
+  // 새 시나리오 퀴즈는 여기에 추가
+];
+
+// ============================================================================
+// 통합 배열 (자동 생성)
+// ============================================================================
+
+export const ALL_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = KNOWLEDGE_QUIZ_REGISTRY.flat();
+export const ALL_SCENARIO_QUIZZES: ScenarioQuiz[] = SCENARIO_QUIZ_REGISTRY.flat();
+
+// 개별 퀴즈 배열도 export (필요시 직접 접근용)
+export { CAT_KNOWLEDGE_QUIZZES } from './cat-knowledge';
+export { DOG_KNOWLEDGE_QUIZZES } from './dog-knowledge';
+export { RABBIT_KNOWLEDGE_QUIZZES } from './rabbit-knowledge';
+export { HAMSTER_KNOWLEDGE_QUIZZES } from './hamster-knowledge';
+export { PLANT_KNOWLEDGE_QUIZZES } from './plant-knowledge';
+export { COFFEE_KNOWLEDGE_QUIZZES } from './coffee-knowledge';
+export { KIDS_ANIMAL_QUIZZES } from './kids-animals';
+export { LOVE_KNOWLEDGE_QUIZZES } from './love-knowledge';
+export { FISH_KNOWLEDGE_QUIZZES } from './fish-knowledge';
+export { TAROT_KNOWLEDGE_QUIZZES, TAROT_QUIZZES } from './tarot-quizzes';
+export { SMALLPET_KNOWLEDGE_QUIZZES } from './smallPet-knowledge';
+export { BIRD_KNOWLEDGE_QUIZZES } from './bird-knowledge';
+export { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
+export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
+export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
+export { RABBIT_SCENARIO_QUIZZES } from './rabbit-scenario';
 
 // ============================================================================
 // 조회 함수
@@ -230,23 +225,21 @@ export const QUIZ_STATS = {
   knowledge: {
     total: ALL_KNOWLEDGE_QUIZZES.length,
     byCategory: () => {
-      const counts: Partial<Record<ContentCategory, number>> = {};
+      const counts: Record<string, number> = {};
       ALL_KNOWLEDGE_QUIZZES.forEach(q => {
         counts[q.category] = (counts[q.category] || 0) + 1;
       });
-      return counts;
+      return counts as Partial<Record<ContentCategory, number>>;
     },
   },
   scenario: {
     total: ALL_SCENARIO_QUIZZES.length,
     byCategory: () => {
-      const counts: Partial<Record<ContentCategory, number>> = {};
+      const counts: Record<string, number> = {};
       ALL_SCENARIO_QUIZZES.forEach(q => {
         counts[q.category] = (counts[q.category] || 0) + 1;
       });
-      return counts;
+      return counts as Partial<Record<ContentCategory, number>>;
     },
   },
-  /** 레지스트리에 등록된 카테고리 목록 */
-  registeredCategories: Object.keys(QUIZ_REGISTRY).filter(k => !k.startsWith('_')),
 };

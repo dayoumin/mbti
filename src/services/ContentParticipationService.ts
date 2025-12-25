@@ -23,6 +23,12 @@ export interface PollParticipation {
   votedAt: string;
 }
 
+export interface SituationParticipation {
+  situationId: string;
+  selectedOption: string;  // 'a', 'b', 'c', 'd' 등
+  answeredAt: string;
+}
+
 export interface StreakData {
   currentStreak: number;          // 현재 연속 참여 일수
   longestStreak: number;          // 최장 연속 참여 일수
@@ -33,10 +39,12 @@ export interface StreakData {
 export interface ContentParticipationData {
   quizzes: QuizParticipation[];
   polls: PollParticipation[];
+  situations: SituationParticipation[];  // 상황별 반응 참여 기록
   stats: {
     totalQuizAnswered: number;
     totalCorrect: number;
     totalPollVoted: number;
+    totalSituationAnswered: number;  // 상황별 반응 참여 수
     lastParticipatedAt: string | null;
   };
   streak: StreakData;
@@ -79,10 +87,12 @@ class ContentParticipationServiceClass {
     return {
       quizzes: [],
       polls: [],
+      situations: [],
       stats: {
         totalQuizAnswered: 0,
         totalCorrect: 0,
         totalPollVoted: 0,
+        totalSituationAnswered: 0,
         lastParticipatedAt: null,
       },
       streak: {
@@ -229,12 +239,50 @@ class ContentParticipationServiceClass {
     this.saveToStorage();
   }
 
+  // 상황별 반응 기록
+  recordSituationAnswer(situationId: string, selectedOption: string): void {
+    // 기존 데이터에 situations가 없으면 초기화
+    if (!this.data.situations) {
+      this.data.situations = [];
+    }
+    if (this.data.stats.totalSituationAnswered === undefined) {
+      this.data.stats.totalSituationAnswered = 0;
+    }
+
+    // 이미 참여한 상황인지 확인
+    const existing = this.data.situations.find(s => s.situationId === situationId);
+    if (existing) return; // 이미 참여함
+
+    this.data.situations.push({
+      situationId,
+      selectedOption,
+      answeredAt: new Date().toISOString(),
+    });
+
+    this.data.stats.totalSituationAnswered++;
+    this.data.stats.lastParticipatedAt = new Date().toISOString();
+
+    // 스트릭 업데이트
+    this.updateStreak();
+
+    this.saveToStorage();
+  }
+
   // 참여 데이터 조회
   getParticipation(): ContentParticipationData {
     // SSR에서 호출 시 최신 데이터 로드
     if (typeof window !== 'undefined') {
       this.data = this.loadFromStorage();
     }
+
+    // 기존 데이터에 situations 필드가 없으면 마이그레이션
+    if (!this.data.situations) {
+      this.data.situations = [];
+    }
+    if (this.data.stats.totalSituationAnswered === undefined) {
+      this.data.stats.totalSituationAnswered = 0;
+    }
+
     return this.data;
   }
 
@@ -246,6 +294,12 @@ class ContentParticipationServiceClass {
   // 특정 투표 참여 여부
   hasVotedPoll(pollId: string): boolean {
     return this.data.polls.some(p => p.pollId === pollId);
+  }
+
+  // 특정 상황별 반응 참여 여부
+  hasAnsweredSituation(situationId: string): boolean {
+    if (!this.data.situations) return false;
+    return this.data.situations.some(s => s.situationId === situationId);
   }
 
   // 퀴즈 정답률
