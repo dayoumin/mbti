@@ -19,6 +19,7 @@ import { LOVE_VS_POLLS } from './love-vs-polls';
 import { MONEY_POLLS } from './money-polls';
 import { TAROT_VS_POLLS, TAROT_CHOICE_POLLS } from './tarot-polls';
 import { BLOODTYPE_VS_POLLS } from './bloodtype-vs-polls';
+import { SEASONAL_VS_POLLS, SEASONAL_CHOICE_POLLS, CHRISTMAS_VS_POLLS, NEWYEAR_VS_POLLS } from './seasonal-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -32,6 +33,7 @@ const POLL_REGISTRY: VSPoll[][] = [
   LOVE_VS_POLLS,
   TAROT_VS_POLLS,
   BLOODTYPE_VS_POLLS,
+  SEASONAL_VS_POLLS,
   // 투표 분리 시 여기에 추가 (예: CAT_POLLS, DOG_POLLS)
 ];
 
@@ -40,10 +42,22 @@ const POLL_REGISTRY: VSPoll[][] = [
 // ============================================================================
 
 export const VS_POLLS: VSPoll[] = POLL_REGISTRY.flat();
-export const CHOICE_POLLS: ChoicePoll[] = [...CHOICE_POLLS_DATA, ...MONEY_POLLS, ...TAROT_CHOICE_POLLS];
+export const CHOICE_POLLS: ChoicePoll[] = [...CHOICE_POLLS_DATA, ...MONEY_POLLS, ...TAROT_CHOICE_POLLS, ...SEASONAL_CHOICE_POLLS];
 
 // 기존 export 유지 (직접 접근용)
 export { VS_POLLS as default };
+
+// 시즌 투표 개별 export
+export {
+  SEASONAL_VS_POLLS,
+  SEASONAL_CHOICE_POLLS,
+  CHRISTMAS_VS_POLLS,
+  NEWYEAR_VS_POLLS,
+  CHRISTMAS_CHOICE_POLLS,
+  NEWYEAR_CHOICE_POLLS,
+  createNewYearVSPolls,
+  createNewYearChoicePolls,
+} from './seasonal-polls';
 
 // ============================================================================
 // 조회 함수

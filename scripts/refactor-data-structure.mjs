@@ -55,7 +55,7 @@ const CHEMI_CONSTANTS = {
     // 레벨 판정 기준 (백분율)
     LEVEL_THRESHOLDS: {
         HIGH: 60,    // 60% 이상 = high
-        LOW: 40      // 40% 이하 = low, 그 사이 = medium
+        LOW: 40      // 40% 미만 = low, 40~60% = medium
     },
 
     // 레벨 값
@@ -81,7 +81,7 @@ function getScoreLevel(score, maxScore) {
     const { LEVEL_THRESHOLDS, LEVELS } = window.CHEMI_CONSTANTS;
     const percentage = (score / maxScore) * 100;
     if (percentage >= LEVEL_THRESHOLDS.HIGH) return LEVELS.HIGH;
-    if (percentage <= LEVEL_THRESHOLDS.LOW) return LEVELS.LOW;
+    if (percentage < LEVEL_THRESHOLDS.LOW) return LEVELS.LOW;  // 40% 미만만 LOW
     return LEVELS.MEDIUM;
 }
 

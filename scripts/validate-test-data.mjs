@@ -403,7 +403,8 @@ function matchResultLabel(scores, dimensions, resultLabels, dimCounts) {
     const percentage = (scores[dim] || 0) / maxScore * 100;
 
     if (percentage >= LEVEL_THRESHOLDS.HIGH) levels[dim] = LEVELS.HIGH;
-    else if (percentage <= LEVEL_THRESHOLDS.LOW) levels[dim] = LEVELS.LOW;
+    // 40% 미만만 LOW (40%는 MEDIUM에 포함 - runtime utils.ts와 동기화)
+    else if (percentage < LEVEL_THRESHOLDS.LOW) levels[dim] = LEVELS.LOW;
     else levels[dim] = LEVELS.MEDIUM;
   });
 
@@ -432,18 +433,30 @@ function matchResultLabel(scores, dimensions, resultLabels, dimCounts) {
 
   if (bestMatch) return bestMatch;
 
-  // 부분 매칭
-  let partialBest = resultLabels[resultLabels.length - 1];
+  // 부분 매칭: 1개 이상 일치하는 결과 중 가장 많이 일치하는 것 선택
+  // 동점 시 조건 개수가 많은 것 우선 (더 구체적인 결과)
+  let partialBest = resultLabels[resultLabels.length - 1]; // 폴백
   let partialScore = 0;
+  let partialConditionCount = 0;
 
   for (const result of resultLabels) {
     const condition = result.condition || {};
+    const conditionKeys = Object.keys(condition);
+    if (conditionKeys.length === 0) continue;
+
     let matchCount = 0;
     for (const [dim, level] of Object.entries(condition)) {
       if (levels[dim] === level) matchCount++;
     }
-    if (matchCount > partialScore) {
+
+    // 0개 매칭은 제외 - 아무것도 일치하지 않으면 폴백으로
+    if (matchCount === 0) continue;
+
+    // 일치 개수가 더 많거나, 동점이면 조건 개수가 더 많은 것 선택
+    if (matchCount > partialScore ||
+        (matchCount === partialScore && conditionKeys.length > partialConditionCount)) {
       partialScore = matchCount;
+      partialConditionCount = conditionKeys.length;
       partialBest = result;
     }
   }
@@ -485,10 +498,20 @@ function validateQuestionQuality(data, result) {
     }
   }
 
-  // 5/1 이분법만 사용하면 경고
+  // 5/1 이분법만 사용하면 에러 (새 테스트는 반드시 3점 옵션 필요)
   if (scoreDistribution['5/1'] === data.questions.length) {
-    result.warn('품질', '모든 질문이 5/1 이분법 사용',
-      'medium 레벨 도달 어려움 - 일부 질문에 중간 점수(3점) 추가 권장');
+    result.error('품질', '모든 질문이 5/1 이분법만 사용',
+      'MEDIUM 레벨 도달 불가 - 최소 40% 질문에 중간 점수(3점) 옵션 필수');
+  }
+
+  // 3점 옵션 비율 체크 (40% 미만이면 경고)
+  const hasMiddleScore = data.questions.filter(q =>
+    q.a && q.a.some(a => a.score === 2 || a.score === 3 || a.score === 4)
+  ).length;
+  const middleRatio = (hasMiddleScore / data.questions.length) * 100;
+  if (middleRatio > 0 && middleRatio < 40) {
+    result.warn('품질', `중간 점수 비율 부족 (${middleRatio.toFixed(0)}%)`,
+      '40% 이상 권장 - 더 많은 질문에 3점 옵션 추가 권장');
   }
 
   // 질문 중복 체크 (간단한 유사도)

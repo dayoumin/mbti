@@ -47,7 +47,7 @@ function getScoreLevel(score, maxScore) {
   const { LEVEL_THRESHOLDS, LEVELS } = CHEMI_CONSTANTS;
   const percentage = (score / maxScore) * 100;
   if (percentage >= LEVEL_THRESHOLDS.HIGH) return LEVELS.HIGH;
-  if (percentage <= LEVEL_THRESHOLDS.LOW) return LEVELS.LOW;
+  if (percentage < LEVEL_THRESHOLDS.LOW) return LEVELS.LOW;  // 40% 미만만 LOW
   return LEVELS.MEDIUM;
 }
 
@@ -209,8 +209,8 @@ function runTests() {
   // 점수 범위 분석
   console.log('\n📈 레벨 판정 기준 (문항 3개 기준, max=15):');
   log.dim(`HIGH: 9점 이상 (60%+)`);
-  log.dim(`MEDIUM: 7-8점 (40-60%)`);
-  log.dim(`LOW: 6점 이하 (40%-)`);
+  log.dim(`MEDIUM: 6-8점 (40% ≤ x < 60%)`);
+  log.dim(`LOW: 5점 이하 (< 40%)`);
 
   let passed = 0;
   let failed = 0;

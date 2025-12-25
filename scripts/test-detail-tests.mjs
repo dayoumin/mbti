@@ -66,7 +66,7 @@ function getScoreLevel(score, questionCount) {
     const maxScore = questionCount * 5;
     const percentage = (score / maxScore) * 100;
     if (percentage >= LEVEL_THRESHOLDS.HIGH) return 'high';
-    if (percentage <= LEVEL_THRESHOLDS.LOW) return 'low';
+    if (percentage < LEVEL_THRESHOLDS.LOW) return 'low';  // 40% 미만만 LOW
     return 'medium';
 }
 

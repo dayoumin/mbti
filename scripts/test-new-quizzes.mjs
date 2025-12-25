@@ -11,9 +11,9 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const quizFiles = [
-  { name: 'fish', file: 'fish-knowledge.ts', expected: 15 },
+  { name: 'fish', file: 'fish-knowledge.ts', expected: 36 },
   { name: 'hamster', file: 'hamster-knowledge.ts', expected: 15 },
-  { name: 'bird', file: 'bird-knowledge.ts', expected: 15 },
+  { name: 'bird', file: 'bird-knowledge.ts', expected: 24 },
   { name: 'reptile', file: 'reptile-knowledge.ts', expected: 16 },
   { name: 'smallPet', file: 'smallPet-knowledge.ts', expected: 15 },
 ];

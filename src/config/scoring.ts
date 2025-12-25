@@ -12,8 +12,8 @@ export type Level = 'high' | 'medium' | 'low';
 
 // 레벨 판정 기준 (백분율)
 export const LEVEL_THRESHOLDS = {
-  HIGH: 70,    // 70% 이상 = high
-  LOW: 30,     // 30% 이하 = low, 그 사이 = medium
+  HIGH: 60,    // 60% 이상 = high
+  LOW: 40,     // 40% 미만 = low, 40~60% = medium
 } as const;
 
 // 레벨 값
@@ -39,6 +39,6 @@ export const BADGE_THRESHOLDS = {
 // 레벨 설명 (UI 표시용) - 임계값과 동기화
 export const LEVEL_DESCRIPTIONS = {
   HIGH: { label: 'HIGH', description: `점수 ≥ ${LEVEL_THRESHOLDS.HIGH}%`, color: 'text-green-600' },
-  MEDIUM: { label: 'MEDIUM', description: `${LEVEL_THRESHOLDS.LOW}% < 점수 < ${LEVEL_THRESHOLDS.HIGH}%`, color: 'text-yellow-600' },
-  LOW: { label: 'LOW', description: `점수 ≤ ${LEVEL_THRESHOLDS.LOW}%`, color: 'text-red-600' },
+  MEDIUM: { label: 'MEDIUM', description: `${LEVEL_THRESHOLDS.LOW}% ≤ 점수 < ${LEVEL_THRESHOLDS.HIGH}%`, color: 'text-yellow-600' },
+  LOW: { label: 'LOW', description: `점수 < ${LEVEL_THRESHOLDS.LOW}%`, color: 'text-red-600' },
 } as const;
