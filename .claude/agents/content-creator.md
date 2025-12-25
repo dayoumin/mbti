@@ -118,7 +118,7 @@ grep "{category}-worldcup" src/app/dashboard/data/tournament-sample.ts
 ### 4단계: 콘텐츠 생성
 content-generator 스킬의 구조에 따라 생성
 
-**팩트 기반 콘텐츠는 sourceRef 추가:**
+**팩트 기반 콘텐츠는 source 필드에 팩트 ID 추가:**
 ```typescript
 {
   id: 'cat-k-004',

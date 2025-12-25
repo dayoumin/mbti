@@ -18,6 +18,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '흙 표면이 마르면 화분 아래로 물이 빠질 때까지 충분히 주세요. 과습보다 약간 건조한 게 대부분의 식물에게 좋아요!',
     difficulty: 1,
     tags: ['식물', '물주기', '관리', '화분', '기초'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-002',
@@ -32,6 +33,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '열대 우림 바닥에서 위쪽 빛을 더 받기 위해 진화한 거예요. 구멍으로 빛이 아래 잎까지 통과해요!',
     difficulty: 2,
     tags: ['식물', '몬스테라', '잎', '진화', '빛'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-003',
@@ -46,6 +48,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '둘 다 잎이나 줄기에 물을 저장하는 "다육" 식물이에요. 선인장은 다육식물의 한 종류랍니다!',
     difficulty: 2,
     tags: ['식물', '다육이', '선인장', '물저장', '종류'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-004',
@@ -60,6 +63,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '물 문제가 가장 흔해요! 너무 많이 주면 뿌리가 썩고, 너무 적으면 영양 공급이 안 돼요.',
     difficulty: 1,
     tags: ['식물', '잎', '노란잎', '문제해결', '물주기'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-005',
@@ -74,6 +78,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '하얀 꽃이 평화(Peace)를 상징해서 "Peace Lily"라고 불려요. NASA 공기정화 식물 연구에서 상위권이었어요!',
     difficulty: 2,
     tags: ['식물', '스파티필럼', '피스릴리', '공기정화', '이름'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-006',
@@ -88,6 +93,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '백합은 고양이에게 매우 위험해요! 꽃가루만 핥아도 급성 신부전을 일으킬 수 있어요.',
     difficulty: 1,
     tags: ['식물', '백합', '고양이', '독성', '위험'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-007',
@@ -102,6 +108,7 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '봄에 성장 활동이 시작되면 뿌리가 빠르게 적응해요. 겨울 분갈이는 스트레스가 커요!',
     difficulty: 1,
     tags: ['식물', '분갈이', '봄', '관리', '타이밍'],
+    source: 'general-knowledge',
   },
   {
     id: 'plant-k-008',
@@ -116,5 +123,6 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: 'CAM 식물이라서 밤에 이산화탄소를 흡수하고 산소를 내보내요. 침실에 두면 좋아요!',
     difficulty: 2,
     tags: ['식물', '산세베리아', '스투키', '산소', '침실'],
+    source: 'general-knowledge',
   },
 ];

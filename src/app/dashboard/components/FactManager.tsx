@@ -16,7 +16,13 @@ import {
   BookOpen,
   RefreshCw,
   AlertCircle,
+  Infinity as InfinityIcon,
 } from 'lucide-react';
+import {
+  getVerificationStatus,
+  getDaysSince,
+  type FactType,
+} from '@/data/content/fact-constants';
 
 // ============================================================================
 // Types
@@ -31,6 +37,7 @@ interface Fact {
   verifiedDate: string;
   usedIn: string[];
   note?: string;
+  factType?: FactType;  // constant | guideline | statistic (없으면 constant로 간주)
 }
 
 interface CategoryFacts {
@@ -52,22 +59,18 @@ interface ApiResponse {
 }
 
 // ============================================================================
-// Utilities
+// Helpers (fact-constants.ts 함수 래핑)
 // ============================================================================
 
-function getDaysSince(dateString: string): number {
-  if (!dateString) return 999;
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-}
-
-function getVerificationStatus(verifiedDate: string): 'fresh' | 'aging' | 'stale' {
-  const days = getDaysSince(verifiedDate);
-  if (days <= 90) return 'fresh';
-  if (days <= 180) return 'aging';
-  return 'stale';
+/**
+ * 팩트의 검증 상태 조회
+ * - factType이 없으면 'constant'로 간주 (재검증 불필요)
+ * - constant는 항상 'constant' 상태 반환
+ */
+function getFactStatus(fact: Fact): 'fresh' | 'aging' | 'stale' | 'constant' {
+  // factType이 없으면 constant로 간주 (기존 팩트 호환)
+  const factType = fact.factType ?? 'constant';
+  return getVerificationStatus(fact.verifiedDate, factType);
 }
 
 // ============================================================================
@@ -112,9 +115,10 @@ function EmptyState() {
 
 function FactCard({ fact }: { fact: Fact }) {
   const [expanded, setExpanded] = useState(false);
-  const status = getVerificationStatus(fact.verifiedDate);
+  const status = getFactStatus(fact);
 
   const statusConfig = {
+    constant: { icon: InfinityIcon, color: 'text-blue-400', bg: 'bg-blue-500/10', label: '상수' },
     fresh: { icon: CheckCircle2, color: 'text-green-400', bg: 'bg-green-500/10', label: '검증됨' },
     aging: { icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', label: '재검증 권장' },
     stale: { icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-500/10', label: '재검증 필요' },
@@ -221,9 +225,10 @@ function CategorySection({ data }: { data: CategoryFacts }) {
   const [expanded, setExpanded] = useState(true);
 
   const stats = useMemo(() => {
-    const statuses = data.facts.map((f) => getVerificationStatus(f.verifiedDate));
+    const statuses = data.facts.map((f) => getFactStatus(f));
     return {
       total: data.facts.length,
+      constant: statuses.filter((s) => s === 'constant').length,
       fresh: statuses.filter((s) => s === 'fresh').length,
       aging: statuses.filter((s) => s === 'aging').length,
       stale: statuses.filter((s) => s === 'stale').length,
@@ -243,7 +248,8 @@ function CategorySection({ data }: { data: CategoryFacts }) {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-green-400">{stats.fresh} 검증</span>
+            {stats.constant > 0 && <span className="text-blue-400">{stats.constant} 상수</span>}
+            {stats.fresh > 0 && <span className="text-green-400">{stats.fresh} 검증</span>}
             {stats.aging > 0 && <span className="text-yellow-400">{stats.aging} 권장</span>}
             {stats.stale > 0 && <span className="text-red-400">{stats.stale} 필요</span>}
           </div>
@@ -316,10 +322,11 @@ export default function FactManager() {
 
   const totalStats = useMemo(() => {
     const allFacts = factsData.flatMap((c) => c.facts);
-    const statuses = allFacts.map((f) => getVerificationStatus(f.verifiedDate));
+    const statuses = allFacts.map((f) => getFactStatus(f));
     return {
       total: allFacts.length,
       categories: factsData.length,
+      constant: statuses.filter((s) => s === 'constant').length,
       fresh: statuses.filter((s) => s === 'fresh').length,
       aging: statuses.filter((s) => s === 'aging').length,
       stale: statuses.filter((s) => s === 'stale').length,
@@ -359,7 +366,7 @@ export default function FactManager() {
       {!loading && !error && factsData.length > 0 && (
         <>
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <div className="bg-gray-800/50 rounded-lg px-4 py-3 border border-gray-700/50">
               <div className="text-2xl font-bold text-white">{totalStats.total}</div>
               <div className="text-sm text-gray-400">전체 팩트</div>
@@ -367,6 +374,10 @@ export default function FactManager() {
             <div className="bg-gray-800/50 rounded-lg px-4 py-3 border border-gray-700/50">
               <div className="text-2xl font-bold text-white">{totalStats.categories}</div>
               <div className="text-sm text-gray-400">카테고리</div>
+            </div>
+            <div className="bg-blue-500/10 rounded-lg px-4 py-3 border border-blue-500/30">
+              <div className="text-2xl font-bold text-blue-400">{totalStats.constant}</div>
+              <div className="text-sm text-blue-300/70">상수</div>
             </div>
             <div className="bg-green-500/10 rounded-lg px-4 py-3 border border-green-500/30">
               <div className="text-2xl font-bold text-green-400">{totalStats.fresh}</div>

@@ -81,7 +81,10 @@ cat research/facts/{category}.md
 research/facts/{category}.md
 
 ## 사용 방법
-콘텐츠 생성 시 sourceRef: "{fact-id}" 추가
+콘텐츠 생성 시 source: "{fact-id}" 추가 (예: source: 'cat-fact-001')
+
+## 참고
+상수 정의: `src/data/content/fact-constants.ts`
 ```
 
 ## 신뢰도 기준

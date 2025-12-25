@@ -6,9 +6,9 @@
  * 팩트 필요 카테고리 (수의학/식물학/식품 등 정확도 필요)
  */
 export type FactRequiredCategory =
-  | 'cat' | 'dog' | 'rabbit' | 'hamster'  // 반려동물
-  | 'plant'                                // 식물
-  | 'coffee' | 'alcohol';                  // 식품/음료
+  | 'cat' | 'dog' | 'rabbit' | 'hamster' | 'bird'  // 반려동물
+  | 'plant'                                         // 식물
+  | 'coffee' | 'alcohol';                           // 식품/음료
 
 /**
  * 팩트 ID 패턴: {category}-fact-{번호}
@@ -119,9 +119,11 @@ export interface ContentMeta {
 // 지식 퀴즈
 // ============================================================================
 
-export interface KnowledgeQuiz {
+/**
+ * 지식 퀴즈 기본 필드 (source 제외)
+ */
+interface KnowledgeQuizBase {
   id: string;
-  category: ContentCategory;
   question: string;
   options: {
     id: string;
@@ -130,11 +132,34 @@ export interface KnowledgeQuiz {
   }[];
   explanation: string;
   difficulty: 1 | 2 | 3;
-  source?: string;              // 레거시: 일반 출처 문자열
-  factRef?: FactReference;      // 신규: 팩트 DB 참조 (정확도 필요 콘텐츠)
+  factRef?: FactReference;      // 팩트 DB 참조 (선택)
   tags?: string[];              // 개인화 추천용 태그
   meta?: ContentMeta;           // 타겟팅/연령 제한 메타데이터
 }
+
+/**
+ * 팩트 필요 카테고리 지식 퀴즈 - source 필수!
+ * 카테고리: cat, dog, rabbit, hamster, plant, coffee, alcohol
+ */
+interface FactRequiredKnowledgeQuiz extends KnowledgeQuizBase {
+  category: FactRequiredCategory;
+  source: string;               // 필수! 팩트 ID 또는 'general-knowledge'
+}
+
+/**
+ * 일반 카테고리 지식 퀴즈 - source 선택
+ */
+interface GeneralKnowledgeQuiz extends KnowledgeQuizBase {
+  category: Exclude<ContentCategory, FactRequiredCategory>;
+  source?: string;              // 선택
+}
+
+/**
+ * 지식 퀴즈 통합 타입
+ * - 팩트 필요 카테고리: source 필수
+ * - 일반 카테고리: source 선택
+ */
+export type KnowledgeQuiz = FactRequiredKnowledgeQuiz | GeneralKnowledgeQuiz;
 
 // ============================================================================
 // 시나리오 퀴즈 (집사점수, 견주력 등)

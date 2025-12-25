@@ -22,6 +22,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '고양이는 기분이 좋으면 "그르릉~" 소리를 내요. 이걸 "골골송"이라고 부르기도 해요! 🐱',
     difficulty: 1,
     tags: ['고양이', '소리', '기분', '골골송'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -39,6 +40,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '고양이 발바닥의 말랑말랑한 부분을 "육구"라고 불러요. 젤리처럼 부드럽고 귀여워요! 🐾',
     difficulty: 1,
     tags: ['고양이', '발바닥', '육구', '신체'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -56,6 +58,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '고양이 눈 안에는 작은 거울 같은 게 있어서 빛을 반사해요. 그래서 어둠 속에서도 잘 볼 수 있어요! ✨',
     difficulty: 1,
     tags: ['고양이', '눈', '야행성', '빛', '신비'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -73,6 +76,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '꼬리를 쫙 세우는 건 "안녕! 반가워!"라는 뜻이에요. 고양이의 인사법이랍니다! 🐱💕',
     difficulty: 1,
     tags: ['고양이', '꼬리', '감정', '인사', '행동'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -94,6 +98,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '강아지가 꼬리를 흔드는 건 "기분 좋아!", "반가워!"라는 뜻이에요! 🐕💕',
     difficulty: 1,
     tags: ['강아지', '꼬리', '감정', '행동', '기분'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -111,6 +116,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '강아지 코가 촉촉하면 냄새 입자가 잘 붙어서 냄새를 더 잘 맡을 수 있어요! 강아지 코는 슈퍼 파워! 👃✨',
     difficulty: 1,
     tags: ['강아지', '코', '후각', '신체', '냄새'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -128,6 +134,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '강아지는 땀을 흘리지 않아서 혀로 열을 식혀요. 에어컨 같은 거예요! 🌬️🐕',
     difficulty: 1,
     tags: ['강아지', '혀', '더위', '신체', '체온조절'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -145,6 +152,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '옛날 야생에서 풀을 눕혀서 침대를 만들던 습관이 남은 거예요! 똑똑한 강아지! 🐕💤',
     difficulty: 1,
     tags: ['강아지', '수면', '습관', '행동', '본능'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -166,6 +174,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '토끼가 점프하면서 몸을 비트는 건 "빙키"라고 해요! "너무 신나!"라는 뜻이에요! 🐰🎉',
     difficulty: 1,
     tags: ['토끼', '빙키', '감정', '행동', '기분'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -183,6 +192,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '토끼는 긴 귀로 아주 멀리 있는 소리도 들을 수 있어요. 슈퍼 히어로 귀! 🐰👂',
     difficulty: 1,
     tags: ['토끼', '귀', '청각', '신체', '감각'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -204,6 +214,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '햄스터 볼주머니는 마법 가방 같아요! 음식을 넣어서 집으로 가져가 저장해요! 🐹🍎',
     difficulty: 1,
     tags: ['햄스터', '볼주머니', '음식', '저장', '습성'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },
@@ -221,6 +232,7 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     explanation: '야생 햄스터는 하루에 엄청 멀리 뛰어다녀요! 집에서는 쳇바퀴로 운동해요! 🐹🏃',
     difficulty: 1,
     tags: ['햄스터', '쳇바퀴', '운동', '습성', '활동'],
+    source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
     },

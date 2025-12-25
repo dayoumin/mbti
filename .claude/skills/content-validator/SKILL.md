@@ -19,22 +19,49 @@ node scripts/validate-content-samples.mjs
 
 ### 0. 팩트 참조 검증 (팩트 필요 카테고리) ⚠️ 중요!
 
-**팩트 필요 카테고리**: `cat`, `dog`, `rabbit`, `hamster`, `plant`, `coffee`, `alcohol`
+**팩트 필요 카테고리 기준:**
+- 반려동물 (수의학/건강 정보)
+- 식물 (식물학 정보)
+- 식품/음료 (섭취 관련 정보)
+
+→ 정확한 목록: `src/data/content/types.ts`의 `FactRequiredCategory` 참조
 
 이 카테고리의 **지식 퀴즈**는 반드시 팩트 참조가 필요합니다.
 
+#### 🔒 TypeScript 빌드 타임 강제
+
+**source 필드가 TypeScript 타입에서 필수로 설정되어 있습니다!**
+
+```typescript
+// types.ts에서 팩트 필요 카테고리는 source 필수
+interface FactRequiredKnowledgeQuiz {
+  category: FactRequiredCategory;  // types.ts 참조
+  source: string;                   // 필수! 없으면 빌드 에러
+  // ...
+}
+```
+
+**빌드 에러 예시:**
+```
+error TS2741: Property 'source' is missing in type '{ id: string; category: "cat"; ... }'
+but required in type 'FactRequiredKnowledgeQuiz'.
+```
+
+→ 팩트 필요 카테고리 지식 퀴즈에 source 없으면 **빌드 자체가 안 됨!**
+
+#### 검증 항목
+
 | 항목 | 에러/경고 | 기준 |
 |------|----------|------|
-| source/factRef 누락 | **에러** | 팩트 필요 카테고리 지식 퀴즈는 팩트 참조 필수 |
+| source 누락 | **빌드 에러** | 팩트 필요 카테고리는 TypeScript 타입에서 필수 |
 | factRef 형식 오류 | 에러 | `{category}-fact-{000}` 형식 |
 | 팩트 파일 미존재 | 경고 | `research/facts/{category}.md` 권장 |
 
 **검증 로직:**
 ```javascript
-const FACT_REQUIRED_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'coffee', 'alcohol'];
-
+// FactRequiredCategory 목록은 types.ts에서 가져옴
 // 지식 퀴즈(knowledge)만 팩트 검증
-if (quiz.type === 'knowledge' && FACT_REQUIRED_CATEGORIES.includes(quiz.category)) {
+if (quiz.type === 'knowledge' && isFactRequiredCategory(quiz.category)) {
   if (!quiz.source && !quiz.factRef) {
     errors.push('팩트 필요 카테고리 지식 퀴즈는 source 또는 factRef 필수');
   }

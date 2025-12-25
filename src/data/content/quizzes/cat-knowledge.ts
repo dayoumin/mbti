@@ -18,6 +18,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '꼬리를 수직으로 세우는 것은 고양이가 기분이 좋고 반가움을 표현하는 대표적인 신호예요!',
     difficulty: 1,
     tags: ['고양이', '꼬리', '행동', '감정표현'],
+    source: 'general-knowledge',
   },
   {
     id: 'cat-k-002',
@@ -32,6 +33,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '양파, 대파, 쪽파 등 파류는 고양이의 적혈구를 파괴해 빈혈을 유발할 수 있어요. 소량도 위험해요!',
     difficulty: 1,
     tags: ['고양이', '음식', '위험', '건강', '독성'],
+    source: 'general-knowledge',
   },
   {
     id: 'cat-k-003',
@@ -46,6 +48,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '골골송은 기분 좋을 때, 아플 때 자기 치유, 새끼가 엄마에게 신호 보낼 때 등에 내요. 화날 땐 "하악" 소리를 내죠!',
     difficulty: 2,
     tags: ['고양이', '골골송', '소리', '감정표현', '치유'],
+    source: 'general-knowledge',
   },
   {
     id: 'cat-k-004',
@@ -60,6 +63,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '체중 1kg당 약 40-60ml가 적정해요. 4kg 고양이면 하루 160-240ml 정도예요. 습식 사료 급여 시 물 섭취량이 줄어들 수 있어요.',
     difficulty: 2,
     tags: ['고양이', '물', '섭취량', '건강', '관리'],
+    source: 'cat-fact-001',
   },
   {
     id: 'cat-k-005',
@@ -74,6 +78,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '"N+1 법칙"이라고 해요. 고양이 수보다 1개 많은 화장실을 준비하면 스트레스가 줄어요!',
     difficulty: 1,
     tags: ['고양이', '화장실', '다묘가정', '스트레스', '관리'],
+    source: 'cat-fact-006',
   },
   {
     id: 'cat-k-006',
@@ -88,6 +93,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '슬로우 블링크(Slow Blink)는 고양이의 "사랑해" 표현이에요! 당신도 천천히 눈을 깜빡여 대답해주세요.',
     difficulty: 1,
     tags: ['고양이', '슬로우블링크', '눈', '애정표현', '소통'],
+    source: 'general-knowledge',
   },
   {
     id: 'cat-k-007',
@@ -102,6 +108,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '배는 고양이의 가장 취약한 부위예요. 배를 보여주는 건 신뢰의 표현이지, 만져달라는 건 아닐 수 있어요!',
     difficulty: 2,
     tags: ['고양이', '배', '행동', '신뢰', '감정표현'],
+    source: 'general-knowledge',
   },
   {
     id: 'cat-k-008',
@@ -116,6 +123,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '고양이의 정상 체온은 37.5-39.2°C로 사람보다 높아요. 39.5°C 이상이면 발열을 의심해야 해요.',
     difficulty: 2,
     tags: ['고양이', '체온', '건강', '발열', '의료'],
+    source: 'cat-fact-002',
   },
   {
     id: 'cat-k-009',
@@ -130,6 +138,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '캣닢 반응은 유전적이에요. 약 50-70%의 고양이만 반응하고, 새끼 고양이는 반응하지 않아요.',
     difficulty: 2,
     tags: ['고양이', '캣닢', '유전', '반응', '장난감'],
+    source: 'cat-fact-003',
   },
   {
     id: 'cat-k-010',
@@ -144,6 +153,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '3종 백신은 범백(파보), 허피스(비기관염), 칼리시 3가지예요. 광견병은 별도 접종이에요.',
     difficulty: 3,
     tags: ['고양이', '예방접종', '백신', '건강', '의료'],
+    source: 'cat-fact-005',
   },
   {
     id: 'cat-k-011',
@@ -158,6 +168,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '고양이 얼굴에는 페로몬 분비샘이 있어요. 머리를 비비면 "내 거야" 표시와 함께 친밀감을 표현하는 거예요!',
     difficulty: 1,
     tags: ['고양이', '버팅', '페로몬', '애정표현', '영역표시'],
+    source: 'general-knowledge',
   },
   {
     id: 'cat-k-012',
@@ -172,6 +183,7 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '대부분의 수의사들은 생후 4-6개월을 권장해요. 첫 발정 전에 하면 유선종양 예방 효과가 높아요.',
     difficulty: 2,
     tags: ['고양이', '중성화', '수술', '건강', '의료'],
+    source: 'cat-fact-004',
   },
 ];
 

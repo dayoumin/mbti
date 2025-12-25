@@ -36,6 +36,52 @@ interface Quiz {
 - 정답은 반드시 1개
 - explanation은 정답 이유 + 추가 정보
 - tags는 최소 2개
+- **팩트 필요 카테고리는 source 필수** (아래 참조)
+
+### 팩트 필요 카테고리 (source 필수!)
+
+**팩트 필요 카테고리 기준:**
+- 반려동물 (수의학/건강 정보)
+- 식물 (식물학 정보)
+- 식품/음료 (섭취 관련 정보)
+
+→ 정확한 목록: `src/data/content/types.ts`의 `FactRequiredCategory` 참조
+
+이 카테고리의 **지식 퀴즈**는 TypeScript 타입에서 `source` 필드가 필수입니다.
+빌드 시 source 없으면 **컴파일 에러** 발생!
+
+```typescript
+// ✅ 올바른 예 (팩트 필요 카테고리)
+{
+  id: 'cat-k-001',
+  category: 'cat',        // 팩트 필요 카테고리
+  question: '고양이 정상 체온은?',
+  source: 'cat-fact-001', // 필수!
+  // ...
+}
+
+// ✅ 팩트 파일이 없는 경우
+{
+  id: 'rabbit-k-001',
+  category: 'rabbit',
+  question: '토끼 행동의 의미는?',
+  source: 'general-knowledge', // 팩트 파일 없으면 이렇게
+  // ...
+}
+
+// ❌ 빌드 에러 (source 누락)
+{
+  id: 'cat-k-002',
+  category: 'cat',
+  question: '고양이 수염 역할은?',
+  // source 없음 → 타입 에러!
+}
+```
+
+**source 값 규칙:**
+- 팩트 파일 있음: `{category}-fact-{번호}` (예: `cat-fact-001`)
+- 팩트 파일 없음: `'general-knowledge'`
+- 팩트 파일 위치: `research/facts/{category}.md`
 
 ### 2. 시나리오 퀴즈 (Scenario Quiz)
 

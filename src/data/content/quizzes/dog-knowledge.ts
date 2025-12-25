@@ -18,6 +18,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '포도와 건포도는 강아지에게 급성 신부전을 일으킬 수 있어요. 소량도 매우 위험해요!',
     difficulty: 1,
     tags: ['강아지', '음식', '위험', '포도', '건강'],
+    source: 'dog-fact-002',
   },
   {
     id: 'dog-k-002',
@@ -32,6 +33,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '꼬리 흔들기는 감정의 "각성"을 나타내요. 높이, 속도, 방향에 따라 기쁨, 불안, 경계 등 다양한 의미가 있어요.',
     difficulty: 2,
     tags: ['강아지', '꼬리', '행동', '감정표현', '소통'],
+    source: 'general-knowledge',
   },
   {
     id: 'dog-k-003',
@@ -46,6 +48,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '소형견 30분-1시간, 대형견/활동적인 견종은 1-2시간 이상 권장해요. 견종별 특성을 고려하세요!',
     difficulty: 1,
     tags: ['강아지', '산책', '운동', '건강', '관리'],
+    source: 'dog-fact-005',
   },
   {
     id: 'dog-k-004',
@@ -60,6 +63,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '강아지 하품은 졸릴 때, 스트레스 해소, 전염성 하품(공감 능력) 때문이에요. 배고픔과는 관련 없어요!',
     difficulty: 2,
     tags: ['강아지', '하품', '행동', '스트레스', '감정표현'],
+    source: 'general-knowledge',
   },
   {
     id: 'dog-k-005',
@@ -74,6 +78,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: 'DHPPL = 홍역(D), 간염(H), 파보(P), 파라인플루엔자(P), 렙토스피라(L)예요.',
     difficulty: 3,
     tags: ['강아지', '예방접종', '백신', '건강', '의료'],
+    source: 'dog-fact-003',
   },
   {
     id: 'dog-k-006',
@@ -88,6 +93,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '촉촉한 코는 공기 중 냄새 분자를 더 잘 포착해요. 강아지가 코를 핥는 건 "냄새를 더 잘 맡기 위해"예요!',
     difficulty: 2,
     tags: ['강아지', '코', '후각', '신체', '본능'],
+    source: 'general-knowledge',
   },
   {
     id: 'dog-k-007',
@@ -102,6 +108,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '야생에서 풀을 눌러 편한 잠자리를 만들고, 위험 요소(뱀 등)를 확인하던 본능이 남아있어요!',
     difficulty: 1,
     tags: ['강아지', '수면', '본능', '행동', '습성'],
+    source: 'general-knowledge',
   },
   {
     id: 'dog-k-008',
@@ -116,6 +123,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '휴식 시 분당 15-30회가 정상이에요. 40회 이상이면 스트레스, 더위, 또는 건강 문제일 수 있어요.',
     difficulty: 2,
     tags: ['강아지', '호흡', '건강', '의료', '체크'],
+    source: 'dog-fact-001',
   },
   {
     id: 'dog-k-009',
@@ -130,6 +138,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '입술 핥기는 대표적인 "칼밍 시그널"로 불안, 긴장, 스트레스를 표현해요. 강아지의 불편함 신호예요.',
     difficulty: 2,
     tags: ['강아지', '칼밍시그널', '불안', '감정표현', '소통'],
+    source: 'general-knowledge',
   },
   {
     id: 'dog-k-010',
@@ -144,6 +153,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '매일이 가장 좋지만, 최소 주 3회 양치질을 권장해요. 치석은 3일 만에 굳어버려요!',
     difficulty: 1,
     tags: ['강아지', '양치질', '치아', '건강', '관리'],
+    source: 'dog-fact-004',
   },
   {
     id: 'dog-k-011',
@@ -158,6 +168,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '강아지 세계에서 직접적인 눈 맞춤은 도전 신호예요. 고개를 돌리는 건 "싸우고 싶지 않아요"라는 평화 신호예요.',
     difficulty: 2,
     tags: ['강아지', '눈맞춤', '복종', '소통', '행동'],
+    source: 'general-knowledge',
   },
   {
     id: 'dog-k-012',
@@ -172,6 +183,7 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '발바닥 패드는 쿠션 역할, 땀샘(체온 조절), 미끄럼 방지 기능을 해요. 냄새는 코로 맡아요!',
     difficulty: 2,
     tags: ['강아지', '발바닥', '신체', '체온조절', '구조'],
+    source: 'general-knowledge',
   },
 ];
 
