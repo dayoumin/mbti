@@ -13,6 +13,7 @@ import type { ContentCategory, VSPoll, ChoicePoll } from '../types';
 import { VS_POLLS as VS_POLLS_DATA } from './vs-polls';
 import { KIDS_VS_POLLS } from './kids-polls';
 import { CHOICE_POLLS as CHOICE_POLLS_DATA } from './choice-polls';
+import { MONEY_POLLS } from './money-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -29,7 +30,7 @@ const POLL_REGISTRY: VSPoll[][] = [
 // ============================================================================
 
 export const VS_POLLS: VSPoll[] = POLL_REGISTRY.flat();
-export const CHOICE_POLLS: ChoicePoll[] = CHOICE_POLLS_DATA;
+export const CHOICE_POLLS: ChoicePoll[] = [...CHOICE_POLLS_DATA, ...MONEY_POLLS];
 
 // 기존 export 유지 (직접 접근용)
 export { VS_POLLS as default };
@@ -70,11 +71,11 @@ export function getChoicePollById(pollId: string): ChoicePoll | undefined {
 export const POLL_STATS = {
   total: VS_POLLS.length,
   byCategory: () => {
-    const counts: Partial<Record<ContentCategory, number>> = {};
+    const counts: Record<string, number> = {};
     VS_POLLS.forEach(p => {
       counts[p.category] = (counts[p.category] || 0) + 1;
     });
-    return counts;
+    return counts as Partial<Record<ContentCategory, number>>;
   },
   byTag: () => {
     const counts: Record<string, number> = {};

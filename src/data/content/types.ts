@@ -1,4 +1,55 @@
 // ============================================================================
+// 카테고리 타입 import
+// ============================================================================
+
+import type { ContentCategory, CommunityCategory } from './categories';
+
+// 하위 호환을 위한 re-export
+export type { ContentCategory, CommunityCategory };
+
+// ============================================================================
+// 시간 민감도 (Time Sensitivity) - 콘텐츠 유효기간 관리
+// ============================================================================
+
+/**
+ * 콘텐츠 시간 민감도 레벨
+ * - high: 금액/수치 기반 (축의금 평균 등) - 2년 유효
+ * - medium: 트렌드 기반 (MZ 인식, 선호도 등) - 3년 유효
+ * - low: 상황 판단 (밸런스게임 등) - 4년 유효
+ * - none: 보편적 성향 (MBTI, 성격 테스트) - 무기한
+ */
+export type TimeSensitivity = 'high' | 'medium' | 'low' | 'none';
+
+/**
+ * 콘텐츠 검토 상태 (유효기간 관련)
+ * - current: 현재 유효
+ * - needs_review: 검토 필요 (유효기간 임박 또는 초과)
+ * - outdated: 만료됨 (노출 중지 권장)
+ */
+export type ValidityStatus = 'current' | 'needs_review' | 'outdated';
+
+/**
+ * 시간 민감도별 유효기간 (년)
+ */
+export const VALIDITY_PERIODS: Record<TimeSensitivity, number | null> = {
+  high: 2,      // 금액/수치 → 2년
+  medium: 3,    // 트렌드 → 3년
+  low: 4,       // 상황 판단 → 4년
+  none: null,   // 보편 성향 → 무기한
+};
+
+/**
+ * 시간 민감도 메타데이터
+ */
+export interface TimeSensitivityMeta {
+  sensitivity: TimeSensitivity;   // 민감도 레벨
+  sourceYear: number;             // 데이터 기준 연도 (예: 2025)
+  validUntil?: string;            // 유효 기한 (YYYY-MM, 자동 계산 가능)
+  lastReviewedAt?: string;        // 마지막 검토일 (YYYY-MM-DD)
+  reviewNote?: string;            // 검토 메모
+}
+
+// ============================================================================
 // 팩트 참조 타입
 // ============================================================================
 
@@ -23,27 +74,6 @@ export interface FactReference {
   factId: FactId;           // 팩트 ID
   verifiedDate?: string;    // 검증일 (YYYY-MM-DD)
 }
-
-// ============================================================================
-// 콘텐츠 카테고리 통합 타입
-// ============================================================================
-
-export type ContentCategory =
-  // 반려동물
-  | 'cat' | 'dog' | 'rabbit' | 'hamster'
-  // 특수동물
-  | 'fish' | 'bird' | 'reptile' | 'smallPet'
-  // 라이프스타일
-  | 'plant' | 'coffee' | 'food' | 'lifestyle' | 'alcohol'
-  // 심리/관계
-  | 'personality' | 'love' | 'relationship'
-  // 운세/점술
-  | 'fortune' | 'zodiac' | 'tarot'
-  // 일반
-  | 'general';
-
-// CommunityCategory는 ContentCategory의 alias (하위 호환)
-export type CommunityCategory = ContentCategory;
 
 // ============================================================================
 // 연령 등급 시스템 (단순화)
@@ -113,6 +143,9 @@ export interface ContentMeta {
   // 생성 정보
   createdAt?: string;          // 생성 일시
   createdBy?: 'manual' | 'ai'; // 생성 방식
+
+  // 시간 민감도 (유효기간 관리)
+  timeSensitivity?: TimeSensitivityMeta;
 }
 
 // ============================================================================
@@ -482,4 +515,133 @@ export function sortContentByPriority<T extends ContentWithMeta>(contents: T[]):
     const priorityB = b.meta?.priority ?? 0;
     return priorityB - priorityA; // 높은 우선순위가 먼저
   });
+}
+
+// ============================================================================
+// 시간 민감도 기반 유효기간 검증 유틸리티
+// ============================================================================
+
+/**
+ * sourceYear와 sensitivity로 validUntil 자동 계산
+ * @param sourceYear 데이터 기준 연도
+ * @param sensitivity 시간 민감도
+ * @returns YYYY-12 형식의 유효기한 (none이면 null)
+ */
+export function calculateValidUntil(
+  sourceYear: number,
+  sensitivity: TimeSensitivity
+): string | null {
+  const period = VALIDITY_PERIODS[sensitivity];
+  if (period === null) return null;
+  return `${sourceYear + period}-12`;
+}
+
+/**
+ * 콘텐츠의 유효 상태 확인
+ * @param meta 시간 민감도 메타데이터
+ * @param currentDate 현재 날짜 (테스트용, 기본값 현재)
+ * @returns 유효 상태
+ */
+export function getValidityStatus(
+  meta?: TimeSensitivityMeta,
+  currentDate: Date = new Date()
+): ValidityStatus {
+  // 메타 없거나 sensitivity가 none이면 항상 유효
+  if (!meta || meta.sensitivity === 'none') return 'current';
+
+  // validUntil 계산 (명시적 값 우선, 없으면 자동 계산)
+  const validUntil = meta.validUntil
+    ?? calculateValidUntil(meta.sourceYear, meta.sensitivity);
+
+  if (!validUntil) return 'current';
+
+  // YYYY-MM 형식 파싱
+  const [year, month] = validUntil.split('-').map(Number);
+  const expiryDate = new Date(year, month - 1, 1); // 해당 월 1일
+
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  // 만료 6개월 전부터 검토 필요
+  const warningDate = new Date(year, month - 7, 1); // 6개월 전
+
+  if (currentDate >= expiryDate) {
+    return 'outdated';
+  } else if (currentDate >= warningDate) {
+    return 'needs_review';
+  }
+
+  return 'current';
+}
+
+/**
+ * 콘텐츠가 현재 유효한지 확인 (노출 가능 여부)
+ */
+export function isContentValid<T extends ContentWithMeta>(
+  content: T,
+  currentDate?: Date
+): boolean {
+  const status = getValidityStatus(content.meta?.timeSensitivity, currentDate);
+  // outdated만 노출 중지, needs_review는 노출하되 경고
+  return status !== 'outdated';
+}
+
+/**
+ * 콘텐츠 목록에서 유효한 것만 필터링
+ */
+export function filterValidContent<T extends ContentWithMeta>(
+  contents: T[],
+  currentDate?: Date
+): T[] {
+  return contents.filter(content => isContentValid(content, currentDate));
+}
+
+/**
+ * 검토가 필요한 콘텐츠 필터 (대시보드용)
+ */
+export function filterNeedsReviewContent<T extends ContentWithMeta>(
+  contents: T[],
+  currentDate?: Date
+): T[] {
+  return contents.filter(content => {
+    const status = getValidityStatus(content.meta?.timeSensitivity, currentDate);
+    return status === 'needs_review' || status === 'outdated';
+  });
+}
+
+/**
+ * 유효 상태별 콘텐츠 그룹핑 (대시보드용)
+ */
+export function groupContentByValidity<T extends ContentWithMeta>(
+  contents: T[],
+  currentDate?: Date
+): Record<ValidityStatus, T[]> {
+  const result: Record<ValidityStatus, T[]> = {
+    current: [],
+    needs_review: [],
+    outdated: [],
+  };
+
+  for (const content of contents) {
+    const status = getValidityStatus(content.meta?.timeSensitivity, currentDate);
+    result[status].push(content);
+  }
+
+  return result;
+}
+
+/**
+ * TimeSensitivityMeta 생성 헬퍼
+ * @param sensitivity 민감도 레벨
+ * @param sourceYear 데이터 기준 연도 (기본: 현재 연도)
+ */
+export function createTimeSensitivityMeta(
+  sensitivity: TimeSensitivity,
+  sourceYear: number = new Date().getFullYear()
+): TimeSensitivityMeta {
+  return {
+    sensitivity,
+    sourceYear,
+    validUntil: calculateValidUntil(sourceYear, sensitivity) ?? undefined,
+  };
 }

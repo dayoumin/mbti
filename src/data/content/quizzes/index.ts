@@ -138,21 +138,21 @@ export const QUIZ_STATS = {
   knowledge: {
     total: ALL_KNOWLEDGE_QUIZZES.length,
     byCategory: () => {
-      const counts: Partial<Record<ContentCategory, number>> = {};
+      const counts: Record<string, number> = {};
       ALL_KNOWLEDGE_QUIZZES.forEach(q => {
         counts[q.category] = (counts[q.category] || 0) + 1;
       });
-      return counts;
+      return counts as Partial<Record<ContentCategory, number>>;
     },
   },
   scenario: {
     total: ALL_SCENARIO_QUIZZES.length,
     byCategory: () => {
-      const counts: Partial<Record<ContentCategory, number>> = {};
+      const counts: Record<string, number> = {};
       ALL_SCENARIO_QUIZZES.forEach(q => {
         counts[q.category] = (counts[q.category] || 0) + 1;
       });
-      return counts;
+      return counts as Partial<Record<ContentCategory, number>>;
     },
   },
 };

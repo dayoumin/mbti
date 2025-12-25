@@ -12,8 +12,10 @@ import { RANKABLE_TESTS } from '@/data/config';
 import { getIconComponent } from '@/utils';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls';
-import type { KnowledgeQuiz, VSPoll, ContentCategory } from '@/data/content/types';
-import { CATEGORY_LABELS } from '@/data/content/categories';
+import type { KnowledgeQuiz, VSPoll, ContentCategory, SituationReaction, SituationCategory } from '@/data/content/types';
+import { getCategoryInfo } from '@/data/content/categories';
+import { ALL_SITUATION_REACTIONS, SITUATION_CATEGORY_LABELS } from '@/data/content/situation-reactions';
+import { SituationReactionCard } from '@/components/content/SituationReactionCard';
 import { contentParticipationService, type ContentParticipationData } from '@/services/ContentParticipationService';
 import { getParticipationBridge } from '@/services/ParticipationBridge';
 import { SAMPLE_TIPS, SAMPLE_QUESTIONS, SAMPLE_DEBATES, formatRelativeTime, formatNumber } from '@/data/content/explore';
@@ -21,10 +23,12 @@ import type { Tip, Question, Debate } from '@/data/content/explore';
 import { nextActionService, type NextAction } from '@/services/NextActionService';
 import { NextActionInline } from '@/components/NextActionCard';
 import CommentSystem from '@/components/CommentSystem';
+import { contentRecommendationService } from '@/services/ContentRecommendationService';
 import PopularPolls from '@/components/content/PopularPolls';
 import { getStablePollResults } from '@/components/content/useContentParticipation';
 import { SUBJECT_CONFIG } from '@/data/config';
 import { CHEMI_DATA } from '@/data';
+import { RelatedContentSection, type RelatedItem } from '@/components/content/RelatedContentSection';
 
 // ============================================================================
 // 타입 정의
@@ -41,6 +45,14 @@ type TabType = 'quiz' | 'poll' | 'community';
 type CommunitySubTab = 'tips' | 'qna' | 'debate';
 
 // CATEGORY_LABELS는 @/data/content/categories에서 import
+
+// SituationCategory → ContentCategory 매핑
+const SITUATION_TO_CONTENT_CATEGORY: Record<SituationCategory, ContentCategory> = {
+  relationship: 'love',      // 연애 카테고리
+  work: 'lifestyle',         // 라이프스타일
+  social: 'relationship',    // 관계 카테고리
+  awkward: 'general',        // 일반
+};
 
 // ============================================================================
 // 스트릭 배너 컴포넌트
@@ -178,14 +190,14 @@ function HotTopicsSection({ quizzes, polls, participation, onQuizClick, onPollCl
     id: q.id,
     type: 'quiz' as const,
     title: q.question,
-    emoji: CATEGORY_LABELS[q.category]?.emoji || '🧠',
+    emoji: getCategoryInfo(q.category).emoji,
     stat: `정답률 ${30 + (getPopularityScore(q.id) % 40)}%`,
     popularity: q.popularity,
   })), ...uncompletedPolls.map(p => ({
     id: p.id,
     type: 'poll' as const,
     title: p.question,
-    emoji: CATEGORY_LABELS[p.category]?.emoji || '🗳️',
+    emoji: getCategoryInfo(p.category).emoji,
     stat: `${100 + (getPopularityScore(p.id) % 900)}명 참여`,
     popularity: p.popularity,
   }))]
@@ -246,7 +258,7 @@ function CategoryProgress({ quizzes, polls, participation, activeTab, onCategory
         ).length;
         return {
           category: cat,
-          label: CATEGORY_LABELS[cat as ContentCategory],
+          label: getCategoryInfo(cat),
           total,
           completed,
           percent: Math.round((completed / total) * 100),
@@ -262,7 +274,7 @@ function CategoryProgress({ quizzes, polls, participation, activeTab, onCategory
         ).length;
         return {
           category: cat,
-          label: CATEGORY_LABELS[cat as ContentCategory],
+          label: getCategoryInfo(cat),
           total,
           completed,
           percent: Math.round((completed / total) * 100),
@@ -321,9 +333,11 @@ interface QuizCardProps {
   previousAnswer?: string;
   onAnswer: (quizId: string, optionId: string, isCorrect: boolean) => void;
   onNextAction?: (action: NextAction) => void;
+  allQuizzes?: KnowledgeQuiz[];
+  answeredQuizIds?: string[];
 }
 
-function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: QuizCardProps) {
+function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction, allQuizzes = [], answeredQuizIds = [] }: QuizCardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(previousAnswer || null);
   const [showResult, setShowResult] = useState(isAnswered);
   const [showComments, setShowComments] = useState(false);
@@ -349,6 +363,31 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
     }).slice(0, 2)
     : [];
 
+  // 관련 퀴즈 추천 (태그 기반, 미참여 우선) - RelatedItem 형식으로 변환
+  const relatedQuizItems = useMemo((): RelatedItem[] => {
+    if (!showResult || allQuizzes.length === 0) return [];
+    const similar = contentRecommendationService.getSimilarQuizzes(quiz, allQuizzes, 6);
+    return similar
+      .filter(s => !answeredQuizIds.includes(s.content.id))
+      .slice(0, 3)
+      .map(s => ({
+        id: s.content.id,
+        title: s.content.question,
+        category: s.content.category,
+        reason: s.reason,
+      }));
+  }, [showResult, quiz, allQuizzes, answeredQuizIds]);
+
+  // 관련 퀴즈 클릭 시 스크롤 이동
+  const handleQuizSelect = useCallback((quizId: string) => {
+    const element = document.getElementById(`quiz-${quizId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('ring-2', 'ring-orange-400');
+      setTimeout(() => element.classList.remove('ring-2', 'ring-orange-400'), 2000);
+    }
+  }, []);
+
   const handleSelect = (optionId: string) => {
     if (showResult) return;
     setSelectedOption(optionId);
@@ -358,7 +397,7 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
   };
 
   const selectedIsCorrect = quiz.options.find(o => o.id === selectedOption)?.isCorrect;
-  const categoryInfo = CATEGORY_LABELS[quiz.category];
+  const categoryInfo = getCategoryInfo(quiz.category);
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
@@ -472,6 +511,15 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction }: 
         </div>
       )}
 
+      {/* 관련 퀴즈 더보기 */}
+      {showResult && (
+        <RelatedContentSection
+          items={relatedQuizItems}
+          onSelect={handleQuizSelect}
+          contentType="quiz"
+        />
+      )}
+
       {/* 댓글 토글 버튼 */}
       {showResult && (
         <button
@@ -509,9 +557,11 @@ interface PollCardProps {
   previousVote?: 'a' | 'b';
   onVote: (pollId: string, choice: 'a' | 'b') => void;
   onNextAction?: (action: NextAction) => void;
+  allPolls?: VSPoll[];
+  votedPollIds?: string[];
 }
 
-function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCardProps) {
+function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, allPolls = [], votedPollIds = [] }: PollCardProps) {
   const [localVoted, setLocalVoted] = useState<'a' | 'b' | null>(null);
   const [showComments, setShowComments] = useState(false);
   // total: null=로딩중, -1=API실패, 0=첫투표, >0=실제통계
@@ -556,13 +606,38 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
     }).slice(0, 2)
     : [];
 
+  // 관련 투표 추천 (태그 기반, 미참여 우선) - RelatedItem 형식으로 변환
+  const relatedPollItems = useMemo((): RelatedItem[] => {
+    if (!voted || allPolls.length === 0) return [];
+    const similar = contentRecommendationService.getSimilarPolls(poll, allPolls, 6);
+    return similar
+      .filter(s => !votedPollIds.includes(s.content.id))
+      .slice(0, 3)
+      .map(s => ({
+        id: s.content.id,
+        title: s.content.question,
+        category: s.content.category,
+        reason: s.reason,
+      }));
+  }, [voted, poll, allPolls, votedPollIds]);
+
+  // 관련 투표 클릭 시 스크롤 이동
+  const handlePollSelect = useCallback((pollId: string) => {
+    const element = document.getElementById(`poll-${pollId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('ring-2', 'ring-purple-400');
+      setTimeout(() => element.classList.remove('ring-2', 'ring-purple-400'), 2000);
+    }
+  }, []);
+
   const handleVote = (choice: 'a' | 'b') => {
     if (voted) return;
     setLocalVoted(choice);
     onVote(poll.id, choice);
   };
 
-  const categoryInfo = CATEGORY_LABELS[poll.category];
+  const categoryInfo = getCategoryInfo(poll.category);
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
@@ -655,6 +730,15 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction }: PollCar
         <div className="mt-4 pt-3 border-t border-gray-100">
           <NextActionInline actions={nextActions} onActionClick={onNextAction} />
         </div>
+      )}
+
+      {/* 관련 투표 더보기 */}
+      {voted && (
+        <RelatedContentSection
+          items={relatedPollItems}
+          onSelect={handlePollSelect}
+          contentType="poll"
+        />
       )}
 
       {/* 댓글 토글 버튼 */}
@@ -1182,6 +1266,20 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
     });
   }, [selectedCategory, searchQuery, showUncompletedOnly, participation.polls]);
 
+  // 상황별 반응 필터링 (poll 탭에 통합)
+  const filteredSituations = useMemo(() => {
+    return ALL_SITUATION_REACTIONS.filter(s => {
+      // SituationCategory를 ContentCategory로 매핑하여 필터링
+      const mappedCategory = SITUATION_TO_CONTENT_CATEGORY[s.category];
+      const matchesCategory = selectedCategory === 'all' || mappedCategory === selectedCategory;
+      const matchesSearch = s.situation.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           s.question.toLowerCase().includes(searchQuery.toLowerCase());
+      const isAnswered = participation.situations?.some(ps => ps.situationId === s.id) || false;
+      const matchesCompletionFilter = !showUncompletedOnly || !isAnswered;
+      return matchesCategory && matchesSearch && matchesCompletionFilter;
+    });
+  }, [selectedCategory, searchQuery, showUncompletedOnly, participation.situations]);
+
   // 퀴즈 정답 처리
   // ContentParticipationService: UI 상태 (참여 여부 표시용)
   // ParticipationBridge: TursoService + GamificationService 통합 (DB 저장 + 배지/포인트)
@@ -1219,6 +1317,15 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
       };
       await bridge.recordPollVote(pollId, choice, pollStats, poll.category);
     }
+  };
+
+  // 상황별 반응 처리
+  const handleSituationAnswer = (situationId: string, optionId: string) => {
+    // UI 상태 업데이트 (로컬 참여 기록)
+    contentParticipationService.recordSituationAnswer(situationId, optionId);
+    setParticipation(contentParticipationService.getParticipation());
+
+    // TODO: 게이미피케이션 연동 (상황별 반응도 배지/포인트 부여)
   };
 
   // 다음 액션 처리
@@ -1377,7 +1484,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
               전체
             </button>
             {availableCategories.map((cat) => {
-              const labelInfo = CATEGORY_LABELS[cat as ContentCategory];
+              const labelInfo = getCategoryInfo(cat);
 
               return (
                 <button
@@ -1388,7 +1495,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                     }`}
                 >
-                  {labelInfo?.emoji} {labelInfo?.name}
+                  {labelInfo.emoji} {labelInfo.name}
                 </button>
               );
             })}
@@ -1484,6 +1591,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                   return (
                     <div
                       key={quiz.id}
+                      id={`quiz-${quiz.id}`}
                       ref={(el) => setItemRef(quiz.id, el)}
                       className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
                     >
@@ -1493,6 +1601,8 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                         previousAnswer={answered?.selectedOption}
                         onAnswer={handleQuizAnswer}
                         onNextAction={handleNextAction}
+                        allQuizzes={filteredQuizzes}
+                        answeredQuizIds={participation.quizzes.map(q => q.quizId)}
                       />
                     </div>
                   );
@@ -1510,14 +1620,15 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                   <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
                 )}
 
-                {/* 기본 투표 목록 */}
-                {filteredPolls.length > 0 ? (
+                {/* VS 투표 목록 */}
+                {filteredPolls.length > 0 && (
                   filteredPolls.map((poll) => {
                     const voted = participation.polls.find(p => p.pollId === poll.id);
                     const isFocused = focusedItemId === poll.id;
                     return (
                       <div
                         key={poll.id}
+                        id={`poll-${poll.id}`}
                         ref={(el) => setItemRef(poll.id, el)}
                         className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
                       >
@@ -1527,11 +1638,52 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                           previousVote={voted?.choice}
                           onVote={handlePollVote}
                           onNextAction={handleNextAction}
+                          allPolls={filteredPolls}
+                          votedPollIds={participation.polls.map(p => p.pollId)}
                         />
                       </div>
                     );
                   })
-                ) : (
+                )}
+
+                {/* 상황별 반응 섹션 */}
+                {filteredSituations.length > 0 && (
+                  <>
+                    {filteredPolls.length > 0 && (
+                      <div className="flex items-center gap-2 my-4">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
+                        <span className="text-xs font-medium text-blue-500 px-3 py-1 bg-blue-50 rounded-full">
+                          💬 상황별 반응
+                        </span>
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
+                      </div>
+                    )}
+                    {filteredSituations.map((situation) => {
+                      const answered = participation.situations?.find(s => s.situationId === situation.id);
+                      const isFocused = focusedItemId === situation.id;
+                      return (
+                        <div
+                          key={situation.id}
+                          id={`situation-${situation.id}`}
+                          ref={(el) => setItemRef(situation.id, el)}
+                          className={isFocused ? 'ring-2 ring-blue-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
+                        >
+                          <SituationReactionCard
+                            situation={situation}
+                            isAnswered={!!answered}
+                            previousAnswer={answered?.selectedOption}
+                            onAnswer={handleSituationAnswer}
+                            allSituations={filteredSituations}
+                            answeredSituationIds={participation.situations?.map(s => s.situationId) || []}
+                          />
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+
+                {/* 아무 콘텐츠도 없을 때 */}
+                {filteredPolls.length === 0 && filteredSituations.length === 0 && (
                   <div className="text-center py-12 text-gray-400">
                     <p>이 카테고리에 투표가 없습니다</p>
                   </div>

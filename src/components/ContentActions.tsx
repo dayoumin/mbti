@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { Brain, Vote, ChevronRight, Sparkles, Users, Trophy } from 'lucide-react';
 import { ALL_KNOWLEDGE_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS } from '@/data/content/polls';
-import { CATEGORY_LABELS } from '@/data/content/categories';
-import type { ContentCategory } from '@/data/content/types';
+import { getCategoryInfo } from '@/data/content/categories';
+import { TEST_TO_CATEGORY } from '@/data/contentGraph';
 
 // ============================================================================
 // Types
@@ -18,44 +18,6 @@ interface ContentActionsProps {
     onCompareClick?: () => void;
     onRankingClick?: () => void;
 }
-
-// 테스트 타입 → 콘텐츠 카테고리 매핑 (SubjectKey → ContentCategory)
-const TEST_TO_CATEGORY: Record<string, ContentCategory> = {
-    // 반려동물
-    cat: 'cat',
-    dog: 'dog',
-    rabbit: 'rabbit',
-    hamster: 'hamster',
-    // 세부 테스트
-    dogBreed: 'dog',
-    catBreed: 'cat',
-    smallPet: 'smallPet',
-    fishType: 'fish',
-    birdType: 'bird',
-    reptileType: 'reptile',
-    // 라이프스타일
-    plant: 'plant',
-    coffee: 'coffee',
-    tea: 'coffee',
-    alcohol: 'alcohol',
-    drinkingStyle: 'alcohol',
-    food: 'lifestyle',
-    ramen: 'lifestyle',
-    bread: 'lifestyle',
-    fruit: 'lifestyle',
-    whiskeySample: 'alcohol',
-    // 향기/뷰티
-    perfume: 'lifestyle',
-    aroma: 'lifestyle',
-    // 심리/관계
-    human: 'personality',
-    idealType: 'love',
-    conflictStyle: 'relationship',
-    spendingStyle: 'lifestyle',
-    travelStyle: 'lifestyle',
-    // 매칭
-    petMatch: 'general',
-};
 
 // ============================================================================
 // Component
@@ -92,7 +54,7 @@ export default function ContentActions({
         };
     }, [targetCategory]);
 
-    const categoryInfo = CATEGORY_LABELS[targetCategory] || { name: '관련', emoji: '📚' };
+    const categoryInfo = getCategoryInfo(targetCategory);
     const categoryLabel = categoryInfo.name;
 
     // 모든 액션이 없으면 렌더링 안함
