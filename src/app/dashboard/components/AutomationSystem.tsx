@@ -172,6 +172,12 @@ const SKILL_SYSTEMS: SkillSystem[] = [
     color: 'cyan',
     skills: [
       {
+        name: 'content-workflow',
+        description: '★ 콘텐츠 생성 오케스트레이터',
+        role: '2개 Agent 순차 호출로 2중 검증: content-creator → content-auditor → 빌드 확인',
+        triggers: ['00 컨텐츠 만들자', '퀴즈 만들어줘', '투표 만들어줘', '토너먼트 만들어줘'],
+      },
+      {
         name: 'fact-collector',
         description: '팩트 수집 및 검증',
         role: 'research/facts/*.md 파일 관리, 웹검색으로 팩트 수집/검증',
@@ -514,12 +520,14 @@ export default function AutomationSystem() {
 │   ├── test-auditor.md       # 테스트 품질 점검
 │   ├── research-requester.md # 딥리서치 요청문 생성
 │   ├── content-creator.md    # 퀴즈/투표/토너먼트 생성
-│   └── content-auditor.md    # 콘텐츠 품질 점검
+│   └── content-auditor.md    # 콘텐츠 품질 점검 (2중 검증)
 │
 └── skills/
+    ├── content-workflow/     # ★ 콘텐츠 생성 오케스트레이터
     ├── research-parser/      # 리서치 파일 파싱
     ├── test-generator/       # 테스트 코드 생성
     ├── test-validator/       # 테스트 검증 + 자동수정
+    ├── fact-collector/       # 팩트 수집/검증
     ├── content-generator/    # 콘텐츠 코드 생성
     └── content-validator/    # 콘텐츠 검증
 
@@ -706,11 +714,90 @@ docs/test-creation/
             </div>
           ))}
 
+          {/* 전체 아키텍처 */}
+          <div className="db-card p-6 bg-gradient-to-r from-blue-500/10 to-green-500/10">
+            <h4 className="font-semibold mb-4">Claude Code 전체 아키텍처</h4>
+            <pre className="bg-black/30 rounded-lg p-4 text-sm mb-4">
+{`┌─────────────────────────────────────────────────────────┐
+│                     메인 Claude                          │
+│                   (오케스트레이터)                        │
+└─────────────────────────────────────────────────────────┘
+         │                                    │
+         ▼                                    ▼
+┌─────────────────┐                  ┌─────────────────┐
+│  Skill (지침서)  │                  │  Agent (실행자)  │
+│                 │                  │                 │
+│ • 순서/조건 정의 │                  │ • 작업 수행      │
+│ • 규칙 명시      │                  │ • 결과 반환      │
+└─────────────────┘                  └────────┬────────┘
+                                              │
+                                              ▼
+                                     ┌─────────────────┐
+                                     │   MCP 서버들     │
+                                     │                 │
+                                     │ • DB 조회       │
+                                     │ • API 호출      │
+                                     │ • 외부 서비스    │
+                                     └─────────────────┘`}
+            </pre>
+            <div className="grid grid-cols-4 gap-2 text-xs">
+              <div className="bg-black/20 p-2 rounded text-center">
+                <div className="font-medium text-blue-400">메인 Claude</div>
+                <div className="opacity-60">Skill 읽고 Agent 호출</div>
+              </div>
+              <div className="bg-black/20 p-2 rounded text-center">
+                <div className="font-medium text-purple-400">Skill</div>
+                <div className="opacity-60">워크플로우 정의</div>
+              </div>
+              <div className="bg-black/20 p-2 rounded text-center">
+                <div className="font-medium text-green-400">Agent</div>
+                <div className="opacity-60">작업 실행 + MCP 연동</div>
+              </div>
+              <div className="bg-black/20 p-2 rounded text-center">
+                <div className="font-medium text-cyan-400">MCP</div>
+                <div className="opacity-60">외부 시스템 접근</div>
+              </div>
+            </div>
+
+            {/* 오케스트레이션 개념 정리 */}
+            <div className="mt-4 p-3 bg-orange-500/10 rounded-lg border border-orange-500/20 text-sm">
+              <div className="font-medium text-orange-400 mb-2">"오케스트레이터 Agent" 개념 정리</div>
+              <div className="text-xs opacity-80 space-y-1">
+                <p>• <strong>일반 AI 용어</strong>: 다른 Agent들을 조율하는 상위 Agent</p>
+                <p>• <strong>Claude Code에서</strong>: ❌ 존재하지 않음 (Subagent는 다른 Agent 호출 불가)</p>
+                <p>• <strong>Anthropic 연구</strong>: 별도 인프라(Redis 등)로 구현한 다른 시스템</p>
+                <p>• <strong>우리 해결책</strong>: Skill이 지침서 역할, 메인 Claude가 오케스트레이터</p>
+              </div>
+            </div>
+          </div>
+
           <div className="db-card p-6 bg-gradient-to-r from-purple-500/10 to-cyan-500/10">
-            <h4 className="font-semibold mb-2">Subagent ↔ Skill 관계</h4>
+            <h4 className="font-semibold mb-2">Skill vs Agent 역할</h4>
             <p className="text-sm opacity-70 mb-4">
-              Subagent가 작업을 오케스트레이션하고, Skills가 개별 기능을 수행합니다.
+              Skill = 지침서 (메인 Claude가 읽고 따름), Agent = 독립 실행자 (자체 컨텍스트에서 작업)
             </p>
+
+            {/* 2중 검증 워크플로우 */}
+            <div className="mb-4 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+              <div className="font-medium text-green-400 mb-2">★ 콘텐츠 생성 2중 검증 워크플로우</div>
+              <pre className="bg-black/30 rounded-lg p-3 text-sm">
+{`사용자: "고양이 컨텐츠 만들자"
+        ↓
+메인 Claude → content-workflow Skill 읽음
+        ↓
+Step 1: Task(content-creator) 호출
+        ↓ 독립 컨텍스트
+Step 2: Task(content-auditor) 호출 ← 2중 검증!
+        ↓ 독립 컨텍스트
+Step 3: npm run build
+        ↓
+Step 4: 결과 보고`}
+              </pre>
+              <p className="text-xs opacity-60 mt-2">
+                두 Agent는 독립 컨텍스트에서 실행 → 첫 번째가 놓친 문제를 두 번째가 발견
+              </p>
+            </div>
+
             <div className="grid md:grid-cols-2 gap-4">
               <pre className="bg-black/30 rounded-lg p-4 text-sm">
 {`test-creator (Subagent)
@@ -720,7 +807,7 @@ docs/test-creation/
               </pre>
               <pre className="bg-black/30 rounded-lg p-4 text-sm">
 {`content-creator (Subagent)
-├── fact-collector (Skill) ← 팩트 필요 카테고리
+├── fact-collector (Skill)
 ├── content-generator (Skill)
 └── content-validator (Skill)`}
               </pre>
@@ -731,6 +818,36 @@ docs/test-creation/
               <p className="text-xs opacity-60 mt-1">
                 이 카테고리의 지식 퀴즈는 반드시 fact-collector 스킬을 통해 팩트를 수집/참조해야 합니다.
               </p>
+            </div>
+
+            {/* 핵심 발견 */}
+            <div className="mt-4 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20 text-sm">
+              <div className="font-medium text-yellow-400 mb-1">2024-12-25 실험 결과</div>
+              <ul className="text-xs opacity-80 space-y-1">
+                <li>• Subagent는 다른 Subagent 호출 불가 (공식 문서 명시)</li>
+                <li>• <strong>Subagent에 "Agent 호출 기능" 없음</strong> → 기술적으로 불가</li>
+                <li>• Subagent는 Skill 지침서는 읽을 수 있음</li>
+                <li>• 메인 Claude만 Agent를 호출할 수 있음</li>
+              </ul>
+            </div>
+
+            {/* 호출 권한 비교 */}
+            <div className="mt-4 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20 text-sm">
+              <div className="font-medium text-purple-400 mb-2">누가 뭘 호출할 수 있나?</div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="bg-black/20 p-2 rounded text-center">
+                  <div className="font-medium">메인 Claude</div>
+                  <div className="opacity-60">Agent ✅ Skill ✅</div>
+                </div>
+                <div className="bg-black/20 p-2 rounded text-center">
+                  <div className="font-medium">Subagent</div>
+                  <div className="opacity-60">Agent ❌ Skill ✅</div>
+                </div>
+                <div className="bg-black/20 p-2 rounded text-center">
+                  <div className="font-medium">Skill 지침서</div>
+                  <div className="opacity-60">(메인이 읽고 실행)</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
