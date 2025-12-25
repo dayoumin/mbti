@@ -18,14 +18,14 @@ import {
 } from 'lucide-react';
 
 // 콘텐츠 데이터 import
-import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES, QUIZ_STATS } from '@/data/content/quizzes';
-import { VS_POLLS, CHOICE_POLLS, POLL_STATS } from '@/data/content/polls';
+import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from '@/data/content/quizzes';
+import { VS_POLLS, CHOICE_POLLS } from '@/data/content/polls';
 import { ALL_SITUATION_REACTIONS } from '@/data/content/situation-reactions';
 import { ZODIAC_FORTUNES_2025, ZODIAC_POLLS, CONSTELLATIONS, ALL_DAILY_MESSAGES, LUCKY_TIPS } from '@/data/content/fortune';
 import { TAROT_QUIZZES } from '@/data/content/quizzes/tarot-quizzes';
 import { TAROT_POLLS } from '@/data/content/polls/tarot-polls';
 import { CATEGORY_LABELS } from '@/data/content/categories';
-import type { ContentCategory } from '@/data/content/types';
+import type { ContentCategory, SituationCategory } from '@/data/content/types';
 
 // ============================================================================
 // Types
@@ -40,11 +40,12 @@ interface ContentTypeStats {
 }
 
 interface CategoryStats {
-  category: ContentCategory;
+  category: string;
   label: string;
   emoji: string;
   quizzes: number;
   polls: number;
+  situationReactions: number;
   total: number;
 }
 
@@ -105,23 +106,48 @@ export default function ContentOverview() {
       },
     ];
 
-    // 카테고리별 통계
-    const knowledgeByCategory = QUIZ_STATS.knowledge.byCategory();
-    const scenarioByCategory = QUIZ_STATS.scenario.byCategory();
-    const pollsByCategory = POLL_STATS.byCategory();
+    // 카테고리별 통계 (모든 콘텐츠 직접 집계)
+    // 1. 퀴즈 집계 (지식 + 시나리오 + 타로)
+    const allQuizzes = [...ALL_KNOWLEDGE_QUIZZES, ...ALL_SCENARIO_QUIZZES, ...TAROT_QUIZZES];
+    const quizByCategory: Record<string, number> = {};
+    allQuizzes.forEach(q => {
+      quizByCategory[q.category] = (quizByCategory[q.category] || 0) + 1;
+    });
 
-    const categoryStats: CategoryStats[] = Object.entries(CATEGORY_LABELS)
-      .map(([cat, info]) => {
-        const category = cat as ContentCategory;
-        const quizCount = (knowledgeByCategory[category] || 0) + (scenarioByCategory[category] || 0);
-        const pollCount = pollsByCategory[category] || 0;
+    // 2. 투표 집계 (VS + Choice + 타로)
+    const allPolls = [...VS_POLLS, ...CHOICE_POLLS, ...TAROT_POLLS];
+    const pollByCategory: Record<string, number> = {};
+    allPolls.forEach(p => {
+      pollByCategory[p.category] = (pollByCategory[p.category] || 0) + 1;
+    });
+
+    // 3. 상황반응 집계
+    const situationByCategory: Record<string, number> = {};
+    ALL_SITUATION_REACTIONS.forEach(s => {
+      situationByCategory[s.category] = (situationByCategory[s.category] || 0) + 1;
+    });
+
+    // 4. 모든 카테고리 수집 (콘텐츠 카테고리 + 상황 카테고리)
+    const allCategories = new Set([
+      ...Object.keys(quizByCategory),
+      ...Object.keys(pollByCategory),
+      ...Object.keys(situationByCategory),
+    ]);
+
+    const categoryStats: CategoryStats[] = Array.from(allCategories)
+      .map(cat => {
+        const info = CATEGORY_LABELS[cat as ContentCategory];
+        const quizCount = quizByCategory[cat] || 0;
+        const pollCount = pollByCategory[cat] || 0;
+        const situationCount = situationByCategory[cat] || 0;
         return {
-          category,
-          label: info.name,
-          emoji: info.emoji,
+          category: cat,
+          label: info?.name || cat,
+          emoji: info?.emoji || '📊',
           quizzes: quizCount,
           polls: pollCount,
-          total: quizCount + pollCount,
+          situationReactions: situationCount,
+          total: quizCount + pollCount + situationCount,
         };
       })
       .filter(c => c.total > 0)
@@ -192,8 +218,10 @@ export default function ContentOverview() {
                 <div className="font-medium text-gray-900 truncate">{cat.label}</div>
                 <div className="text-sm text-gray-500">
                   {cat.quizzes > 0 && <span>퀴즈 {cat.quizzes}</span>}
-                  {cat.quizzes > 0 && cat.polls > 0 && <span> · </span>}
+                  {cat.quizzes > 0 && (cat.polls > 0 || cat.situationReactions > 0) && <span> · </span>}
                   {cat.polls > 0 && <span>투표 {cat.polls}</span>}
+                  {cat.polls > 0 && cat.situationReactions > 0 && <span> · </span>}
+                  {cat.situationReactions > 0 && <span>상황 {cat.situationReactions}</span>}
                 </div>
               </div>
               <div className="text-lg font-bold text-gray-900">{cat.total}</div>
@@ -208,32 +236,38 @@ export default function ContentOverview() {
           <TrendingUp className="w-5 h-5 text-gray-600" />
           콘텐츠 유형 비율
         </h3>
-        <div className="flex h-8 rounded-full overflow-hidden">
-          {stats.contentTypes.map((type, idx) => {
-            const percentage = (type.count / stats.totalContent) * 100;
-            return (
-              <div
-                key={type.name}
-                className={`${type.color} flex items-center justify-center text-white text-xs font-medium`}
-                style={{ width: `${percentage}%` }}
-                title={`${type.name}: ${type.count}개 (${percentage.toFixed(1)}%)`}
-              >
-                {percentage > 10 && `${percentage.toFixed(0)}%`}
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex flex-wrap gap-4 mt-4">
-          {stats.contentTypes.map((type) => (
-            <div key={type.name} className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${type.color}`} />
-              <span className="text-sm text-gray-600">{type.name}</span>
-              <span className="text-sm font-medium text-gray-900">
-                ({((type.count / stats.totalContent) * 100).toFixed(1)}%)
-              </span>
+        {stats.totalContent > 0 ? (
+          <>
+            <div className="flex h-8 rounded-full overflow-hidden">
+              {stats.contentTypes.map((type) => {
+                const percentage = (type.count / stats.totalContent) * 100;
+                return (
+                  <div
+                    key={type.name}
+                    className={`${type.color} flex items-center justify-center text-white text-xs font-medium`}
+                    style={{ width: `${percentage}%` }}
+                    title={`${type.name}: ${type.count}개 (${percentage.toFixed(1)}%)`}
+                  >
+                    {percentage > 10 && `${percentage.toFixed(0)}%`}
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </div>
+            <div className="flex flex-wrap gap-4 mt-4">
+              {stats.contentTypes.map((type) => (
+                <div key={type.name} className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${type.color}`} />
+                  <span className="text-sm text-gray-600">{type.name}</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    ({((type.count / stats.totalContent) * 100).toFixed(1)}%)
+                  </span>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="text-gray-500 text-center py-4">콘텐츠가 없습니다</div>
+        )}
       </div>
 
       {/* 콘텐츠 추가 가이드 */}
