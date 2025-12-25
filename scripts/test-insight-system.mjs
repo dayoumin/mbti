@@ -199,6 +199,76 @@ if (aiStages.length === 1 && aiStages[0].id === 7) {
 }
 
 // ============================================================================
+// 6. 프리미엄 기능 & 로드맵 검증
+// ============================================================================
+console.log('\n[6] 프리미엄 기능 & 로드맵 검증');
+
+// PREMIUM_FEATURES 검증
+const premiumFeatures = module.PREMIUM_FEATURES;
+if (premiumFeatures && premiumFeatures.length > 0) {
+  console.log(`  ℹ️ 프리미엄 기능: ${premiumFeatures.length}개`);
+
+  // 모든 기능이 구독에 포함되는지 확인
+  const allInSubscription = premiumFeatures.every(f => f.includedInSubscription);
+  if (allInSubscription) {
+    console.log('  ✅ 모든 프리미엄 기능이 구독에 포함됨');
+  } else {
+    const notIncluded = premiumFeatures.filter(f => !f.includedInSubscription).map(f => f.name);
+    console.log(`  ℹ️ 구독 미포함 기능: ${notIncluded.join(', ')}`);
+  }
+
+  // pricingModel 분포
+  const modelCount = {};
+  for (const f of premiumFeatures) {
+    modelCount[f.pricingModel] = (modelCount[f.pricingModel] || 0) + 1;
+  }
+  console.log(`  ℹ️ 가격 모델 분포: ${JSON.stringify(modelCount)}`);
+} else {
+  console.log('  ⚠️ PREMIUM_FEATURES 없음');
+  warnings++;
+}
+
+// IMPLEMENTATION_ROADMAP 검증
+const roadmap = module.IMPLEMENTATION_ROADMAP;
+if (roadmap && roadmap.length > 0) {
+  console.log(`  ℹ️ 로드맵 Phase: ${roadmap.length}개`);
+
+  // 유료화가 마지막 Phase인지 확인
+  const lastPhase = roadmap[roadmap.length - 1];
+  if (lastPhase.title.includes('유료화') || lastPhase.phase.includes('7')) {
+    console.log('  ✅ 유료화는 마지막 Phase');
+  } else {
+    console.log('  ⚠️ 유료화가 마지막 Phase가 아님');
+    warnings++;
+  }
+
+  // Phase 번호 순차 확인
+  const phases = roadmap.map(r => r.phase);
+  console.log(`  ℹ️ Phase 순서: ${phases.join(' → ')}`);
+} else {
+  console.log('  ⚠️ IMPLEMENTATION_ROADMAP 없음');
+  warnings++;
+}
+
+// PEOPLE_MATCHING_SYSTEM 검증
+const peopleMatching = module.PEOPLE_MATCHING_SYSTEM;
+if (peopleMatching) {
+  console.log(`  ℹ️ 사람 매칭 유형: ${peopleMatching.matchTypes?.length || 0}개`);
+  if (peopleMatching.tiers?.free && peopleMatching.tiers?.paid) {
+    console.log('  ✅ 사람 매칭 무료/유료 티어 정의됨');
+  }
+}
+
+// RELATIONSHIP_MATCH 무료/유료 구분 검증
+const relationshipMatch = module.RELATIONSHIP_MATCH;
+if (relationshipMatch?.tiers?.free && relationshipMatch?.tiers?.premium) {
+  console.log('  ✅ 궁합 분석 무료/유료 티어 정의됨 (바이럴용 무료 포함)');
+} else {
+  console.log('  ⚠️ 궁합 분석 티어 정의 확인 필요');
+  warnings++;
+}
+
+// ============================================================================
 // 결과 요약
 // ============================================================================
 console.log('\n' + '='.repeat(60));

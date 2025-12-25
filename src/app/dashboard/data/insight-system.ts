@@ -470,42 +470,47 @@ export const PREMIUM_FEATURES: PremiumFeature[] = [
   {
     id: 'ai-analysis',
     name: 'AI 종합 분석',
-    description: '현재 설계된 단일 프리미엄 리포트',
+    description: '축적된 활동 데이터 기반 AI 성격 리포트',
     pricingModel: 'one-time',
     price: '$2.99',
-    repurchaseMotivation: '낮음',
+    repurchaseMotivation: 'low',
+    includedInSubscription: true,
   },
   {
     id: 'pet-care-program',
     name: '사육관리 프로그램',
-    description: '반려동물 맞춤 케어 가이드',
+    description: '반려동물 맞춤 케어 가이드 + 알림 + 체크리스트',
     pricingModel: 'subscription',
     price: '$4.99/월',
-    repurchaseMotivation: '높음',
+    repurchaseMotivation: 'high',
+    includedInSubscription: true,
   },
   {
     id: 'relationship-match',
-    name: '관계 궁합 분석',
-    description: '친구/연인과 비교 분석',
-    pricingModel: 'one-time',
-    price: '$1.99/명',
-    repurchaseMotivation: '중간',
+    name: '관계 궁합 심화 분석',
+    description: '친구/연인과 상세 비교 분석 + AI 관계 조언',
+    pricingModel: 'bundle',
+    price: '$1.99/명, 3인 $4.99, 5인 $6.99',
+    repurchaseMotivation: 'medium',
+    includedInSubscription: true,
   },
   {
     id: 'monthly-report',
     name: '월간 인사이트 리포트',
-    description: '한 달 변화 추적 리포트',
+    description: '한 달간 변화 추적 + 성장 분석',
     pricingModel: 'subscription',
     price: '$2.99/월',
-    repurchaseMotivation: '높음',
+    repurchaseMotivation: 'high',
+    includedInSubscription: true,
   },
   {
     id: 'premium-badge-theme',
     name: '프리미엄 뱃지/테마',
-    description: '꾸미기 요소',
+    description: '프로필 꾸미기 요소',
     pricingModel: 'one-time',
     price: '$0.99',
-    repurchaseMotivation: '중간',
+    repurchaseMotivation: 'medium',
+    includedInSubscription: true,
   },
 ];
 
@@ -738,10 +743,12 @@ export const RELATIONSHIP_MATCH = {
 // ============================================================================
 
 export const IMPLEMENTATION_ROADMAP = [
+  // ═══════════════════════════════════════════════════════════════
+  // 기능 개발 (모두 무료로 구현, 유료화 로직 없음)
+  // ═══════════════════════════════════════════════════════════════
   {
     phase: 'Phase 1',
     title: '기반 시스템',
-    duration: '2주',
     tasks: [
       '태그 타입 정의 (src/data/insight/tags.ts)',
       '테스트 결과 태그 매핑 (주요 10개 테스트)',
@@ -754,7 +761,6 @@ export const IMPLEMENTATION_ROADMAP = [
   {
     phase: 'Phase 2',
     title: 'Stage 1-4 인사이트',
-    duration: '2주',
     tasks: [
       'Stage 1: 기본 성향 (즉시 표시)',
       'Stage 2: 성격 조합 (룰 15개)',
@@ -769,7 +775,6 @@ export const IMPLEMENTATION_ROADMAP = [
   {
     phase: 'Phase 3',
     title: 'Stage 5-6 인사이트',
-    duration: '2주',
     tasks: [
       '관계 태그 확장',
       'Stage 5: 관계 패턴 (룰 10개)',
@@ -782,22 +787,19 @@ export const IMPLEMENTATION_ROADMAP = [
   },
   {
     phase: 'Phase 4',
-    title: 'AI 분석 & 기본 수익화',
-    duration: '1주',
+    title: 'AI 분석',
     tasks: [
       'AI 프롬프트 최적화',
-      'Stage 7: AI 종합 분석',
-      '비용 모니터링',
-      '결제 시스템 연동 (단품 결제)',
+      'Stage 7: AI 종합 분석 (기능 구현)',
+      '비용 모니터링 대시보드',
     ],
-    deliverable: 'AI 분석 + 단품 수익화',
+    deliverable: 'AI 분석 기능 완성',
   },
   {
     phase: 'Phase 5',
-    title: '사람 매칭 시스템',
-    duration: '3주',
+    title: '사람 매칭 & 궁합',
     tasks: [
-      '친구 궁합 분석 (무료 바이럴)',
+      '친구 궁합 분석',
       '초대 링크 시스템',
       '매칭 알고리즘 구현 (태그 유사도, 보완 케미)',
       '프로필 열람 UI',
@@ -810,18 +812,32 @@ export const IMPLEMENTATION_ROADMAP = [
   },
   {
     phase: 'Phase 6',
-    title: '프리미엄 & 구독',
-    duration: '2주',
+    title: '추가 기능',
     tasks: [
-      '프로필 열람권 결제 ($0.99/명)',
-      '구독 결제 시스템 ($6.99/월)',
       '사육관리 프로그램 UI',
       '월간 인사이트 리포트',
       '프리미엄 뱃지/테마',
-      '메시지 시스템 (구독자용)',
+      '메시지 시스템',
     ],
-    deliverable: '완전한 수익화 시스템',
-    revenueTarget: '$1,500-2,000/월 (MAU 10k 기준)',
+    deliverable: '부가 기능 완성',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 유료화 (기능 완성 후 마지막에 진행)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    phase: 'Phase 7',
+    title: '유료화 & 결제 연동',
+    tasks: [
+      '유료/무료 기능 플래그 추가',
+      '결제 시스템 연동 (Stripe/토스페이먼츠)',
+      '구독 관리 시스템',
+      '프리미엄 잠금 UI',
+      '가격 A/B 테스트 준비',
+    ],
+    deliverable: '수익화 시스템',
+    note: '모든 기능 완성 후 마지막에 진행',
+    pricingReference: 'PRICING_TIERS 참조',
   },
 ];
 
