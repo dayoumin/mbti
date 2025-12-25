@@ -287,6 +287,85 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // 전체 테스트 분포 현황 (대시보드용)
+    // 대상: test_results 테이블의 모든 테스트 (personality + matching)
+    // 제외: 찬반 투표 (ranking_votes 테이블에 별도 저장)
+    if (type === 'all-distributions') {
+      const results = await query(
+        `SELECT
+           test_type,
+           result_name,
+           COUNT(*) as count
+         FROM test_results
+         GROUP BY test_type, result_name
+         ORDER BY test_type, count DESC`
+      );
+
+      // 테스트별로 그룹화
+      const byTest: Record<string, { resultName: string; count: number }[]> = {};
+      results.rows.forEach(row => {
+        const testType = row.test_type as string;
+        if (!byTest[testType]) byTest[testType] = [];
+        byTest[testType].push({
+          resultName: row.result_name as string,
+          count: row.count as number,
+        });
+      });
+
+      // 이상 감지 (skew detection)
+      const SKEW_HIGH_THRESHOLD = 40; // 40% 이상이면 쏠림
+      const SKEW_LOW_THRESHOLD = 1;   // 1% 미만이면 도달 안됨
+
+      const distributions = Object.entries(byTest).map(([testType, items]) => {
+        const total = items.reduce((sum, item) => sum + item.count, 0);
+
+        const distribution = items.map((item, idx) => {
+          const percentage = total > 0 ? Math.round((item.count / total) * 100) : 0;
+          return {
+            rank: idx + 1,
+            resultName: item.resultName,
+            count: item.count,
+            percentage,
+          };
+        });
+
+        // 이상 감지
+        const alerts: { type: 'high' | 'low' | 'zero'; resultName: string; percentage: number }[] = [];
+        distribution.forEach(d => {
+          if (d.percentage >= SKEW_HIGH_THRESHOLD) {
+            alerts.push({ type: 'high', resultName: d.resultName, percentage: d.percentage });
+          }
+          if (d.percentage > 0 && d.percentage < SKEW_LOW_THRESHOLD) {
+            alerts.push({ type: 'low', resultName: d.resultName, percentage: d.percentage });
+          }
+        });
+
+        return {
+          testType,
+          total,
+          resultCount: distribution.length,
+          distribution,
+          alerts,
+          hasAlerts: alerts.length > 0,
+        };
+      });
+
+      // 알림 있는 테스트 먼저
+      distributions.sort((a, b) => {
+        if (a.hasAlerts && !b.hasAlerts) return -1;
+        if (!a.hasAlerts && b.hasAlerts) return 1;
+        return b.total - a.total;
+      });
+
+      const totalAlerts = distributions.reduce((sum, d) => sum + d.alerts.length, 0);
+
+      return NextResponse.json({
+        totalTests: distributions.length,
+        totalAlerts,
+        distributions,
+      });
+    }
+
     return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 });
   } catch (error) {
     console.error('[Test Results API] GET error:', error);

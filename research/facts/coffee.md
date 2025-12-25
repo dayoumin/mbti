@@ -15,7 +15,7 @@
 - [Caffeine in Americano Coffee](https://www.caffeineinformer.com/caffeine-content/caffe-americano)
 - [Americano Caffeine Content Guide](https://baristalife.co/blogs/blog/americano-caffeine-content)
 
-**사용된 콘텐츠**: coffee-k-001
+**사용된 콘텐츠**: coffee-k-001, coffee-quiz-001
 
 ---
 
@@ -26,7 +26,7 @@
 - [Arabica vs Robusta Coffee Beans - MasterClass](https://www.masterclass.com/articles/arabica-vs-robusta-coffee-beans)
 - [10 differences Between Robusta & Arabica Coffee](https://us.theroasterspack.com/blogs/news/15409365-10-differences-between-robusta-arabica-coffee)
 
-**사용된 콘텐츠**: coffee-k-002, coffee-k-008
+**사용된 콘텐츠**: coffee-k-002, coffee-k-008, coffee-quiz-002
 
 ---
 
@@ -37,7 +37,7 @@
 - [Coffee Roast Levels: Light, Medium, and Dark](https://jetcoffee.com/2025/08/11/coffee-roast-levels-light-medium-and-dark/)
 - [Coffee Roast Levels Guide](https://colipsecoffee.com/blogs/coffee/roast-levels)
 
-**사용된 콘텐츠**: coffee-k-003, coffee-k-007
+**사용된 콘텐츠**: coffee-k-003, coffee-k-007, coffee-quiz-003, coffee-quiz-007
 
 ---
 
@@ -48,7 +48,7 @@
 - [Coffee Basics: Brewing Methods](https://counterculturecoffee.com/blogs/counter-culture-coffee/coffee-basics-brewing-methods)
 - [Drip coffee vs. French press](https://www.breville.com/us/en/blog/coffee-and-espresso/drip-coffee-vs-french-press.html)
 
-**사용된 콘텐츠**: coffee-k-004, coffee-k-005
+**사용된 콘텐츠**: coffee-k-004, coffee-k-005, coffee-quiz-004, coffee-quiz-005
 
 ---
 
@@ -58,7 +58,7 @@
 **출처**:
 - [Coffee Roast Levels Chart](https://density.coffee/coffee-roast-levels-chart/)
 
-**사용된 콘텐츠**: coffee-k-006
+**사용된 콘텐츠**: coffee-k-006, coffee-quiz-006
 
 ---
 
@@ -68,7 +68,7 @@
 **출처**:
 - [Americano Caffeine Content Guide](https://baristalife.co/blogs/blog/americano-caffeine-content)
 
-**사용된 콘텐츠**: coffee-k-009
+**사용된 콘텐츠**: coffee-k-009, coffee-quiz-009
 
 ---
 
@@ -79,4 +79,4 @@
 - [Arabica vs Robusta Coffee Beans - MasterClass](https://www.masterclass.com/articles/arabica-vs-robusta-coffee-beans)
 - [10 differences Between Robusta & Arabica Coffee](https://us.theroasterspack.com/blogs/news/15409365-10-differences-between-robusta-arabica-coffee)
 
-**사용된 콘텐츠**: coffee-k-010
+**사용된 콘텐츠**: coffee-k-010, coffee-quiz-008, coffee-quiz-010

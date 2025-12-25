@@ -95,7 +95,20 @@
       "Bash(src/services/NextActionService.ts )",
       "Bash(src/components/NextTestRecommendation.tsx)",
       "Skill(content-workflow)",
-      "Skill(content-workflow:*)"
+      "Skill(content-workflow:*)",
+      "Skill(test-generator)",
+      "Skill(test-generator:*)",
+      "Bash(npx rimraf:*)",
+      "Bash(.claude/agents/content-creator.md )",
+      "Bash(.claude/skills/content-generator/SKILL.md )",
+      "Bash(CLAUDE.md )",
+      "Bash(src/app/dashboard/data/content-samples.ts )",
+      "Bash(src/app/dashboard/data/content-system.ts )",
+      "Bash(src/app/dashboard/data/tournament-sample.ts )",
+      "Bash(src/data/content/categories.ts )",
+      "Bash(src/data/content/situation-reactions/awkward.ts )",
+      "Bash(src/data/content/situation-reactions/index.ts )",
+      "Bash(scripts/test-situation-reactions.ts)"
     ],
     "deny": [],
     "ask": []

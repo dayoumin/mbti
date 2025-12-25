@@ -113,6 +113,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <Wrench className="w-5 h-5" />,
     subTabs: [
       { key: 'contentOverview', label: '콘텐츠 현황', icon: <Database className="w-4 h-4" /> },
+      { key: 'resultDistribution', label: '결과 분포', icon: <PieChart className="w-4 h-4" /> },
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
       { key: 'contentReview', label: '콘텐츠 검수', icon: <Shield className="w-4 h-4" /> },

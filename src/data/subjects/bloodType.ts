@@ -133,7 +133,7 @@ export const bloodTypeData: SubjectData = {
         { text: '어려워... 속마음 잘 안 드러냄', score: 1 },
       ],
     },
-    // === logical (논리성) - 2문항 (신규) ===
+    // === logical (논리성) - 3문항 (신규) ===
     {
       q: '중요한 결정을 내릴 때 나는?',
       dimension: 'logical',
@@ -152,7 +152,16 @@ export const bloodTypeData: SubjectData = {
         { text: '그냥 감정적으로 풀자, 분석은 피곤해', score: 1 },
       ],
     },
-    // === stable (안정성) - 2문항 (신규) ===
+    {
+      q: '감정이 상했을 때 나는?',
+      dimension: 'logical',
+      a: [
+        { text: '왜 그런 감정이 생겼는지 원인부터 정리', score: 5 },
+        { text: '감정도 정리하고 상황도 같이 봄', score: 3 },
+        { text: '그냥 기분이 그렇다면 그런 거지', score: 1 },
+      ],
+    },
+    // === stable (안정성) - 3문항 (신규) ===
     {
       q: '작은 실수를 했을 때 나는?',
       dimension: 'stable',
@@ -169,6 +178,15 @@ export const bloodTypeData: SubjectData = {
         { text: '별로 신경 안 써, 나는 나니까', score: 5 },
         { text: '가끔 신경 쓰이기도 해', score: 3 },
         { text: '많이 신경 쓰여... 눈치 보게 됨', score: 1 },
+      ],
+    },
+    {
+      q: '갑자기 분위기가 어색해졌을 때?',
+      dimension: 'stable',
+      a: [
+        { text: '괜찮아, 금방 넘길 수 있어', score: 5 },
+        { text: '좀 신경 쓰이지만 괜찮아질 거야', score: 3 },
+        { text: '계속 신경 쓰이고 마음이 불편해', score: 1 },
       ],
     },
   ],

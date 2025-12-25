@@ -143,11 +143,11 @@ export function validateKnowledgeQuiz(quiz: KnowledgeQuiz): { valid: boolean; er
 /** 시나리오 퀴즈 점수 범위 검증 */
 export function validateScenarioQuizScores(quiz: ScenarioQuiz): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  const maxPossibleScore = quiz.questions.reduce((sum, q) => {
+  const maxPossibleScore = quiz.questions.reduce((sum: number, q) => {
     const maxOption = Math.max(...q.options.map(o => o.points));
     return sum + maxOption;
   }, 0);
-  const minPossibleScore = quiz.questions.reduce((sum, q) => {
+  const minPossibleScore = quiz.questions.reduce((sum: number, q) => {
     const minOption = Math.min(...q.options.map(o => o.points));
     return sum + minOption;
   }, 0);

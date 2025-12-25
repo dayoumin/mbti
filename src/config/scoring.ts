@@ -12,8 +12,8 @@ export type Level = 'high' | 'medium' | 'low';
 
 // 레벨 판정 기준 (백분율)
 export const LEVEL_THRESHOLDS = {
-  HIGH: 60,    // 60% 이상 = high
-  LOW: 40,     // 40% 이하 = low, 그 사이 = medium
+  HIGH: 70,    // 70% 이상 = high
+  LOW: 30,     // 30% 이하 = low, 그 사이 = medium
 } as const;
 
 // 레벨 값

@@ -78,6 +78,7 @@ import DemographicTester from './components/DemographicTester';
 import FactManager from './components/FactManager';
 import ContentReview from './components/ContentReview';
 import ContentOverview from './components/ContentOverview';
+import ResultDistributionMonitor from './components/ResultDistributionMonitor';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -487,6 +488,7 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'demographicTest' && <DemographicTester />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
           {activeCategory === 'devtools' && activeSubTab === 'contentOverview' && <ContentOverview />}
+          {activeCategory === 'devtools' && activeSubTab === 'resultDistribution' && <ResultDistributionMonitor />}
           {activeCategory === 'devtools' && activeSubTab === 'contentReview' && <ContentReview />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
