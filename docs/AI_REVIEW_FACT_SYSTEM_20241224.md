@@ -276,13 +276,13 @@ d:\Projects\MBTI\
 | 레이어 | 위치 | 역할 |
 |--------|------|------|
 | 1. 스킬 문서 | `.claude/skills/content-validator/SKILL.md` | AI에게 규칙 안내 |
-| 2. 검증 스크립트 | `scripts/validate-content-samples.mjs` | 자동 검출 |
+| 2. 검증 스크립트 | `scripts/validate-content-structure.mjs` | 자동 검출 |
 | 3. 대시보드 | `AutomationSystem.tsx` | 시각화 및 모니터링 |
 
 ### 8.3 검증 스크립트 변경
 
 ```javascript
-// validate-content-samples.mjs
+// validate-content-structure.mjs
 const FACT_REQUIRED_CATEGORIES = ['cat', 'dog', 'rabbit', 'hamster', 'plant', 'coffee', 'alcohol'];
 
 // 지식 퀴즈(knowledge)만 팩트 검증

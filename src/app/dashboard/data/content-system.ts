@@ -2189,7 +2189,7 @@ export const RECOMMENDATION_SYSTEM = {
     minCount: 3,
     language: '한글',
     purpose: '추천 시스템 유사도 계산',
-    validation: 'scripts/validate-content-samples.mjs',
+    validation: 'scripts/validate-content-structure.mjs',
     examples: {
       good: ['고양이', '품종', '성격', '입양'],
       bad: ['cat', '퀴즈', '동물'],

@@ -192,7 +192,7 @@ const SKILL_SYSTEMS: SkillSystem[] = [
       {
         name: 'content-validator',
         description: '콘텐츠 검증',
-        role: 'validate-content-samples.mjs + npm build, 에러 리포트 (팩트 참조 검증 포함)',
+        role: 'validate-content-structure.mjs + npm build, 에러 리포트 (팩트 참조 검증 포함)',
         triggers: ['콘텐츠 생성 후', '콘텐츠 수정 후'],
       },
     ],
@@ -370,17 +370,17 @@ const CONTENT_VALIDATION_DATA: ValidationItem[] = [
 
 const VALIDATION_COMMANDS = [
   {
-    cmd: 'node scripts/validate-content-samples.mjs',
+    cmd: 'node scripts/validate-content-structure.mjs',
     desc: '전체 콘텐츠 검증',
     type: 'full',
   },
   {
-    cmd: 'node scripts/validate-content-samples.mjs --verbose',
+    cmd: 'node scripts/validate-content-structure.mjs --verbose',
     desc: '상세 검증 결과',
     type: 'verbose',
   },
   {
-    cmd: 'node scripts/validate-content-samples.mjs --json',
+    cmd: 'node scripts/validate-content-structure.mjs --json',
     desc: 'JSON 형식 출력',
     type: 'json',
   },
@@ -1295,8 +1295,8 @@ mood: 기분 (평범한 날 ↔ 특별한 날)`}
                   <p className="text-xs opacity-60 mt-1">성격/매칭 테스트 검증 (src/data/subjects/)</p>
                 </div>
                 <div>
-                  <code className="text-blue-400">validate-content-samples.mjs</code>
-                  <p className="text-xs opacity-60 mt-1">콘텐츠 샘플 검증 (퀴즈/투표/토너먼트)</p>
+                  <code className="text-blue-400">validate-content-structure.mjs</code>
+                  <p className="text-xs opacity-60 mt-1">콘텐츠 구조 검증 (퀴즈/투표/토너먼트)</p>
                 </div>
               </div>
             </div>
@@ -1309,8 +1309,8 @@ mood: 기분 (평범한 날 ↔ 특별한 날)`}
               {[
                 { step: '1', title: '콘텐츠 생성', desc: 'content-creator 실행', color: '#7aa2ff' },
                 { step: '2', title: '자체 검증', desc: '팩트체크, 일관성', color: '#55e6c1' },
-                { step: '3', title: '파일 저장', desc: 'content-samples.ts', color: '#ffd166' },
-                { step: '4', title: '스크립트 검증', desc: 'validate-content-samples', color: '#ff6b9d' },
+                { step: '3', title: '파일 저장', desc: 'dashboard-content.ts', color: '#ffd166' },
+                { step: '4', title: '스크립트 검증', desc: 'validate-content-structure', color: '#ff6b9d' },
                 { step: '5', title: '빌드 확인', desc: 'npm run build', color: '#a29bfe' },
               ].map((item, idx, arr) => (
                 <div key={item.step} className="flex items-center">

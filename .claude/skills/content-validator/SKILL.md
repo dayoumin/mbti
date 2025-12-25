@@ -12,7 +12,7 @@ allowed-tools: Read, Bash, Grep, Glob
 ## 검증 명령어
 
 ```bash
-node scripts/validate-content-samples.mjs
+node scripts/validate-content-structure.mjs
 ```
 
 ## 검증 항목
@@ -328,7 +328,7 @@ contestants: [
 ## 검증 스크립트 위치
 
 ```
-scripts/validate-content-samples.mjs
+scripts/validate-content-structure.mjs
 ```
 
 ## 자동 수정 지원
@@ -479,7 +479,7 @@ scripts/validate-content-samples.mjs
 
 | 단계 | 담당 | 방식 |
 |------|------|------|
-| 1. 스크립트 | `validate-content-samples.mjs` | 형식만 체크 (키워드 감지 안 함) |
+| 1. 스크립트 | `validate-content-structure.mjs` | 형식만 체크 (키워드 감지 안 함) |
 | 2. AI 검증 | content-validator 스킬 실행 시 | **맥락 기반** 성인 콘텐츠 체크 |
 
 ### AI 검증 규칙 (필수!)

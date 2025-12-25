@@ -32,7 +32,7 @@ model: sonnet
 
 ### 1단계: 전체 스캔
 ```bash
-node scripts/validate-content-samples.mjs
+node scripts/validate-content-structure.mjs
 ```
 
 ### 2단계: 개별 분석

@@ -1,4 +1,4 @@
-import { validateQuiz, validatePoll, COFFEE_KNOWLEDGE_QUIZZES, COFFEE_VS_POLLS } from '../src/app/dashboard/data/content-samples.ts';
+import { validateQuiz, validatePoll, COFFEE_KNOWLEDGE_QUIZZES, COFFEE_VS_POLLS } from '../src/app/dashboard/data/dashboard-content.ts';
 
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 console.log('📊 커피 지식 퀴즈 검증 (10개)');

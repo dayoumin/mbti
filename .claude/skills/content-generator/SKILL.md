@@ -293,7 +293,7 @@ src/data/content/polls/        # 투표
 src/data/content/types.ts      # 타입 정의
 
 # 대시보드 샘플 (구조 참고용)
-src/app/dashboard/data/content-samples.ts
+src/app/dashboard/data/dashboard-content.ts
 src/app/dashboard/data/tournament-sample.ts
 ```
 
@@ -332,7 +332,7 @@ tags: ['퀴즈']              // 콘텐츠 유형 태그 금지
 
 ```bash
 # 1. 스크립트 검증
-node scripts/validate-content-samples.mjs
+node scripts/validate-content-structure.mjs
 
 # 2. 빌드 검증
 npm run build
@@ -359,7 +359,7 @@ npm run build
 ### 대시보드 샘플용 (문서화/검증용)
 | 타입 | 파일 위치 |
 |-----|----------|
-| 샘플 | `src/app/dashboard/data/content-samples.ts` |
+| 샘플 | `src/app/dashboard/data/dashboard-content.ts` |
 | 토너먼트 샘플 | `src/app/dashboard/data/tournament-sample.ts` |
 
 ## 연령 등급 (Age Rating)

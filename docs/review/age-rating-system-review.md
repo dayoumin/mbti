@@ -67,7 +67,7 @@ const filteredQuizCount = useMemo(() => ..., [participation.quizzes.length, ageV
 const todayQuizzes = useMemo(() => ..., [answeredQuizIds, timeSlotSeed, ageVersion]);
 ```
 
-### 3.2 validate-content-samples.mjs - 키워드 검증 제거
+### 3.2 validate-content-structure.mjs - 키워드 검증 제거
 ```javascript
 // 변경 전: 키워드로 성인 콘텐츠 감지
 const adultKeywords = ['술', '음주', '도박', ...];
@@ -174,7 +174,7 @@ AI가 전체 텍스트를 읽고 맥락 이해
 | 파일 | 역할 |
 |------|------|
 | [TodayQuizPoll.tsx](../../src/components/TodayQuizPoll.tsx) | 연령 제한 UI |
-| [validate-content-samples.mjs](../../scripts/validate-content-samples.mjs) | 형식 검증 |
+| [validate-content-structure.mjs](../../scripts/validate-content-structure.mjs) | 형식 검증 |
 | [test-age-rating.mjs](../../scripts/test-age-rating.mjs) | 테스트 스크립트 |
 | [content-generator SKILL.md](../../.claude/skills/content-generator/SKILL.md) | 생성 가이드 |
 | [content-validator SKILL.md](../../.claude/skills/content-validator/SKILL.md) | 검증 가이드 |

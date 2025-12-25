@@ -16,7 +16,7 @@ scripts/
 |---------|------|----------|
 | `validate-all-content.mjs` | **통합 검증** (모든 검증 실행) | `npm run validate` |
 | `validate-content-files.mjs` | 콘텐츠 파일 이중 검증 | `npm run validate:content` |
-| `validate-content-samples.mjs` | 샘플 데이터 형식 검증 | `node scripts/validate-content-samples.mjs` |
+| `validate-content-structure.mjs` | 콘텐츠 구조 검증 | `node scripts/validate-content-structure.mjs` |
 | `validate-test-data.mjs` | 테스트 데이터 검증 | `node scripts/validate-test-data.mjs {subject}` |
 | `validate-situation-reactions.mjs` | 상황반응 콘텐츠 검증 | `node scripts/validate-situation-reactions.mjs` |
 | `validate-tags-quality.mjs` | 태그 품질 검증 | `node scripts/validate-tags-quality.mjs` |
@@ -84,7 +84,7 @@ npm run build
 
 [수동 검증]
 npm run validate (= validate-all-content.mjs)
- ├─ validate-content-samples.mjs
+ ├─ validate-content-structure.mjs
  ├─ validate-content-files.mjs
  ├─ 연령 등급 검증
  └─ 태그 품질 검증

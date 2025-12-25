@@ -107,11 +107,11 @@ Quiz, Poll, Reaction 콘텐츠를 생성합니다.
 #### 카테고리별 중복 확인 (범위 좁히기)
 ```bash
 # 예: cat 카테고리 퀴즈 생성 시
-grep "id:.*cat-quiz" src/app/dashboard/data/content-samples.ts
-grep "category.*cat" src/app/dashboard/data/content-samples.ts
+grep "id:.*cat-quiz" src/app/dashboard/data/dashboard-content.ts
+grep "category.*cat" src/app/dashboard/data/dashboard-content.ts
 
 # 예: food 카테고리 투표 생성 시
-grep "id:.*food-poll" src/app/dashboard/data/content-samples.ts
+grep "id:.*food-poll" src/app/dashboard/data/dashboard-content.ts
 
 # 토너먼트 확인
 grep "{category}-worldcup" src/app/dashboard/data/tournament-sample.ts
@@ -165,7 +165,7 @@ content-generator 스킬의 구조에 따라 생성
 
 ### 8단계: 시스템 검증
 ```bash
-node scripts/validate-content-samples.mjs
+node scripts/validate-content-structure.mjs
 ```
 
 ### 9단계: 빌드 확인

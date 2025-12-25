@@ -121,7 +121,7 @@ situationReactions: ALL_SITUATION_REACTIONS.length,
 
 - 콘텐츠 생성 가이드: `.claude/skills/content-generator/SKILL.md`
 - 콘텐츠 검증 가이드: `.claude/skills/content-validator/SKILL.md`
-- 대시보드 샘플: `src/app/dashboard/data/content-samples.ts` (문서화/검증용)
+- 대시보드 샘플: `src/app/dashboard/data/dashboard-content.ts` (문서화/검증용)
 
 ---
 

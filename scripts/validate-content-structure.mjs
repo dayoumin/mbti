@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * 콘텐츠 샘플 검증 스크립트 (퀴즈/투표/토너먼트)
+ * 콘텐츠 구조 검증 스크립트 (퀴즈/투표/토너먼트)
  *
  * 사용법:
- *   node scripts/validate-content-samples.mjs           # 전체 검증
- *   node scripts/validate-content-samples.mjs --verbose # 상세 출력
- *   node scripts/validate-content-samples.mjs --json    # JSON 형식 출력
+ *   node scripts/validate-content-structure.mjs           # 전체 검증
+ *   node scripts/validate-content-structure.mjs --verbose # 상세 출력
+ *   node scripts/validate-content-structure.mjs --json    # JSON 형식 출력
  *
  * 검증 항목:
  * 1. 퀴즈 - id, question, options, 정답 유무, tags
@@ -341,7 +341,7 @@ function safeEval(code) {
 }
 
 function loadContentSamples() {
-  const filePath = join(projectRoot, 'src', 'app', 'dashboard', 'data', 'content-samples.ts');
+  const filePath = join(projectRoot, 'src', 'app', 'dashboard', 'data', 'dashboard-content.ts');
 
   if (!existsSync(filePath)) {
     console.error(`${colors.red}파일 없음: ${filePath}${colors.reset}`);

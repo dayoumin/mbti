@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 // ============================================================================
-// 샘플 데이터 (content-samples.ts에서 복사)
+// 샘플 데이터 (dashboard-content.ts에서 복사)
 // ============================================================================
 
 const CAT_KNOWLEDGE_QUIZZES = [
