@@ -78,6 +78,7 @@ import DemographicTester from './components/DemographicTester';
 import FactManager from './components/FactManager';
 import ContentReview from './components/ContentReview';
 import ContentOverview from './components/ContentOverview';
+import InsightSystem from './components/InsightSystem';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -137,12 +138,13 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
         groupLabel: '전략',
         tabs: [
           { key: 'ideaBank', label: '아이디어 뱅크', icon: <Lightbulb className="w-4 h-4" /> },
-          { key: 'content', label: '콘텐츠 시스템', icon: <Brain className="w-4 h-4" /> },
+          { key: 'insight', label: '인사이트 시스템', icon: <Brain className="w-4 h-4" /> },
+          { key: 'content', label: '콘텐츠 시스템', icon: <Sparkles className="w-4 h-4" /> },
           { key: 'firstMover', label: '선점 효과', icon: <Zap className="w-4 h-4" /> },
           { key: 'roadmap', label: '로드맵', icon: <ListChecks className="w-4 h-4" /> },
           { key: 'category', label: '카테고리', icon: <Layers className="w-4 h-4" /> },
           { key: 'userStrategy', label: '사용자', icon: <User className="w-4 h-4" /> },
-          { key: 'viral', label: '바이럴', icon: <Sparkles className="w-4 h-4" /> },
+          { key: 'viral', label: '바이럴', icon: <Star className="w-4 h-4" /> },
           { key: 'share', label: '공유', icon: <Share2 className="w-4 h-4" /> },
           { key: 'retention', label: '체류 유도', icon: <RefreshCw className="w-4 h-4" /> },
         ],
@@ -460,6 +462,7 @@ export default function DashboardPage() {
           {/* 개요 - TODO */}
           {activeCategory === 'overview' && activeSubTab === 'todos' && <TodoManagement />}
           {/* 기획 */}
+          {activeCategory === 'planning' && activeSubTab === 'insight' && <InsightSystem />}
           {activeCategory === 'planning' && activeSubTab === 'firstMover' && <FirstMoverStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
           {activeCategory === 'planning' && activeSubTab === 'category' && <CategoryStrategy />}

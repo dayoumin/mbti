@@ -272,6 +272,98 @@ CREATE TABLE insight_rules (
 | docs/planning/INSIGHT_SYSTEM_MASTER.md | 마스터 설계서 (990줄) |
 | research/INSIGHT_RESEARCH_CLAUDE_FINDINGS.md | Claude 리서치 결과 |
 | src/app/dashboard/data/insight-system.ts | 대시보드용 데이터 통합 |
+| src/app/dashboard/components/InsightSystem.tsx | **NEW** 대시보드 뷰어 컴포넌트 (777줄) |
+
+---
+
+## 추가: 코드 리뷰 완료 (2024-12-25)
+
+### 새로 생성된 파일
+
+**InsightSystem.tsx** - 대시보드 뷰어 컴포넌트
+- 8개 탭 (개요/7단계/태그/룰/로드맵/수익화/매칭/지표)
+- 777줄 단일 파일 (분리 고려 필요?)
+
+### 코드 구조
+
+```typescript
+InsightSystem.tsx
+├── InsightSystem()          # 메인 (탭 라우팅)
+├── OverviewTab()            # 개요
+├── StagesTab()              # 7단계 해금
+├── TagsTab()                # 태그 시스템
+├── RulesTab()               # 룰 엔진
+├── RoadmapTab()             # 로드맵
+├── PricingTab()             # 수익화
+├── MatchingTab()            # 사람 매칭
+└── MetricsTab()             # 성공 지표
+```
+
+### 핵심 패턴
+
+**1. 데이터 동기화 (자동 반영)**
+```typescript
+// 데이터 배열 수정 → 대시보드 자동 업데이트
+{INSIGHT_STAGES.map((stage) => (
+  <button key={stage.id}>
+    Stage {stage.id}: {stage.name}
+  </button>
+))}
+```
+
+**2. 조건부 속성 접근**
+```typescript
+// union 타입 대응
+{'validity' in evidence && <p>{evidence.validity}</p>}
+{'reliability' in evidence && <p>{evidence.reliability}</p>}
+```
+
+**3. 탭 타입 안전성**
+```typescript
+type TabKey = 'overview' | 'stages' | 'tags' | 'rules' |
+              'roadmap' | 'pricing' | 'matching' | 'metrics';
+```
+
+### 빌드 상태
+```
+✓ TypeScript 검사 통과
+✓ Compiled successfully
+✓ Static pages 생성 완료
+```
+
+### 해결된 이슈
+1. ✅ PSYCHOLOGICAL_EVIDENCE의 validity 속성 조건부 처리
+2. ✅ page.tsx useState 타입에 'insight' 추가
+3. ✅ tabs 배열에 insight 탭 추가
+
+### 잠재적 개선점
+1. ⚠️ 777줄 단일 파일 → 탭별 분리 고려
+2. ⚠️ 버튼 접근성 (aria-label 미적용)
+3. ⚠️ 일부 하드코딩 색상값
+
+---
+
+## 추가 코드 리뷰 요청
+
+### 1. 파일 분리 여부
+8개 탭 컴포넌트가 한 파일에 있음 (777줄)
+- 현재 패턴: 관련 컴포넌트 그룹핑
+- 대안: 탭별 파일 분리 (`StagesTab.tsx`, `TagsTab.tsx` 등)
+- 어떤 접근이 더 나을까요?
+
+### 2. 조건부 속성 접근 개선
+```typescript
+// 현재
+{'validity' in evidence && <p>{evidence.validity}</p>}
+
+// 대안: 타입 가드 함수?
+function hasValidity(e: Evidence): e is EvidenceWithValidity { ... }
+```
+
+### 3. 데이터-뷰 동기화 패턴
+- 장점: 데이터 수정 시 자동 반영
+- 단점: 구조 변경 시 컴포넌트도 수정 필요
+- 더 나은 접근법?
 
 ---
 

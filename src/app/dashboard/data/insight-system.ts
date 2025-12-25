@@ -307,6 +307,266 @@ export const RULE_PLAN = {
 };
 
 // ============================================================================
+// 5.1 행동-특성 매핑 테이블 (Gemini 딥리서치 보고서 기반)
+// ============================================================================
+// 사용자의 구체적인 행동(Event)을 심리적 특성(Trait)으로 변환하는 가중치 테이블
+// 근거: 심리측정학적 검증 결과 (Big Five, TKI, 애착 이론)
+
+export interface BehaviorTraitMapping {
+  activity: string;
+  activityKr: string;
+  primaryTrait: {
+    trait: string;
+    impact: 'high' | 'medium' | 'low';
+    direction: '+' | '-';
+  };
+  secondaryTrait?: {
+    trait: string;
+    impact: 'high' | 'medium' | 'low';
+    direction: '+' | '-';
+  };
+  narrativeAngle: string; // 인사이트 서사 방향
+  source?: string;
+}
+
+export const BEHAVIOR_TRAIT_MAPPINGS: BehaviorTraitMapping[] = [
+  // ═══════════════════════════════════════════════════════════════
+  // 반려동물 벡터 (Texas 대학 연구 기반)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    activity: 'dog_walking',
+    activityKr: '반려견 산책',
+    primaryTrait: { trait: 'extraversion', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'conscientiousness', impact: 'medium', direction: '+' },
+    narrativeAngle: '규범 준수와 사회적 연결성을 강조하는 메시지',
+    source: 'Texas University Pet Study (4,565명)',
+  },
+  {
+    activity: 'cat_care',
+    activityKr: '반려묘 케어',
+    primaryTrait: { trait: 'openness', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'neuroticism', impact: 'low', direction: '+' },
+    narrativeAngle: '독립성과 정서적 깊이, 창의성을 지지하는 메시지',
+    source: 'Texas University Pet Study',
+  },
+  {
+    activity: 'dog_training',
+    activityKr: '반려견 훈련',
+    primaryTrait: { trait: 'dominance', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'rule_consciousness', impact: 'high', direction: '+' },
+    narrativeAngle: '리더십과 구조적 사고방식을 칭찬',
+    source: 'C-BARQ 연구',
+  },
+  {
+    activity: 'cat_play',
+    activityKr: '반려묘 놀이',
+    primaryTrait: { trait: 'abstractedness', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'social_dominance', impact: 'medium', direction: '-' },
+    narrativeAngle: '비선형적 사고와 상상력을 자극하는 피드백',
+    source: 'Feline Five 연구',
+  },
+  {
+    activity: 'pet_community',
+    activityKr: '반려동물 커뮤니티 활동',
+    primaryTrait: { trait: 'agreeableness', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'extraversion', impact: 'medium', direction: '+' },
+    narrativeAngle: '공동체 의식과 정보 공유 의지를 강조',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 미각 벡터 (커피/음료 취향)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    activity: 'black_coffee',
+    activityKr: '블랙 커피 선호',
+    primaryTrait: { trait: 'conscientiousness', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'tough_mindedness', impact: 'medium', direction: '+' },
+    narrativeAngle: '효율성 추구와 실용적 미니멀리즘 강조',
+    source: '쓴맛 선호-Dark Triad 약한 상관 연구',
+  },
+  {
+    activity: 'latte_sweet',
+    activityKr: '라떼/달콤한 음료 선호',
+    primaryTrait: { trait: 'agreeableness', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'comfort_seeking', impact: 'high', direction: '+' },
+    narrativeAngle: '"오늘 하루 자신에게 너그러웠나요?" 같은 따뜻한 어조',
+  },
+  {
+    activity: 'tea_preference',
+    activityKr: '차/말차 선호',
+    primaryTrait: { trait: 'openness', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'health_consciousness', impact: 'medium', direction: '+' },
+    narrativeAngle: '마음 챙김과 건강한 루틴 강조',
+    source: 'Study Finds - Coffee or Tea Personality (2,000명)',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 사회적 배터리 벡터
+  // ═══════════════════════════════════════════════════════════════
+  {
+    activity: 'large_party',
+    activityKr: '대규모 파티/네트워킹',
+    primaryTrait: { trait: 'social_energy_drain', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'extraversion', impact: 'high', direction: '+' },
+    narrativeAngle: '외향인에게는 에너지 충전, 내향인에게는 방전 경고',
+    source: '도파민 보상 시스템 연구',
+  },
+  {
+    activity: 'solo_reading',
+    activityKr: '혼자 독서/멍하니 있기',
+    primaryTrait: { trait: 'social_energy_recharge', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'introversion', impact: 'medium', direction: '+' },
+    narrativeAngle: '"지금은 혼자만의 동굴이 필요한 시간입니다" 같은 검증 메시지',
+    source: '코르티솔 반응 연구',
+  },
+  {
+    activity: 'small_group',
+    activityKr: '소규모 모임 (3-5명)',
+    primaryTrait: { trait: 'social_balance', impact: 'medium', direction: '+' },
+    narrativeAngle: '균형 잡힌 사회적 에너지 관리 칭찬',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 갈등 관리 벡터 (TKI 모델 기반)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    activity: 'conflict_avoid',
+    activityKr: '갈등 회피 ("말 안 하기로 했다")',
+    primaryTrait: { trait: 'avoiding', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'assertiveness', impact: 'low', direction: '-' },
+    narrativeAngle: '단기적 평화 vs 장기적 관계 비용 인사이트',
+    source: 'Thomas-Kilmann Conflict Mode (TKI)',
+  },
+  {
+    activity: 'conflict_compete',
+    activityKr: '갈등 경쟁 ("내 의견 끝까지 주장")',
+    primaryTrait: { trait: 'competing', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'assertiveness', impact: 'high', direction: '+' },
+    narrativeAngle: '목표 달성력 강조, 관계 유지 팁 제공',
+    source: 'TKI',
+  },
+  {
+    activity: 'conflict_collaborate',
+    activityKr: '갈등 협력 ("윈-윈 찾기")',
+    primaryTrait: { trait: 'collaborating', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'agreeableness', impact: 'high', direction: '+' },
+    narrativeAngle: '관계 강화 능력과 문제 해결력 칭찬',
+    source: 'TKI',
+  },
+  {
+    activity: 'conflict_accommodate',
+    activityKr: '갈등 수용 ("상대방 의견 따르기")',
+    primaryTrait: { trait: 'accommodating', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'assertiveness', impact: 'low', direction: '-' },
+    narrativeAngle: '관계 우선 성향 인정, 자기 주장 성장점 제시',
+    source: 'TKI',
+  },
+  {
+    activity: 'conflict_compromise',
+    activityKr: '갈등 타협 ("서로 양보")',
+    primaryTrait: { trait: 'compromising', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'pragmatism', impact: 'medium', direction: '+' },
+    narrativeAngle: '효율적 해결 능력 강조',
+    source: 'TKI',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 라이프스타일 벡터
+  // ═══════════════════════════════════════════════════════════════
+  {
+    activity: 'morning_routine',
+    activityKr: '아침 루틴 (운동, 명상 등)',
+    primaryTrait: { trait: 'conscientiousness', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'self_discipline', impact: 'high', direction: '+' },
+    narrativeAngle: '자기 관리 능력과 일관성 강조',
+  },
+  {
+    activity: 'night_owl',
+    activityKr: '야행성 활동 (밤 10시 이후)',
+    primaryTrait: { trait: 'openness', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'emotional_sensitivity', impact: 'medium', direction: '+' },
+    narrativeAngle: '"피곤할 때 감정에 더 솔직해지시네요" 같은 발견',
+  },
+  {
+    activity: 'plant_care',
+    activityKr: '식물 돌봄',
+    primaryTrait: { trait: 'nurturing', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'patience', impact: 'medium', direction: '+' },
+    narrativeAngle: '조용한 돌봄과 성장 지켜보기의 만족감 강조',
+  },
+  {
+    activity: 'spontaneous_trip',
+    activityKr: '즉흥 여행/외출',
+    primaryTrait: { trait: 'openness', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'spontaneity', impact: 'high', direction: '+' },
+    narrativeAngle: '모험 정신과 유연성 강조',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 관계/표현 벡터
+  // ═══════════════════════════════════════════════════════════════
+  {
+    activity: 'direct_expression',
+    activityKr: '감정 직접 표현',
+    primaryTrait: { trait: 'assertiveness', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'extraversion', impact: 'medium', direction: '+' },
+    narrativeAngle: '솔직한 소통 능력 칭찬',
+  },
+  {
+    activity: 'indirect_expression',
+    activityKr: '감정 간접 표현 (행동으로)',
+    primaryTrait: { trait: 'reserved', impact: 'medium', direction: '+' },
+    secondaryTrait: { trait: 'thoughtfulness', impact: 'high', direction: '+' },
+    narrativeAngle: '섬세한 배려와 사려 깊음 강조',
+  },
+  {
+    activity: 'gift_giving',
+    activityKr: '선물 주기',
+    primaryTrait: { trait: 'love_language_gifts', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'thoughtfulness', impact: 'medium', direction: '+' },
+    narrativeAngle: '물질적 표현을 통한 애정 전달 스타일',
+  },
+  {
+    activity: 'quality_time',
+    activityKr: '함께 시간 보내기 중시',
+    primaryTrait: { trait: 'love_language_time', impact: 'high', direction: '+' },
+    secondaryTrait: { trait: 'presence', impact: 'high', direction: '+' },
+    narrativeAngle: '함께하는 순간의 가치를 아는 사람',
+  },
+];
+
+// 사회적 배터리 계산용 상수
+export const SOCIAL_BATTERY_CONFIG = {
+  // 활동별 에너지 영향 (내향인 기준, 외향인은 반전)
+  energyImpact: {
+    large_party: -30,        // 대규모 모임: 크게 방전
+    networking_event: -25,   // 네트워킹: 방전
+    small_group: -10,        // 소규모 모임: 약간 방전
+    one_on_one: -5,          // 1:1 대화: 미미한 방전
+    solo_activity: +20,      // 혼자 활동: 충전
+    solo_reading: +25,       // 독서/명상: 크게 충전
+    nature_walk: +15,        // 자연 산책: 충전
+    phone_call: -10,         // 전화 통화: 약간 방전
+  },
+
+  // 내향/외향 판별 임계값
+  thresholds: {
+    introvert: 40,   // 외향성 점수 40 이하 = 내향
+    ambivert: 60,    // 40-60 = 양향
+    extravert: 60,   // 60 이상 = 외향
+  },
+
+  // 배터리 상태별 메시지
+  messages: {
+    critical: '지금은 혼자만의 동굴이 필요한 시간입니다. 🌙',
+    low: '에너지가 낮아지고 있어요. 조용한 시간을 가져보세요.',
+    medium: '적절한 균형을 유지하고 있어요.',
+    high: '사회적 에너지가 충분해요! 모임에 참여해보는 건 어때요?',
+    full: '에너지가 넘쳐요! 새로운 만남도 즐길 수 있겠네요.',
+  },
+};
+
+// ============================================================================
 // 6. 기술 스택 권장사항
 // ============================================================================
 
@@ -355,6 +615,127 @@ export const TECH_RECOMMENDATIONS = {
       '출력 토큰 제한: 출력이 입력보다 2-5배 비쌈',
     ],
   },
+};
+
+// ============================================================================
+// 6.1 페르소나 & 어조 가이드 (Gemini 딥리서치 보고서 기반)
+// ============================================================================
+// Co-Star 성공 요인 반영: "팩트 폭력(Biting Truth)" 스타일
+// 무조건적 칭찬보다 데이터 기반 직설적 인사이트가 공유율 높음
+
+export const PERSONA_GUIDE = {
+  // 핵심 페르소나 정의
+  persona: {
+    name: '냉철하지만 위트있는 행동 심리학자',
+    description: '무조건적인 칭찬보다 데이터 기반 팩트 폭력(Biting Truth)을 선호',
+    tone: 'snarky-but-caring', // Co-Star 성공 요인
+    inspiration: 'Co-Star의 "팩트 폭력" + The Pattern의 "깊이 있는 분석"',
+  },
+
+  // 어조별 예시 (상황에 따라 선택)
+  toneExamples: {
+    // 팩트 폭력 스타일 (공유하고 싶은 콘텐츠)
+    biting: [
+      '당신은 갈등 앞에서 도망가는 걸 "배려"라고 부르고 있네요.',
+      '혼자 있고 싶다면서 연인에겐 24시간 붙어있고 싶어하는 모순... 흥미롭네요.',
+      '계획적이라고 했는데, 커피 취향은 매번 바뀌네요. 진짜 당신은 누구죠?',
+      '고양이를 좋아한다고 했지만, 투표 패턴은 "같이 있고 싶어요"를 외치고 있어요.',
+    ],
+
+    // 따뜻한 지지 스타일 (균형용)
+    supportive: [
+      '혼자 시간이 필요한 건 이기적인 게 아니에요. 충전이 필요한 거죠.',
+      '상대방을 먼저 생각하는 당신, 가끔은 자신도 돌봐주세요.',
+      '루틴을 지키는 당신의 일관성이 주변 사람들에게 안정감을 줘요.',
+    ],
+
+    // 발견/인사이트 스타일
+    discovery: [
+      '밤 10시 이후 투표에서 감정적 선택이 40% 증가해요. 피곤하면 솔직해지시나봐요.',
+      '고양이 테스트에선 독립형인데, 이상형 테스트에선 밀착형... 가까운 사람에겐 다르군요.',
+      '커피는 항상 같은 걸 마시는데, 여행지는 매번 새로운 곳을 고르시네요.',
+    ],
+  },
+
+  // 프롬프트 템플릿
+  promptTemplate: {
+    system: `당신은 냉철하지만 위트 있는 행동 심리학자입니다.
+
+## 성격
+- 무조건적인 칭찬보다 데이터 기반 팩트 폭력(Biting Truth)을 선호합니다
+- 하지만 근본적으로 사용자를 돕고 싶어합니다 (snarky-but-caring)
+- 모순이나 흥미로운 패턴을 발견하면 날카롭게 지적합니다
+- 너무 상처주지 않도록 위트를 섞어서 표현합니다
+
+## 어조 규칙
+1. 짧고 강렬하게 (1-2문장 핵심)
+2. 데이터를 구체적으로 인용 ("40%", "5번 중 4번" 등)
+3. 반전이나 모순을 부각
+4. "~하시네요", "~인 것 같아요" 대신 "~군요", "~네요" 사용
+5. 이모지는 문장 끝에 하나만
+
+## 피해야 할 것
+- "정말 대단해요!", "완벽해요!" 같은 과한 칭찬
+- 뻔한 조언 ("자신을 사랑하세요")
+- 너무 긴 설명
+- 모호한 표현`,
+
+    userDataFormat: `## 사용자 데이터
+### 테스트 결과
+{{testResults}}
+
+### 투표 패턴 (최근 30일)
+- 실용 vs 감성: {{practicalRatio}}% vs {{emotionalRatio}}%
+- 안전 vs 모험: {{safeRatio}}% vs {{adventurousRatio}}%
+- 혼자 vs 함께: {{soloRatio}}% vs {{togetherRatio}}%
+
+### 시간대 패턴
+- 가장 활발한 시간: {{peakHour}}
+- 밤(22시 이후) 감정적 선택 증가율: {{nightEmotionalIncrease}}%
+
+### 발견된 모순
+{{contradictions}}`,
+
+    outputFormat: `## 요청
+위 데이터를 분석하여 다음 형식으로 인사이트를 제공해주세요:
+
+### 한 줄 팩트 폭력 (필수)
+- 가장 흥미로운 모순이나 패턴을 날카롭게 지적
+
+### 숨은 패턴 (1-2개)
+- 사용자도 몰랐을 의외의 발견
+
+### 성장 포인트 (1개)
+- 비난이 아닌 가능성으로 표현
+
+응답은 JSON 형식으로:
+{
+  "bitingTruth": "한 줄 팩트 폭력",
+  "hiddenPatterns": ["패턴1", "패턴2"],
+  "growthPoint": "성장 포인트"
+}`,
+  },
+
+  // 상황별 어조 선택 가이드
+  toneSelection: {
+    // 모순 발견 시 → biting 스타일
+    contradiction: 'biting',
+    // 첫 인사이트 해금 시 → supportive 스타일
+    firstUnlock: 'supportive',
+    // 숨은 패턴 발견 시 → discovery 스타일
+    hiddenPattern: 'discovery',
+    // 사회적 배터리 낮을 때 → supportive 스타일
+    lowBattery: 'supportive',
+    // 공유 가능 콘텐츠 → biting 스타일 (바이럴 효과)
+    shareable: 'biting',
+  },
+
+  // 공유용 콘텐츠 포맷
+  shareableFormats: [
+    '{name}님은 {contradiction}... {emoji}',
+    '테스트 결과: {result1} + {result2} = {insight}',
+    '{percentage}%의 사람들과 다른 선택을 했어요: {uniqueChoice}',
+  ],
 };
 
 // ============================================================================
@@ -744,6 +1125,31 @@ export const RELATIONSHIP_MATCH = {
 
 export const IMPLEMENTATION_ROADMAP = [
   // ═══════════════════════════════════════════════════════════════
+  // 기술 부채 해소 (코드 구조 개선)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    phase: 'Phase 0',
+    title: '설계 데이터 분리 (기술 부채)',
+    priority: 'low', // 실제 서비스 구현 전까지 불필요
+    trigger: '실제 InsightService 구현 시작 시',
+    tasks: [
+      'insight-system.ts → 여러 파일로 분리',
+      '  - insight/concept.ts (핵심 컨셉, 해금 시스템)',
+      '  - insight/tags.ts (태그 정의)',
+      '  - insight/rules.ts (룰 정의)',
+      '  - insight/behavior-mappings.ts (행동-특성 매핑)',
+      '  - insight/persona.ts (페르소나 가이드)',
+      '  - insight/pricing.ts (비즈니스 모델, 가격)',
+      '  - insight/matching.ts (사람 매칭 시스템)',
+      '  - insight/index.ts (통합 export)',
+      'barrel export로 기존 import 호환 유지',
+      'BEHAVIOR_TRAIT_MAPPINGS에 trait union type 추가',
+    ],
+    note: '현재 설계 문서로 사용 중 → 실제 서비스 코드 전환 시 진행',
+    estimatedSize: '각 파일 100-200줄 수준',
+  },
+
+  // ═══════════════════════════════════════════════════════════════
   // 기능 개발 (모두 무료로 구현, 유료화 로직 없음)
   // ═══════════════════════════════════════════════════════════════
   {
@@ -876,6 +1282,10 @@ export const INSIGHT_SYSTEM = {
     samples: SAMPLE_RULES,
     plan: RULE_PLAN,
   },
+  // 딥리서치 보고서 반영 (2024-12-25)
+  behaviorMappings: BEHAVIOR_TRAIT_MAPPINGS,  // 행동-특성 매핑 테이블
+  socialBattery: SOCIAL_BATTERY_CONFIG,       // 사회적 배터리 설정
+  personaGuide: PERSONA_GUIDE,                // 페르소나 & 어조 가이드
   tech: TECH_RECOMMENDATIONS,
   gamification: GAMIFICATION_STRATEGY,
   business: BUSINESS_MODEL,
