@@ -236,10 +236,21 @@ export interface ScenarioResult {
 // VS 투표
 // ============================================================================
 
+/**
+ * 인사이트용 태그 (투표 선택지별)
+ * Stage 3 판단 스타일 분석에 사용
+ */
+export interface InsightTags {
+  personality?: string[];   // 성격 태그: extroverted, introverted, expressive 등
+  decision?: string[];      // 판단 태그: practical, emotional, safe, adventurous 등
+  relationship?: string[];  // 관계 태그: supportive, independent, direct, indirect 등
+}
+
 export interface VSPollOption {
   id: 'a' | 'b';
   text: string;
   emoji: string;
+  insightTags?: InsightTags;  // 인사이트 분석용 태그 (Stage 3+)
 }
 
 export interface VSPoll {
