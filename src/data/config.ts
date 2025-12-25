@@ -307,6 +307,56 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         resultFormat: "simple",
         deepButtonText: "여행 스타일"
     },
+    gameStyle: {
+        testType: "personality",
+        icon: "GameStyleIcon",
+        lucideIcon: "Gamepad2",
+        emoji: "🎮",
+        label: "게임 스타일",
+        intro: ["당신의 게임 플레이 스타일은?", "경쟁형? 탐험형?", "혼자? 같이?"],
+        resultFormat: "simple",
+        deepButtonText: "게임 스타일"
+    },
+    snsStyle: {
+        testType: "personality",
+        icon: "SnsStyleIcon",
+        lucideIcon: "Share2",
+        emoji: "📱",
+        label: "SNS 성격",
+        intro: ["당신의 SNS 페르소나는?", "인플루언서? 잠수함?", "공유러? 관찰러?"],
+        resultFormat: "simple",
+        deepButtonText: "SNS 스타일"
+    },
+    homeStyle: {
+        testType: "matching",
+        icon: "HomeStyleIcon",
+        lucideIcon: "Sofa",
+        emoji: "🛋️",
+        label: "집콕 취미",
+        intro: ["나에게 맞는 집콕 취미는?", "창작형? 감상형?", "활동적? 편안하게?"],
+        resultFormat: "matching",
+        deepButtonText: "집콕 취향",
+        matchPointsTitle: "🛋️ 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 소개", guide: "💡 시작 팁" },
+        tabActiveColor: "bg-amber-100 border-amber-500",
+        checkColor: "text-amber-600",
+        analysisButtonText: "🛋️ 상세 취향 분석 보기"
+    },
+    movieGenre: {
+        testType: "matching",
+        icon: "MovieGenreIcon",
+        lucideIcon: "Clapperboard",
+        emoji: "🎬",
+        label: "영화/드라마",
+        intro: ["당신에게 맞는 장르는?", "스릴러? 로맨스?", "코미디? SF?"],
+        resultFormat: "matching",
+        deepButtonText: "장르 취향",
+        matchPointsTitle: "🎬 이런 분에게 추천해요",
+        tabLabels: { interpretation: "📖 소개", guide: "🍿 추천 작품" },
+        tabActiveColor: "bg-violet-100 border-violet-500",
+        checkColor: "text-violet-600",
+        analysisButtonText: "🎬 상세 취향 분석 보기"
+    },
     // 세부 테스트
     dogBreed: {
         testType: "matching",

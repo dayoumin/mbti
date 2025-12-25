@@ -161,6 +161,7 @@ export type SubjectKey =
   | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'tea' | 'conflictStyle'
   | 'fruit' | 'alcohol' | 'bread' | 'perfume' | 'aroma' | 'food' | 'whiskeySample' | 'ramen'
   | 'spendingStyle' | 'drinkingStyle' | 'travelStyle'
+  | 'gameStyle' | 'snsStyle' | 'homeStyle' | 'movieGenre'
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 
