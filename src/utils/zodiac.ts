@@ -1,6 +1,15 @@
 // ============================================================================
 // 연도/띠 동적 계산 유틸리티
 // ============================================================================
+//
+// ⚠️ 중요: 양력(그레고리력) 기준
+// - 이 모듈은 양력 1월 1일을 기준으로 연도를 계산합니다.
+// - 음력 설날(1~2월) 기준이 아닙니다.
+// - 전통적 띠 계산(음력 설날 기준)과 다를 수 있으나,
+//   현대 한국에서 일반적으로 사용하는 양력 기준을 따릅니다.
+// - 콘텐츠 목적상 엄밀한 음력 기준보다 이해하기 쉬운 양력 기준 채택.
+//
+// ============================================================================
 
 /**
  * 12지신 띠 정보
@@ -197,8 +206,39 @@ export function getNewYearInfo() {
 }
 
 /**
- * 동적 문자열 생성 헬퍼
- * (향후 UI에서 동적 연도 표시에 활용 가능)
+ * 동적 연도 정보 스냅샷 생성
+ *
+ * 주의: 각 getter 호출마다 getCurrentYear()가 호출되어
+ * 자정 경계에서 불일치 가능성이 있었음.
+ * → 스냅샷 패턴으로 일관성 보장.
+ *
+ * @example
+ * const info = createDynamicYearSnapshot();
+ * console.log(info.year, info.ganji, info.zodiac);
+ */
+export function createDynamicYearSnapshot() {
+  const year = getCurrentYear(true);
+  const animal = getZodiacAnimal(year);
+
+  return {
+    year,
+    yearText: `${year}년`,
+    ganji: getGanjiName(year),
+    zodiac: getZodiacName(year),
+    coloredZodiac: getColoredZodiacName(year),
+    fullName: `${year}년 ${getGanjiName(year)}`,
+    emoji: animal.emoji,
+  };
+}
+
+/**
+ * 동적 문자열 생성 헬퍼 (레거시 호환)
+ *
+ * ⚠️ 주의: 각 getter 호출마다 getCurrentYear()가 호출됨
+ * - 자정 경계에서 year와 ganji가 불일치할 수 있음
+ * - 일관성이 필요하면 createDynamicYearSnapshot() 사용 권장
+ *
+ * @deprecated createDynamicYearSnapshot() 사용 권장
  */
 export const DYNAMIC_YEAR = {
   /** 현재/다음 연도 (12월엔 다음해) */

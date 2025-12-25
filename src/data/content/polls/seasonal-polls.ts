@@ -95,9 +95,15 @@ export const CHRISTMAS_CHOICE_POLLS: ChoicePoll[] = [
 // ============================================================================
 
 /**
- * 새해 VS 투표 동적 생성
+ * 새해 VS 투표 동적 생성 (팩토리 함수)
+ *
+ * 런타임에 최신 데이터가 필요하면 이 함수를 직접 호출.
+ *
+ * @example
+ * import { createNewYearVSPolls } from './seasonal-polls';
+ * const freshPolls = createNewYearVSPolls();
  */
-function createNewYearVSPolls(): VSPoll[] {
+export function createNewYearVSPolls(): VSPoll[] {
   const { year } = getNewYearInfo();
 
   return [
@@ -150,9 +156,11 @@ function createNewYearVSPolls(): VSPoll[] {
 }
 
 /**
- * 새해 선택 투표 동적 생성
+ * 새해 선택 투표 동적 생성 (팩토리 함수)
+ *
+ * 런타임에 최신 데이터가 필요하면 이 함수를 직접 호출.
  */
-function createNewYearChoicePolls(): ChoicePoll[] {
+export function createNewYearChoicePolls(): ChoicePoll[] {
   const info = getNewYearInfo();
   const { year, ganjiName, zodiacName, animal } = info;
 
@@ -199,9 +207,13 @@ function createNewYearChoicePolls(): ChoicePoll[] {
   ];
 }
 
-// 동적 생성된 새해 투표
-// Note: 모듈 로드 시점에 연도가 결정됨. 연말/연초에 빌드 필요.
-// Vercel 서버리스 환경에서는 콜드 스타트 시 재계산되므로 대부분 문제없음.
+// ============================================================================
+// 모듈 로드 시점 캐시 데이터
+// ============================================================================
+// ⚠️ 주의: 모듈 로드 시점에 연도가 고정됨
+// - 장기 실행 프로세스: 연말/연초에 재시작 필요
+// - Vercel 서버리스: 콜드 스타트 시 자동 갱신 (대부분 OK)
+// - 런타임 최신 필요 시: createNewYearVSPolls(), createNewYearChoicePolls() 직접 호출
 export const NEWYEAR_VS_POLLS: VSPoll[] = createNewYearVSPolls();
 export const NEWYEAR_CHOICE_POLLS: ChoicePoll[] = createNewYearChoicePolls();
 

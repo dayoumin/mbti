@@ -74,7 +74,7 @@ export { SMALLPET_KNOWLEDGE_QUIZZES } from './smallPet-knowledge';
 export { BIRD_KNOWLEDGE_QUIZZES } from './bird-knowledge';
 export { REPTILE_KNOWLEDGE_QUIZZES } from './reptile-knowledge';
 export { HAMSTER_KNOWLEDGE_QUIZZES } from './hamster-knowledge';
-export { SEASONAL_QUIZZES, CHRISTMAS_QUIZZES, NEWYEAR_QUIZZES } from './seasonal-quizzes';
+export { SEASONAL_QUIZZES, CHRISTMAS_QUIZZES, NEWYEAR_QUIZZES, createNewYearQuizzes } from './seasonal-quizzes';
 export { CAT_SCENARIO_QUIZZES } from './cat-scenario';
 export { DOG_SCENARIO_QUIZZES } from './dog-scenario';
 

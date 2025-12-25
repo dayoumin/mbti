@@ -40,7 +40,16 @@ export const CHOICE_POLLS: ChoicePoll[] = [...CHOICE_POLLS_DATA, ...MONEY_POLLS,
 export { VS_POLLS as default };
 
 // 시즌 투표 개별 export
-export { SEASONAL_VS_POLLS, SEASONAL_CHOICE_POLLS, CHRISTMAS_VS_POLLS, NEWYEAR_VS_POLLS } from './seasonal-polls';
+export {
+  SEASONAL_VS_POLLS,
+  SEASONAL_CHOICE_POLLS,
+  CHRISTMAS_VS_POLLS,
+  NEWYEAR_VS_POLLS,
+  CHRISTMAS_CHOICE_POLLS,
+  NEWYEAR_CHOICE_POLLS,
+  createNewYearVSPolls,
+  createNewYearChoicePolls,
+} from './seasonal-polls';
 
 // ============================================================================
 // 조회 함수
