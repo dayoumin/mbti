@@ -320,20 +320,21 @@ export async function GET(request: NextRequest) {
       });
 
       // 정의된 결과 후보군 가져오기 (미출현 감지용)
-      const getExpectedResults = (testType: string): string[] => {
+      // Set으로 반환하여 중복 방지 + O(1) 멤버십 체크
+      const getExpectedResultsSet = (testType: string): Set<string> => {
         const data = CHEMI_DATA[testType as keyof typeof CHEMI_DATA];
-        if (!data?.resultLabels) return [];
-        return data.resultLabels.map(r => r.name);
+        if (!data?.resultLabels) return new Set();
+        return new Set(data.resultLabels.map(r => r.name));
       };
 
       const distributions = Object.entries(byTest).map(([testType, items]) => {
         const total = items.reduce((sum, item) => sum + item.count, 0);
         const existingResults = new Set(items.map(item => item.resultName));
-        const expectedResults = getExpectedResults(testType);
+        const expectedResultsSet = getExpectedResultsSet(testType);
 
-        // 기존 결과 + 미출현 결과(0%) 병합
+        // 기존 결과 + 미출현 결과(0%) 병합 (Set으로 dedupe 보장)
         const allResults = [...items];
-        expectedResults.forEach(name => {
+        expectedResultsSet.forEach(name => {
           if (!existingResults.has(name)) {
             allResults.push({ resultName: name, count: 0 });
           }
@@ -343,28 +344,31 @@ export async function GET(request: NextRequest) {
         allResults.sort((a, b) => b.count - a.count);
 
         const distribution = allResults.map((item, idx) => {
-          // 희귀 결과 감지를 위해 소수점 1자리까지 유지
+          // rawPercentage: 알림 판단용 (반올림 없음)
+          // percentage: UI 표시용 (소수점 1자리)
+          const rawPercentage = total > 0 ? (item.count / total) * 100 : 0;
           const percentage = total > 0 ? Math.round((item.count / total) * 1000) / 10 : 0;
           return {
             rank: idx + 1,
             resultName: item.resultName,
             count: item.count,
             percentage,
+            rawPercentage, // 알림 판단용
           };
         });
 
-        // 이상 감지 (THRESHOLDS 사용)
+        // 이상 감지 (rawPercentage로 판단, Set.has로 O(1) 체크)
         const alerts: { type: 'high' | 'low' | 'zero'; resultName: string; percentage: number }[] = [];
         distribution.forEach(d => {
-          if (d.percentage >= THRESHOLDS.HIGH) {
+          if (d.rawPercentage >= THRESHOLDS.HIGH) {
             alerts.push({ type: 'high', resultName: d.resultName, percentage: d.percentage });
           }
-          // 희귀: 0보다 크고 1% 미만 (0.1% ~ 0.9% 등)
-          if (d.percentage > 0 && d.percentage < THRESHOLDS.LOW) {
+          // 희귀: count > 0이지만 1% 미만 (rawPercentage로 판단)
+          if (d.count > 0 && d.rawPercentage < THRESHOLDS.LOW) {
             alerts.push({ type: 'low', resultName: d.resultName, percentage: d.percentage });
           }
-          // 미출현: 정의된 결과인데 0%
-          if (d.count === 0 && expectedResults.includes(d.resultName)) {
+          // 미출현: count가 0이고 정의된 결과 (Set.has로 O(1))
+          if (d.count === 0 && expectedResultsSet.has(d.resultName)) {
             alerts.push({ type: 'zero', resultName: d.resultName, percentage: 0 });
           }
         });
@@ -373,7 +377,7 @@ export async function GET(request: NextRequest) {
           testType,
           total,
           resultCount: distribution.length,
-          expectedCount: expectedResults.length,
+          expectedCount: expectedResultsSet.size,
           distribution,
           alerts,
           hasAlerts: alerts.length > 0,

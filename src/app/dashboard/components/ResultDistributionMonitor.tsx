@@ -12,6 +12,7 @@ interface DistributionItem {
   resultName: string;
   count: number;
   percentage: number;
+  rawPercentage: number;  // 알림 판단용 (반올림 없음)
 }
 
 interface Alert {
@@ -80,9 +81,23 @@ export default function ResultDistributionMonitor() {
     return config?.label || testType;
   };
 
-  const getTestType = (testType: string) => {
+  const getTestType = (testType: string): 'personality' | 'matching' | 'unknown' => {
     const config = SUBJECT_CONFIG[testType as keyof typeof SUBJECT_CONFIG];
-    return config?.testType || 'unknown';
+    const type = config?.testType;
+    if (type === 'personality' || type === 'matching') return type;
+    return 'unknown';
+  };
+
+  const getTestTypeBadge = (testType: string) => {
+    const type = getTestType(testType);
+    switch (type) {
+      case 'personality':
+        return { label: '성격', className: 'bg-purple-100 text-purple-600' };
+      case 'matching':
+        return { label: '매칭', className: 'bg-blue-100 text-blue-600' };
+      default:
+        return { label: '기타', className: 'bg-gray-100 text-gray-600' };
+    }
   };
 
   const getAlertIcon = (type: Alert['type']) => {
@@ -91,6 +106,23 @@ export default function ResultDistributionMonitor() {
       case 'low': return '🟡';
       case 'zero': return '⚫';
     }
+  };
+
+  // 경계 근처(±0.1%)에서는 소수점 2자리까지 표시하여 혼란 방지
+  // 예: raw 39.96% → "39.96%" (40.0%로 보이지만 HIGH 아님을 명확히)
+  const formatPercentage = (rawPct: number, displayPct: number): string => {
+    // HIGH 경계 근처 (39.9 ~ 40.1)
+    const nearHighBoundary = Math.abs(rawPct - thresholds.HIGH) < 0.1;
+    // LOW 경계 근처 (0.9 ~ 1.1) 또는 매우 작은 값 (0 < raw < 0.1)
+    const nearLowBoundary = Math.abs(rawPct - thresholds.LOW) < 0.1;
+    const verySmall = rawPct > 0 && rawPct < 0.1;
+
+    if (nearHighBoundary || nearLowBoundary || verySmall) {
+      // 소수점 2자리까지 표시
+      return rawPct.toFixed(2);
+    }
+    // 일반: 반올림된 값 사용
+    return displayPct.toString();
   };
 
   const getAlertMessage = (alert: Alert) => {
@@ -228,13 +260,14 @@ export default function ResultDistributionMonitor() {
             >
               <div className="flex items-center gap-3">
                 <span className="font-medium">{getTestName(dist.testType)}</span>
-                <span className={`text-xs px-1.5 py-0.5 rounded ${
-                  getTestType(dist.testType) === 'personality'
-                    ? 'bg-purple-100 text-purple-600'
-                    : 'bg-blue-100 text-blue-600'
-                }`}>
-                  {getTestType(dist.testType) === 'personality' ? '성격' : '매칭'}
-                </span>
+                {(() => {
+                  const badge = getTestTypeBadge(dist.testType);
+                  return (
+                    <span className={`text-xs px-1.5 py-0.5 rounded ${badge.className}`}>
+                      {badge.label}
+                    </span>
+                  );
+                })()}
                 {dist.hasAlerts && (
                   <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded">
                     {dist.alerts.length}개 이상
@@ -252,9 +285,10 @@ export default function ResultDistributionMonitor() {
             {expandedTest === dist.testType && (
               <div className="mt-4 space-y-2">
                 {dist.distribution.map(item => {
-                  const isHigh = item.percentage >= 40;
-                  // API가 소수점 1자리까지 반환하므로 0.1~0.9% 감지 가능
-                  const isLow = item.percentage > 0 && item.percentage < 1;
+                  // rawPercentage로 판단하여 API 알림과 일치시킴
+                  const isHigh = item.rawPercentage >= thresholds.HIGH;
+                  const isLow = item.count > 0 && item.rawPercentage < thresholds.LOW;
+                  const isZero = item.count === 0;
 
                   return (
                     <div key={item.resultName} className="flex items-center gap-3">
@@ -266,26 +300,36 @@ export default function ResultDistributionMonitor() {
                       {/* 막대 그래프 */}
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-sm ${isHigh ? 'text-red-600 font-medium' : isLow ? 'text-yellow-600' : ''}`}>
+                          <span className={`text-sm ${
+                            isHigh ? 'text-red-600 font-medium' :
+                            isZero ? 'text-gray-400 italic' :
+                            isLow ? 'text-yellow-600' : ''
+                          }`}>
                             {item.resultName}
                           </span>
                           {isHigh && <span className="text-xs text-red-500">⚠️ 쏠림</span>}
                           {isLow && <span className="text-xs text-yellow-500">⚠️ 희귀</span>}
+                          {isZero && <span className="text-xs text-gray-500">⚫ 미출현</span>}
                         </div>
                         <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all ${
-                              isHigh ? 'bg-red-400' : isLow ? 'bg-yellow-400' : 'bg-blue-400'
+                              isHigh ? 'bg-red-400' :
+                              isZero ? 'bg-gray-300' :
+                              isLow ? 'bg-yellow-400' : 'bg-blue-400'
                             }`}
-                            style={{ width: `${Math.max(item.percentage, 1)}%` }}
+                            style={{ width: `${Math.max(item.percentage, isZero ? 0 : 1)}%` }}
                           />
                         </div>
                       </div>
 
                       {/* 수치 */}
-                      <div className="w-20 text-right text-sm">
-                        <span className={isHigh ? 'text-red-600 font-medium' : 'text-gray-600'}>
-                          {item.percentage}%
+                      <div className="w-24 text-right text-sm">
+                        <span className={
+                          isHigh ? 'text-red-600 font-medium' :
+                          isZero ? 'text-gray-400' : 'text-gray-600'
+                        }>
+                          {formatPercentage(item.rawPercentage, item.percentage)}%
                         </span>
                         <span className="text-gray-400 ml-1">({item.count})</span>
                       </div>
@@ -308,6 +352,9 @@ export default function ResultDistributionMonitor() {
                             {alert.type === 'low' && (
                               <>"{alert.resultName}" 결과가 {alert.percentage}%로 너무 적음 → 도달 가능성 확인 필요</>
                             )}
+                            {alert.type === 'zero' && (
+                              <>"{alert.resultName}" 결과가 한 번도 안 나옴 → condition 조건 불가능 여부 확인</>
+                            )}
                           </span>
                         </li>
                       ))}
@@ -323,8 +370,8 @@ export default function ResultDistributionMonitor() {
       {/* 푸터 */}
       <div className="p-4 border-t bg-gray-50 text-xs text-gray-500">
         <p className="font-medium text-gray-600 mb-1">분포 이상 감지 기준:</p>
-        <p>• 🔴 쏠림: 한 결과가 40% 이상 → condition 조건 완화 필요</p>
-        <p>• 🟡 희귀: 한 결과가 1% 미만 → 도달 조건 확인 필요</p>
+        <p>• 🔴 쏠림: 한 결과가 {thresholds.HIGH}% 이상 → condition 조건 완화 필요</p>
+        <p>• 🟡 희귀: 한 결과가 {thresholds.LOW}% 미만 → 도달 조건 확인 필요</p>
         <p>• ⚫ 미출현: 0% (한 번도 안 나옴) → 조건 불가능 확인</p>
       </div>
     </div>
