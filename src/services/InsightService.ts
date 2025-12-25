@@ -16,7 +16,7 @@ import {
 } from '@/data/insight/test-tag-mappings';
 import { CHEMI_DATA } from '@/data';
 import { INSIGHT_UNLOCK } from '@/data/gamification/points';
-import { VALID_INSIGHT_TAGS, getInterestTagFromCategory } from '@/data/insight/insight-tags';
+import { VALID_INSIGHT_TAGS, getInterestTagFromCategory, DECISION_TAGS } from '@/data/insight/insight-tags';
 import { matchStage2Rules, type Stage2Rule } from '@/data/insight/stage2-rules';
 import {
   generateDecisionStyleResult,
@@ -606,13 +606,8 @@ class InsightServiceClass {
 
     const tagCounts = this.getTagCounts();
 
-    // 의사결정 관련 태그가 있는지 확인 (모든 DECISION_TAGS 포함)
-    const decisionTags = [
-      'practical', 'sentimental', 'adventurous', 'safe', 'cautious',
-      'solo', 'together', 'direct', 'indirect',
-      'present-focused', 'future-focused',
-    ];
-    const hasDecisionTags = decisionTags.some(tag => tagCounts[tag] > 0);
+    // 의사결정 관련 태그가 있는지 확인 (SSOT: DECISION_TAGS)
+    const hasDecisionTags = DECISION_TAGS.some(tag => tagCounts[tag] > 0);
 
     if (!hasDecisionTags) {
       return null;
