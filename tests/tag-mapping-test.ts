@@ -9,7 +9,9 @@ import {
   extractTagsFromTestResult,
   isRelationshipTest,
   getTestCategory,
+  getDimensionQuestionCounts,
 } from '../src/data/insight/test-tag-mappings';
+import { CHEMI_DATA } from '../src/data';
 
 // ============================================================================
 // 테스트 유틸리티
@@ -82,16 +84,21 @@ assert(isRelationshipTest('coffee') === false, 'coffee는 관계 테스트 아�
 
 section('4. 태그 추출 - human (외향적 성격)');
 
+// CHEMI_DATA에서 실제 질문 분포 추출 (human: 5차원 × 3문항 = 15문항)
+const humanDimCounts = getDimensionQuestionCounts(CHEMI_DATA.human.questions);
+console.log('  human dimCounts:', JSON.stringify(humanDimCounts));
+
 // 외향적, 모험적, 공감적, 계획적, 멘탈 강한 사람
+// 차원당 3문항 × 5점 = 15점 만점, HIGH >= 60% = 9점 이상
 const extrovertScores = {
-  inssa: 45,     // HIGH (15점 만점 중 15점 = 100%)
-  adventure: 45, // HIGH
-  empathy: 45,   // HIGH
-  plan: 45,      // HIGH
-  mental: 45,    // HIGH
+  inssa: 15,     // HIGH (15점 만점 중 15점 = 100%)
+  adventure: 15, // HIGH
+  empathy: 15,   // HIGH
+  plan: 15,      // HIGH
+  mental: 15,    // HIGH
 };
 
-const extrovertTags = extractTagsFromTestResult('human', extrovertScores, 15);
+const extrovertTags = extractTagsFromTestResult('human', extrovertScores, humanDimCounts);
 console.log('  추출된 태그:', extrovertTags.join(', '));
 
 assert(extrovertTags.includes('extroverted'), '외향적 태그 포함');
@@ -107,15 +114,16 @@ assert(extrovertTags.includes('resilient'), '회복력 태그 포함');
 section('5. 태그 추출 - human (내향적 성격)');
 
 // 내향적, 안전추구, 논리적, 자유로운, 민감한 사람
+// 차원당 3문항 × 5점 = 15점 만점, LOW < 40% = 6점 미만
 const introvertScores = {
-  inssa: 5,      // LOW
-  adventure: 5,  // LOW
-  empathy: 5,    // LOW
-  plan: 5,       // LOW
-  mental: 5,     // LOW
+  inssa: 3,      // LOW (15점 만점 중 3점 = 20%)
+  adventure: 3,  // LOW
+  empathy: 3,    // LOW
+  plan: 3,       // LOW
+  mental: 3,     // LOW
 };
 
-const introvertTags = extractTagsFromTestResult('human', introvertScores, 15);
+const introvertTags = extractTagsFromTestResult('human', introvertScores, humanDimCounts);
 console.log('  추출된 태그:', introvertTags.join(', '));
 
 assert(introvertTags.includes('introverted'), '내향적 태그 포함');
@@ -130,7 +138,7 @@ assert(introvertTags.includes('sensitive'), '민감함 태그 포함');
 
 section('6. 태그 추출 - MEDIUM 레벨 (중립)');
 
-// 15문항, 5차원 → 차원당 3문항 → 차원당 최대 15점
+// 차원당 3문항 × 5점 = 15점 만점
 // MEDIUM = 40%~60% = 6~9점
 const neutralScores = {
   inssa: 7,      // MEDIUM (~47%)
@@ -140,7 +148,7 @@ const neutralScores = {
   mental: 7,     // MEDIUM (~47%)
 };
 
-const neutralTags = extractTagsFromTestResult('human', neutralScores, 15);
+const neutralTags = extractTagsFromTestResult('human', neutralScores, humanDimCounts);
 console.log('  추출된 태그 수:', neutralTags.length);
 console.log('  (차원당 3문항, 최대 15점 기준 40-60% = 6-9점)');
 
@@ -153,6 +161,11 @@ assert(neutralTags.length === 0, 'MEDIUM 레벨은 태그 없음');
 
 section('7. 관계 테스트 태그 추출 - idealType');
 
+const idealTypeDimCounts = getDimensionQuestionCounts(CHEMI_DATA.idealType.questions);
+console.log('  idealType dimCounts:', JSON.stringify(idealTypeDimCounts));
+
+// idealType은 차원당 질문 수에 따라 최대 점수가 결정됨
+// 점수 25는 모든 차원에서 HIGH를 보장하기 위해 충분히 높게 설정
 const passionateScores = {
   passion: 25,   // HIGH
   commit: 25,    // HIGH
@@ -160,8 +173,7 @@ const passionateScores = {
   express: 25,   // HIGH
   active: 25,    // HIGH
 };
-
-const passionateTags = extractTagsFromTestResult('idealType', passionateScores, 15);
+const passionateTags = extractTagsFromTestResult('idealType', passionateScores, idealTypeDimCounts);
 console.log('  추출된 태그:', passionateTags.join(', '));
 
 assert(passionateTags.includes('expressive'), 'expressive 태그 포함');
@@ -174,7 +186,7 @@ assert(passionateTags.includes('future-focused'), 'future-focused 태그 포함'
 
 section('8. 존재하지 않는 테스트 처리');
 
-const unknownTags = extractTagsFromTestResult('unknownTest', { dim1: 50 }, 10);
+const unknownTags = extractTagsFromTestResult('unknownTest', { dim1: 50 });
 assert(unknownTags.length === 0, '존재하지 않는 테스트 → 빈 배열');
 
 // ============================================================================

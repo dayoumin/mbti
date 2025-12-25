@@ -4,7 +4,7 @@
 // 각 테스트의 차원 점수를 인사이트 태그로 변환
 // Stage 1, 2에서 사용
 
-import type { PersonalityTag, DecisionTag, RelationshipTag } from '@/app/dashboard/data/insight-system';
+import type { PersonalityTag, DecisionTag, RelationshipTag } from './insight-tags';
 
 // ============================================================================
 // 타입 정의
@@ -388,11 +388,14 @@ function getLevel(scorePercent: number): 'high' | 'medium' | 'low' {
 
 /**
  * 테스트 결과에서 태그 추출
+ * @param testId 테스트 ID
+ * @param dimensions 차원별 점수
+ * @param dimCounts 차원별 질문 수 (optional, 없으면 균등 배분 가정)
  */
 export function extractTagsFromTestResult(
   testId: string,
   dimensions: Record<string, number>,
-  questionCount: number = 12
+  dimCounts?: Record<string, number>
 ): string[] {
   const mapping = TEST_TAG_MAPPINGS[testId];
   if (!mapping) {
@@ -401,14 +404,14 @@ export function extractTagsFromTestResult(
   }
 
   const tags: Set<string> = new Set();
-  const maxScore = questionCount * 5; // 최대 점수 (문항당 5점)
+  const dimensionCount = Object.keys(mapping.dimensions).length;
 
   for (const [dimensionKey, score] of Object.entries(dimensions)) {
     const dimMapping = mapping.dimensions[dimensionKey];
     if (!dimMapping) continue;
 
-    // 차원당 질문 수 추정 (균등 배분 가정)
-    const dimQuestionCount = Math.ceil(questionCount / Object.keys(mapping.dimensions).length);
+    // 차원별 질문 수: 전달받으면 사용, 아니면 기본값 추정
+    const dimQuestionCount = dimCounts?.[dimensionKey] ?? Math.ceil(12 / dimensionCount);
     const dimMaxScore = dimQuestionCount * 5;
     const scorePercent = (score / dimMaxScore) * 100;
     const level = getLevel(scorePercent);
@@ -438,4 +441,21 @@ export function isRelationshipTest(testId: string): boolean {
 export function getTestCategory(testId: string): string {
   const mapping = TEST_TAG_MAPPINGS[testId];
   return mapping?.category ?? 'unknown';
+}
+
+/**
+ * 테스트 데이터에서 차원별 질문 수 계산
+ * @param questions 테스트 질문 배열
+ * @returns 차원별 질문 수 Record
+ */
+export function getDimensionQuestionCounts(
+  questions: Array<{ dimension: string }>
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+
+  for (const q of questions) {
+    counts[q.dimension] = (counts[q.dimension] || 0) + 1;
+  }
+
+  return counts;
 }

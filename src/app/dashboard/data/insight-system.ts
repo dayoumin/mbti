@@ -6,6 +6,13 @@
 // 리서치: research/INSIGHT_RESEARCH_CLAUDE_FINDINGS.md
 // 외부 검증: Gemini 딥리서치 보고서
 
+// 태그 상수 import (SSOT에서 가져옴)
+import {
+  PERSONALITY_TAGS,
+  DECISION_TAGS,
+  RELATIONSHIP_TAGS,
+} from '@/data/insight/insight-tags';
+
 // ============================================================================
 // 1. 핵심 컨셉
 // ============================================================================
@@ -161,47 +168,24 @@ export const INSIGHT_STAGES: InsightStage[] = [
 ];
 
 // ============================================================================
-// 3. 태그 시스템
+// 3. 태그 시스템 - SSOT에서 re-export
 // ============================================================================
+// 태그 정의는 insight-tags.ts에서 관리 (Single Source of Truth)
 
-// 성격 태그 (Big Five 기반)
-export const PERSONALITY_TAGS = [
-  // 에너지 방향 (외향성)
-  'extroverted', 'introverted', 'ambiverted',
-  // 정보 처리 (개방성)
-  'logical', 'emotional', 'intuitive', 'analytical',
-  // 행동 방식 (성실성)
-  'planned', 'spontaneous', 'flexible', 'structured',
-  // 관계 스타일 (친화성)
-  'independent', 'collaborative', 'supportive', 'leading',
-  // 정서 안정성 (신경성)
-  'resilient', 'sensitive',
-] as const;
-
-// 결정 태그 (투표 선택지용)
-export const DECISION_TAGS = [
-  'practical', 'sentimental',    // 실용 vs 감성 (emotional과 구분)
-  'safe', 'adventurous',         // 안전 vs 모험
-  'solo', 'together',            // 혼자 vs 함께
-  'direct', 'indirect',          // 직접 vs 우회
-  'present-focused', 'future-focused', // 현재 vs 미래
-] as const;
-
-// 관계 태그 (TKI 갈등 모델 기반)
-export const RELATIONSHIP_TAGS = [
-  // 표현 스타일
-  'expressive', 'reserved',
-  // 갈등 대처 (TKI 5유형)
-  'competing', 'avoiding', 'accommodating', 'collaborating', 'compromising',
-  // 친밀도 선호
-  'close-bonding', 'space-needing',
-  // 감정 처리
-  'self-first', 'other-first',
-] as const;
-
-export type PersonalityTag = typeof PERSONALITY_TAGS[number];
-export type DecisionTag = typeof DECISION_TAGS[number];
-export type RelationshipTag = typeof RELATIONSHIP_TAGS[number];
+export {
+  PERSONALITY_TAGS,
+  DECISION_TAGS,
+  RELATIONSHIP_TAGS,
+  INTEREST_TAGS,
+  LIFESTYLE_TAGS,
+  VALID_INSIGHT_TAGS,
+  type PersonalityTag,
+  type DecisionTag,
+  type RelationshipTag,
+  type InterestTag,
+  type LifestyleTag,
+  type InsightTag,
+} from '@/data/insight/insight-tags';
 
 // ============================================================================
 // 4. 심리학적 근거 (리서치 결과)

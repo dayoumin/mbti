@@ -12,9 +12,20 @@ import { eventBus } from './EventBus';
 import {
   extractTagsFromTestResult,
   isRelationshipTest,
-  getTestCategory,
+  getDimensionQuestionCounts,
 } from '@/data/insight/test-tag-mappings';
+import { CHEMI_DATA } from '@/data';
 import { INSIGHT_UNLOCK } from '@/data/gamification/points';
+import { VALID_INSIGHT_TAGS, getInterestTagFromCategory } from '@/data/insight/insight-tags';
+import { matchStage2Rules, type Stage2Rule } from '@/data/insight/stage2-rules';
+import {
+  generateDecisionStyleResult,
+  type DecisionStyleResult,
+} from '@/data/insight/stage3-decision-style';
+import {
+  generateInterestMapResult,
+  type InterestMapResult,
+} from '@/data/insight/stage4-interest-map';
 import type { UserActivityEvent } from '@/types/events';
 
 // ============================================================================
@@ -127,7 +138,12 @@ class InsightServiceClass {
 
     // 테스트 결과에서 추가 태그 추출
     if (dimensions) {
-      const extractedTags = extractTagsFromTestResult(testId, dimensions);
+      // CHEMI_DATA에서 실제 질문 수를 기반으로 dimCounts 계산
+      const testData = CHEMI_DATA[testId as keyof typeof CHEMI_DATA];
+      const dimCounts = testData?.questions
+        ? getDimensionQuestionCounts(testData.questions)
+        : undefined;
+      const extractedTags = extractTagsFromTestResult(testId, dimensions, dimCounts);
       if (extractedTags.length > 0) {
         this.addTags(extractedTags);
       }
@@ -149,9 +165,26 @@ class InsightServiceClass {
     // 활동 통계 업데이트
     this.incrementActivityStat(isQuiz ? 'quizCount' : 'pollCount');
 
-    // 태그 집계
+    // 태그 집계 (Set으로 중복 제거)
+    const tagSet = new Set<string>();
+
+    // 1. 명시적 태그 추가
     if (tags && tags.length > 0) {
-      this.addTags(tags);
+      tags.forEach(tag => tagSet.add(tag));
+    }
+
+    // 2. 카테고리 기반 관심사 태그 자동 추가 (Stage 4 관심사 지도용)
+    //    예: category='cat' → 'interest-cat' 자동 추가
+    if (category) {
+      const interestTag = getInterestTagFromCategory(category);
+      if (interestTag) {
+        tagSet.add(interestTag);
+      }
+    }
+
+    // 모든 태그 저장 (중복 제거됨)
+    if (tagSet.size > 0) {
+      this.addTags(Array.from(tagSet));
     }
 
     // 해금 체크
@@ -197,13 +230,23 @@ class InsightServiceClass {
 
   /**
    * 활동 통계 증가
+   * @param key 증가할 통계 키
+   * @param countAsActivity totalActivities도 함께 증가할지 (기본: true)
    */
-  private incrementActivityStat(key: keyof UserActivityStats): void {
+  private incrementActivityStat(
+    key: keyof UserActivityStats,
+    countAsActivity: boolean = true
+  ): void {
     if (typeof window === 'undefined') return;
 
     const stats = this.getActivityStats();
     stats[key]++;
-    stats.totalActivities++;
+
+    // totalActivities는 실제 활동 1회당 1번만 증가
+    // relationshipActivities는 추가 분류이므로 totalActivities 증가하지 않음
+    if (countAsActivity && key !== 'relationshipActivities') {
+      stats.totalActivities++;
+    }
 
     localStorage.setItem(STORAGE_KEYS.ACTIVITY_STATS, JSON.stringify(stats));
   }
@@ -229,7 +272,7 @@ class InsightServiceClass {
   }
 
   /**
-   * 태그 추가
+   * 태그 추가 (유효한 인사이트 태그만 저장)
    */
   private addTags(tags: string[]): void {
     if (typeof window === 'undefined') return;
@@ -237,7 +280,10 @@ class InsightServiceClass {
     const counts = this.getTagCounts();
 
     for (const tag of tags) {
-      counts[tag] = (counts[tag] || 0) + 1;
+      // 유효한 인사이트 태그만 저장 (category, testId 등 제외)
+      if (VALID_INSIGHT_TAGS.has(tag)) {
+        counts[tag] = (counts[tag] || 0) + 1;
+      }
     }
 
     localStorage.setItem(STORAGE_KEYS.TAG_COUNTS, JSON.stringify(counts));
@@ -364,9 +410,19 @@ class InsightServiceClass {
     const formattedResults = testResults.map(result => {
       const dimensions: Record<string, { score: number; level: 'high' | 'medium' | 'low' }> = {};
 
+      // 테스트 데이터에서 차원별 질문 수 계산
+      const testData = CHEMI_DATA[result.testType as keyof typeof CHEMI_DATA];
+      const dimCounts = testData?.questions
+        ? getDimensionQuestionCounts(testData.questions)
+        : undefined;
+
       if (result.scores) {
         for (const [key, score] of Object.entries(result.scores)) {
-          const scorePercent = (score / 15) * 100; // 차원당 최대 15점 가정
+          // 차원별 질문 수 기반 동적 계산
+          const dimQuestionCount = dimCounts?.[key] ?? 3; // 폴백: 기본 3문항
+          const dimMaxScore = dimQuestionCount * 5;
+          const scorePercent = (score / dimMaxScore) * 100;
+
           let level: 'high' | 'medium' | 'low' = 'medium';
           if (scorePercent >= 60) level = 'high';
           else if (scorePercent < 40) level = 'low';
@@ -376,7 +432,7 @@ class InsightServiceClass {
       }
 
       const tags = result.scores
-        ? extractTagsFromTestResult(result.testType, result.scores)
+        ? extractTagsFromTestResult(result.testType, result.scores, dimCounts)
         : [];
 
       return {
@@ -483,6 +539,82 @@ class InsightServiceClass {
 
     // Stage 6 해금됨 (Stage 7은 유료)
     return null;
+  }
+
+  // ========================================================================
+  // Stage 2: 성격 조합 인사이트
+  // ========================================================================
+
+  /**
+   * Stage 2 인사이트 생성 - 성격 조합 룰 매칭
+   * @param limit 반환할 최대 룰 수 (기본 5)
+   */
+  getStage2Insight(limit: number = 5): Stage2Rule[] | null {
+    if (!this.isStageUnlocked(2)) {
+      return null;
+    }
+
+    const tagCounts = this.getTagCounts();
+    const userTags = Object.keys(tagCounts);
+
+    if (userTags.length === 0) {
+      return null;
+    }
+
+    return matchStage2Rules(userTags, limit);
+  }
+
+  // ========================================================================
+  // Stage 3: 판단 스타일 인사이트
+  // ========================================================================
+
+  /**
+   * Stage 3 인사이트 생성 - 판단 스타일 분석
+   */
+  getStage3Insight(): DecisionStyleResult | null {
+    if (!this.isStageUnlocked(3)) {
+      return null;
+    }
+
+    const tagCounts = this.getTagCounts();
+
+    // 의사결정 관련 태그가 있는지 확인
+    const decisionTags = [
+      'practical', 'sentimental', 'adventurous', 'safe', 'cautious',
+      'solo', 'together', 'direct', 'indirect',
+    ];
+    const hasDecisionTags = decisionTags.some(tag => tagCounts[tag] > 0);
+
+    if (!hasDecisionTags) {
+      return null;
+    }
+
+    return generateDecisionStyleResult(tagCounts);
+  }
+
+  // ========================================================================
+  // Stage 4: 관심사 지도 인사이트
+  // ========================================================================
+
+  /**
+   * Stage 4 인사이트 생성 - 관심사 지도
+   */
+  getStage4Insight(): InterestMapResult | null {
+    if (!this.isStageUnlocked(4)) {
+      return null;
+    }
+
+    const tagCounts = this.getTagCounts();
+    const stats = this.getActivityStats();
+
+    // interest- 태그가 있는지 확인
+    const hasInterestTags = Object.keys(tagCounts).some(tag => tag.startsWith('interest-'));
+
+    if (!hasInterestTags) {
+      return null;
+    }
+
+    return generateInterestMapResult(tagCounts, stats.totalActivities);
   }
 
   // ========================================================================
