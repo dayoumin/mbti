@@ -11,6 +11,10 @@ export { participationBridge } from './ParticipationBridge';
 export { friendService } from './FriendService';
 export { contentRecommendationService } from './ContentRecommendationService';
 
+// Event System (Phase 1)
+export { eventBus } from './EventBus';
+export { userActivityService } from './UserActivityService';
+
 // Types
 export type { RankingVote, RankingStats, CategorySummary, SeasonSummary, SeasonType } from './RankingService';
 export type { PollStats, QuizStats, FeedbackComment } from './TursoService';
