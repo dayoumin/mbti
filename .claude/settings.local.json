@@ -82,7 +82,20 @@
       "Bash(git pull:*)",
       "Bash(del \"d:\\\\Project\\\\MBTI\\\\.next\\\\lock\")",
       "Bash(npx vitest run:*)",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "Skill(content-generator)",
+      "Skill(content-generator:*)",
+      "Skill(content-validator)",
+      "Skill(content-validator:*)",
+      "Bash(echo:*)",
+      "Bash(src/components/content/RelatedContentSection.tsx )",
+      "Bash(src/components/content/SituationReactionCard.tsx )",
+      "Bash(src/services/ContentRecommendationService.ts )",
+      "Bash(src/services/ContentParticipationService.ts )",
+      "Bash(src/services/NextActionService.ts )",
+      "Bash(src/components/NextTestRecommendation.tsx)",
+      "Skill(content-workflow)",
+      "Skill(content-workflow:*)"
     ],
     "deny": [],
     "ask": []
