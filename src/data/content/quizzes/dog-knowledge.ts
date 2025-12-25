@@ -173,6 +173,85 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['강아지', '발바닥', '신체', '체온조절', '구조'],
   },
+
+  // ==========================================================================
+  // 중성화 관련 (dog-k-013 ~ 017)
+  // ==========================================================================
+  {
+    id: 'dog-k-013',
+    category: 'dog',
+    question: '소형견과 대형견의 중성화 적정 시기는?',
+    options: [
+      { id: 'a', text: '둘 다 생후 3개월', isCorrect: false },
+      { id: 'b', text: '소형견 6-9개월, 대형견 12-18개월', isCorrect: true },
+      { id: 'c', text: '둘 다 생후 6개월', isCorrect: false },
+      { id: 'd', text: '소형견이 더 늦게', isCorrect: false },
+    ],
+    explanation: '소형견은 6-9개월, 대형견은 12-18개월이 적정해요. 대형견은 뼈와 관절이 충분히 성장한 후 수술하는 게 관절 질환 예방에 도움이 돼요.',
+    difficulty: 2,
+    tags: ['강아지', '중성화', '수술', '시기', '건강'],
+    source: 'dog-fact-006',
+  },
+  {
+    id: 'dog-k-014',
+    category: 'dog',
+    question: '중성화 수술 전, 성견은 몇 시간 금식해야 할까요? (최신 가이드라인)',
+    options: [
+      { id: 'a', text: '금식 필요 없어요', isCorrect: false },
+      { id: 'b', text: '4-6시간', isCorrect: true },
+      { id: 'c', text: '12시간 이상', isCorrect: false },
+      { id: 'd', text: '24시간', isCorrect: false },
+    ],
+    explanation: '최신 가이드라인(AAHA 2023)은 4-6시간 금식을 권장해요. 과거 12시간 금식은 저혈당 위험이 있어요. 물은 수술 직전까지 허용!',
+    difficulty: 2,
+    tags: ['강아지', '중성화', '금식', '수술준비', '마취'],
+    source: 'dog-fact-007',
+  },
+  {
+    id: 'dog-k-015',
+    category: 'dog',
+    question: '중성화 수술 후 회복 기간은?',
+    options: [
+      { id: 'a', text: '3-5일', isCorrect: false },
+      { id: 'b', text: '10-14일', isCorrect: true },
+      { id: 'c', text: '1개월', isCorrect: false },
+      { id: 'd', text: '당일 회복', isCorrect: false },
+    ],
+    explanation: '10-14일이 기본 회복 기간이에요. 수컷이 암컷보다 빠르게 회복해요. 외부 상처는 10-14일, 내부 회복은 수주가 걸려요.',
+    difficulty: 1,
+    tags: ['강아지', '중성화', '회복', '수술', '관리'],
+    source: 'dog-fact-008',
+  },
+  {
+    id: 'dog-k-016',
+    category: 'dog',
+    question: '중성화 수술 후 넥카라(깔때기)는 며칠 착용해야 할까요?',
+    options: [
+      { id: 'a', text: '3일', isCorrect: false },
+      { id: 'b', text: '7일', isCorrect: false },
+      { id: 'c', text: '10-14일', isCorrect: true },
+      { id: 'd', text: '한 달', isCorrect: false },
+    ],
+    explanation: '10-14일 착용이 권장돼요. 상처를 핥거나 긁으면 감염이나 회복 지연이 생길 수 있어요. 불편해도 꼭 착용하세요!',
+    difficulty: 1,
+    tags: ['강아지', '중성화', '넥카라', '수술', '관리'],
+    source: 'dog-fact-009',
+  },
+  {
+    id: 'dog-k-017',
+    category: 'dog',
+    question: '중성화 후 확실히 변하는 행동은?',
+    options: [
+      { id: 'a', text: '공격성이 항상 줄어든다', isCorrect: false },
+      { id: 'b', text: '배회/마운팅/마킹이 줄어든다', isCorrect: true },
+      { id: 'c', text: '성격이 완전히 온순해진다', isCorrect: false },
+      { id: 'd', text: '활동량이 늘어난다', isCorrect: false },
+    ],
+    explanation: '배회, 마운팅, 마킹 같은 호르몬 관련 행동은 확실히 줄어들어요. 하지만 불안이나 공격성은 개체차가 있어요.',
+    difficulty: 2,
+    tags: ['강아지', '중성화', '행동변화', '마운팅', '마킹'],
+    source: 'dog-fact-010',
+  },
 ];
 
 export default DOG_KNOWLEDGE_QUIZZES;

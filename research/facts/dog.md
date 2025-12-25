@@ -51,3 +51,71 @@
 - **검증일**: 2024-12-24
 - **사용된 콘텐츠**: dog-k-003
 - **비고**: 견종별 특성 고려 필요
+
+---
+
+## dog-fact-006: 중성화 적정 시기 (크기별)
+- **값**: 소형견 6-9개월, 대형견 12-18개월 (뼈/관절 성장 완료 후)
+- **출처**: AKC, Frontiers in Veterinary Science (2024)
+- **URL**: https://www.akc.org/expert-advice/vets-corner/neutering-spaying-right-age-dog/
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: dog-k-013
+- **비고**: 대형견은 늦게 할수록 관절 질환/암 위험 감소, 소형견은 차이 없음
+
+---
+
+## dog-fact-007: 중성화 수술 전 금식 시간
+- **값**: 4개월 이상 견 8-12시간, 4개월 미만 견 금식 불필요
+- **출처**: ASPCA Spay/Neuter Alliance
+- **URL**: https://www.aspca.org/aspca-spay-neuter-alliance/before-surgery-instructions
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: dog-k-014
+- **비고**: 마취 중 흡인성 폐렴 예방 목적, 물은 허용
+
+---
+
+## dog-fact-008: 중성화 수술 후 회복 기간
+- **값**: 10-14일 (수컷이 암컷보다 빠름)
+- **출처**: AKC, PetMD
+- **URL**: https://www.akc.org/expert-advice/health/post-surgical-care-following-spay-neuter/
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: dog-k-015
+- **비고**: 외부 상처는 10-14일, 내부 회복은 수주 소요
+
+---
+
+## dog-fact-009: 중성화 후 넥카라(E-collar) 착용 기간
+- **값**: 10-14일
+- **출처**: Animal Humane Society
+- **URL**: https://www.animalhumanesociety.org/resource/spayneuter-post-surgical-care-and-recovery-instructions
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: dog-k-016
+- **비고**: 핥기/긁기로 인한 합병증 방지
+
+---
+
+## dog-fact-010: 중성화 후 행동 변화 (호르몬 관련)
+- **값**: 배회/마운팅/마킹 감소, 불안/공격성은 개체차 있음
+- **출처**: PMC - Neutering Effects on Behavior (2024-2025)
+- **URL**: https://pmc.ncbi.nlm.nih.gov/articles/PMC11350830/
+- **검증일**: 2025-12-25
+- **사용된 콘텐츠**: dog-k-017
+- **비고**: 1세 이전 수술 시 불안/공포 반응 증가 가능
+
+---
+
+## dog-fact-011: 중성화 후 체중 증가 위험
+- **값**: 대사율 감소로 비만 위험 증가
+- **출처**: Merck Veterinary Manual
+- **URL**: https://www.merckvetmanual.com/
+- **검증일**: 2025-12-25
+- **비고**: 사료량 조절 및 운동량 유지 필요
+
+---
+
+## dog-fact-012: 중성화의 암 예방 효과
+- **값**: 유선암(첫 발정 전 수술 시 0.5%), 고환암/자궁축농증(100% 예방)
+- **출처**: Cornell University College of Veterinary Medicine (2024)
+- **URL**: https://familyfriendsvet.com/2025/02/24/the-complete-guide-to-spaying-and-neutering-health-behavior-and-community-impact/
+- **검증일**: 2025-12-25
+- **비고**: 대형견 조기 중성화 시 골육종 위험 증가 가능

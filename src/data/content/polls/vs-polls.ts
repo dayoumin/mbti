@@ -93,6 +93,46 @@ export const VS_POLLS: VSPoll[] = [
     optionB: { id: 'b', text: '두부모래', emoji: '🟫' },
     tags: ['용품', '고양이'],
   },
+  {
+    id: 'vs-cat-006',
+    category: 'cat',
+    question: '고양이 중성화 시기, 언제가 나을까?',
+    optionA: { id: 'a', text: '생후 4-6개월 (첫 발정 전)', emoji: '🐱' },
+    optionB: { id: 'b', text: '생후 1년 이후 (충분히 성장 후)', emoji: '🐈' },
+    tags: ['중성화', '고양이', '건강'],
+  },
+  {
+    id: 'vs-cat-007',
+    category: 'cat',
+    question: '중성화 수술 전 금식, 어떻게?',
+    optionA: { id: 'a', text: '12시간 금식 (안전하게)', emoji: '🌙' },
+    optionB: { id: 'b', text: '4-6시간 금식 (최신 가이드)', emoji: '⏰' },
+    tags: ['중성화', '고양이', '수술준비'],
+  },
+  {
+    id: 'vs-cat-008',
+    category: 'cat',
+    question: '중성화 후 넥카라, 어떻게 하시나요?',
+    optionA: { id: 'a', text: '깔때기 넥카라 (확실한 차단)', emoji: '🔵' },
+    optionB: { id: 'b', text: '도넛형 넥쿠션 (편안함)', emoji: '🍩' },
+    tags: ['중성화', '고양이', '수술관리'],
+  },
+  {
+    id: 'vs-cat-009',
+    category: 'cat',
+    question: '중성화 후 사료 바꾸시나요?',
+    optionA: { id: 'a', text: '중성화 전용 사료로', emoji: '🥫' },
+    optionB: { id: 'b', text: '기존 사료 유지 + 양 조절', emoji: '🥣' },
+    tags: ['중성화', '고양이', '사료', '체중관리'],
+  },
+  {
+    id: 'vs-cat-010',
+    category: 'cat',
+    question: '중성화 후 성격 변화, 어떻게 느끼셨나요?',
+    optionA: { id: 'a', text: '많이 변했어요', emoji: '🔄' },
+    optionB: { id: 'b', text: '거의 안 변했어요', emoji: '😺' },
+    tags: ['중성화', '고양이', '행동변화'],
+  },
 
   // ==========================================================================
   // 강아지
@@ -136,6 +176,48 @@ export const VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '노즈워크', emoji: '👃' },
     optionB: { id: 'b', text: '터그 놀이', emoji: '🪢' },
     tags: ['놀이', '강아지'],
+  },
+
+  // 강아지 - 중성화 관련 (vs-dog-006 ~ 010)
+  {
+    id: 'vs-dog-006',
+    category: 'dog',
+    question: '강아지 중성화 시기, 어떻게 하셨나요?',
+    optionA: { id: 'a', text: '생후 6-9개월 (조기)', emoji: '🐶' },
+    optionB: { id: 'b', text: '돌 이후 (성장 완료 후)', emoji: '🐕' },
+    tags: ['중성화', '강아지', '수술', '시기', '건강'],
+  },
+  {
+    id: 'vs-dog-007',
+    category: 'dog',
+    question: '중성화 수술 전 금식, 어떻게 하셨나요?',
+    optionA: { id: 'a', text: '자정부터 엄격 금식', emoji: '🚫' },
+    optionB: { id: 'b', text: '저녁밥은 조금 줌', emoji: '🥄' },
+    tags: ['중성화', '강아지', '금식', '수술준비', '마취'],
+  },
+  {
+    id: 'vs-dog-008',
+    category: 'dog',
+    question: '중성화 후 넥카라, 어떻게 하시나요?',
+    optionA: { id: 'a', text: '깔때기 넥카라 (안전 중시)', emoji: '🔔' },
+    optionB: { id: 'b', text: '부드러운 넥쿠션', emoji: '☁️' },
+    tags: ['중성화', '강아지', '넥카라', '수술관리', '회복'],
+  },
+  {
+    id: 'vs-dog-009',
+    category: 'dog',
+    question: '중성화 후 사료 바꾸시나요?',
+    optionA: { id: 'a', text: '중성화 전용 사료로', emoji: '🥫' },
+    optionB: { id: 'b', text: '기존 사료, 양만 조절', emoji: '⚖️' },
+    tags: ['중성화', '강아지', '사료', '체중관리', '건강'],
+  },
+  {
+    id: 'vs-dog-010',
+    category: 'dog',
+    question: '중성화 후 행동 변화, 어떻게 느끼셨나요?',
+    optionA: { id: 'a', text: '확실히 차분해짐', emoji: '😌' },
+    optionB: { id: 'b', text: '별 차이 못 느낌', emoji: '🤷' },
+    tags: ['중성화', '강아지', '행동변화', '마운팅', '성격'],
   },
 
   // ==========================================================================
