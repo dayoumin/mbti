@@ -13,6 +13,9 @@ import type { ContentCategory, VSPoll, ChoicePoll } from '../types';
 import { VS_POLLS as VS_POLLS_DATA } from './vs-polls';
 import { KIDS_VS_POLLS } from './kids-polls';
 import { CHOICE_POLLS as CHOICE_POLLS_DATA } from './choice-polls';
+import { PET_VS_POLLS } from './pet-vs-polls';
+import { COFFEE_VS_POLLS } from './coffee-vs-polls';
+import { LOVE_VS_POLLS } from './love-vs-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -21,6 +24,9 @@ import { CHOICE_POLLS as CHOICE_POLLS_DATA } from './choice-polls';
 const POLL_REGISTRY: VSPoll[][] = [
   VS_POLLS_DATA,
   KIDS_VS_POLLS,
+  PET_VS_POLLS,
+  COFFEE_VS_POLLS,
+  LOVE_VS_POLLS,
   // 투표 분리 시 여기에 추가 (예: CAT_POLLS, DOG_POLLS)
 ];
 

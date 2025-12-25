@@ -367,6 +367,36 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         intro: ["어떤 파충류가 나와 맞을까?", "쿨한 친구 찾기"],
         resultFormat: "matching",
         deepButtonText: "파충류 매칭"
+    },
+    wine: {
+        testType: "matching",
+        icon: "WineIcon",
+        lucideIcon: "Wine",
+        emoji: "🍷",
+        label: "와인",
+        intro: ["나에게 어울리는 와인은?", "취향 저격 와인 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "와인 매칭"
+    },
+    travel: {
+        testType: "matching",
+        icon: "TravelIcon",
+        lucideIcon: "Plane",
+        emoji: "✈️",
+        label: "여행",
+        intro: ["나의 여행 스타일은?", "완벽한 여행지 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "여행지 매칭"
+    },
+    exercise: {
+        testType: "matching",
+        icon: "ExerciseIcon",
+        lucideIcon: "Dumbbell",
+        emoji: "🏋️",
+        label: "운동",
+        intro: ["나에게 맞는 운동은?", "운동 궁합 찾기"],
+        resultFormat: "matching",
+        deepButtonText: "운동 매칭"
     }
 };
 

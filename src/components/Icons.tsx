@@ -1025,6 +1025,120 @@ export const TravelStyleIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto
   </svg>
 );
 
+// 와인 아이콘 (wine 테스트용)
+export const WineIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 와인 잔 */}
+    <path d="M35 25 Q35 55 50 60 Q65 55 65 25 Z" fill="#722F37" stroke="#4A4A4A" strokeWidth="2" />
+    <ellipse cx="50" cy="25" rx="15" ry="5" fill="#722F37" stroke="#4A4A4A" strokeWidth="2" />
+    {/* 잔 줄기 */}
+    <rect x="48" y="60" width="4" height="20" fill="#E5E5E5" stroke="#4A4A4A" strokeWidth="2" />
+    {/* 받침 */}
+    <ellipse cx="50" cy="85" rx="15" ry="5" fill="#E5E5E5" stroke="#4A4A4A" strokeWidth="2" />
+    {/* 와인 반사 */}
+    <ellipse cx="42" cy="40" rx="3" ry="6" fill="#8B3A3A" opacity="0.5" />
+    {mood === "happy" && (
+      <g>
+        <circle cx="45" cy="35" r="2" fill="white" opacity="0.3" />
+        <circle cx="55" cy="40" r="1.5" fill="white" opacity="0.3" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <circle cx="45" cy="35" r="2" fill="white" opacity="0.4" />
+        <circle cx="55" cy="40" r="1.5" fill="white" opacity="0.4" />
+        <path d="M20 20 L25 25 M30 15 L25 25 M20 30 L25 25" stroke="#FFD700" strokeWidth="2" />
+        <path d="M80 20 L75 25 M70 15 L75 25 M80 30 L75 25" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="38" y="32" width="10" height="5" rx="2" fill="black" opacity="0.8" />
+        <rect x="52" y="32" width="10" height="5" rx="2" fill="black" opacity="0.8" />
+        <path d="M48 35 L52 35" stroke="black" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 여행 아이콘 (travel 테스트용)
+export const TravelIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 여행 가방 */}
+    <rect x="25" y="35" width="50" height="45" rx="5" fill="#3B82F6" stroke="#1E40AF" strokeWidth="3" />
+    {/* 가방 손잡이 */}
+    <path d="M40 35 L40 25 Q40 20 45 20 L55 20 Q60 20 60 25 L60 35" fill="none" stroke="#1E40AF" strokeWidth="3" />
+    {/* 가방 스트랩 */}
+    <rect x="35" y="50" width="30" height="3" fill="#1E40AF" />
+    <rect x="35" y="60" width="30" height="3" fill="#1E40AF" />
+    {/* 가방 잠금장치 */}
+    <rect x="47" y="68" width="6" height="8" fill="#FCD34D" stroke="#D97706" strokeWidth="1" rx="1" />
+    {/* 스티커 */}
+    <circle cx="35" cy="45" r="5" fill="#EF4444" />
+    <circle cx="65" cy="72" r="4" fill="#22C55E" />
+    {/* 바퀴 */}
+    <circle cx="32" cy="82" r="3" fill="#374151" />
+    <circle cx="68" cy="82" r="3" fill="#374151" />
+    {mood === "happy" && (
+      <g>
+        <text x="33" y="47" fontSize="6" fill="white" fontWeight="bold">JP</text>
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <text x="33" y="47" fontSize="6" fill="white" fontWeight="bold">JP</text>
+        <path d="M15 25 L20 30 M25 20 L20 30 M15 35 L20 30" stroke="#FFD700" strokeWidth="2" />
+        <path d="M85 25 L80 30 M75 20 L80 30 M85 35 L80 30" stroke="#FFD700" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="38" y="42" width="10" height="5" rx="2" fill="black" />
+        <rect x="52" y="42" width="10" height="5" rx="2" fill="black" />
+        <path d="M48 44 L52 44" stroke="black" strokeWidth="2" />
+      </g>
+    )}
+  </svg>
+);
+
+// 운동 아이콘 (exercise 테스트용)
+export const ExerciseIcon = ({ mood = "happy", className = "w-32 h-32 mx-auto mb-4" }: IconProps) => (
+  <svg viewBox="0 0 100 100" className={className}>
+    {/* 덤벨 바 */}
+    <rect x="25" y="47" width="50" height="6" fill="#6B7280" stroke="#374151" strokeWidth="2" rx="1" />
+    {/* 왼쪽 웨이트 */}
+    <rect x="15" y="35" width="12" height="30" fill="#1F2937" stroke="#111827" strokeWidth="2" rx="2" />
+    <rect x="20" y="30" width="8" height="40" fill="#374151" stroke="#111827" strokeWidth="2" rx="2" />
+    {/* 오른쪽 웨이트 */}
+    <rect x="73" y="35" width="12" height="30" fill="#1F2937" stroke="#111827" strokeWidth="2" rx="2" />
+    <rect x="72" y="30" width="8" height="40" fill="#374151" stroke="#111827" strokeWidth="2" rx="2" />
+    {/* 무게 표시 */}
+    <text x="22" y="52" fontSize="6" fill="white" fontWeight="bold">10</text>
+    <text x="74" y="52" fontSize="6" fill="white" fontWeight="bold">10</text>
+    {mood === "happy" && (
+      <g>
+        <circle cx="50" cy="25" r="3" fill="#22C55E" />
+        <path d="M47 22 L50 25 L53 22" fill="none" stroke="#22C55E" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "excited" && (
+      <g>
+        <path d="M10 20 L15 25 M20 15 L15 25 M10 30 L15 25" stroke="#FFD700" strokeWidth="2" />
+        <path d="M90 20 L85 25 M80 15 L85 25 M90 30 L85 25" stroke="#FFD700" strokeWidth="2" />
+        <path d="M45 20 L50 15 L55 20" fill="none" stroke="#EF4444" strokeWidth="2" />
+        <path d="M45 18 L50 13 L55 18" fill="none" stroke="#EF4444" strokeWidth="2" />
+      </g>
+    )}
+    {mood === "cool" && (
+      <g>
+        <rect x="42" y="75" width="6" height="3" rx="1" fill="black" />
+        <rect x="52" y="75" width="6" height="3" rx="1" fill="black" />
+        <path d="M48 76 L52 76" stroke="black" strokeWidth="1" />
+      </g>
+    )}
+  </svg>
+);
+
 // 아이콘 맵핑 (동적 렌더링용)
 export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   HumanIcon,
@@ -1049,6 +1163,9 @@ export const IconMap: Record<string, React.ComponentType<IconProps>> = {
   DrinkingStyleIcon,
   SpendingStyleIcon,
   TravelStyleIcon,
+  WineIcon,
+  TravelIcon,
+  ExerciseIcon,
 };
 
 export const getIcon = (iconName: string): React.ComponentType<IconProps> => {

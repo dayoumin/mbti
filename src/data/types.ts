@@ -52,6 +52,10 @@ export interface ResultMeta {
   // === 특수 태그 (자유롭게 확장 가능) ===
   tags?: string[];  // ["공기정화", "야행성", "저소음", "저관리"]
 
+  // === 연령 제한 ===
+  isAdultOnly?: boolean;  // 성인 전용 콘텐츠 (예: 와인, 술)
+  minAge?: string;        // 최소 연령 ("20s" 등)
+
   // === 바이럴 콘텐츠용 ===
   funFacts?: FunFacts;
 }
@@ -161,6 +165,7 @@ export type SubjectKey =
   | 'idealType' | 'plant' | 'petMatch' | 'coffee' | 'tea' | 'conflictStyle'
   | 'fruit' | 'alcohol' | 'bread' | 'perfume' | 'aroma' | 'food' | 'whiskeySample' | 'ramen'
   | 'spendingStyle' | 'drinkingStyle' | 'travelStyle'
+  | 'wine' | 'travel' | 'exercise'  // 신규 테스트
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 

@@ -31,6 +31,8 @@ const SUBJECTS = [
   'human', 'cat', 'dog', 'rabbit', 'hamster',
   'idealType', 'plant', 'petMatch', 'coffee', 'tea', 'conflictStyle',
   'fruit', 'alcohol', 'bread', 'perfume', 'aroma', 'food', 'whiskeySample', 'ramen', 'spendingStyle', 'drinkingStyle', 'travelStyle',
+  // 신규 매칭 테스트
+  'wine', 'travel', 'exercise',
   // petMatch 세부 테스트
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
@@ -62,6 +64,7 @@ const DETAIL_INFO_REQUIRED_TESTS = [
 const MATCHING_TESTS = [
   'idealType', 'plant', 'petMatch', 'coffee', 'tea',
   'fruit', 'alcohol', 'bread', 'perfume', 'aroma', 'food', 'whiskeySample',
+  'wine', 'travel', 'exercise',
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];
 
