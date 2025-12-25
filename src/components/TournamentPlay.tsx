@@ -10,7 +10,7 @@ import {
   MBTI_WORLDCUP,
   type Tournament,
   type TournamentContestant,
-} from '@/app/dashboard/data/tournament-sample';
+} from '@/app/dashboard/data/dashboard-tournaments';
 
 // ============================================================================
 // Types

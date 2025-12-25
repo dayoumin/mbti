@@ -15,11 +15,11 @@ import {
   CAT_BUTLER_SCENARIO,
   CAT_VS_POLLS,
   CAT_CHOICE_POLLS,
-} from '@/app/dashboard/data/content-samples';
+} from '@/app/dashboard/data/dashboard-content';
 import {
   Tournament,
   CAT_BREED_TOURNAMENT,
-} from '@/app/dashboard/data/tournament-sample';
+} from '@/app/dashboard/data/dashboard-tournaments';
 
 // ============================================================================
 // Types

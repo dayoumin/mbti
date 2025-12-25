@@ -2,7 +2,7 @@
 // 와인 월드컵 - 16강 토너먼트
 // ============================================================================
 
-import { Tournament, TournamentContestant } from './tournament-sample';
+import { Tournament, TournamentContestant } from './dashboard-tournaments';
 
 // ============================================================================
 // 와인 16강 참가자

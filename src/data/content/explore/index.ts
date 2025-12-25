@@ -13,7 +13,7 @@ export {
   SAMPLE_POLLS,
   SAMPLE_QUIZZES,
   SAMPLE_DEBATES,
-} from './sample-data';
+} from './community-data';
 
 // ============================================================================
 // 유틸리티 함수

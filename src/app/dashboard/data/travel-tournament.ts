@@ -2,7 +2,7 @@
 // 여행지 월드컵 - 16강 토너먼트
 // ============================================================================
 
-import { Tournament, TournamentContestant } from './tournament-sample';
+import { Tournament, TournamentContestant } from './dashboard-tournaments';
 
 // ============================================================================
 // 여행지 16강 참가자

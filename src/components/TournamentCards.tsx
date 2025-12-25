@@ -8,7 +8,7 @@ import {
   IDEALTYPE_CONDITIONS_WORLDCUP,
   MBTI_WORLDCUP,
   type Tournament,
-} from '@/app/dashboard/data/tournament-sample';
+} from '@/app/dashboard/data/dashboard-tournaments';
 
 interface TournamentCardsProps {
   onTournamentClick?: (tournamentId: string) => void;

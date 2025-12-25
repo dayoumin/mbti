@@ -2,7 +2,7 @@
 // 디저트 월드컵 16강
 // ============================================================================
 
-import { Tournament, TournamentContestant } from './tournament-sample';
+import { Tournament, TournamentContestant } from './dashboard-tournaments';
 
 export const DESSERT_WORLDCUP_CONTESTANTS: TournamentContestant[] = [
   {
