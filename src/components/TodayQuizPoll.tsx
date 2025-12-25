@@ -408,6 +408,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
             <p className="text-xs text-slate-500">매일 새로운 콘텐츠가 기다려요</p>
           </div>
         </div>
+        {/* 누적 참여 현황 */}
         {hasActivity && (
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <span className="flex items-center gap-1">
@@ -625,14 +626,14 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
         )}
       </div>
 
-      {/* 더보기 버튼 */}
+      {/* 전체 콘텐츠 탐색 버튼 */}
       {onExploreMore && (
         <button
           onClick={onExploreMore}
-          className="w-full mt-3 flex items-center justify-center gap-1 py-2 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
+          className="w-full mt-3 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-slate-500 hover:text-indigo-600 hover:bg-white/50 rounded-xl border border-transparent hover:border-indigo-100 transition-all"
         >
-          더 많은 퀴즈/투표 보기
-          <ChevronRight className="w-3 h-3" />
+          전체 콘텐츠 둘러보기
+          <ChevronRight className="w-3.5 h-3.5" />
         </button>
       )}
     </div>

@@ -143,13 +143,13 @@ export default function PollWidget({
               </button>
             )}
 
-            {/* 다음 투표 버튼 */}
+            {/* 다음 투표 버튼 - 강조 스타일 */}
             {remainingCount > 0 && onNext && (
               <button
                 onClick={onNext}
-                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all shadow-sm"
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
-                다음 투표
+                다음 투표 ({remainingCount}개)
                 <ChevronRight className="w-4 h-4" />
               </button>
             )}
