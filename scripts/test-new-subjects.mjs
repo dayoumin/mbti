@@ -40,7 +40,7 @@ const LEVEL_THRESHOLDS = { HIGH: 60, LOW: 40 };
 function getScoreLevel(score, maxScore) {
     const percentage = (score / maxScore) * 100;
     if (percentage >= LEVEL_THRESHOLDS.HIGH) return 'high';
-    if (percentage <= LEVEL_THRESHOLDS.LOW) return 'low';
+    if (percentage < LEVEL_THRESHOLDS.LOW) return 'low';  // 40% 미만만 LOW
     return 'medium';
 }
 

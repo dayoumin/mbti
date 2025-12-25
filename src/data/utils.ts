@@ -7,7 +7,8 @@ import type { Dimension, ResultLabel } from './types';
 export function getScoreLevel(score: number, maxScore: number): Level {
   const percentage = (score / maxScore) * 100;
   if (percentage >= LEVEL_THRESHOLDS.HIGH) return LEVELS.HIGH as Level;
-  if (percentage <= LEVEL_THRESHOLDS.LOW) return LEVELS.LOW as Level;
+  // 40% 미만만 LOW (40%는 MEDIUM에 포함 - 경계값 일관성)
+  if (percentage < LEVEL_THRESHOLDS.LOW) return LEVELS.LOW as Level;
   return LEVELS.MEDIUM as Level;
 }
 
@@ -51,17 +52,30 @@ export function matchResultLabel(
 
   if (bestExactMatch) return bestExactMatch;
 
-  // 부분 매칭 (가장 많이 일치)
-  let bestMatch = resultLabels[resultLabels.length - 1];
-  let bestScore = 0;
+  // 부분 매칭: 1개 이상 일치하는 결과 중 가장 많이 일치하는 것 선택
+  // 동점 시 조건 개수가 많은 것 우선 (더 구체적인 결과)
+  let bestMatch = resultLabels[resultLabels.length - 1]; // 폴백
+  let bestMatchCount = 0;
+  let bestConditionCount = 0;
+
   for (const result of resultLabels) {
     const condition = result.condition || {};
+    const conditionKeys = Object.keys(condition);
+    if (conditionKeys.length === 0) continue;
+
     let matchCount = 0;
     for (const [dim, level] of Object.entries(condition)) {
       if (levels[dim] === level) matchCount++;
     }
-    if (matchCount > bestScore) {
-      bestScore = matchCount;
+
+    // 0개 매칭은 제외 - 아무것도 일치하지 않으면 폴백으로
+    if (matchCount === 0) continue;
+
+    // 일치 개수가 더 많거나, 동점이면 조건 개수가 더 많은 것 선택
+    if (matchCount > bestMatchCount ||
+        (matchCount === bestMatchCount && conditionKeys.length > bestConditionCount)) {
+      bestMatchCount = matchCount;
+      bestConditionCount = conditionKeys.length;
       bestMatch = result;
     }
   }

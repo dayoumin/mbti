@@ -1045,11 +1045,11 @@ function LogicViewer({ selectedTest, onSelectTest }: TestSelectorProps) {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-amber-400">MEDIUM</span>
-                  <span className="text-[var(--db-muted)]">40% &lt; 점수 &lt; 60%</span>
+                  <span className="text-[var(--db-muted)]">40% ≤ 점수 &lt; 60%</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-rose-400">LOW</span>
-                  <span className="text-[var(--db-muted)]">점수 ≤ 40%</span>
+                  <span className="text-[var(--db-muted)]">점수 &lt; 40%</span>
                 </div>
               </div>
             </div>

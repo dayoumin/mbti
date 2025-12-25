@@ -48,6 +48,10 @@ export const DOG_DATA = {
                     score: 5
                 },
                 {
+                    text: "조심스럽게 냄새 맡으며 탐색한다.",
+                    score: 3
+                },
+                {
                     text: "보호자 뒤로 숨거나 못 본 척 지나간다.",
                     score: 1
                 }
@@ -62,6 +66,10 @@ export const DOG_DATA = {
                     score: 5
                 },
                 {
+                    text: "한두 마리와만 어울리고 나머지는 무시한다.",
+                    score: 3
+                },
+                {
                     text: "내 무릎 위나 의자 밑에만 있는다.",
                     score: 1
                 }
@@ -74,6 +82,10 @@ export const DOG_DATA = {
                 {
                     text: "누구세요! 짖으면서도 꼬리는 흔든다.",
                     score: 5
+                },
+                {
+                    text: "일단 지켜보다가 괜찮으면 다가간다.",
+                    score: 3
                 },
                 {
                     text: "방에 들어가서 나올 생각을 안 한다.",
@@ -104,6 +116,10 @@ export const DOG_DATA = {
                     score: 5
                 },
                 {
+                    text: "여기저기 찾다가 결국 발견한다.",
+                    score: 3
+                },
+                {
                     text: "어디 있지? 엉뚱한 곳을 파거나 짖는다.",
                     score: 1
                 }
@@ -130,6 +146,10 @@ export const DOG_DATA = {
                 {
                     text: "뭐가 문젠데? 억울하다는 듯 쳐다본다.",
                     score: 5
+                },
+                {
+                    text: "슬픈 눈으로 눈치를 보며 살살 다가온다.",
+                    score: 3
                 },
                 {
                     text: "잘못했어요... 배를 보이며 납작 엎드린다.",
@@ -215,6 +235,10 @@ export const DOG_DATA = {
                 {
                     text: "세상 밖으로! 신나게 뛰어다니며 아침을 시작한다.",
                     score: 5
+                },
+                {
+                    text: "보호자가 일어나면 슬슬 따라 움직인다.",
+                    score: 3
                 },
                 {
                     text: "아직 졸려... 늘어지게 기지개만 켠다.",

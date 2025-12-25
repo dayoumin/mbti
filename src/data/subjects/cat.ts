@@ -43,6 +43,10 @@ export const CAT_DATA = {
                     score: 5
                 },
                 {
+                    text: "한번 확인하고 근처에서 기다린다.",
+                    score: 3
+                },
+                {
                     text: "나올 때까지 조용히 기다리거나 내 할 일 한다.",
                     score: 1
                 }
@@ -53,12 +57,16 @@ export const CAT_DATA = {
             dimension: "alert",
             a: [
                 {
-                    text: "누구냐옹? 먼저 다가가서 냄새를 맡는다.",
-                    score: 1
-                },
-                {
                     text: "후다닥! 침대 밑이나 높은 곳으로 숨는다.",
                     score: 5
+                },
+                {
+                    text: "멀리서 지켜보다 괜찮으면 나온다.",
+                    score: 3
+                },
+                {
+                    text: "누구냐옹? 먼저 다가가서 냄새를 맡는다.",
+                    score: 1
                 }
             ]
         },
@@ -69,6 +77,10 @@ export const CAT_DATA = {
                 {
                     text: "우다다다! 바로 달려들어 사냥한다.",
                     score: 5
+                },
+                {
+                    text: "눈으로 따라보다가 가끔 손을 뻗는다.",
+                    score: 3
                 },
                 {
                     text: "누워서 발만 까딱까딱... 귀찮다옹.",
@@ -127,6 +139,10 @@ export const CAT_DATA = {
                     score: 5
                 },
                 {
+                    text: "무슨 일이냐옹? 멀리서 지켜본다.",
+                    score: 3
+                },
+                {
                     text: "왜 그러냐옹... 조용히 다가와서 눈물을 핥아준다.",
                     score: 1
                 }
@@ -165,12 +181,16 @@ export const CAT_DATA = {
             dimension: "random",
             a: [
                 {
-                    text: "정확한 시간에 야옹! 밥 내놔라옹!",
-                    score: 1
-                },
-                {
                     text: "자다가 생각나면 가서 먹는다.",
                     score: 5
+                },
+                {
+                    text: "대충 시간 맞춰서 가는데, 가끔 잊기도 한다.",
+                    score: 3
+                },
+                {
+                    text: "정확한 시간에 야옹! 밥 내놔라옹!",
+                    score: 1
                 }
             ]
         },
@@ -224,6 +244,10 @@ export const CAT_DATA = {
                 {
                     text: "그르렁~ 몸을 맡기고 배를 보여준다.",
                     score: 5
+                },
+                {
+                    text: "기분 좋게 받다가 어느 순간 딱 멈추고 간다.",
+                    score: 3
                 },
                 {
                     text: "적당히 받다가 손을 물거나 피한다.",

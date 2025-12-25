@@ -122,7 +122,7 @@ console.log('🔢 결과 매칭 로직 테스트\n');
 function getScoreLevel(score, maxScore) {
     const percentage = (score / maxScore) * 100;
     if (percentage >= 60) return "high";
-    if (percentage <= 40) return "low";
+    if (percentage < 40) return "low";  // 40% 미만만 LOW
     return "medium";
 }
 

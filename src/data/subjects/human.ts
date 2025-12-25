@@ -43,6 +43,10 @@ export const HUMAN_DATA = {
                     score: 5
                 },
                 {
+                    text: "일단 지켜보다가 기회가 오면 자연스럽게 합류한다.",
+                    score: 3
+                },
+                {
                     text: "친한 친구 옆에 딱 붙어서 조용히 있는다.",
                     score: 1
                 }
@@ -55,6 +59,10 @@ export const HUMAN_DATA = {
                 {
                     text: "심심해... 친구들에게 연락해 약속을 잡는다.",
                     score: 5
+                },
+                {
+                    text: "반반! 오전은 쉬고 오후에 가벼운 약속 하나 잡는다.",
+                    score: 3
                 },
                 {
                     text: "나이스! 밀린 넷플릭스를 보며 침대와 한 몸이 된다.",
@@ -81,12 +89,16 @@ export const HUMAN_DATA = {
             dimension: "adventure",
             a: [
                 {
-                    text: "오늘 저녁 뭐 먹지? 내일 할 일이 뭐더라?",
-                    score: 1
-                },
-                {
                     text: "좀비 사태가 터지면 어디로 도망가지? 로또 당첨되면...",
                     score: 5
+                },
+                {
+                    text: "평범한 일상 생각과 가끔 엉뚱한 상상이 섞인다.",
+                    score: 3
+                },
+                {
+                    text: "오늘 저녁 뭐 먹지? 내일 할 일이 뭐더라?",
+                    score: 1
                 }
             ]
         },
@@ -109,12 +121,16 @@ export const HUMAN_DATA = {
             dimension: "adventure",
             a: [
                 {
-                    text: "소금 1작은술... 계량스푼으로 정확히 맞춘다.",
-                    score: 1
-                },
-                {
                     text: "이 정도면 되겠지? 감으로 대충 넣거나 내 맘대로 바꾼다.",
                     score: 5
+                },
+                {
+                    text: "기본은 따르되, 가끔 내 취향대로 조금씩 변형한다.",
+                    score: 3
+                },
+                {
+                    text: "소금 1작은술... 계량스푼으로 정확히 맞춘다.",
+                    score: 1
                 }
             ]
         },
@@ -123,12 +139,16 @@ export const HUMAN_DATA = {
             dimension: "empathy",
             a: [
                 {
-                    text: "무슨 빵 샀어? 맛있어?",
-                    score: 1
-                },
-                {
                     text: "무슨 일 있어? 왜 우울해 ㅠㅠ",
                     score: 5
+                },
+                {
+                    text: "맛있는 거 먹으면 기분 좀 나아지지~ 같이 먹자!",
+                    score: 3
+                },
+                {
+                    text: "무슨 빵 샀어? 맛있어?",
+                    score: 1
                 }
             ]
         },
@@ -151,12 +171,16 @@ export const HUMAN_DATA = {
             dimension: "empathy",
             a: [
                 {
-                    text: "이 부분은 수정이 필요해요. 부족한 점을 명확히 짚어준다.",
-                    score: 1
-                },
-                {
                     text: "고생 많으셨어요! 근데 이 부분만 조금 더... 격려부터 한다.",
                     score: 5
+                },
+                {
+                    text: "노력한 건 알겠는데, 이 부분은 같이 수정해봐요.",
+                    score: 3
+                },
+                {
+                    text: "이 부분은 수정이 필요해요. 부족한 점을 명확히 짚어준다.",
+                    score: 1
                 }
             ]
         },
@@ -167,6 +191,10 @@ export const HUMAN_DATA = {
                 {
                     text: "며칠 전부터 리스트를 작성하고 차곡차곡 싸둔다.",
                     score: 5
+                },
+                {
+                    text: "전날 밤에 필요한 것들 떠올리며 대충 챙긴다.",
+                    score: 3
                 },
                 {
                     text: "출발 직전에 '지갑, 여권! 챙겼으면 됐지!' 하고 후다닥 싼다.",
@@ -181,6 +209,10 @@ export const HUMAN_DATA = {
                 {
                     text: "일별로 공부할 분량을 나눠서 계획을 짠다.",
                     score: 5
+                },
+                {
+                    text: "대략적인 범위만 나눠두고, 그때그때 조절한다.",
+                    score: 3
                 },
                 {
                     text: "아직 2주나 남았네? 일단 놀다가 벼락치기한다.",
@@ -211,6 +243,10 @@ export const HUMAN_DATA = {
                     score: 5
                 },
                 {
+                    text: "잠깐 당황하지만, 할 수 있는 것부터 차근차근 시작한다.",
+                    score: 3
+                },
+                {
                     text: "머리가 새하얘지고, 일단 패닉 상태에 빠진다.",
                     score: 1
                 }
@@ -223,6 +259,10 @@ export const HUMAN_DATA = {
                 {
                     text: "그럴 수도 있지. 다양한 의견이 있는 거니까.",
                     score: 5
+                },
+                {
+                    text: "좀 신경 쓰이지만, 시간이 지나면 잊어버린다.",
+                    score: 3
                 },
                 {
                     text: "하루 종일 그 댓글이 머릿속에서 떠나지 않는다.",
@@ -255,6 +295,10 @@ export const HUMAN_DATA = {
                     score: 5
                 },
                 {
+                    text: "나름 괜찮지만, 슬슬 사람이 그리워진다.",
+                    score: 3
+                },
+                {
                     text: "너무 평화롭다. 에너지가 완전히 충전된 기분이다.",
                     score: 1
                 }
@@ -281,6 +325,10 @@ export const HUMAN_DATA = {
                 {
                     text: "넓고 얕은 관계. 다양한 사람들과 어울리는 것이 좋다.",
                     score: 5
+                },
+                {
+                    text: "적당한 수의 친구들과 균형 있게 지내는 편이다.",
+                    score: 3
                 },
                 {
                     text: "좁고 깊은 관계. 소수의 사람과 깊은 이야기를 나누는 것이 좋다.",
@@ -349,12 +397,16 @@ export const HUMAN_DATA = {
             dimension: "adventure",
             a: [
                 {
-                    text: "맛집 위치, 교통편, 숙소 가격 등 구체적인 정보를 찾는다.",
-                    score: 1
-                },
-                {
                     text: "여행지의 분위기, 그곳에서 느낄 감정, 특별한 경험을 상상한다.",
                     score: 5
+                },
+                {
+                    text: "분위기도 보고, 실용적인 정보도 함께 찾아본다.",
+                    score: 3
+                },
+                {
+                    text: "맛집 위치, 교통편, 숙소 가격 등 구체적인 정보를 찾는다.",
+                    score: 1
                 }
             ]
         },
@@ -363,12 +415,16 @@ export const HUMAN_DATA = {
             dimension: "adventure",
             a: [
                 {
-                    text: "검증된 방식, 매뉴얼, 선례를 따르는 것이 편하고 확실하다.",
-                    score: 1
-                },
-                {
                     text: "남들이 안 해본 새로운 방식, 나만의 독창적인 방법을 시도하고 싶다.",
                     score: 5
+                },
+                {
+                    text: "기본은 따르되, 개선점이 보이면 조금씩 바꿔본다.",
+                    score: 3
+                },
+                {
+                    text: "검증된 방식, 매뉴얼, 선례를 따르는 것이 편하고 확실하다.",
+                    score: 1
                 }
             ]
         },
@@ -419,12 +475,16 @@ export const HUMAN_DATA = {
             dimension: "empathy",
             a: [
                 {
-                    text: "규정은 규정이니 원칙대로 처리한다.",
-                    score: 1
-                },
-                {
                     text: "사정을 들어보고 이번만 봐줄 수 있는지 알아본다.",
                     score: 5
+                },
+                {
+                    text: "경고는 주되, 가벼운 처분으로 끝낼 수 있는지 본다.",
+                    score: 3
+                },
+                {
+                    text: "규정은 규정이니 원칙대로 처리한다.",
+                    score: 1
                 }
             ]
         },
@@ -507,6 +567,10 @@ export const HUMAN_DATA = {
                     score: 5
                 },
                 {
+                    text: "잠깐 아쉽지만, 금방 다른 할 일을 찾는다.",
+                    score: 3
+                },
+                {
                     text: "오예! 자유시간이다! 즉흥적으로 하고 싶은 걸 하거나 쉰다.",
                     score: 1
                 }
@@ -519,6 +583,10 @@ export const HUMAN_DATA = {
                 {
                     text: "물건들이 제자리에 정리되어 있고 깔끔하다.",
                     score: 5
+                },
+                {
+                    text: "대체로 정돈되어 있지만 가끔 어지럽혀지기도 한다.",
+                    score: 3
                 },
                 {
                     text: "다소 어지럽혀져 있지만, 나름의 질서가 있어 찾을 순 있다.",
@@ -591,6 +659,10 @@ export const HUMAN_DATA = {
                     score: 5
                 },
                 {
+                    text: "잠깐 아쉽지만, 원인 파악하고 넘어간다.",
+                    score: 3
+                },
+                {
                     text: "왜 그랬을까... 계속 곱씹으며 자책한다.",
                     score: 1
                 }
@@ -617,6 +689,10 @@ export const HUMAN_DATA = {
                 {
                     text: "운동이나 취미로 빠르게 해소한다.",
                     score: 5
+                },
+                {
+                    text: "시간이 좀 걸리지만 나름의 방법으로 풀어낸다.",
+                    score: 3
                 },
                 {
                     text: "잠을 못 자거나 폭식/폭음을 하게 된다.",
