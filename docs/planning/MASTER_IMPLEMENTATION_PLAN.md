@@ -86,14 +86,14 @@
 | GamificationService 리팩토링 | ✅ | e1204d2 |
 | UnlockCondition 구조체 | ✅ | e1204d2 |
 
-#### Phase 1: 이벤트 버스 (Week 1-2)
+#### Phase 1: 이벤트 버스 ✅ 완료
 
-```
-[ ] src/types/events.ts - 이벤트 스키마
-[ ] src/services/EventBus.ts - 이벤트 발행/구독
-[ ] src/services/UserActivityService.ts - 활동 이벤트
-[ ] src/data/gamification/rewards.ts - 보상 설정 (SSOT)
-```
+| 작업 | 상태 | 커밋 |
+|------|------|------|
+| src/types/events.ts - 이벤트 스키마 | ✅ | 93358fb |
+| src/services/EventBus.ts - 이벤트 발행/구독 | ✅ | 93358fb |
+| src/services/UserActivityService.ts - 활동 이벤트 | ✅ | 93358fb |
+| src/data/gamification/rewards.ts - 보상 설정 (SSOT) | ✅ | 93358fb |
 
 **충돌 영역**: 없음 (신규 파일)
 
