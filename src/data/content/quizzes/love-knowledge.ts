@@ -74,7 +74,13 @@ export const LOVE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: '최근 연애 트렌드 조사에 따르면, 첫 데이트에서는 "번갈아 내기"가 가장 선호돼요. 한 사람이 전부 내면 부담스럽고, 정확한 더치는 너무 계산적으로 보일 수 있어요. "내가 밥 살게, 너는 디저트 사!" 같은 게 자연스러워요.',
     difficulty: 1,
     tags: ['연애', '첫데이트', '데이트비용'],
-    meta: { minAge: '20s' },
+    meta: {
+      minAge: '20s',
+      timeSensitivity: {
+        sensitivity: 'low',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'love-k-006',

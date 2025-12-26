@@ -4,6 +4,14 @@
 
 import type { VSPoll } from '../types';
 
+// 공통 timeSensitivity 설정 (밸런스게임/취향 = low)
+const DEFAULT_TIME_SENSITIVITY = {
+  timeSensitivity: {
+    sensitivity: 'low' as const,
+    sourceYear: 2025,
+  },
+};
+
 export const VS_POLLS: VSPoll[] = [
   // ==========================================================================
   // 난제/바이럴 (Controversial/Viral) - 상단 배치하여 참여 유도
@@ -25,6 +33,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { decision: ['safe', 'practical'], personality: ['reserved'] },
     },
     tags: ['음식', '취향'],
+    meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-002',
@@ -43,6 +52,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { decision: ['practical', 'safe'], personality: ['structured'] },
     },
     tags: ['음식', '탕수육'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-003',
@@ -61,6 +71,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { decision: ['safe', 'practical'], personality: ['reserved'] },
     },
     tags: ['음식', '피자'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-004',
@@ -79,6 +90,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { relationship: ['assertive', 'close-bonding'], personality: ['emotional'] },
     },
     tags: ['연애', '논쟁'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-005',
@@ -97,7 +109,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { relationship: ['assertive', 'close-bonding'], personality: ['emotional'] },
     },
     tags: ['연애', '질투'],
-    meta: { minAge: '20s', isAdultOnly: true },
+    meta: { minAge: '20s', isAdultOnly: true, ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -120,6 +132,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['structured', 'independent'], decision: ['practical'] },
     },
     tags: ['사료', '고양이'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-002',
@@ -138,6 +151,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['structured'], decision: ['practical', 'safe'] },
     },
     tags: ['품종', '고양이'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-003',
@@ -156,6 +170,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['structured'], decision: ['adventurous', 'practical'] },
     },
     tags: ['용품', '고양이'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-004',
@@ -174,6 +189,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['structured'], decision: ['practical', 'solo'] },
     },
     tags: ['장난감', '고양이'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-005',
@@ -192,6 +208,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive'], decision: ['adventurous', 'sentimental'] },
     },
     tags: ['용품', '고양이'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-006',
@@ -210,6 +227,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive'], decision: ['cautious', 'sentimental'] },
     },
     tags: ['중성화', '고양이', '건강'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-007',
@@ -228,6 +246,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['analytical'], decision: ['adventurous', 'practical'] },
     },
     tags: ['중성화', '고양이', '수술준비'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-008',
@@ -246,6 +265,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'emotional'], decision: ['sentimental'] },
     },
     tags: ['중성화', '고양이', '수술관리'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-009',
@@ -264,6 +284,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible'], decision: ['practical', 'safe'] },
     },
     tags: ['중성화', '고양이', '사료', '체중관리'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-cat-010',
@@ -282,6 +303,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['resilient', 'logical'], decision: ['practical'] },
     },
     tags: ['중성화', '고양이', '행동변화'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -304,6 +326,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible'], lifestyle: ['night-owl', 'active'] },
     },
     tags: ['산책', '강아지'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-002',
@@ -322,6 +345,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'analytical'], decision: ['sentimental'] },
     },
     tags: ['용품', '강아지'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-003',
@@ -340,6 +364,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['independent', 'supportive'], decision: ['adventurous'] },
     },
     tags: ['미용', '강아지'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-004',
@@ -358,6 +383,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['expressive'], decision: ['together', 'adventurous'] },
     },
     tags: ['훈련', '강아지'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-005',
@@ -376,6 +402,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'expressive'], decision: ['together'] },
     },
     tags: ['놀이', '강아지'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-006',
@@ -394,6 +421,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive'], decision: ['cautious', 'sentimental'] },
     },
     tags: ['중성화', '강아지', '수술', '시기', '건강'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-007',
@@ -412,6 +440,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'flexible'], decision: ['sentimental'] },
     },
     tags: ['중성화', '강아지', '금식', '수술준비', '마취'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-008',
@@ -430,6 +459,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'emotional'], decision: ['sentimental'] },
     },
     tags: ['중성화', '강아지', '넥카라', '수술관리', '회복'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-009',
@@ -448,6 +478,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible'], decision: ['practical', 'safe'] },
     },
     tags: ['중성화', '강아지', '사료', '체중관리', '건강'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-dog-010',
@@ -466,6 +497,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['resilient', 'logical'], decision: ['practical'] },
     },
     tags: ['중성화', '강아지', '행동변화', '마운팅', '성격'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -488,6 +520,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['planned', 'structured'], decision: ['practical'] },
     },
     tags: ['반려동물'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-pet-002',
@@ -506,6 +539,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['independent'], decision: ['adventurous', 'practical'] },
     },
     tags: ['반려동물'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -528,6 +562,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['expressive'], decision: ['direct', 'practical'] },
     },
     tags: ['연애'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-002',
@@ -546,6 +581,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { relationship: ['assertive'], decision: ['indirect', 'practical'] },
     },
     tags: ['연애', '갈등'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-003',
@@ -564,6 +600,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted'], decision: ['adventurous'], lifestyle: ['active'] },
     },
     tags: ['연애', '데이트'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-004',
@@ -582,6 +619,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'reserved'], relationship: ['space-needing'] },
     },
     tags: ['연애', '연락'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-005',
@@ -600,6 +638,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['planned', 'structured'], decision: ['practical'] },
     },
     tags: ['연애', '이벤트'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-006',
@@ -618,6 +657,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'intuitive'], decision: ['indirect'] },
     },
     tags: ['연애', '썸', '호감'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-007',
@@ -636,6 +676,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved'], decision: ['indirect', 'cautious'] },
     },
     tags: ['연애', '썸', '연락'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-008',
@@ -654,6 +695,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['planned', 'analytical'], decision: ['cautious'] },
     },
     tags: ['연애', '고백', '타이밍'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-009',
@@ -672,6 +714,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted'], decision: ['adventurous', 'together'] },
     },
     tags: ['연애', '첫데이트', '장소'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-010',
@@ -690,6 +733,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['analytical', 'logical'], decision: ['practical'] },
     },
     tags: ['연애', '소개팅', '이상형'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -712,6 +756,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous', 'flexible'], decision: ['adventurous'] },
     },
     tags: ['커피', '라이프스타일'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-002',
@@ -730,6 +775,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['emotional', 'flexible'], decision: ['sentimental'] },
     },
     tags: ['커피', '라이프스타일', '음료'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-003',
@@ -748,6 +794,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous', 'flexible'], lifestyle: ['night-owl'] },
     },
     tags: ['라이프스타일'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-004',
@@ -766,6 +813,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'collaborative'], lifestyle: ['active'] },
     },
     tags: ['라이프스타일', '일'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-005',
@@ -784,6 +832,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['planned', 'independent'], lifestyle: ['creative'] },
     },
     tags: ['라이프스타일', '음식'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -806,6 +855,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'expressive'], decision: ['together'] },
     },
     tags: ['성격'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-personality-002',
@@ -824,6 +874,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous', 'flexible', 'intuitive'], decision: ['adventurous'] },
     },
     tags: ['성격'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-personality-003',
@@ -842,6 +893,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['analytical'], decision: ['indirect', 'cautious'] },
     },
     tags: ['성격', '갈등'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -864,6 +916,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'analytical'], decision: ['sentimental'] },
     },
     tags: ['토끼', '사료'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-rabbit-002',
@@ -882,6 +935,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'flexible'], decision: ['adventurous'] },
     },
     tags: ['토끼', '환경'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-rabbit-003',
@@ -900,6 +954,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible', 'spontaneous'], decision: ['safe'] },
     },
     tags: ['토끼', '관리'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-rabbit-004',
@@ -918,6 +973,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['analytical'], decision: ['practical', 'safe'] },
     },
     tags: ['토끼', '간식'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -940,6 +996,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive', 'planned'], decision: ['sentimental'] },
     },
     tags: ['식물'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-plant-002',
@@ -958,6 +1015,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['intuitive', 'spontaneous'], decision: ['sentimental'] },
     },
     tags: ['식물'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-plant-003',
@@ -976,6 +1034,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['analytical'], decision: ['adventurous', 'practical'] },
     },
     tags: ['식물'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-plant-004',
@@ -994,6 +1053,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['independent'], decision: ['adventurous', 'practical'] },
     },
     tags: ['식물', '구매'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-plant-005',
@@ -1012,6 +1072,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['analytical'], decision: ['practical', 'adventurous'] },
     },
     tags: ['식물', '인테리어'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -1034,6 +1095,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous'], decision: ['adventurous', 'sentimental'] },
     },
     tags: ['음식', '중식'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-007',
@@ -1052,6 +1114,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['expressive'], decision: ['adventurous', 'sentimental'] },
     },
     tags: ['음식', '치킨'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-008',
@@ -1070,6 +1133,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous', 'flexible'], decision: ['adventurous'] },
     },
     tags: ['음식', '라면'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-009',
@@ -1088,6 +1152,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['structured'], decision: ['safe', 'practical'] },
     },
     tags: ['음식', '계란'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-viral-010',
@@ -1106,7 +1171,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible', 'extroverted'], decision: ['together'] },
     },
     tags: ['술', '음료'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-006',
@@ -1125,6 +1190,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'independent'], decision: ['practical'] },
     },
     tags: ['라이프스타일', '쇼핑'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-007',
@@ -1143,6 +1209,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous', 'flexible', 'intuitive'], decision: ['adventurous'] },
     },
     tags: ['라이프스타일', '여행'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-008',
@@ -1161,6 +1228,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible'], lifestyle: ['night-owl', 'active'] },
     },
     tags: ['라이프스타일', '운동'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-009',
@@ -1179,6 +1247,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted'], decision: ['safe'], lifestyle: ['homebody'] },
     },
     tags: ['라이프스타일', '휴식'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-life-010',
@@ -1197,6 +1266,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'independent'], decision: ['solo'] },
     },
     tags: ['라이프스타일', '영화'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -1219,7 +1289,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'expressive'], decision: ['together'] },
     },
     tags: ['취향', '기호품', '사교'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-ambiguous-002',
@@ -1238,6 +1308,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive'], decision: ['sentimental', 'direct'] },
     },
     tags: ['연애', '데이트'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-ambiguous-003',
@@ -1256,7 +1327,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['independent', 'introverted'], decision: ['solo'] },
     },
     tags: ['직장', '회식'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-ambiguous-004',
@@ -1275,7 +1346,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted'], decision: ['together'], lifestyle: ['active'] },
     },
     tags: ['소비', '라이프스타일'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-ambiguous-005',
@@ -1294,6 +1365,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['independent'], relationship: ['assertive', 'space-needing'] },
     },
     tags: ['연애', '연락'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -1316,6 +1388,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['supportive'], decision: ['together', 'sentimental'] },
     },
     tags: ['연애', '표현'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-017',
@@ -1334,6 +1407,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'reserved'], relationship: ['space-needing'] },
     },
     tags: ['연애', '사생활'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-018',
@@ -1352,6 +1426,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['flexible', 'logical'], decision: ['practical'] },
     },
     tags: ['연애', '기념일'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-019',
@@ -1370,6 +1445,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'introverted'], relationship: ['space-needing'] },
     },
     tags: ['연애', '스킨십'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-020',
@@ -1388,6 +1464,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous', 'flexible'], decision: ['present-focused'] },
     },
     tags: ['연애', '미래'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-011',
@@ -1406,6 +1483,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['emotional', 'sensitive'], decision: ['sentimental'] },
     },
     tags: ['연애', '과거'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-012',
@@ -1424,6 +1502,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'introverted'], relationship: ['space-needing'] },
     },
     tags: ['연애', 'SNS'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-013',
@@ -1442,6 +1521,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'logical'], relationship: ['space-needing'] },
     },
     tags: ['연애', '호칭'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-014',
@@ -1460,6 +1540,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved'], decision: ['indirect'], relationship: ['avoiding'] },
     },
     tags: ['연애', '갈등'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-015',
@@ -1478,6 +1559,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'independent'], relationship: ['space-needing'] },
     },
     tags: ['연애', '인간관계'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -1500,6 +1582,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'spontaneous'], decision: ['together'], lifestyle: ['active'] },
     },
     tags: ['MBTI', '내향', '외향', '성격'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-mbti-ie-002',
@@ -1518,6 +1601,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'expressive'], relationship: ['close-bonding'], decision: ['together'] },
     },
     tags: ['MBTI', '내향', '외향', '모임'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-mbti-ie-003',
@@ -1536,6 +1620,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'expressive'], decision: ['direct'], relationship: ['assertive'] },
     },
     tags: ['MBTI', '내향', '외향', '첫만남'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-mbti-ie-004',
@@ -1554,6 +1639,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'collaborative'], decision: ['together'], relationship: ['close-bonding'] },
     },
     tags: ['MBTI', '내향', '외향', '점심'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-mbti-ie-005',
@@ -1572,6 +1658,7 @@ export const VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted', 'expressive'], decision: ['together'], lifestyle: ['active'] },
     },
     tags: ['MBTI', '내향', '외향', '여행'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -1602,6 +1689,7 @@ export const VS_POLLS: VSPoll[] = [
       },
     },
     tags: ['가치관', '일과삶', '돈', '시간', '워라밸'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-values-002',
@@ -1628,6 +1716,7 @@ export const VS_POLLS: VSPoll[] = [
       },
     },
     tags: ['가치관', '진로', '안정', '도전', '커리어'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-values-003',
@@ -1654,6 +1743,7 @@ export const VS_POLLS: VSPoll[] = [
       },
     },
     tags: ['가치관', '정직', '배려', '인간관계', '소통'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-values-004',
@@ -1680,6 +1770,7 @@ export const VS_POLLS: VSPoll[] = [
       },
     },
     tags: ['가치관', '현재', '미래', '소비', '저축'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-values-005',
@@ -1706,6 +1797,7 @@ export const VS_POLLS: VSPoll[] = [
       },
     },
     tags: ['가치관', '원칙', '관계', '갈등', '소통'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 ];
 

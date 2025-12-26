@@ -23,6 +23,10 @@ export const WINE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     meta: {
       ageRating: 'adult',
       ageRestrictionReason: 'alcohol',
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
     },
   },
   {

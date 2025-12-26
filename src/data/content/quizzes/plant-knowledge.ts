@@ -19,6 +19,12 @@ export const PLANT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['식물', '물주기', '관리', '화분', '기초'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'plant-k-002',

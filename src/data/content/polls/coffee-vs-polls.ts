@@ -15,6 +15,12 @@ export const COFFEE_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '아라비카 (부드러움)', emoji: '🌸' },
     optionB: { id: 'b', text: '로부스타 (진함)', emoji: '💪' },
     tags: ['coffee', '원두', '취향'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'vs-coffee-002',

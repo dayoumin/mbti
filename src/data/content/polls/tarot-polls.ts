@@ -25,6 +25,12 @@ export const TAROT_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: 'The Fool (새로운 시작)', emoji: '🎒' },
     optionB: { id: 'b', text: 'The World (완성과 성취)', emoji: '🌍' },
     tags: ['The Fool', 'The World', '에너지'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'tarot-poll-002',

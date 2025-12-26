@@ -19,6 +19,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['고양이', '꼬리', '행동', '감정표현'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-002',
@@ -34,6 +40,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['고양이', '음식', '위험', '건강', '독성'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-003',
@@ -49,6 +61,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '골골송', '소리', '감정표현', '치유'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-004',
@@ -64,6 +82,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '물', '섭취량', '건강', '관리'],
     source: 'cat-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-005',
@@ -79,6 +103,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['고양이', '화장실', '다묘가정', '스트레스', '관리'],
     source: 'cat-fact-006',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-006',
@@ -94,6 +124,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['고양이', '슬로우블링크', '눈', '애정표현', '소통'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-007',
@@ -109,6 +145,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '배', '행동', '신뢰', '감정표현'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-008',
@@ -124,6 +166,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '체온', '건강', '발열', '의료'],
     source: 'cat-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-009',
@@ -139,6 +187,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '캣닢', '유전', '반응', '장난감'],
     source: 'cat-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-010',
@@ -154,6 +208,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['고양이', '예방접종', '백신', '건강', '의료'],
     source: 'cat-fact-005',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-011',
@@ -169,6 +229,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['고양이', '버팅', '페로몬', '애정표현', '영역표시'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-012',
@@ -184,6 +250,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '중성화', '수술', '건강', '의료'],
     source: 'cat-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-013',
@@ -199,6 +271,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '중성화', '수술', '금식', '준비사항'],
     source: 'cat-fact-013',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-014',
@@ -214,6 +292,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '중성화', '회복', '수술', '관리'],
     source: 'cat-fact-014',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-015',
@@ -229,6 +313,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '중성화', '넥카라', '수술', '관리'],
     source: 'cat-fact-015',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-016',
@@ -244,6 +334,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '중성화', '행동변화', '성격'],
     source: 'cat-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'cat-k-017',
@@ -259,6 +355,12 @@ export const CAT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['고양이', '중성화', '비만', '체중관리', '건강'],
     source: 'cat-fact-017',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 ];
 

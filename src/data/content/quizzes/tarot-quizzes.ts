@@ -32,6 +32,12 @@ export const TAROT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     explanation: 'The Fool은 0번 카드로, 시작과 무한 가능성을 상징해요!',
     difficulty: 1,
     tags: ['메이저아르카나', '카드번호', 'The Fool'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'tarot-quiz-002',

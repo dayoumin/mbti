@@ -19,21 +19,33 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['강아지', '음식', '위험', '포도', '건강'],
     source: 'dog-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-002',
     category: 'dog',
-    question: '강아지가 꼬리를 흔드는 것은 항상 기쁨의 표현일까요?',
+    question: '강아지가 꼬리를 흔드는 것은 항상 기본적인 표현일까요?',
     options: [
-      { id: 'a', text: '네, 항상 기뻐요', isCorrect: false },
+      { id: 'a', text: '네, 항상 기본해요', isCorrect: false },
       { id: 'b', text: '아니요, 긴장이나 불안일 수도 있어요', isCorrect: true },
       { id: 'c', text: '배가 고플 때만 흔들어요', isCorrect: false },
       { id: 'd', text: '아무 의미 없어요', isCorrect: false },
     ],
-    explanation: '꼬리 흔들기는 감정의 "각성"을 나타내요. 높이, 속도, 방향에 따라 기쁨, 불안, 경계 등 다양한 의미가 있어요.',
+    explanation: '꼬리 흔들기는 감정의 "각성"을 나타내요. 높이, 속도, 방향에 따라 기본, 불안, 경계 등 다양한 의미가 있어요.',
     difficulty: 2,
     tags: ['강아지', '꼬리', '행동', '감정표현', '소통'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-003',
@@ -49,6 +61,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['강아지', '산책', '운동', '건강', '관리'],
     source: 'dog-fact-005',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-004',
@@ -64,6 +82,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['강아지', '하품', '행동', '스트레스', '감정표현'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-005',
@@ -75,10 +99,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '폐렴', isCorrect: false },
       { id: 'd', text: '기생충', isCorrect: false },
     ],
-    explanation: 'DHPPL = 홍역(D), 간염(H), 파보(P), 파라인플루엔자(P), 렙토스피라(L)예요.',
+    explanation: 'DHPPL = 홍역(D), 간염(H), 파보(P), 파라인플루엔자(P), 렙토스피라(L)이에요.',
     difficulty: 3,
     tags: ['강아지', '예방접종', '백신', '건강', '의료'],
     source: 'dog-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-006',
@@ -88,12 +118,18 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'a', text: '코가 건조해서', isCorrect: false },
       { id: 'b', text: '후각 능력 향상을 위해', isCorrect: true },
       { id: 'c', text: '배가 고파서', isCorrect: false },
-      { id: 'd', text: '습관이에요', isCorrect: false },
+      { id: 'd', text: '습관이 좋아요', isCorrect: false },
     ],
-    explanation: '촉촉한 코는 공기 중 냄새 분자를 더 잘 포착해요. 강아지가 코를 핥는 건 "냄새를 더 잘 맡기 위해"예요!',
+    explanation: '촉촉한 코는 공기 중 냄새 분자를 더 잘 포집해요. 강아지가 코를 핥는 건 "냄새를 더 잘 맡기 위해"이에요!',
     difficulty: 2,
     tags: ['강아지', '코', '후각', '신체', '본능'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-007',
@@ -105,10 +141,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '특별한 이유 없어요', isCorrect: false },
       { id: 'd', text: '아파서', isCorrect: false },
     ],
-    explanation: '야생에서 풀을 눌러 편한 잠자리를 만들고, 위험 요소(뱀 등)를 확인하던 본능이 남아있어요!',
+    explanation: '야생에서 풀을 눌러 편안한 잠자리를 만들고, 위험 요소(뱀 등)를 확인하던 본능이 남아있어요!',
     difficulty: 1,
     tags: ['강아지', '수면', '본능', '행동', '습성'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-008',
@@ -124,6 +166,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['강아지', '호흡', '건강', '의료', '체크'],
     source: 'dog-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-009',
@@ -135,10 +183,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '놀고 싶다', isCorrect: false },
       { id: 'd', text: '공격 전조', isCorrect: false },
     ],
-    explanation: '입술 핥기는 대표적인 "칼밍 시그널"로 불안, 긴장, 스트레스를 표현해요. 강아지의 불편함 신호예요.',
+    explanation: '입술 핥기는 대표적인 "칼밍 시그널"로 불안, 긴장, 스트레스를 표현해요. 강아지의 불편함 신호이에요.',
     difficulty: 2,
     tags: ['강아지', '칼밍시그널', '불안', '감정표현', '소통'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-010',
@@ -154,6 +208,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['강아지', '양치질', '치아', '건강', '관리'],
     source: 'dog-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-011',
@@ -165,10 +225,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '화났다는 신호', isCorrect: false },
       { id: 'd', text: '놀고 싶다는 신호', isCorrect: false },
     ],
-    explanation: '강아지 세계에서 직접적인 눈 맞춤은 도전 신호예요. 고개를 돌리는 건 "싸우고 싶지 않아요"라는 평화 신호예요.',
+    explanation: '강아지 세계에서 직접적인 눈 맞춤은 도전 신호이에요. 고개를 돌리는 건 "싸우고 싶지 않아요"라는 평화 신호이에요.',
     difficulty: 2,
     tags: ['강아지', '눈맞춤', '복종', '소통', '행동'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-012',
@@ -184,6 +250,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['강아지', '발바닥', '신체', '체온조절', '구조'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 
   // ==========================================================================
@@ -199,10 +271,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '둘 다 생후 6개월', isCorrect: false },
       { id: 'd', text: '소형견이 더 늦게', isCorrect: false },
     ],
-    explanation: '소형견은 6-9개월, 대형견은 12-18개월이 적정해요. 대형견은 뼈와 관절이 충분히 성장한 후 수술하는 게 관절 질환 예방에 도움이 돼요.',
+    explanation: '소형견은 6-9개월, 대형견은 12-18개월이 적정이에요. 대형견은 뼈와 관절이 충분히 성장한 후 수술하는 게 관절 질환 예방에 도움이 돼요.',
     difficulty: 2,
     tags: ['강아지', '중성화', '수술', '시기', '건강'],
     source: 'dog-fact-006',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-014',
@@ -218,6 +296,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['강아지', '중성화', '금식', '수술준비', '마취'],
     source: 'dog-fact-007',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-015',
@@ -229,10 +313,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '1개월', isCorrect: false },
       { id: 'd', text: '당일 회복', isCorrect: false },
     ],
-    explanation: '10-14일이 기본 회복 기간이에요. 수컷이 암컷보다 빠르게 회복해요. 외부 상처는 10-14일, 내부 회복은 수주가 걸려요.',
+    explanation: '10-14일이 기본 회복 기간이에요. 수컷은 암컷보다 빠르게 회복해요. 외부 상처는 10-14일, 내부 회복은 수주가 걸려요.',
     difficulty: 1,
     tags: ['강아지', '중성화', '회복', '수술', '관리'],
     source: 'dog-fact-008',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-016',
@@ -248,6 +338,12 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['강아지', '중성화', '넥카라', '수술', '관리'],
     source: 'dog-fact-009',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'dog-k-017',
@@ -259,10 +355,16 @@ export const DOG_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '성격이 완전히 온순해진다', isCorrect: false },
       { id: 'd', text: '활동량이 늘어난다', isCorrect: false },
     ],
-    explanation: '배회, 마운팅, 마킹 같은 호르몬 관련 행동은 확실히 줄어들어요. 하지만 불안이나 공격성은 개체차가 있어요.',
+    explanation: '배회, 마운팅, 마킹 같은 호르몬 관련 행동은 확실히 줄어들어요. 하지만 불안이나 공격성은 개체 차이가 있어요.',
     difficulty: 2,
     tags: ['강아지', '중성화', '행동변화', '마운팅', '마킹'],
     source: 'dog-fact-010',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 ];
 

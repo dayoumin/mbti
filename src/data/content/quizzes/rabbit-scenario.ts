@@ -12,6 +12,12 @@ export const RABBIT_SCENARIO_QUIZZES: ScenarioQuiz[] = [
     description: '토끼 집사로서의 돌봄 능력을 테스트해보세요',
     emoji: '🐰',
     tags: ['토끼', '집사', '시나리오', '양육', '점수테스트'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
     questions: [
       {
         id: 'q1',

@@ -5,6 +5,14 @@
 
 import type { VSPoll } from '../types';
 
+// 공통 timeSensitivity 설정 (동물/상상력/취향 = none)
+const DEFAULT_TIME_SENSITIVITY = {
+  timeSensitivity: {
+    sensitivity: 'none' as const,
+    sourceYear: 2025,
+  },
+};
+
 export const KIDS_VS_POLLS: VSPoll[] = [
   // ==========================================================================
   // 동물 취향 투표
@@ -18,6 +26,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['동물', '강아지', '고양이', '취향'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -29,6 +38,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['동물', '토끼', '햄스터', '귀여움'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -40,6 +50,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['고양이', '발바닥', '육구', '색깔'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -51,6 +62,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['강아지', '놀이', '산책', '활동'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
 
@@ -66,6 +78,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['계절', '겨울', '여름', '취향'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -77,6 +90,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['생활패턴', '아침', '저녁', '습관'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -88,6 +102,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['놀이', '야외', '실내', '취향'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -99,6 +114,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['간식', '음식', '아이스크림', '과자'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
 
@@ -114,6 +130,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['상상력', '마법', '꿈', '소원'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -125,6 +142,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['초능력', '상상력', '능력', '꿈'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
 
@@ -140,6 +158,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['고양이', '털', '품종', '취향'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
   {
@@ -151,6 +170,7 @@ export const KIDS_VS_POLLS: VSPoll[] = [
     tags: ['강아지', '크기', '품종', '취향'],
     meta: {
       ageRating: 'kids',
+    ...DEFAULT_TIME_SENSITIVITY,
     },
   },
 ];

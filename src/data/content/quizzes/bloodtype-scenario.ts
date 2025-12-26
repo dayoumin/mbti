@@ -12,6 +12,12 @@ export const BLOODTYPE_SCENARIO_QUIZZES: ScenarioQuiz[] = [
     description: '다양한 상황에서 혈액형별 반응을 얼마나 잘 아시나요?',
     emoji: '🩸',
     tags: ['혈액형', '성격', '시나리오', '재미', 'MBTI'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
     questions: [
       {
         id: 'q1',
@@ -41,7 +47,7 @@ export const BLOODTYPE_SCENARIO_QUIZZES: ScenarioQuiz[] = [
         question: 'O형의 스타일은?',
         options: [
           { id: 'a', text: '엑셀로 시간표 짜고 예산 관리', points: 4, feedback: 'O형은 이렇게까지는...' },
-          { id: 'b', text: '대충 큰 틀만 정하고 현지에서 즉흥', points: 10, feedback: '정답! O형은 대범하고 유연해요!' },
+          { id: 'b', text: '대충 큰 틀만 정하고 현지에서 즐흥', points: 10, feedback: '정답! O형은 대범하고 유연해요!' },
           { id: 'c', text: '계획 자체를 안 세운다', points: 7, feedback: '어느 정도는 생각해요!' },
           { id: 'd', text: '친구들한테 다 맡긴다', points: 3, feedback: 'O형은 리더십이 있어요!' },
         ],
@@ -97,7 +103,7 @@ export const BLOODTYPE_SCENARIO_QUIZZES: ScenarioQuiz[] = [
         options: [
           { id: 'a', text: '조용히 지켜만 본다', points: 10, feedback: '정답! AB형은 관찰자 스타일이에요!' },
           { id: 'b', text: '적극적으로 의견 제시', points: 5, feedback: '필요할 때만 나서요' },
-          { id: 'c', text: '채팅방을 나간다', points: 4, feedback: '나가진 않아요, 조용히 있어요' },
+          { id: 'c', text: '채팅방을 나간다', points: 4, feedback: '나가지 않아요, 조용히 있어요' },
           { id: 'd', text: '중재하려고 노력한다', points: 7, feedback: '중재보다는 관망해요' },
         ],
       },
@@ -117,8 +123,8 @@ export const BLOODTYPE_SCENARIO_QUIZZES: ScenarioQuiz[] = [
         situation: '스트레스를 받는 날이에요.',
         question: 'B형이 푸는 방법은?',
         options: [
-          { id: 'a', text: '혼자 조용히 있는다', points: 4, feedback: 'B형은 혼자 있는 걸 안 좋아해요' },
-          { id: 'b', text: '친구들 불러서 신나게 논다', points: 10, feedback: '정답! B형은 사람들과 함께 풀어요!' },
+          { id: 'a', text: '혼자 조용히 있다', points: 4, feedback: 'B형은 혼자 있는 걸 안 좋아해요' },
+          { id: 'b', text: '친구들 불러서 신나게 논다', points: 10, feedback: '정답! B형은 사람들과 함께 놀아요!' },
           { id: 'c', text: '계획을 세워서 해결한다', points: 3, feedback: '계획보다는 행동파예요' },
           { id: 'd', text: '잠자면서 잊어버린다', points: 6, feedback: '놀면서 푸는 게 더 B형스러워요' },
         ],

@@ -19,6 +19,12 @@ export const RABBIT_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['토끼', '빙키', '행동', '감정표현', '행복'],
     source: 'general-knowledge',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'rabbit-k-002',

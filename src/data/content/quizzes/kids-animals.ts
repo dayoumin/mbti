@@ -25,6 +25,10 @@ export const KIDS_ANIMAL_QUIZZES: KnowledgeQuiz[] = [
     source: 'general-knowledge',
     meta: {
       ageRating: 'kids',
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
     },
   },
   {

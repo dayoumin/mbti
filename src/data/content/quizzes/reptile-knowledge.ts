@@ -19,6 +19,12 @@ export const REPTILE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['파충류', '레오파드게코', '온도', '사육환경'],
     source: 'reptile-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'reptile-k-002',

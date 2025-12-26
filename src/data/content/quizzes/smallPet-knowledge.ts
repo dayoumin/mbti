@@ -20,6 +20,12 @@ export const SMALLPET_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['소동물', '기니피그', '수명', '기본정보'],
     source: 'smallPet-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'smallPet-k-002',

@@ -4,6 +4,14 @@
 
 import type { ChoicePoll } from '../types';
 
+// 공통 timeSensitivity 설정 (일반 라이프스타일/의견 = none)
+const DEFAULT_TIME_SENSITIVITY = {
+  timeSensitivity: {
+    sensitivity: 'none' as const,
+    sourceYear: 2025,
+  },
+};
+
 export const CHOICE_POLLS: ChoicePoll[] = [
   {
     id: 'choice-life-001',
@@ -17,7 +25,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '4명 이상', emoji: '👨‍👩‍👧‍👦' },
     ],
     tags: ['라이프스타일', '가족', '자녀'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -35,7 +43,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '운세 안 봄', emoji: '🙅' },
     ],
     tags: ['운세', '별자리', '타로', '띠'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-fortune-002',
@@ -49,7 +57,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '거의 안 봄', emoji: '🙅' },
     ],
     tags: ['운세', '습관', '라이프스타일'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-fortune-003',
@@ -63,7 +71,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '진지하게 참고함', emoji: '🧐' },
     ],
     tags: ['운세', '심리', '재미'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-fortune-004',
@@ -77,7 +85,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '혈액형이 더 맞음', emoji: '🩸' },
     ],
     tags: ['운세', '별자리', '띠', '혈액형'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-fortune-005',
@@ -91,7 +99,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '타로 안 봄', emoji: '🙅' },
     ],
     tags: ['타로', '운세', '연애', '재물'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -109,7 +117,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '취미/자기계발', emoji: '📚' },
     ],
     tags: ['라이프스타일', '주말', '휴식'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-life-003',
@@ -123,7 +131,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '집에서 쉬는 게 최고', emoji: '🏠' },
     ],
     tags: ['라이프스타일', '여행', '휴가'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-life-004',
@@ -137,7 +145,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '독서/공부', emoji: '📖' },
     ],
     tags: ['라이프스타일', '취미', '여가'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -155,7 +163,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '직업/경제력', emoji: '💼' },
     ],
     tags: ['연애', '썸', '이상형'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-love-002',
@@ -169,7 +177,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '집에서 편하게 있을 때', emoji: '🏠' },
     ],
     tags: ['연애', '데이트', '로맨스'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-love-003',
@@ -183,7 +191,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '상황마다 다름', emoji: '🤷' },
     ],
     tags: ['연애', '스타일', '성향'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -201,7 +209,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '멍 때리며 바라보기', emoji: '👀' },
     ],
     tags: ['고양이', '반려묘', '일상'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-cat-002',
@@ -215,7 +223,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '길고양이 입양', emoji: '❤️' },
     ],
     tags: ['고양이', '품종', '반려묘'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -233,7 +241,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '같이 낮잠 자기', emoji: '😴' },
     ],
     tags: ['강아지', '반려견', '활동'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-dog-002',
@@ -247,7 +255,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '크기 상관없음', emoji: '❤️' },
     ],
     tags: ['강아지', '크기', '품종'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -265,7 +273,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '야식 안 먹음', emoji: '🙅' },
     ],
     tags: ['음식', '야식', '배달'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-food-002',
@@ -279,7 +287,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '시즌 메뉴', emoji: '🎄' },
     ],
     tags: ['카페', '음료', '커피'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ============================================================================
@@ -297,7 +305,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '엉뚱하고 4차원', emoji: '🌀' },
     ],
     tags: ['성격', 'MBTI', '자기분석'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'choice-personality-002',
@@ -311,7 +319,7 @@ export const CHOICE_POLLS: ChoicePoll[] = [
       { id: 'e', text: '쇼핑/취미 활동', emoji: '🛍️' },
     ],
     tags: ['성격', '스트레스', '대처방식'],
-    meta: { minAge: '20s' },
+    meta: { minAge: '20s', ...DEFAULT_TIME_SENSITIVITY },
   },
 ];
 

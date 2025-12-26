@@ -23,7 +23,14 @@ export const CHRISTMAS_QUIZZES: KnowledgeQuiz[] = [
     explanation: '1931년 코카콜라 광고에서 빨간 옷을 입은 산타 이미지가 대중화되었어요. 그 전에는 녹색, 갈색 등 다양한 색 옷을 입었답니다!',
     difficulty: 1,
     tags: ['크리스마스', '산타', '역사', '광고'],
-    meta: { seasonal: ['christmas'], priority: 10 },
+    meta: {
+      seasonal: ['christmas'],
+      priority: 10,
+      timeSensitivity: {
+        sensitivity: 'low',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'xmas-002',

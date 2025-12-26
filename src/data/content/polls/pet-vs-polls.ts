@@ -15,6 +15,12 @@ export const PET_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '고양이 (독립적 매력)', emoji: '🐱' },
     optionB: { id: 'b', text: '강아지 (충직한 친구)', emoji: '🐶' },
     tags: ['반려동물', '고양이', '강아지'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'vs-pet-species-002',

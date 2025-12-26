@@ -15,6 +15,12 @@ export const BLOODTYPE_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: 'A형 + B형 (정반대 매력)', emoji: '🅰️🅱️' },
     optionB: { id: 'b', text: 'O형 + AB형 (보완 관계)', emoji: '🅾️🆎' },
     tags: ['bloodtype', 'relationship', '궁합'],
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    },
   },
   {
     id: 'vs-bloodtype-couple-002',

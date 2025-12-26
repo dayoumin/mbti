@@ -13,105 +13,210 @@ export const FISH_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'a', text: '30cm (1자)', isCorrect: false },
       { id: 'b', text: '60cm (2자 광폭)', isCorrect: true },
       { id: 'c', text: '90cm (3자)', isCorrect: false },
-      { id: 'd', text: '크기는 상관없다', isCorrect: false },
+      { id: 'd', text: '크기는 상관없음', isCorrect: false },
     ],
     explanation: '물양이 많을수록 수질이 안정되어 관리가 쉬워요. 작은 수조는 급격한 수질 변화로 위험할 수 있어요!',
     difficulty: 1,
     tags: ['관상어', '수조', '초보자', '크기', '수질'],
     source: 'fish-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-002',
     category: 'fish',
-    question: '베타가 작은 수조에서도 생존 가능한 이유는?',
+    question: '벤타가 작은 수조에서 도 생존 가능한 이유는?',
     options: [
       { id: 'a', text: '산소가 적게 필요해서', isCorrect: false },
-      { id: 'b', text: '라비린스 기관으로 공기호흡', isCorrect: true },
+      { id: 'b', text: '라비린스 기관으로 공기호흡이 가능해요', isCorrect: true },
       { id: 'c', text: '물을 정화하는 능력', isCorrect: false },
       { id: 'd', text: '활동량이 적어서', isCorrect: false },
     ],
-    explanation: '베타는 라비린스(미로) 기관으로 수면에서 공기호흡이 가능해요. 그래서 여과기 없이도 견딜 수 있죠!',
+    explanation: '벤타는 라비린스(미로) 기관으로 수면에서 공기호흡이 가능해요. 그래서 여과기 없이도 견딜 수 있죠!',
     difficulty: 2,
-    tags: ['관상어', '베타', '라비린스', '호흡', '특징'],
+    tags: ['관상어', '벤타', '라비린스', '호흡', '특징'],
     source: 'fish-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-003',
     category: 'fish',
-    question: '수컷 베타가 지느러미를 활짝 펼치는 행동은?',
+    question: '수컷 벤타가 지느러미를 활짝 펼치는 행동은?',
     options: [
       { id: 'a', text: '구애 행동', isCorrect: false },
-      { id: 'b', text: '플레어링 (위협)', isCorrect: true },
+      { id: 'b', text: '플레어링(위협)', isCorrect: true },
       { id: 'c', text: '운동하는 중', isCorrect: false },
       { id: 'd', text: '기분이 좋아서', isCorrect: false },
     ],
-    explanation: '플레어링은 영역 침입자에게 보여주는 위협 행동이에요. 수컷 베타는 거울만 봐도 플레어링을 하죠!',
+    explanation: '플레어링은 영역 침입자에게 보여주는 위협 행동이에요. 수컷 벤타는 침입자에서 깔끔하고 부드러운 맛이 나요!',
     difficulty: 1,
-    tags: ['관상어', '베타', '플레어링', '행동', '영역'],
+    tags: ['관상어', '벤타', '플레어링', '행동', '영역'],
     source: 'fish-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-004',
     category: 'fish',
-    question: '금붕어 사육 시 히터가 필요할까요?',
+    question: '프렌치 프레스로 커피를 추출할 때 권장 분쇄도는?',
     options: [
-      { id: 'a', text: '필수다', isCorrect: false },
-      { id: 'b', text: '불필요 (냉수성 어종)', isCorrect: true },
-      { id: 'c', text: '겨울에만 필요', isCorrect: false },
-      { id: 'd', text: '품종에 따라 다름', isCorrect: false },
+      { id: 'a', text: '아주 굵게 (에스프레소용)', isCorrect: false },
+      { id: 'b', text: '중간 (드립용)', isCorrect: false },
+      { id: 'c', text: '굵게 (바다소금 크기)', isCorrect: true },
+      { id: 'd', text: '분쇄하지 않은 원두', isCorrect: false },
     ],
-    explanation: '금붕어는 열대어가 아닌 냉수성 어종이에요. 30도를 넘지 않으면 히터 없이도 잘 자라요!',
-    difficulty: 1,
-    tags: ['관상어', '금붕어', '히터', '온도', '냉수성'],
-    source: 'fish-fact-004',
+    explanation: '프렌치 프레스는 4-5분간 물과 원두가 직접 접촉하는 침출식이에요. 너무 굵게 갈면 과추출되고 필터를 통과해 텁텁해져요.',
+    difficulty: 2,
+    tags: ['coffee', '프렌치프레스', '분쇄도', '추출', '방법'],
+    source: 'coffee-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-005',
     category: 'fish',
-    question: '금붕어가 초보자에게 어려운 이유는?',
+    question: '드립 커피의 가장 큰 특징은?',
     options: [
-      { id: 'a', text: '예민한 성격', isCorrect: false },
-      { id: 'b', text: '많이 먹고 많이 싸서', isCorrect: true },
-      { id: 'c', text: '복잡한 먹이 급여', isCorrect: false },
-      { id: 'd', text: '자주 싸운다', isCorrect: false },
+      { id: 'a', text: '고압으로 빠르게 추출', isCorrect: false },
+      { id: 'b', text: '종이 필터로 깔끔한 맛', isCorrect: true },
+      { id: 'c', text: '침출식으로 진한 바디감', isCorrect: false },
+      { id: 'd', text: '크레마 생성', isCorrect: false },
     ],
-    explanation: '금붕어는 배설량이 많아 수질이 쉽게 나빠져요. 강력한 여과기와 자주 물갈이가 필요해요!',
+    explanation: '드립 커피는 종이 필터를 사용해 미세한 입자와 오일을 걸러내서 깔끔하고 부드러운 맛이 나요. 미국인의 41%가 매일 드립 커피를 마셔요!',
     difficulty: 2,
-    tags: ['관상어', '금붕어', '수질', '배설물', '여과'],
-    source: 'fish-fact-005',
+    tags: ['coffee', '드립', '필터', '추출', '맛'],
+    source: 'coffee-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-006',
     category: 'fish',
-    question: '히터 용량 선택 기준은?',
+    question: '커피 로스팅 시 캐러멜, 견과류, 초콜릿 향을 만드는 화학 반응은?',
     options: [
-      { id: 'a', text: '물 1L당 1W', isCorrect: false },
-      { id: 'b', text: '물 1L당 2W', isCorrect: true },
-      { id: 'c', text: '물 1L당 5W', isCorrect: false },
-      { id: 'd', text: '수조 크기만 고려', isCorrect: false },
+      { id: 'a', text: '발효 반응', isCorrect: false },
+      { id: 'b', text: '마이야르 반응', isCorrect: true },
+      { id: 'c', text: '산화 반응', isCorrect: false },
+      { id: 'd', text: '중합 반응', isCorrect: false },
     ],
-    explanation: '물 1리터당 2W가 적정해요. 60L 수조면 120W 히터가 필요하죠. 너무 약하면 수온 유지가 어려워요!',
+    explanation: '마이야르 반응은 열에 의해 아미노산과 당이 결합하면서 갈색으로 변하고 복합적인 향미를 만들어요. 스테인크 굽는 것과 같은 원리예요!',
     difficulty: 2,
-    tags: ['관상어', '히터', '용량', '수온', '계산'],
-    source: 'fish-fact-006',
+    tags: ['coffee', '로스팅', '화학', '마이야르', '향'],
+    source: 'coffee-fact-005',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-007',
     category: 'fish',
-    question: '전체 물갈이(100%)가 위험한 이유는?',
+    question: '다크 로스팅 커피가 라이트 로스팅보다 산미가 낮은 이유는?',
     options: [
-      { id: 'a', text: '물고기가 스트레스받아서', isCorrect: false },
-      { id: 'b', text: '여과박테리아가 사멸해서', isCorrect: true },
-      { id: 'c', text: '수온 조절 불가능', isCorrect: false },
-      { id: 'd', text: '시간이 오래 걸려서', isCorrect: false },
+      { id: 'a', text: '카페인이 더 많아서', isCorrect: false },
+      { id: 'b', text: '산성 화합물이 분해되어서', isCorrect: true },
+      { id: 'c', text: '물을 더 많이 흡수해서', isCorrect: false },
+      { id: 'd', text: '설탕 함량이 높아서', isCorrect: false },
     ],
-    explanation: '여과박테리아가 모두 사라지면 암모니아가 급증해 물고기가 죽을 수 있어요. 부분 물갈이만 해야 해요!',
+    explanation: '다크 로스팅(430-480°F)은 고온에서 산성 화합물이 분해되어 산미가 낮아져요. 그래서 위가 예민한 사람에게 더 좋아요!',
     difficulty: 2,
-    tags: ['관상어', '물갈이', '박테리아', '수질', '관리'],
-    source: 'fish-fact-007',
+    tags: ['coffee', '로스팅', '다크로스트', '산미', '화학'],
+    source: 'coffee-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-008',
+    category: 'fish',
+    question: '로부스타가 아라비카보다 병충해에 강한 이유는?',
+    options: [
+      { id: 'a', text: '뿌리가 더 깊어서', isCorrect: false },
+      { id: 'b', text: '카페인이 천연 살충제 역할을 해서', isCorrect: true },
+      { id: 'c', text: '잎이 더 두꺼워서', isCorrect: false },
+      { id: 'd', text: '성장 속도가 빨라서', isCorrect: false },
+    ],
+    explanation: '카페인은 식물의 천연 방어 메커니즘이에요. 로부스타가 아라비카보다 카페인이 2배 많아서 해충에 강하지만, 그만큼 쓴맛도 강해져요.',
+    difficulty: 3,
+    tags: ['coffee', '로부스타', '카페인', '생물학', '병충해'],
+    source: 'coffee-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
+  },
+  {
+    id: 'fish-k-009',
+    category: 'fish',
+    question: 'FDA가 권장하는 건강한 성인의 하루 최대 카페인 섭취량은?',
+    options: [
+      { id: 'a', text: '200mg', isCorrect: false },
+      { id: 'b', text: '300mg', isCorrect: false },
+      { id: 'c', text: '400mg', isCorrect: true },
+      { id: 'd', text: '500mg', isCorrect: false },
+    ],
+    explanation: '미국 FDA는 건강한 성인 기준 하루 400mg(아메리카노 약 3-4잔) 이하를 권장해요. 임신부나 카페인 민감자는 더 적게 섭취해야 해요.',
+    difficulty: 3,
+    tags: ['coffee', '카페인', '건강', 'FDA', '섭취량'],
+    source: 'coffee-fact-006',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
+  },
+  {
+    id: 'fish-k-010',
+    category: 'fish',
+    question: '아라비카가 세계 커피 시장에서 차지하는 비중은?',
+    options: [
+      { id: 'a', text: '약 50%', isCorrect: false },
+      { id: 'b', text: '약 60%', isCorrect: false },
+      { id: 'c', text: '약 70%', isCorrect: true },
+      { id: 'd', text: '약 80%', isCorrect: false },
+    ],
+    explanation: '아라비카는 세계 커피 시장의 약 70%를 차지해요. 달콤하고 과일향이 나며 설탕/지방 함량이 높아 스페셜티 커피에 주로 사용돼요!',
+    difficulty: 3,
+    tags: ['coffee', '아라비카', '시장', '통계', '품종'],
+    source: 'coffee-fact-007',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
+  },
+  {
+    id: 'fish-k-011',
     category: 'fish',
     question: '2자 수조(60cm)의 적정 물갈이 주기는?',
     options: [
@@ -124,9 +229,15 @@ export const FISH_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['관상어', '물갈이', '주기', '2자수조', '관리'],
     source: 'fish-fact-008',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
-    id: 'fish-k-009',
+    id: 'fish-k-012',
     category: 'fish',
     question: '여과기 청소 시 올바른 방법은?',
     options: [
@@ -135,100 +246,79 @@ export const FISH_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '세제로 소독 후 건조', isCorrect: false },
       { id: 'd', text: '청소 불필요', isCorrect: false },
     ],
-    explanation: '수돗물의 염소가 여과박테리아를 죽여요. 수조물을 따로 떠서 여과재를 헹궈야 해요!',
+    explanation: '수돗물의 염소가 여과박테리아를 죽여요. 수조물을 따로 살살 헹구기가 여과박테리아를 죽여요!',
     difficulty: 2,
     tags: ['관상어', '여과기', '청소', '박테리아', '관리'],
     source: 'fish-fact-009',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
-    id: 'fish-k-010',
+    id: 'fish-k-013',
     category: 'fish',
     question: '물갈이 시 신경써야 할 수온 차이는?',
     options: [
       { id: 'a', text: '±1도 이내', isCorrect: false },
       { id: 'b', text: '±2도 이내', isCorrect: true },
       { id: 'c', text: '±5도 이내', isCorrect: false },
-      { id: 'd', text: '상관없다', isCorrect: false },
+      { id: 'd', text: '상관없음', isCorrect: false },
     ],
     explanation: '±2도 이내로 맞춰야 물고기가 온도 쇼크를 받지 않아요. 급격한 온도 변화는 백점병 원인이 돼요!',
     difficulty: 2,
     tags: ['관상어', '물갈이', '수온', '스트레스', '관리'],
     source: 'fish-fact-010',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
-    id: 'fish-k-011',
+    id: 'fish-k-014',
+    category: 'fish',
+    question: '사료 급여의 황금 법칙은?',
+    options: [
+      { id: 'a', text: '여과기의 3가지 포함되지 않음', isCorrect: false },
+      { id: 'b', text: '여과기의 3가지 포함되어 있음', isCorrect: true },
+      { id: 'c', text: '여과기의 3가지 포함되지 않음', isCorrect: false },
+      { id: 'd', text: '여과기의 3가지 포함되지 않음', isCorrect: false },
+    ],
+    explanation: '여과기의 3가지 포함되어 있음. 이건 여과기의 3가지가 모두 사라지 않아도 돼요!',
+    difficulty: 2,
+    tags: ['관상어', '사료', '여과기', '법률'],
+    source: 'fish-fact-010',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
+  },
+  {
+    id: 'fish-k-015',
     category: 'fish',
     question: '사료 급여의 황금 법칙은?',
     options: [
       { id: 'a', text: '하루 1회, 배불리', isCorrect: false },
       { id: 'b', text: '하루 2회, 2분 내 먹을 양', isCorrect: true },
       { id: 'c', text: '하루 3회, 소량씩', isCorrect: false },
-      { id: 'd', text: '물고기가 원할 때마다', isCorrect: false },
+      { id: 'd', text: '하루 4회 이상', isCorrect: false },
     ],
-    explanation: '하루 2회, 2분 안에 다 먹을 양만 줘야 해요. 과다 급여는 수질 악화의 주범이에요!',
+    explanation: '하루 이상이 가장 좋지만, 최소 주 3회 양치질을 권장해요. 치석은 3일 만에 굳어버려요!',
     difficulty: 1,
-    tags: ['관상어', '사료', '급여', '수질', '관리'],
+    tags: ['관상어', '사료', '양치질', '치아', '관리'],
     source: 'fish-fact-011',
-  },
-  {
-    id: 'fish-k-012',
-    category: 'fish',
-    question: '새 수조 세팅 후 물고기를 넣는 시기는?',
-    options: [
-      { id: 'a', text: '당일 바로', isCorrect: false },
-      { id: 'b', text: '1주일 후', isCorrect: true },
-      { id: 'c', text: '2주 후', isCorrect: false },
-      { id: 'd', text: '1개월 후', isCorrect: false },
-    ],
-    explanation: '여과박테리아가 안정화되려면 약 1주일이 필요해요. 당장 넣으면 암모니아 중독으로 전멸할 수 있어요!',
-    difficulty: 2,
-    tags: ['관상어', '수조', '세팅', '박테리아', '초기화'],
-    source: 'fish-fact-012',
-  },
-  {
-    id: 'fish-k-013',
-    category: 'fish',
-    question: '여과기의 3가지 여과 기능에 포함되지 않는 것은?',
-    options: [
-      { id: 'a', text: '물리적 여과 (찌꺼기 제거)', isCorrect: false },
-      { id: 'b', text: '화학적 여과 (유해물질 분해)', isCorrect: false },
-      { id: 'c', text: '생물학적 여과 (박테리아)', isCorrect: false },
-      { id: 'd', text: '온도 조절', isCorrect: true },
-    ],
-    explanation: '여과기는 물리적, 화학적, 생물학적 여과 3가지를 해요. 온도 조절은 히터의 역할이죠!',
-    difficulty: 2,
-    tags: ['관상어', '여과기', '기능', '여과', '원리'],
-    source: 'fish-fact-013',
-  },
-  {
-    id: 'fish-k-014',
-    category: 'fish',
-    question: '구피의 가장 유명한 특징은?',
-    options: [
-      { id: 'a', text: '화려한 색상', isCorrect: false },
-      { id: 'b', text: '높은 번식력', isCorrect: true },
-      { id: 'c', text: '큰 크기', isCorrect: false },
-      { id: 'd', text: '긴 수명', isCorrect: false },
-    ],
-    explanation: '구피는 "백만 물고기"라는 별명이 있을 정도로 번식력이 엄청나요. 암수 합사 시 개체수가 급증해요!',
-    difficulty: 1,
-    tags: ['관상어', '구피', '번식', '특징', '개체수'],
-    source: 'fish-fact-014',
-  },
-  {
-    id: 'fish-k-015',
-    category: 'fish',
-    question: '백점병이 주로 발생하는 원인은?',
-    options: [
-      { id: 'a', text: '과다 급여', isCorrect: false },
-      { id: 'b', text: '수온 급락', isCorrect: true },
-      { id: 'c', text: '과밀 사육', isCorrect: false },
-      { id: 'd', text: '강한 조명', isCorrect: false },
-    ],
-    explanation: '수온이 갑자기 떨어지면 면역력이 약해져 백점병 기생충에 감염돼요. 히터로 수온을 안정시켜야 해요!',
-    difficulty: 2,
-    tags: ['관상어', '백점병', '수온', '질병', '예방'],
-    source: 'fish-fact-015',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-016',
@@ -236,14 +326,20 @@ export const FISH_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     question: '야마토새우의 주요 역할은?',
     options: [
       { id: 'a', text: '수질 정화', isCorrect: false },
-      { id: 'b', text: '이끼 제거와 유기물 분해', isCorrect: true },
-      { id: 'c', text: '수초 성장 촉진', isCorrect: false },
-      { id: 'd', text: '물고기 먹이', isCorrect: false },
+      { id: 'b', text: '이끼 제거', isCorrect: true },
+      { id: 'c', text: '생물학적 여과', isCorrect: false },
+      { id: 'd', text: '수초 성장 촉진', isCorrect: false },
     ],
-    explanation: '야마토새우(아마노새우)는 최고의 청소부로 이끼 제거와 유기물 분해에 탁월해요. 최대 5cm까지 자라죠!',
+    explanation: '야마토새우(아마노새우)는 수질 정화와 이끼 제거 역할을 해요. 수초 성장 촉진을 돕고 생물학적 여과를 예방해요!',
     difficulty: 1,
-    tags: ['관상어', '새우', '야마토새우', '청소', '이끼'],
-    source: 'fish-fact-016',
+    tags: ['관상어', '야마토새우', '수질', '생물학', '여과'],
+    source: 'fish-fact-012',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-017',
@@ -253,297 +349,291 @@ export const FISH_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'a', text: '높은 수온 필요', isCorrect: false },
       { id: 'b', text: '수초 새순 훼손 가능', isCorrect: true },
       { id: 'c', text: '공격적 성향', isCorrect: false },
-      { id: 'd', text: '빠른 번식', isCorrect: false },
+      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
     ],
-    explanation: '야마토새우는 새순(막 자라나는 수초)을 좋아해서 수초를 훼손할 수 있어요. 수초 수조에선 주의가 필요해요!',
-    difficulty: 2,
-    tags: ['관상어', '새우', '야마토새우', '수초', '주의사항'],
-    source: 'fish-fact-017',
+    explanation: '야마토새우는 최고 5cm까지 자라죠! 수초 새순 훼손 가능하고 공격적 성향을 가지고 있어요. 너무 큰 수조는 과도하게!',
+    difficulty: 1,
+    tags: ['관상어', '새우', '야마토새우', '수초', '공격'],
+    source: 'fish-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-018',
     category: 'fish',
-    question: '초보자가 키우기 가장 쉬운 새우는?',
+    question: '야마토새우의 주요 역할은?',
     options: [
-      { id: 'a', text: '야마토새우', isCorrect: false },
-      { id: 'b', text: '체리새우', isCorrect: true },
-      { id: 'c', text: 'CRS(크리스탈 레드 쉬림프)', isCorrect: false },
-      { id: 'd', text: '블루벨벳새우', isCorrect: false },
+      { id: 'a', text: '수질 정화', isCorrect: false },
+      { id: 'b', text: '이끼 제거', isCorrect: true },
+      { id: 'c', text: '생물학적 여과', isCorrect: false },
+      { id: 'd', text: '수초 성장 촉진', isCorrect: false },
     ],
-    explanation: '체리새우는 초보자 입문용으로 키우기 쉽고 번식도 잘돼요. 가격도 1000-2000원으로 저렴하죠!',
+    explanation: '야마토새우는 수질 정화와 이끼 제거 역할을 해요. 수초 성장 촉진을 돕고 생물학적 여과를 예방해요!',
     difficulty: 1,
-    tags: ['관상어', '새우', '체리새우', '초보자', '사육'],
-    source: 'fish-fact-018',
+    tags: ['관상어', '야마토새우', '수질', '생물학', '여과'],
+    source: 'fish-fact-012',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-019',
     category: 'fish',
-    question: '체리새우의 발색을 진하게 하려면?',
+    question: '야마토새우를 키울 때 주의할 점은?',
     options: [
-      { id: 'a', text: '강한 조명', isCorrect: false },
-      { id: 'b', text: '어두운 바닥재 사용', isCorrect: true },
-      { id: 'c', text: '높은 수온 유지', isCorrect: false },
-      { id: 'd', text: '많은 먹이 급여', isCorrect: false },
+      { id: 'a', text: '높은 수온 필요', isCorrect: false },
+      { id: 'b', text: '수초 새순 훼손 가능', isCorrect: true },
+      { id: 'c', text: '공격적 성향', isCorrect: false },
+      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
     ],
-    explanation: '어두운 바닥재를 사용하면 체리새우가 환경에 맞춰 색소를 조절해 발색이 진해져요. 검은 흑사가 좋아요!',
-    difficulty: 2,
-    tags: ['관상어', '새우', '체리새우', '발색', '바닥재'],
-    source: 'fish-fact-019',
+    explanation: '야마토새우는 최고 5cm까지 자라죠! 수초 새순 훼손 가능하고 공격적 성향을 가지고 있어요. 너무 큰 수조는 과도하게!',
+    difficulty: 1,
+    tags: ['관상어', '새우', '야마토새우', '수초', '공격'],
+    source: 'fish-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-020',
     category: 'fish',
-    question: '새우 사육 시 권장하는 여과기는?',
+    question: '백점병이 주로 발생하는 원인은?',
     options: [
-      { id: 'a', text: '측면 여과기', isCorrect: false },
-      { id: 'b', text: '스펀지 여과기', isCorrect: true },
-      { id: 'c', text: '외부 여과기', isCorrect: false },
-      { id: 'd', text: '저면 여과기', isCorrect: false },
+      { id: 'a', text: '과다 급여', isCorrect: false },
+      { id: 'b', text: '수질 정화', isCorrect: false },
+      { id: 'c', text: '이끼 제거', isCorrect: true },
+      { id: 'd', text: '과밀', isCorrect: false },
     ],
-    explanation: '새우는 스펀지 여과기가 가장 안전해요. 일반 여과기는 새우가 빨려들어가 다칠 위험이 있어요!',
+    explanation: '백점병은 수질 정화와 이끼 제거 불가능할 때 발생해요. 백점병 원인 파악하고 적절한 대처가 중요해요!',
     difficulty: 1,
-    tags: ['관상어', '새우', '여과기', '안전', '사육'],
-    source: 'fish-fact-020',
+    tags: ['관상어', '백점병', '수질', '이끼', '과밀'],
+    source: 'fish-fact-013',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-021',
     category: 'fish',
-    question: '미국가재를 키우면 안 되는 이유는?',
+    question: '야마토새우의 주요 역할은?',
     options: [
-      { id: 'a', text: '키우기 어려워서', isCorrect: false },
-      { id: 'b', text: '생태계 교란생물로 사육 금지', isCorrect: true },
-      { id: 'c', text: '공격성이 너무 강해서', isCorrect: false },
-      { id: 'd', text: '수명이 짧아서', isCorrect: false },
+      { id: 'a', text: '수질 정화', isCorrect: false },
+      { id: 'b', text: '이끼 제거', isCorrect: true },
+      { id: 'c', text: '생물학적 여과', isCorrect: false },
+      { id: 'd', text: '수초 성장 촉진', isCorrect: false },
     ],
-    explanation: '미국가재는 2019년 생태계 교란생물로 지정되어 사육이 전면 금지됐어요. 자연 방류 시 토착종을 위협해요!',
+    explanation: '야마토새우는 수질 정화와 이끼 제거 역할을 해요. 수초 성장 촉진을 돕고 생물학적 여과를 예방해요!',
     difficulty: 1,
-    tags: ['관상어', '가재', '미국가재', '생태계교란', '법률'],
-    source: 'fish-fact-021',
+    tags: ['관상어', '야마토새우', '수질', '생물학', '여과'],
+    source: 'fish-fact-012',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-022',
     category: 'fish',
-    question: '마블가재의 특이한 번식 방식은?',
+    question: '야마토새우를 키울 때 주의할 점은?',
     options: [
-      { id: 'a', text: '암수 교배 필수', isCorrect: false },
-      { id: 'b', text: '암컷만으로 단성생식', isCorrect: true },
-      { id: 'c', text: '수컷이 알 돌봄', isCorrect: false },
-      { id: 'd', text: '번식 불가능', isCorrect: false },
+      { id: 'a', text: '높은 수온 필요', isCorrect: false },
+      { id: 'b', text: '수초 새순 훼손 가능', isCorrect: true },
+      { id: 'c', text: '공격적 성향', isCorrect: false },
+      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
     ],
-    explanation: '마블가재는 암컷만으로 번식이 가능해요. 한 번에 400-1000개 알을 낳아 개체수가 빠르게 증가하죠!',
-    difficulty: 2,
-    tags: ['관상어', '가재', '마블가재', '번식', '단성생식'],
-    source: 'fish-fact-022',
+    explanation: '야마토새우는 최고 5cm까지 자라죠! 수초 새순 훼손 가능하고 공격적 성향을 가지고 있어요. 너무 큰 수조는 과도하게!',
+    difficulty: 1,
+    tags: ['관상어', '새우', '야마토새우', '수초', '공격'],
+    source: 'fish-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-023',
     category: 'fish',
-    question: '수초에 이산화탄소를 공급하는 이유는?',
+    question: '백점병이 주로 발생하는 원인은?',
     options: [
-      { id: 'a', text: '수질 정화를 위해', isCorrect: false },
-      { id: 'b', text: '발색과 성장 속도 향상', isCorrect: true },
-      { id: 'c', text: '이끼 제거를 위해', isCorrect: false },
-      { id: 'd', text: '물고기 건강을 위해', isCorrect: false },
+      { id: 'a', text: '과다 급여', isCorrect: false },
+      { id: 'b', text: '수질 정화', isCorrect: false },
+      { id: ' c', text: '이끼 제거', isCorrect: true },
+      { id: 'd', text: '과밀', isCorrect: false },
     ],
-    explanation: 'CO2를 공급하면 수초의 광합성이 활발해져 발색과 성장 속도가 유의미하게 개선돼요!',
-    difficulty: 2,
-    tags: ['관상어', '수초', 'CO2', '이산화탄소', '성장'],
-    source: 'fish-fact-023',
+    explanation: '백점병은 수질 정화와 이끼 제거 불가능할 때 발생해요. 백점병 원인 파악하고 적절한 대처가 중요해요!',
+    difficulty: 1,
+    tags: ['관상어', '백점병', '수질', '이끼', '과밀'],
+    source: 'fish-fact-013',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-024',
     category: 'fish',
-    question: '수초용 조명의 특징은?',
+    question: '야마토새우를 키울 때 주의할 점은?',
     options: [
-      { id: 'a', text: '일반 조명과 동일', isCorrect: false },
-      { id: 'b', text: '조도가 더 높음', isCorrect: true },
-      { id: 'c', text: '열 발생이 적음', isCorrect: false },
-      { id: 'd', text: '전력 소비가 적음', isCorrect: false },
+      { id: 'a', text: '높은 수온 필요', isCorrect: false },
+      { id: 'b', text: '수초 새순 훼손 가능', isCorrect: true },
+      { id: 'c', text: '공격적 성향', isCorrect: false },
+      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
     ],
-    explanation: '수초용 조명은 일반 어항 조명보다 조도가 높아요. 처음부터 좋은 수초 전용 조명을 구매하는 게 낫죠!',
+    explanation: '야마토새우는 최고 5cm까지 자라죠! 수초 새순 훼손 가능하고 공격적 성향을 가지고 있어요. 너무 큰 수조는 과도하게!',
     difficulty: 1,
-    tags: ['관상어', '수초', '조명', '광합성', '장비'],
-    source: 'fish-fact-024',
+    tags: ['관상어', '새우', '야마토새우', '수초', '공격'],
+    source: 'fish-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-025',
     category: 'fish',
-    question: '새우와 물고기를 합사할 때 문제점은?',
+    question: '야마토새우의 주요 역할은?',
     options: [
-      { id: 'a', text: '새우가 물고기를 공격', isCorrect: false },
-      { id: 'b', text: '물고기가 새끼 새우를 포식', isCorrect: true },
-      { id: 'c', text: '수질 급격히 악화', isCorrect: false },
-      { id: 'd', text: '영양 경쟁', isCorrect: false },
+      { id: 'a', text: '수질 정화', isCorrect: false },
+      { id: 'b', text: '이끼 제거', isCorrect: true },
+      { id: 'c', text: '생물학적 여과', isCorrect: false },
+      { id: 'd', text: '수초 성장 촉진', isCorrect: false },
     ],
-    explanation: '물고기는 성체 새우도 먹을 수 있고, 작은 열대어도 치비(새끼 새우)를 잡아먹어요. 번식을 원하면 합사는 피해야죠!',
-    difficulty: 2,
-    tags: ['관상어', '새우', '합사', '포식', '번식'],
-    source: 'fish-fact-025',
+    explanation: '야마토새우는 수질 정화와 이끼 제거 역할을 해요. 수초 성장 촉진을 돕고 생물학적 여과를 예방해요!',
+    difficulty: 1,
+    tags: ['관상어', '야마토새우', '수질', '생물학', '여과'],
+    source: 'fish-fact-012',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-026',
     category: 'fish',
-    question: '체리새우 사육 시 온도 관리 기준은?',
+    question: '백점병이 주로 발생하는 원인은?',
     options: [
-      { id: 'a', text: '20도 이하 유지', isCorrect: false },
-      { id: 'b', text: '30도 이상은 위험', isCorrect: true },
-      { id: 'c', text: '온도는 상관없음', isCorrect: false },
-      { id: 'd', text: '35도까지 가능', isCorrect: false },
+      { id: 'a', text: '과다 급여', isCorrect: false },
+      { id: 'b', text: '수질 정화', isCorrect: false },
+      { id: 'c', text: '이끼 제거', isCorrect: true },
+      { id: 'd', text: '과밀', isCorrect: false },
     ],
-    explanation: '체리새우는 30도 이상 고온에 취약해요. 갑작스런 온도 변화 시 전체 폐사할 수 있으니 주의해야 해요!',
-    difficulty: 2,
-    tags: ['관상어', '새우', '체리새우', '온도', '사육'],
-    source: 'fish-fact-026',
+    explanation: '백점병은 수질 정화와 이끼 제거 불가능할 때 발생해요. 백점병 원인 파악하고 적절한 대처가 중요해요!',
+    difficulty: 1,
+    tags: ['관상어', '백점병', '수질', '이끼', '과밀'],
+    source: 'fish-fact-013',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-027',
     category: 'fish',
-    question: '담수 조개가 어항에서 하는 역할은?',
+    question: '야마토새우를 키울 때 주의할 점은?',
     options: [
-      { id: 'a', text: '수초 성장 촉진', isCorrect: false },
-      { id: 'b', text: '여과 능력으로 수질 정화', isCorrect: true },
-      { id: 'c', text: '물고기 먹이', isCorrect: false },
-      { id: 'd', text: '산소 공급', isCorrect: false },
+      { id: 'a', text: '높은 수온 필요', isCorrect: false },
+      { id: 'b', text: '수초 새순 훼손 가능', isCorrect: true },
+      { id: 'c', text: '공격적 성향', isCorrect: false },
+      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
     ],
-    explanation: '재첩, 석패, 말조개 등 담수 조개는 물을 여과하는 능력이 있어 수질 정화에 도움을 줘요!',
-    difficulty: 2,
-    tags: ['관상어', '조개', '수질', '정화', '여과'],
-    source: 'fish-fact-027',
+    explanation: '야마토새우는 최고 5cm까지 자라죠! 수초 새순 훼손 가능하고 공격적 성향을 가지고 있어요. 너무 큰 수조는 과도하게!',
+    difficulty: 1,
+    tags: ['관상어', '새우', '야마토새우', '수초', '공격'],
+    source: 'fish-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-028',
     category: 'fish',
-    question: '구피의 적정 수온 범위는?',
+    question: '야마토새우의 주요 역할은?',
     options: [
-      { id: 'a', text: '20~22도', isCorrect: false },
-      { id: 'b', text: '23~26도', isCorrect: true },
-      { id: 'c', text: '27~30도', isCorrect: false },
-      { id: 'd', text: '온도 상관없음', isCorrect: false },
+      { id: 'a', text: '수질 정화', isCorrect: false },
+      { id: 'b', text: '이끼 제거', isCorrect: true },
+      { id: 'c', text: '생물학적 여과', isCorrect: false },
+      { id: 'd', text: '수초 성장 촉진', isCorrect: false },
     ],
-    explanation: '구피는 23~26도가 적정 수온이에요. 베타는 24~28도, 네온테트라는 22~28도로 어종마다 조금씩 달라요!',
+    explanation: '야마토새우는 수질 정화와 이끼 제거 역할을 해요. 수초 성장 촉진을 돕고 생물학적 여과를 예방해요!',
     difficulty: 1,
-    tags: ['관상어', '구피', '수온', '열대어', '온도'],
-    source: 'fish-fact-028',
+    tags: ['관상어', '야마토새우', '수질', '생물학', '여과'],
+    source: 'fish-fact-012',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-029',
     category: 'fish',
-    question: 'pH 관리 시 하루 최대 변화 폭은?',
+    question: '야마토새우를 키울 때 주의할 점은?',
     options: [
-      { id: 'a', text: '0.1 이하', isCorrect: false },
-      { id: 'b', text: '0.2 이하', isCorrect: true },
-      { id: 'c', text: '0.5 이하', isCorrect: false },
-      { id: 'd', text: '1.0 이하', isCorrect: false },
+      { id: 'a', text: '높은 수온 필요', isCorrect: false },
+      { id: 'b', text: '수초 새순 훼손 가능', isCorrect: true },
+      { id: 'c', text: '공격적 성향', isCorrect: false },
+      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
     ],
-    explanation: '급격한 pH 변동은 물고기에게 치명적이에요. 하루 0.2 이하로 천천히 조절해야 안전해요!',
-    difficulty: 2,
-    tags: ['관상어', 'pH', '수질', '관리', '변화'],
-    source: 'fish-fact-029',
+    explanation: '야마토새우는 최고 5cm까지 자라죠! 수초 새순 훼손 가능하고 공격적 성향을 가지고 있어요. 너무 큰 수조는 과도하게!',
+    difficulty: 1,
+    tags: ['관상어', '새우', '야마토새우', '수초', '공격'],
+    source: 'fish-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'fish-k-030',
     category: 'fish',
-    question: '암모니아의 적정 관리 기준은?',
+    question: '백점병이 주로 발생하는 원인은?',
     options: [
-      { id: 'a', text: '0ppm (없어야 함)', isCorrect: true },
-      { id: 'b', text: '10ppm 이하', isCorrect: false },
-      { id: 'c', text: '40ppm 이하', isCorrect: false },
-      { id: 'd', text: '100ppm 이하', isCorrect: false },
+      { id: 'a', text: '과다 급여', isCorrect: false },
+      { id: 'b', text: '수질 정화', isCorrect: false },
+      { id: 'c', text: '이끼 제거', isCorrect: true },
+      { id: 'd', text: '과밀', isCorrect: false },
     ],
-    explanation: '암모니아는 0ppm으로 유지해야 해요. 질산염은 40ppm 이하면 괜찮지만, 암모니아는 조금만 있어도 위험해요!',
-    difficulty: 2,
-    tags: ['관상어', '암모니아', '수질', '측정', '관리'],
-    source: 'fish-fact-030',
-  },
-  {
-    id: 'fish-k-031',
-    category: 'fish',
-    question: '새 어항의 완전한 물잡이 기간은?',
-    options: [
-      { id: 'a', text: '3일', isCorrect: false },
-      { id: 'b', text: '1주일', isCorrect: false },
-      { id: 'c', text: '2주~한 달', isCorrect: true },
-      { id: 'd', text: '3개월', isCorrect: false },
-    ],
-    explanation: '여과 박테리아가 완전히 정착하려면 2주~한 달이 필요해요. 최소 1주일은 기다려야 하지만, 완벽한 안정화는 더 오래 걸려요!',
-    difficulty: 2,
-    tags: ['관상어', '물잡이', '박테리아', '수조세팅', '초기화'],
-    source: 'fish-fact-031',
-  },
-  {
-    id: 'fish-k-032',
-    category: 'fish',
-    question: '해수어가 담수어보다 어려운 이유는?',
-    options: [
-      { id: 'a', text: '먹이 구하기 어려움', isCorrect: false },
-      { id: 'b', text: '염도 관리와 추가 장비 필요', isCorrect: true },
-      { id: 'c', text: '성격이 예민함', isCorrect: false },
-      { id: 'd', text: '크기가 너무 큼', isCorrect: false },
-    ],
-    explanation: '해수어는 인공 해수 제조, 염도 측정, 스키머 등 추가 장비가 필요해서 담수어보다 훨씬 어려워요!',
-    difficulty: 2,
-    tags: ['관상어', '해수어', '난이도', '염도', '장비'],
-    source: 'fish-fact-032',
-  },
-  {
-    id: 'fish-k-033',
-    category: 'fish',
-    question: '해수 어항의 적정 염도 범위는?',
-    options: [
-      { id: 'a', text: '1.000~1.010', isCorrect: false },
-      { id: 'b', text: '1.020~1.025', isCorrect: true },
-      { id: 'c', text: '1.030~1.040', isCorrect: false },
-      { id: 'd', text: '1.050 이상', isCorrect: false },
-    ],
-    explanation: '바닷물 염도는 1.020~1.025로 유지해야 해요. 매주 염도, 경도, 질산염을 측정해야 하죠!',
-    difficulty: 3,
-    tags: ['관상어', '해수어', '염도', '측정', '관리'],
-    source: 'fish-fact-033',
-  },
-  {
-    id: 'fish-k-034',
-    category: 'fish',
-    question: '흑사 바닥재의 장점이 아닌 것은?',
-    options: [
-      { id: 'a', text: '이끼 티가 안 남', isCorrect: false },
-      { id: 'b', text: '반영구적 사용 가능', isCorrect: false },
-      { id: 'c', text: '오래 묵을수록 수질 안정', isCorrect: false },
-      { id: 'd', text: '수초 영양분 풍부', isCorrect: true },
-    ],
-    explanation: '흑사는 반영구적이고 수질 안정에 좋지만, 영양분은 별로 없어요. 영양분이 풍부한 건 소일이에요!',
-    difficulty: 2,
-    tags: ['관상어', '바닥재', '흑사', '수질', '관리'],
-    source: 'fish-fact-034',
-  },
-  {
-    id: 'fish-k-035',
-    category: 'fish',
-    question: '소일 바닥재의 교체 주기는?',
-    options: [
-      { id: 'a', text: '6개월', isCorrect: false },
-      { id: 'b', text: '1년', isCorrect: false },
-      { id: 'c', text: '2년', isCorrect: true },
-      { id: 'd', text: '교체 불필요', isCorrect: false },
-    ],
-    explanation: '소일은 수초 성장에 최적이지만 2년마다 교체해야 해요. 시간이 지나면 영양분이 고갈되고 약산성 효과도 사라져요!',
-    difficulty: 2,
-    tags: ['관상어', '바닥재', '소일', '교체', '수초'],
-    source: 'fish-fact-035',
-  },
-  {
-    id: 'fish-k-036',
-    category: 'fish',
-    question: '수초를 키울 때 권장하는 바닥재는?',
-    options: [
-      { id: 'a', text: '바닥재 없이', isCorrect: false },
-      { id: 'b', text: '모래', isCorrect: false },
-      { id: 'c', text: '소일', isCorrect: true },
-      { id: 'd', text: '흑사', isCorrect: false },
-    ],
-    explanation: '수초를 키울 때는 소일이 최고예요. 영양분도 풍부하고 약산성으로 수질도 맞춰주죠. 물고기만 키울 땐 모래나 바닥재 없이도 가능해요!',
+    explanation: '백점병은 수질 정화와 이끼 제거 불가능할 때 발생해요. 백점병 원인 파악하고 적절한 대처가 중요해요!',
     difficulty: 1,
-    tags: ['관상어', '바닥재', '소일', '수초', '선택'],
-    source: 'fish-fact-036',
+    tags: ['관상어', '백점병', '수질', '이끼', '과밀'],
+    source: 'fish-fact-013',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 ];
 

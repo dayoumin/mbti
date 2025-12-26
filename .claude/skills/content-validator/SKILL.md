@@ -407,15 +407,15 @@ scripts/validate-content-structure.mjs
 - [ ] **시간 민감도 설정 적절성 확인**
 - [ ] 다시 빌드 확인
 
-## 시간 민감도 검증 (Time Sensitivity)
+## 시간 민감도 검증 (Time Sensitivity) - 필수!
 
-금액/수치/트렌드 기반 콘텐츠는 `meta.timeSensitivity` 설정 필수!
+**모든 콘텐츠에 `meta.timeSensitivity` 설정 필수!** (대시보드에서 만료 관리됨)
 
 ### 검증 항목
 
 | 항목 | 에러/경고 | 기준 |
 |------|----------|------|
-| timeSensitivity 누락 | **경고** | 금액/트렌드 콘텐츠인데 없음 |
+| **timeSensitivity 누락** | **경고** | **모든 신규 콘텐츠에 필수** |
 | sourceYear 누락 | **에러** | timeSensitivity 있는데 연도 없음 |
 | sensitivity 무효 | 에러 | high/medium/low/none 중 하나 |
 | validUntil 형식 | 에러 | YYYY-MM 형식이 아님 |
@@ -427,40 +427,52 @@ scripts/validate-content-structure.mjs
 | 레벨 | 유효기간 | 적용 콘텐츠 |
 |------|---------|------------|
 | `high` | 2년 | 축의금, 선물 가격, 연봉, 물가, 통계 수치 |
-| `medium` | 3년 | MZ 인식, 선호도, 유행어, 트렌드 |
+| `medium` | 3년 | 연예인/셀럽, MZ 인식, 선호도, 유행어, 트렌드 |
 | `low` | 4년 | 밸런스게임, 상황별 반응, 에티켓 |
 | `none` | 무기한 | 동물 지식, MBTI, 성격, 과학적 사실 |
 
-### AI 검증 규칙
+### AI 검증 규칙 (자동 판단)
 
-**시간 민감도가 필요한지 판단:**
-```
-질문/상황에 포함된 키워드 체크:
-- 금액 관련: 만원, 얼마, 평균, 가격 → high 권장
-- 트렌드 관련: MZ, 요즘, 최근, 세대 → medium 권장
-- 상황 관련: 이럴 때, 어떻게 → low 권장
-- 지식/사실: 특성, 원리, 효과 → none (생략 가능)
-```
+**콘텐츠별 sensitivity 자동 판단:**
+
+| 조건 | sensitivity | 예시 |
+|------|-------------|------|
+| 금액/가격/연봉/물가 언급 | `high` | "평균 축의금", "시급" |
+| 연예인/셀럽/인물 기반 | `medium` | "이상형 월드컵", "최애 연예인" |
+| 트렌드/유행/MZ/밈 언급 | `medium` | "요즘 MZ는", "유행어" |
+| 통계/조사 결과 기반 | `medium` | "00% 선호", "인기순위" |
+| 상황 판단/밸런스게임 | `low` | "이럴 때 나는?", "A vs B" |
+| 동물 지식/품종/건강 | `none` | "고양이 정상 체온", "품종 특성" |
+| 성격/심리/MBTI | `none` | "당신의 성격은?" |
 
 ### 검증 출력 형식
 
 ```
 ## 시간 민감도 검증
 
-✅ cat-quiz-001: 동물 지식 → timeSensitivity 불필요
-✅ money-quiz-001: timeSensitivity='high', sourceYear=2025 → 유효 (2027-12까지)
-⚠️ money-poll-002: 금액 관련 질문인데 timeSensitivity 없음
-   권장: meta: { timeSensitivity: { sensitivity: 'high', sourceYear: 2025 } }
+✅ cat-quiz-001: sensitivity='none', sourceYear=2025 → 무기한 유효
+✅ celebrity-worldcup-001: sensitivity='medium', sourceYear=2025 → 유효 (2028-12까지)
+✅ money-quiz-001: sensitivity='high', sourceYear=2025 → 유효 (2027-12까지)
+⚠️ new-poll-002: timeSensitivity 누락 → 신규 콘텐츠는 필수!
+   권장: meta: { timeSensitivity: { sensitivity: 'low', sourceYear: 2025 } }
 ⚠️ trend-poll-001: 유효기간 임박 (2025-06까지, 검토 필요)
-❌ money-quiz-003: 만료됨 (2024-12, 노출 중지 권장)
+❌ money-quiz-003: 만료됨 (2024-12, 노출 중지됨)
 
 === 시간 민감도 요약 ===
-시간 민감 콘텐츠: 15개
-- 유효: 10개 ✅
-- 검토 필요: 3개 ⚠️
-- 만료됨: 2개 ❌
-- 설정 누락: 0개
+전체 콘텐츠: 100개
+- timeSensitivity 설정됨: 50개
+  - 유효: 45개 ✅
+  - 검토 필요: 3개 ⚠️
+  - 만료됨: 2개 ❌
+- timeSensitivity 미설정: 50개 (신규는 필수 추가!)
 ```
+
+### 대시보드 연동
+
+설정된 timeSensitivity는 **대시보드 > 콘텐츠 현황 > 유효기간 관리**에서:
+- 유효/검토필요/만료됨 상태 표시
+- 만료 임박 콘텐츠 알림
+- 갱신 주기별 분포 확인
 
 ### 자동 수정 제안
 

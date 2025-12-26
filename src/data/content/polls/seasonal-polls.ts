@@ -5,6 +5,14 @@
 import type { VSPoll, ChoicePoll } from '../types';
 import { getNewYearInfo } from '@/utils/zodiac';
 
+// 공통 timeSensitivity 설정 (시즌 콘텐츠 = low)
+const DEFAULT_TIME_SENSITIVITY = {
+  timeSensitivity: {
+    sensitivity: 'low' as const,
+    sourceYear: 2025,
+  },
+};
+
 // ============================================================================
 // 크리스마스 VS 투표 - 연도 무관, 정적 데이터
 // ============================================================================
@@ -17,7 +25,7 @@ export const CHRISTMAS_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '눈 오는 화이트 크리스마스', emoji: '❄️' },
     optionB: { id: 'b', text: '따뜻한 실내에서 영화 보기', emoji: '🎬' },
     tags: ['크리스마스', '날씨', '취향'],
-    meta: { seasonal: ['christmas'], priority: 10 },
+    meta: { seasonal: ['christmas'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'xmas-vs-002',
@@ -26,7 +34,7 @@ export const CHRISTMAS_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '깜짝 서프라이즈 선물', emoji: '🎁' },
     optionB: { id: 'b', text: '원하는 거 미리 말하기', emoji: '📝' },
     tags: ['크리스마스', '선물', '취향'],
-    meta: { seasonal: ['christmas'], priority: 10 },
+    meta: { seasonal: ['christmas'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'xmas-vs-003',
@@ -35,7 +43,7 @@ export const CHRISTMAS_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '따끈한 크리스마스 케이크', emoji: '🎂' },
     optionB: { id: 'b', text: '바삭한 치킨', emoji: '🍗' },
     tags: ['크리스마스', '음식', '취향'],
-    meta: { seasonal: ['christmas'], priority: 9 },
+    meta: { seasonal: ['christmas'], priority: 9, ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'xmas-vs-004',
@@ -44,7 +52,7 @@ export const CHRISTMAS_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '화려한 조명의 거리', emoji: '✨' },
     optionB: { id: 'b', text: '아늑한 카페', emoji: '☕' },
     tags: ['크리스마스', '데이트', '연애'],
-    meta: { seasonal: ['christmas'], priority: 9 },
+    meta: { seasonal: ['christmas'], priority: 9, ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'xmas-vs-005',
@@ -53,7 +61,7 @@ export const CHRISTMAS_VS_POLLS: VSPoll[] = [
     optionA: { id: 'a', text: '로맨틱 코미디', emoji: '💕' },
     optionB: { id: 'b', text: '나홀로 집에 같은 코미디', emoji: '😂' },
     tags: ['크리스마스', '영화', '취향'],
-    meta: { seasonal: ['christmas'], priority: 8 },
+    meta: { seasonal: ['christmas'], priority: 8, ...DEFAULT_TIME_SENSITIVITY },
   },
 ];
 
@@ -73,7 +81,7 @@ export const CHRISTMAS_CHOICE_POLLS: ChoicePoll[] = [
       { id: 'd', text: '고요한 밤 거룩한 밤', emoji: '🌙' },
     ],
     tags: ['크리스마스', '캐롤', '음악'],
-    meta: { seasonal: ['christmas'], priority: 9 },
+    meta: { seasonal: ['christmas'], priority: 9, ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'xmas-choice-002',
@@ -86,7 +94,7 @@ export const CHRISTMAS_CHOICE_POLLS: ChoicePoll[] = [
       { id: 'd', text: '현금이 최고', emoji: '💰' },
     ],
     tags: ['크리스마스', '선물', '취향'],
-    meta: { seasonal: ['christmas'], priority: 10 },
+    meta: { seasonal: ['christmas'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
   },
 ];
 
@@ -114,7 +122,7 @@ export function createNewYearVSPolls(): VSPoll[] {
       optionA: { id: 'a', text: '해돋이 보러 가기', emoji: '🌅' },
       optionB: { id: 'b', text: '따뜻한 이불 속에서 늦잠', emoji: '😴' },
       tags: ['새해', '아침', '취향'],
-      meta: { seasonal: ['newyear'], priority: 10 },
+      meta: { seasonal: ['newyear'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
     },
     {
       id: 'newyear-vs-002',
@@ -123,7 +131,7 @@ export function createNewYearVSPolls(): VSPoll[] {
       optionA: { id: 'a', text: '큰 목표 하나 정해서 올인', emoji: '🎯' },
       optionB: { id: 'b', text: '작은 목표 여러 개로 분산', emoji: '📋' },
       tags: ['새해', '결심', '성향'],
-      meta: { seasonal: ['newyear'], priority: 10 },
+      meta: { seasonal: ['newyear'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
     },
     {
       id: 'newyear-vs-003',
@@ -132,7 +140,7 @@ export function createNewYearVSPolls(): VSPoll[] {
       optionA: { id: 'a', text: '사람 많은 광장에서', emoji: '🎉' },
       optionB: { id: 'b', text: '집에서 가족/친구와', emoji: '🏠' },
       tags: ['새해', '카운트다운', '취향'],
-      meta: { seasonal: ['newyear'], priority: 9 },
+      meta: { seasonal: ['newyear'], priority: 9, ...DEFAULT_TIME_SENSITIVITY },
     },
     {
       id: `newyear-vs-${year}-004`,  // 연도 포함 (연도별 분석용)
@@ -141,7 +149,7 @@ export function createNewYearVSPolls(): VSPoll[] {
       optionA: { id: 'a', text: '새로운 도전과 경험', emoji: '🚀' },
       optionB: { id: 'b', text: '안정과 평화로운 일상', emoji: '🌿' },
       tags: ['새해', `${year}`, '가치관'],
-      meta: { seasonal: ['newyear'], priority: 10 },
+      meta: { seasonal: ['newyear'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
     },
     {
       id: 'newyear-vs-005',
@@ -150,7 +158,7 @@ export function createNewYearVSPolls(): VSPoll[] {
       optionA: { id: 'a', text: '다이어리/플래너', emoji: '📔' },
       optionB: { id: 'b', text: '현금/상품권', emoji: '💵' },
       tags: ['새해', '선물', '취향'],
-      meta: { seasonal: ['newyear'], priority: 8 },
+      meta: { seasonal: ['newyear'], priority: 8, ...DEFAULT_TIME_SENSITIVITY },
     },
   ];
 }
@@ -176,7 +184,7 @@ export function createNewYearChoicePolls(): ChoicePoll[] {
         { id: 'd', text: '여행/새로운 경험', emoji: '✈️' },
       ],
       tags: ['새해', `${year}`, '목표', '결심'],
-      meta: { seasonal: ['newyear'], priority: 10 },
+      meta: { seasonal: ['newyear'], priority: 10, ...DEFAULT_TIME_SENSITIVITY },
     },
     {
       id: `newyear-choice-${year}-002`,  // 연도 포함 (연도별 분석용)
@@ -189,7 +197,7 @@ export function createNewYearChoicePolls(): ChoicePoll[] {
         { id: 'd', text: `${animal.name}처럼 차분한 판단력`, emoji: '🧠' },
       ],
       tags: ['새해', `${year}`, ganjiName.replace(/년\(.*\)/, ''), zodiacName],
-      meta: { seasonal: ['newyear'], priority: 9 },
+      meta: { seasonal: ['newyear'], priority: 9, ...DEFAULT_TIME_SENSITIVITY },
     },
     {
       id: 'newyear-choice-003',
@@ -202,7 +210,7 @@ export function createNewYearChoicePolls(): ChoicePoll[] {
         { id: 'd', text: '그냥 푹 쉬기', emoji: '😴' },
       ],
       tags: ['새해', '첫날', '계획'],
-      meta: { seasonal: ['newyear'], priority: 8 },
+      meta: { seasonal: ['newyear'], priority: 8, ...DEFAULT_TIME_SENSITIVITY },
     },
   ];
 }

@@ -4,6 +4,14 @@
 
 import type { VSPoll } from '../types';
 
+// 공통 timeSensitivity 설정 (연애/관계 = low)
+const DEFAULT_TIME_SENSITIVITY = {
+  timeSensitivity: {
+    sensitivity: 'low' as const,
+    sourceYear: 2025,
+  },
+};
+
 export const LOVE_VS_POLLS: VSPoll[] = [
   // ==========================================================================
   // 연애 커뮤니케이션 스타일
@@ -25,6 +33,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { decision: ['direct', 'practical'] },
     },
     tags: ['love', 'relationship', '연애스타일'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-style-002',
@@ -43,6 +52,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'independent'] },
     },
     tags: ['love', 'relationship', '연락'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-style-003',
@@ -61,6 +71,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'supportive'] },
     },
     tags: ['love', 'relationship', '표현'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -83,6 +94,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['extroverted'], decision: ['adventurous'] },
     },
     tags: ['love', 'relationship', '데이트'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-date-002',
@@ -101,6 +113,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['spontaneous'], decision: ['adventurous'] },
     },
     tags: ['love', 'relationship', '데이트', '계획'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-date-003',
@@ -119,6 +132,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['introverted', 'independent'] },
     },
     tags: ['love', 'relationship', '시간관리'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -141,6 +155,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { relationship: ['assertive'], decision: ['practical'] },
     },
     tags: ['love', 'relationship', '갈등', '화해'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-conflict-002',
@@ -159,6 +174,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { decision: ['indirect', 'practical'] },
     },
     tags: ['love', 'relationship', '갈등', '소통'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 
   // ==========================================================================
@@ -181,6 +197,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'independent'] },
     },
     tags: ['love', 'relationship', '스킨십'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
   {
     id: 'vs-love-affection-002',
@@ -199,6 +216,7 @@ export const LOVE_VS_POLLS: VSPoll[] = [
       insightTags: { personality: ['reserved', 'introverted'] },
     },
     tags: ['love', 'relationship', 'SNS', '인증'],
+  meta: { ...DEFAULT_TIME_SENSITIVITY },
   },
 ];
 

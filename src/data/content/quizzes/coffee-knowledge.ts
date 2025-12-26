@@ -20,6 +20,12 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['coffee', '카페인', '아메리카노', '에스프레소', '기초'],
     source: 'coffee-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-002',
@@ -35,6 +41,12 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['coffee', '원두', '아라비카', '로부스타', '카페인'],
     source: 'coffee-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-003',
@@ -50,6 +62,12 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['coffee', '로스팅', '라이트로스트', '맛', '향'],
     source: 'coffee-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 
   // ========== 보통 (4개) ==========
@@ -58,15 +76,21 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     category: 'coffee',
     question: '프렌치 프레스로 커피를 추출할 때 권장 분쇄도는?',
     options: [
-      { id: 'a', text: '아주 곱게 (에스프레소용)', isCorrect: false },
+      { id: 'a', text: '아주 굵게 (에스프레소용)', isCorrect: false },
       { id: 'b', text: '중간 (드립용)', isCorrect: false },
       { id: 'c', text: '굵게 (바다소금 크기)', isCorrect: true },
       { id: 'd', text: '분쇄하지 않은 원두', isCorrect: false },
     ],
-    explanation: '프렌치 프레스는 4-5분간 물과 원두가 직접 접촉하는 침출식이에요. 너무 곱게 갈면 과추출되고 필터를 통과해 텁텁해져요.',
+    explanation: '프렌치 프레스는 4-5분간 물과 원두가 직접 접촉하는 침출식이에요. 너무 굵게 갈면 과추출되고 필터를 통과해 텁텁해져요.',
     difficulty: 2,
     tags: ['coffee', '프렌치프레스', '분쇄도', '추출', '방법'],
     source: 'coffee-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-005',
@@ -82,6 +106,12 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['coffee', '드립', '필터', '추출', '맛'],
     source: 'coffee-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-006',
@@ -93,10 +123,16 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '산화 반응', isCorrect: false },
       { id: 'd', text: '중합 반응', isCorrect: false },
     ],
-    explanation: '마이야르 반응은 열에 의해 아미노산과 당이 결합하면서 갈색으로 변하고 복합적인 향미를 만들어요. 스테이크 굽는 것과 같은 원리예요!',
+    explanation: '마이야르 반응은 열에 의해 아미노산과 당이 결합하면서 갈색으로 변하고 복합적인 향미를 만들어요. 스테인크 굽는 것과 같은 원리예요!',
     difficulty: 2,
     tags: ['coffee', '로스팅', '화학', '마이야르', '향'],
     source: 'coffee-fact-005',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-007',
@@ -112,6 +148,12 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['coffee', '로스팅', '다크로스트', '산미', '화학'],
     source: 'coffee-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 
   // ========== 어려움 (3개) ==========
@@ -129,6 +171,12 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['coffee', '로부스타', '카페인', '생물학', '병충해'],
     source: 'coffee-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-009',
@@ -140,10 +188,16 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '400mg', isCorrect: true },
       { id: 'd', text: '500mg', isCorrect: false },
     ],
-    explanation: '미국 FDA는 건강한 성인 기준 하루 400mg(아메리카노 약 3-4잔) 이하를 권장해요. 임산부나 카페인 민감자는 더 적게 섭취해야 해요.',
+    explanation: '미국 FDA는 건강한 성인 기준 하루 400mg(아메리카노 약 3-4잔) 이하를 권장해요. 임신부나 카페인 민감자는 더 적게 섭취해야 해요.',
     difficulty: 3,
     tags: ['coffee', '카페인', '건강', 'FDA', '섭취량'],
     source: 'coffee-fact-006',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'coffee-k-010',
@@ -159,5 +213,13 @@ export const COFFEE_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['coffee', '아라비카', '시장', '통계', '품종'],
     source: 'coffee-fact-007',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 ];
+
+export default COFFEE_KNOWLEDGE_QUIZZES;

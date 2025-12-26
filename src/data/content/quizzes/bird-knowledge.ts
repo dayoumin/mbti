@@ -19,6 +19,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['앵무새', '왕관앵무', '수명', '품종'],
     source: 'bird-fact-001',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-002',
@@ -34,6 +40,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '버드기', '언어능력', '성별'],
     source: 'bird-fact-002',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-003',
@@ -49,6 +61,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '입양', '적응', '스트레스', '관리'],
     source: 'bird-fact-003',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-004',
@@ -64,6 +82,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['앵무새', '새장', '환경', '스트레스'],
     source: 'bird-fact-004',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-005',
@@ -79,6 +103,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['앵무새', '음식', '위험', '독성', '건강'],
     source: 'bird-fact-005',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-006',
@@ -94,6 +124,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '온도', '환경', '건강', '관리'],
     source: 'bird-fact-006',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-007',
@@ -109,6 +145,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '버드기', '식단', '영양', '관리'],
     source: 'bird-fact-007',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-008',
@@ -120,10 +162,16 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '운동 부족', isCorrect: false },
       { id: 'd', text: '질병 증상', isCorrect: false },
     ],
-    explanation: '야생에서 포식자를 경계하던 본능이에요. 가벼운 잠을 자다가 가끔 놀라서 난동을 부려요. 야간등을 켜두면 도움이 돼요!',
+    explanation: '야생에서 포식자를 경계하던 본능이에요. 가벼운 잠을 자다가 갑자기 놀라서 난동을 부려요. 야간등을 켜두면 도움이 돼요!',
     difficulty: 2,
     tags: ['앵무새', '왕관앵무', '야간공포', '행동', '본능'],
     source: 'bird-fact-008',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-009',
@@ -139,6 +187,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '헤드뱅잉', '행동', '소통'],
     source: 'bird-fact-009',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-010',
@@ -154,6 +208,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['앵무새', '깃털', '행동', '감정표현'],
     source: 'bird-fact-010',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-011',
@@ -169,6 +229,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '왕관앵무', '새장', '환경', '크기'],
     source: 'bird-fact-011',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-012',
@@ -184,6 +250,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['앵무새', '왕관앵무', '산란', '건강', '암컷'],
     source: 'bird-fact-012',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-013',
@@ -199,6 +271,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '스킨십', '호르몬', '관리', '행동'],
     source: 'bird-fact-013',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-014',
@@ -214,6 +292,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['앵무새', '위험', '독성', '조리기구', '안전'],
     source: 'bird-fact-014',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-015',
@@ -222,13 +306,19 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     options: [
       { id: 'a', text: '새로운 환경에 빨리 적응함', isCorrect: false },
       { id: 'b', text: '낯선 것에 경계심 많고 적응력 낮음', isCorrect: true },
-      { id: 'c', text: '주인 외모 변화는 신경 안 씀', isCorrect: false },
+      { id: 'c', text: '주인 외모 변화는 신경 안 써', isCorrect: false },
       { id: 'd', text: '밥그릇 바꿔도 잘 먹음', isCorrect: false },
     ],
     explanation: '앵무새는 피식자 위치라 낯선 것을 매우 경계해요. 주인이 머리 염색하거나 새 그림을 걸어도 스트레스를 받을 수 있어요!',
     difficulty: 2,
     tags: ['앵무새', '적응력', '경계심', '스트레스', '행동'],
     source: 'bird-fact-015',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-016',
@@ -240,15 +330,21 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
       { id: 'c', text: '50년 이상', isCorrect: true },
       { id: 'd', text: '80년 이상', isCorrect: false },
     ],
-    explanation: '대형 앵무새는 50년 이상 살아요! 소형 앵무는 15-20년인 반면, 뇌가 큰 대형종은 수명도 길답니다.',
+    explanation: '대형 앵무새는 50년 이상 살아요! 소형 앵무는 15-20년인 반면, 몸집이 큰 대형종은 수명도 길답니다.',
     difficulty: 2,
     tags: ['앵무새', '수명', '대형앵무', '품종'],
     source: 'bird-fact-016',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-017',
     category: 'bird',
-    question: '사랑앵무(버드기) 어린 새의 납막(코) 색깔이 분홍/보라색이면?',
+    question: '사랑앵무(버드기) 어린 새의 부리(코) 색깔이 분홍/보라색이면?',
     options: [
       { id: 'a', text: '암컷', isCorrect: false },
       { id: 'b', text: '수컷', isCorrect: true },
@@ -257,8 +353,14 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     ],
     explanation: '어릴 때 분홍/보라색이면 수컷, 갈색/흰색이면 암컷이에요. 성조가 되면 수컷은 짙은 파란색, 암컷은 흰색/갈색이 돼요!',
     difficulty: 2,
-    tags: ['앵무새', '사랑앵무', '성별구분', '납막', '버드기'],
+    tags: ['앵무새', '사랑앵무', '성별구분', '부리', '버드기'],
     source: 'bird-fact-017',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-018',
@@ -274,6 +376,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['앵무새', '모란앵무', '러브버드', '유대감', '품종'],
     source: 'bird-fact-018',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-019',
@@ -289,6 +397,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['앵무새', '아보카도', '독성', '퍼신', '위험', '건강'],
     source: 'bird-fact-019',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-020',
@@ -304,6 +418,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 3,
     tags: ['앵무새', '말하기', '시링스', '노래핵', '발성원리'],
     source: 'bird-fact-020',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-021',
@@ -319,6 +439,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '지능', 'IQ', '능력'],
     source: 'bird-fact-021',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-022',
@@ -334,6 +460,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '회색앵무', '언어능력', '기네스북', '지능'],
     source: 'bird-fact-022',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-023',
@@ -349,6 +481,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 2,
     tags: ['앵무새', '왕관앵무', '볏', '감정표현', '행동'],
     source: 'bird-fact-023',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
   {
     id: 'bird-k-024',
@@ -364,6 +502,12 @@ export const BIRD_KNOWLEDGE_QUIZZES: KnowledgeQuiz[] = [
     difficulty: 1,
     tags: ['앵무새', '수명', '주인교체', '책임감', '통계'],
     source: 'bird-fact-024',
+    meta: {
+      timeSensitivity: {
+        sensitivity: 'none',
+        sourceYear: 2025
+      }
+    }
   },
 ];
 
