@@ -9,6 +9,7 @@
 
 import { resultService } from './ResultService';
 import { eventBus } from './EventBus';
+import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
 import {
   extractTagsFromTestResult,
   isRelationshipTest,
@@ -16,7 +17,14 @@ import {
 } from '@/data/insight/test-tag-mappings';
 import { CHEMI_DATA } from '@/data';
 import { INSIGHT_UNLOCK } from '@/data/gamification/points';
-import { VALID_INSIGHT_TAGS, getInterestTagFromCategory, DECISION_TAGS } from '@/data/insight/insight-tags';
+import {
+  VALID_INSIGHT_TAGS,
+  getInterestTagFromCategory,
+  DECISION_TAGS,
+  RELATIONSHIP_TAGS,
+  getTagCategory as getTagCategoryFromSSOT,
+  type InsightTag,
+} from '@/data/insight/insight-tags';
 import { matchStage2Rules, type Stage2Rule } from '@/data/insight/stage2-rules';
 import {
   generateDecisionStyleResult,
@@ -34,6 +42,16 @@ import {
   generateHiddenPatternResult,
   type HiddenPatternResult,
 } from '@/data/insight/stage6-hidden-pattern';
+import {
+  generateFallbackReport,
+  summarizeStage2Rules,
+  summarizeStage3Result,
+  summarizeStage4Result,
+  summarizeStage5Result,
+  summarizeStage6Result,
+  type AIAnalysisInput,
+  type AIAnalysisResult,
+} from '@/data/insight/stage7-ai-analysis';
 import type { UserActivityEvent } from '@/types/events';
 
 // ============================================================================
@@ -664,12 +682,7 @@ class InsightServiceClass {
     const tagCounts = this.getTagCounts();
 
     // 관계 관련 태그가 있는지 확인 (SSOT: RELATIONSHIP_TAGS from insight-tags.ts)
-    const relationshipTags = [
-      'competing', 'avoiding', 'accommodating', 'collaborating', 'compromising',
-      'close-bonding', 'space-needing', 'self-first', 'other-first',
-      'assertive', 'diplomatic',
-    ];
-    const hasRelationshipTags = relationshipTags.some(tag => tagCounts[tag] > 0);
+    const hasRelationshipTags = RELATIONSHIP_TAGS.some(tag => tagCounts[tag] > 0);
 
     if (!hasRelationshipTags) {
       return null;
@@ -700,6 +713,142 @@ class InsightServiceClass {
     }
 
     return generateHiddenPatternResult(tagCounts);
+  }
+
+  // ========================================================================
+  // Stage 7: AI 종합 분석
+  // ========================================================================
+
+  /**
+   * Stage 7 인사이트 생성 - AI 종합 분석
+   * Stage 6 해금 필요 (유료 체크는 별도)
+   */
+  getStage7Insight(): AIAnalysisResult | null {
+    if (!this.isStageUnlocked(6)) {
+      return null;
+    }
+
+    // AI 분석용 입력 데이터 수집
+    const input = this.buildAIAnalysisInput();
+
+    // 현재는 폴백 리포트 사용 (추후 AI API 연동)
+    return generateFallbackReport(input);
+  }
+
+  /**
+   * AI 분석용 입력 데이터 빌드
+   */
+  private buildAIAnalysisInput(): AIAnalysisInput {
+    const stats = this.getActivityStats();
+    const tagCounts = this.getTagCounts();
+
+    // 태그 분포 계산
+    const totalTags = Object.values(tagCounts).reduce((sum, count) => sum + count, 0);
+    const tagDistribution = Object.entries(tagCounts)
+      .map(([tag, count]) => ({
+        tag,
+        count,
+        percentage: totalTags > 0 ? Math.round((count / totalTags) * 100) : 0,
+        category: this.getTagCategory(tag),
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    // Stage별 인사이트 수집
+    const stage2Rules = this.getStage2Insight(5);
+    const stage3Result = this.getStage3Insight();
+    const stage4Result = this.getStage4Insight();
+    const stage5Result = this.getStage5Insight();
+    const stage6Result = this.getStage6Insight();
+
+    // Stage 1 요약 (테스트 기반 태그만 사용 - 퀴즈/투표 태그 제외)
+    // 테스트 결과에서 직접 태그 추출 (저장된 결과 기반)
+    const testTagCounts: Record<string, number> = {};
+    const testResults = this.getTestResultsFromStorage();
+    for (const result of testResults) {
+      // 테스트 결과에서 dimensions(scores)로 태그 추출
+      if (result.scores && result.testType) {
+        const testData = CHEMI_DATA[result.testType as keyof typeof CHEMI_DATA];
+        if (testData) {
+          const dimCounts = testData.questions
+            ? getDimensionQuestionCounts(testData.questions)
+            : undefined;
+          const extractedTags = extractTagsFromTestResult(
+            result.testType,
+            result.scores,
+            dimCounts
+          );
+          for (const tag of extractedTags) {
+            if (VALID_INSIGHT_TAGS.has(tag)) {
+              testTagCounts[tag] = (testTagCounts[tag] || 0) + 1;
+            }
+          }
+        }
+      }
+    }
+
+    const testDominantTags = Object.entries(testTagCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([tag]) => tag);
+
+    const stage1Summary = stats.testCount > 0
+      ? {
+          testCount: stats.testCount,
+          dominantTags: testDominantTags.length > 0 ? testDominantTags : tagDistribution.slice(0, 3).map(t => t.tag),
+        }
+      : null;
+
+    return {
+      activitySummary: {
+        totalTests: stats.testCount,
+        totalPolls: stats.pollCount,
+        totalQuizzes: stats.quizCount,
+        totalActivities: stats.totalActivities,
+        activeDays: 1, // TODO: 실제 활동 일수 추적
+      },
+      insights: {
+        stage1: stage1Summary,
+        stage2: stage2Rules ? summarizeStage2Rules(stage2Rules) : null,
+        stage3: stage3Result ? summarizeStage3Result(stage3Result) : null,
+        stage4: stage4Result ? summarizeStage4Result(stage4Result) : null,
+        stage5: stage5Result ? summarizeStage5Result(stage5Result) : null,
+        stage6: stage6Result ? summarizeStage6Result(stage6Result) : null,
+      },
+      tagDistribution,
+    };
+  }
+
+  /**
+   * 태그 카테고리 판별 (SSOT: insight-tags.ts 사용)
+   */
+  private getTagCategory(tag: string): 'personality' | 'decision' | 'relationship' | 'interest' | 'lifestyle' {
+    // 유효한 인사이트 태그인 경우 SSOT 함수 사용
+    if (VALID_INSIGHT_TAGS.has(tag)) {
+      return getTagCategoryFromSSOT(tag as InsightTag);
+    }
+    // 유효하지 않은 태그는 lifestyle로 폴백
+    return 'lifestyle';
+  }
+
+  /**
+   * localStorage에서 테스트 결과 조회 (동기)
+   * Stage 7 buildAIAnalysisInput()에서 테스트 전용 태그 추출에 사용
+   */
+  private getTestResultsFromStorage(): Array<{ testType: string; scores: Record<string, number> }> {
+    if (typeof window === 'undefined') return [];
+
+    try {
+      const userId = resultService.getUserId();
+      const all = JSON.parse(localStorage.getItem(GLOBAL_STORAGE_KEYS.TEST_RESULTS) || '[]');
+      return all
+        .filter((item: { user_id?: string }) => item.user_id === userId)
+        .map((item: { test_type?: string; scores?: Record<string, number> }) => ({
+          testType: item.test_type || '',
+          scores: item.scores || {},
+        }));
+    } catch {
+      return [];
+    }
   }
 
   // ========================================================================
