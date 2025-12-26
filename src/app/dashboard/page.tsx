@@ -83,6 +83,8 @@ import InsightSystem from './components/InsightSystem';
 import ContentStatusDashboard from './components/ContentStatusDashboard';
 import IdeaPipeline from './components/IdeaPipeline';
 import DeveloperGuide from './components/DeveloperGuide';
+import ImagePromptManager from './components/ImagePromptManager';
+import CopyrightGuide from './components/CopyrightGuide';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -199,6 +201,8 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
       { key: 'contentReview', label: '콘텐츠 검수', icon: <CheckCircle2 className="w-4 h-4" /> },
+      { key: 'imagePrompts', label: '이미지 프롬프트', icon: <Palette className="w-4 h-4" /> },
+      { key: 'copyright', label: '저작권 가이드', icon: <Shield className="w-4 h-4" /> },
     ],
   },
   {
@@ -504,6 +508,8 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'contentReview' && <ContentReview />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
+          {activeCategory === 'devtools' && activeSubTab === 'imagePrompts' && <ImagePromptManager />}
+          {activeCategory === 'devtools' && activeSubTab === 'copyright' && <CopyrightGuide />}
           {/* 참고 */}
           {activeCategory === 'reference' && activeSubTab === 'references' && <References />}
           {activeCategory === 'reference' && activeSubTab === 'newTests' && <NewTestResearch />}
