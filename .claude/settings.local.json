@@ -98,6 +98,8 @@
       "Skill(content-workflow:*)",
       "Skill(test-generator)",
       "Skill(test-generator:*)",
+      "Skill(test-workflow)",
+      "Skill(test-workflow:*)",
       "Bash(npx rimraf:*)",
       "Bash(.claude/agents/content-creator.md )",
       "Bash(.claude/skills/content-generator/SKILL.md )",

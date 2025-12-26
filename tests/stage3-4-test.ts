@@ -97,6 +97,24 @@ const testTagCounts8 = {
   adventurous: 5,
 };
 
+// 엣지 케이스: 1차 분류 한 축만 데이터 있음 (부분 데이터)
+const testTagCounts9 = {
+  safe: 5,
+  adventurous: 3,
+  // practical/sentimental 없음 → 1차 분류 사용 불가 → 2차로 fallback
+  solo: 4,
+  together: 2,
+  direct: 6,
+  indirect: 1,
+};
+
+// 엣지 케이스: 2차 분류 한 축만 데이터 있음
+const testTagCounts10 = {
+  solo: 5,
+  together: 3,
+  // direct/indirect 없음 → 2차 분류 사용 불가 → 기본값
+};
+
 console.log('\n[테스트 1] 실용적 + 안전 추구 성향');
 console.log('태그:', testTagCounts1);
 
@@ -163,6 +181,19 @@ console.log('\n[테스트 8] 엣지 케이스: 동점');
 console.log('태그:', testTagCounts8);
 const profile8 = matchDecisionProfile(testTagCounts8);
 console.log(`\n프로필: ${profile8.emoji} ${profile8.nameKr} (동점 시 practical+safe 우선)`);
+
+console.log('\n[테스트 9] 엣지 케이스: 1차 분류 부분 데이터');
+console.log('태그:', testTagCounts9);
+console.log('(safe/adventurous만 있고 practical/sentimental 없음 → 2차 분류로 fallback)');
+const profile9 = matchDecisionProfile(testTagCounts9);
+console.log(`\n프로필: ${profile9.emoji} ${profile9.nameKr}`);
+console.log(`설명: ${profile9.description}`);
+
+console.log('\n[테스트 10] 엣지 케이스: 2차 분류 부분 데이터');
+console.log('태그:', testTagCounts10);
+console.log('(solo/together만 있고 direct/indirect 없음 → 기본값)');
+const profile10 = matchDecisionProfile(testTagCounts10);
+console.log(`\n프로필: ${profile10.emoji} ${profile10.nameKr} (기본값)`);
 
 // ============================================================================
 // Stage 4 테스트
@@ -310,6 +341,23 @@ if (profile8.id === 'practical-safe') {
   passed++;
 } else {
   console.log(`❌ 엣지 케이스 (동점): ${profile8.id} (예상: practical-safe)`);
+  failed++;
+}
+
+// 부분 데이터 테스트
+if (profile9.id === 'solo-direct') {
+  console.log('✅ 엣지 케이스 (1차 부분 데이터): 2차 분류로 fallback');
+  passed++;
+} else {
+  console.log(`❌ 엣지 케이스 (1차 부분 데이터): ${profile9.id} (예상: solo-direct)`);
+  failed++;
+}
+
+if (profile10.id === 'together-indirect') {
+  console.log('✅ 엣지 케이스 (2차 부분 데이터): 기본값 반환');
+  passed++;
+} else {
+  console.log(`❌ 엣지 케이스 (2차 부분 데이터): ${profile10.id} (예상: together-indirect)`);
   failed++;
 }
 

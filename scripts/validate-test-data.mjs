@@ -33,6 +33,8 @@ const SUBJECTS = [
   'fruit', 'alcohol', 'bread', 'perfume', 'aroma', 'food', 'whiskeySample', 'ramen', 'spendingStyle', 'drinkingStyle', 'travelStyle',
   // 신규 매칭 테스트
   'wine', 'travel', 'exercise', 'bloodType',
+  // 신규 성격 테스트
+  'gameStyle', 'snsStyle', 'homeStyle', 'movieGenre', 'attachment',
   // petMatch 세부 테스트
   'dogBreed', 'catBreed', 'smallPet', 'fishType', 'birdType', 'reptileType'
 ];

@@ -462,6 +462,16 @@ export const SUBJECT_CONFIG: Record<SubjectKey, SubjectConfig> = {
         tabActiveColor: "bg-red-100 border-red-400",
         checkColor: "text-red-600",
         analysisButtonText: "🩸 상세 성향 분석 보기"
+    },
+    attachment: {
+        testType: "personality",
+        icon: "HeartIcon",
+        lucideIcon: "Heart",
+        emoji: "💕",
+        label: "애착 유형",
+        intro: ["나의 연애 애착 스타일은?", "사랑하는 방식의 비밀", "건강한 관계 만들기"],
+        resultFormat: "simple",
+        deepButtonText: "애착 유형"
     }
 };
 

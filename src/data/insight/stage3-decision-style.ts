@@ -287,14 +287,14 @@ export function matchDecisionProfile(
   const directCount = tagCounts['direct'] || 0;
   const indirectCount = tagCounts['indirect'] || 0;
 
-  // 1차 분류 차원에 데이터가 있는지 확인
-  const hasPrimaryData = (practicalCount + sentimentalCount + safeCount + adventurousCount) > 0;
+  // 각 축(axis)에 데이터가 있는지 개별 확인
+  const hasDecisionBasis = (practicalCount + sentimentalCount) > 0;  // 실용/감성 축
+  const hasRiskPreference = (safeCount + adventurousCount) > 0;      // 안전/모험 축
+  const hasSocialPreference = (soloCount + togetherCount) > 0;       // 혼자/함께 축
+  const hasCommunicationStyle = (directCount + indirectCount) > 0;  // 직접/간접 축
 
-  // 2차 분류 차원에 데이터가 있는지 확인
-  const hasSecondaryData = (soloCount + togetherCount + directCount + indirectCount) > 0;
-
-  // 1차 분류: 실용/감성 + 안전/모험 (데이터가 있을 때만)
-  if (hasPrimaryData) {
+  // 1차 분류: 두 축 모두 데이터가 있을 때만 사용
+  if (hasDecisionBasis && hasRiskPreference) {
     const isPractical = practicalCount >= sentimentalCount;
     const isSafe = safeCount >= adventurousCount;
 
@@ -312,8 +312,8 @@ export function matchDecisionProfile(
     }
   }
 
-  // 2차 분류: 혼자/함께 + 직접/간접 (1차 데이터가 없을 때)
-  if (hasSecondaryData) {
+  // 2차 분류: 두 축 모두 데이터가 있을 때만 사용
+  if (hasSocialPreference && hasCommunicationStyle) {
     const isSolo = soloCount >= togetherCount;
     const isDirect = directCount >= indirectCount;
 

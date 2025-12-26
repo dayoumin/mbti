@@ -307,22 +307,109 @@ export type SituationCategory = 'relationship' | 'work' | 'social' | 'awkward';
 export type ReactionTag = 'cool' | 'emotional' | 'rational' | 'avoidant' |
                           'confrontational' | 'humorous' | 'caring' | 'passive';
 
+/**
+ * ReactionTag → InsightTags 자동 매핑
+ * 상황별 반응의 ReactionTag에서 인사이트 태그를 자동 추출
+ */
+export const REACTION_TAG_TO_INSIGHT: Record<ReactionTag, InsightTags> = {
+  cool: { personality: ['reserved', 'resilient'], decision: ['practical'] },
+  emotional: { personality: ['emotional', 'expressive', 'sensitive'] },
+  rational: { personality: ['logical', 'analytical'], decision: ['practical'] },
+  avoidant: { relationship: ['avoiding'], personality: ['reserved'] },
+  confrontational: { relationship: ['competing', 'assertive'], decision: ['direct'] },
+  humorous: { personality: ['expressive'], decision: ['indirect'] },
+  caring: { personality: ['supportive'], relationship: ['accommodating', 'other-first'] },
+  passive: { relationship: ['accommodating'], personality: ['reserved'] },
+};
+
+export interface SituationReactionOption {
+  id: string;                  // 'a', 'b', 'c', 'd'
+  text: string;                // 반응 텍스트
+  emoji: string;               // 반응 이모지
+  tag: ReactionTag;            // 반응 유형 태그 (자동 매핑됨)
+  insightTags?: InsightTags;   // 추가 인사이트 태그 (선택, tag 매핑과 병합)
+}
+
 export interface SituationReaction {
   id: string;                    // "situation-reaction-{category}-{번호}"
   type: 'situation-reaction';
   category: SituationCategory;
   situation: string;             // 상황 설명 (1-2문장)
   question: string;              // "이럴 때 나는?"
-  options: {
-    id: string;                  // 'a', 'b', 'c', 'd'
-    text: string;                // 반응 텍스트
-    emoji: string;               // 반응 이모지
-    tag: ReactionTag;            // 반응 유형 태그
-  }[];
+  options: SituationReactionOption[];
   personalityMapping?: {         // 성격 유형별 예상 반응 (통계용)
     [personalityType: string]: string;  // MBTI 등 -> optionId
   };
   tags?: string[];               // 검색용 태그
+  meta?: ContentMeta;
+}
+
+/**
+ * SituationReaction 옵션에서 인사이트 태그 추출
+ * ReactionTag 자동 매핑 + 추가 insightTags 병합
+ */
+export function getInsightTagsFromReactionOption(option: SituationReactionOption): InsightTags {
+  const baseTags = REACTION_TAG_TO_INSIGHT[option.tag];
+  const additionalTags = option.insightTags || {};
+
+  // 병합 (각 카테고리별로)
+  return {
+    personality: [...(baseTags.personality || []), ...(additionalTags.personality || [])],
+    decision: [...(baseTags.decision || []), ...(additionalTags.decision || [])],
+    relationship: [...(baseTags.relationship || []), ...(additionalTags.relationship || [])],
+    interest: [...(additionalTags.interest || [])],  // base에는 interest 없음
+    lifestyle: [...(additionalTags.lifestyle || [])], // base에는 lifestyle 없음
+  };
+}
+
+// ============================================================================
+// 티어 토너먼트 (집단지성 랭킹)
+// ============================================================================
+
+/**
+ * 티어 등급 (S~F)
+ */
+export type TierGrade = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
+
+/**
+ * 토너먼트 아이템
+ */
+export interface TournamentItem {
+  id: string;
+  name: string;
+  emoji?: string;
+  imageUrl?: string;         // 이미지 URL (선택)
+  description?: string;      // 부가 설명
+  tags?: string[];           // 검색/필터용 태그
+}
+
+/**
+ * 티어 토너먼트 콘텐츠
+ * - 집단지성으로 S~F 티어 분류
+ * - 실시간 순위 변동으로 바이럴 유도
+ */
+export interface TierTournament {
+  id: string;
+  type: 'tier-tournament';
+  category: ContentCategory;
+
+  // 기본 정보
+  title: string;              // "역대 애니메이션 티어표"
+  subtitle?: string;          // "집단지성으로 분류하는 명작 랭킹"
+  emoji: string;
+
+  // 토너먼트 설정
+  items: TournamentItem[];    // 평가 대상 목록 (16~64개 권장)
+  tierLabels?: Record<TierGrade, string>;  // 커스텀 티어 라벨 (예: S: "명작 of 명작")
+
+  // 바이럴 요소
+  viralHooks?: {
+    debateTopics?: string[];  // 논쟁 유발 토픽 ("귀멸 vs 주술")
+    fandoms?: string[];       // 팬덤 태그 (실시간 동원)
+  };
+
+  // 메타데이터
+  tags?: string[];
   meta?: ContentMeta;
 }
 
@@ -332,6 +419,7 @@ export interface SituationReaction {
 
 export type QuizContent = KnowledgeQuiz | ScenarioQuiz;
 export type PollContent = VSPoll | ChoicePoll | SituationReaction;
+export type TournamentContent = TierTournament;
 
 // ============================================================================
 // 운세 콘텐츠 (Fortune Content)

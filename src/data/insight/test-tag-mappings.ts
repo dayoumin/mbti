@@ -359,6 +359,26 @@ export const HAMSTER_TAG_MAPPING: TestTagMapping = {
 };
 
 // ============================================================================
+// Attachment (애착 유형) 테스트 태그 매핑
+// ============================================================================
+
+export const ATTACHMENT_TAG_MAPPING: TestTagMapping = {
+  testId: 'attachment',
+  category: 'relationship',
+  countsAsRelationship: true,
+  dimensions: {
+    anxiety: {
+      high: ['sensitive', 'emotional', 'close-bonding', 'other-first'],
+      low: ['resilient', 'independent', 'space-needing'],
+    },
+    avoidance: {
+      high: ['space-needing', 'independent', 'reserved', 'avoiding'],
+      low: ['close-bonding', 'expressive', 'collaborative', 'supportive'],
+    },
+  },
+};
+
+// ============================================================================
 // 전체 테스트 매핑 레지스트리
 // ============================================================================
 
@@ -373,6 +393,7 @@ export const TEST_TAG_MAPPINGS: Record<string, TestTagMapping> = {
   petMatch: PETMATCH_TAG_MAPPING,
   rabbit: RABBIT_TAG_MAPPING,
   hamster: HAMSTER_TAG_MAPPING,
+  attachment: ATTACHMENT_TAG_MAPPING,
 };
 
 // ============================================================================

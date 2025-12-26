@@ -36,6 +36,7 @@ const CATEGORY_KEY_LIST = [
   'fortune', 'zodiac', 'tarot', 'bloodtype',
   'work', 'social', 'awkward',  // 상황반응 카테고리
   'seasonal',
+  'anime',  // 애니메이션/만화
   'general',
 ] as const;
 
@@ -94,6 +95,9 @@ export const CATEGORIES: Record<ContentCategory, CategoryInfo> = {
 
   // 시즌/이벤트
   seasonal: { name: '시즌', emoji: '🎄' },
+
+  // 엔터테인먼트
+  anime: { name: '애니메이션', emoji: '🎌' },
 
   // 일반
   general: { name: '일반', emoji: '📚' },

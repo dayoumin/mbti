@@ -265,7 +265,8 @@ interface SituationReaction {
     id: string;                  // 'a', 'b', 'c', 'd'
     text: string;                // 반응 텍스트
     emoji: string;               // 반응 이모지
-    tag: ReactionTag;            // 반응 유형 태그 (필수!)
+    tag: ReactionTag;            // 반응 유형 태그 (필수! → 자동 insightTags 변환)
+    insightTags?: InsightTags;   // 추가 인사이트 태그 (선택, tag와 병합)
   }[];
   personalityMapping?: {         // 성격 유형별 예상 반응 (통계용)
     [personalityType: string]: string;  // MBTI 등 -> optionId
@@ -289,6 +290,35 @@ type ReactionTag = 'cool' | 'emotional' | 'rational' | 'avoidant' |
 - `work`: 직장, 상사, 동료, 회의, 회식
 - `social`: 친구 모임, SNS, 파티
 - `awkward`: 어색한 순간, 민망한 상황
+
+### ReactionTag → InsightTags 자동 매핑
+
+**ReactionTag는 자동으로 InsightTags로 변환됩니다:**
+
+| ReactionTag | 자동 매핑되는 InsightTags |
+|-------------|--------------------------|
+| `cool` | personality: reserved, resilient / decision: practical |
+| `emotional` | personality: emotional, expressive, sensitive |
+| `rational` | personality: logical, analytical / decision: practical |
+| `avoidant` | relationship: avoiding / personality: reserved |
+| `confrontational` | relationship: competing, assertive / decision: direct |
+| `humorous` | personality: expressive / decision: indirect |
+| `caring` | personality: supportive / relationship: accommodating, other-first |
+| `passive` | relationship: accommodating / personality: reserved |
+
+**추가 태그가 필요하면 insightTags 사용:**
+```typescript
+{
+  id: 'a',
+  text: '솔직하게 말한다',
+  emoji: '😤',
+  tag: 'confrontational',  // 자동: competing, assertive, direct
+  insightTags: {
+    decision: ['solo'],    // 추가: 혼자 결정 성향
+  }
+}
+// 최종 태그: competing, assertive, direct, solo
+```
 
 ### 6. 토너먼트/월드컵 (Tournament)
 

@@ -9,7 +9,7 @@ allowed-tools: Read, Write, Edit, Glob
 ## 목적
 리서치 파서가 추출한 데이터를 실제 TypeScript 코드로 변환합니다.
 
-## 생성할 파일 (7개)
+## 생성할 파일 (8개)
 
 ### 1. 테스트 데이터 파일
 ```
@@ -44,6 +44,11 @@ src/app/dashboard/page.tsx → TEST_ICONS 객체
 ### 7. 검증 스크립트 수정
 ```
 scripts/validate-test-data.mjs → SUBJECTS 배열
+```
+
+### 8. 인사이트 태그 매핑 ⭐
+```
+src/data/insight/test-tag-mappings.ts → {SUBJECT}_TAG_MAPPING 추가
 ```
 
 ## 데이터 구조 템플릿
@@ -133,6 +138,76 @@ export function {Subject}Icon({ className = "w-6 h-6" }) {
 }
 ```
 
+## 인사이트 태그 매핑 ⭐
+
+테스트 결과에서 인사이트 태그를 추출하기 위한 매핑을 추가합니다.
+
+### 매핑 구조
+
+```typescript
+// src/data/insight/test-tag-mappings.ts
+
+export const {SUBJECT}_TAG_MAPPING: TestTagMapping = {
+  dimensions: {
+    dim1: {
+      high: ['extroverted', 'expressive'],  // HIGH 레벨일 때 태그
+      low: ['introverted', 'reserved'],     // LOW 레벨일 때 태그
+    },
+    dim2: {
+      high: ['planned', 'structured'],
+      low: ['spontaneous', 'flexible'],
+    },
+    // ... 모든 차원
+  },
+  countsAsRelationship: false,  // 관계 테스트면 true
+};
+
+// TEST_TAG_MAPPINGS에 등록
+export const TEST_TAG_MAPPINGS: Record<SubjectKey, TestTagMapping> = {
+  // 기존...
+  {subject}: {SUBJECT}_TAG_MAPPING,
+};
+```
+
+### 태그 선택 가이드
+
+**SSOT**: `src/data/insight/insight-tags.ts` 참조
+
+| 카테고리 | 사용 가능한 태그 |
+|---------|-----------------|
+| personality | `extroverted`, `introverted`, `logical`, `emotional`, `planned`, `spontaneous`, `structured`, `independent`, `supportive`, `expressive`, `reserved` 등 |
+| decision | `practical`, `sentimental`, `adventurous`, `safe`, `cautious`, `solo`, `together`, `direct`, `indirect` |
+| relationship | `competing`, `avoiding`, `accommodating`, `collaborating`, `compromising`, `close-bonding`, `space-needing` |
+| lifestyle | `active`, `homebody`, `frugal`, `splurger`, `morning-person`, `night-owl` |
+
+### 차원 → 태그 매핑 원칙
+
+1. **차원의 의미와 일치**: 차원이 측정하는 것과 태그가 일치해야 함
+2. **high/low 대칭**: 반대 성향의 태그 쌍으로 구성
+3. **2-3개 태그**: 각 레벨당 2-3개 태그 권장
+
+**예시:**
+```typescript
+// 외향성 차원
+social: {
+  high: ['extroverted', 'together', 'expressive'],
+  low: ['introverted', 'solo', 'reserved'],
+}
+
+// 계획성 차원
+planning: {
+  high: ['planned', 'structured', 'cautious'],
+  low: ['spontaneous', 'flexible', 'adventurous'],
+}
+```
+
+### countsAsRelationship 설정
+
+| 테스트 유형 | 값 | 예시 |
+|------------|-----|------|
+| 연애/관계 테스트 | `true` | idealType, conflictStyle |
+| 성격/취향 테스트 | `false` | human, coffee, whiskey |
+
 ## 체크리스트
 
 - [ ] subjects/{subject}.ts 생성
@@ -142,3 +217,4 @@ export function {Subject}Icon({ className = "w-6 h-6" }) {
 - [ ] Icons.js 아이콘 추가
 - [ ] dashboard/page.tsx TEST_ICONS 추가
 - [ ] validate-test-data.mjs SUBJECTS 추가
+- [ ] **test-tag-mappings.ts 태그 매핑 추가** ⭐

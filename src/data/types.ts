@@ -167,6 +167,7 @@ export type SubjectKey =
   | 'spendingStyle' | 'drinkingStyle' | 'travelStyle'
   | 'wine' | 'travel' | 'exercise' | 'bloodType'  // 신규 테스트
   | 'gameStyle' | 'snsStyle' | 'homeStyle' | 'movieGenre'
+  | 'attachment'  // 연애 애착 스타일
   // petMatch 세부 테스트
   | 'dogBreed' | 'catBreed' | 'smallPet' | 'fishType' | 'birdType' | 'reptileType';
 

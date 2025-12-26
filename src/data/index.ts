@@ -33,6 +33,7 @@ import { gameStyleData } from './subjects/gameStyle';
 import { snsStyleData } from './subjects/snsStyle';
 import { homeStyleData } from './subjects/homeStyle';
 import { movieGenreData } from './subjects/movieGenre';
+import { attachmentData } from './subjects/attachment';
 // 세부 테스트
 import { dogBreedData } from './subjects/dogBreed';
 import { catBreedData } from './subjects/catBreed';
@@ -78,6 +79,7 @@ const _CHEMI_DATA = {
     snsStyle: snsStyleData,
     homeStyle: homeStyleData,
     movieGenre: movieGenreData,
+    attachment: attachmentData,
     // 세부 테스트
     dogBreed: dogBreedData,
     catBreed: catBreedData,
@@ -112,6 +114,6 @@ export const coffeeData = COFFEE_DATA;
 // 신규 테스트 re-export (이미 camelCase로 import됨)
 export { teaData, conflictStyleData, fruitData, alcoholData, breadData, perfumeData, aromaData, foodData, whiskeySampleData, ramenData, spendingStyleData, drinkingStyleData, travelStyleData };
 // 신규 매칭 테스트 re-export
-export { wineData, travelData, exerciseData, bloodTypeData, gameStyleData, snsStyleData, homeStyleData, movieGenreData };
+export { wineData, travelData, exerciseData, bloodTypeData, gameStyleData, snsStyleData, homeStyleData, movieGenreData, attachmentData };
 // 세부 테스트 re-export
 export { dogBreedData, catBreedData, smallPetData, fishTypeData, birdTypeData, reptileTypeData };

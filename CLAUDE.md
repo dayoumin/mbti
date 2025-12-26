@@ -116,6 +116,9 @@ npm run build
 | 해금 조건 | `src/app/dashboard/data/insight-system.ts` | InsightService, UI |
 | 테스트 설정 | `src/data/config.ts` | 모든 테스트 관련 코드 |
 | 이벤트 타입 | `src/services/AnalyticsService.ts` | dashboard/data/analytics-system.ts |
+| **인사이트 태그** | `src/data/insight/insight-tags.ts` | InsightService, content-generator, test-tag-mappings |
+| 테스트 태그 매핑 | `src/data/insight/test-tag-mappings.ts` | InsightService |
+| 반응 태그 매핑 | `src/data/content/types.ts` (REACTION_TAG_TO_INSIGHT) | 상황반응 콘텐츠 |
 
 **하드코딩 금지 예시:**
 ```typescript

@@ -9,12 +9,16 @@ import {
   Lock,
   ChevronRight,
   TrendingUp,
+  Heart,
+  Eye,
 } from 'lucide-react';
 import { insightService } from '@/services/InsightService';
 import { eventBus } from '@/services/EventBus';
 import type { Stage2Rule } from '@/data/insight/stage2-rules';
 import type { DecisionStyleResult } from '@/data/insight/stage3-decision-style';
 import type { InterestMapResult } from '@/data/insight/stage4-interest-map';
+import type { RelationshipPatternResult } from '@/data/insight/stage5-relationship-pattern';
+import type { HiddenPatternResult } from '@/data/insight/stage6-hidden-pattern';
 
 // ============================================================================
 // Types
@@ -51,6 +55,8 @@ export default function InsightCards({
   const [stage2Rules, setStage2Rules] = useState<Stage2Rule[] | null>(null);
   const [stage3Result, setStage3Result] = useState<DecisionStyleResult | null>(null);
   const [stage4Result, setStage4Result] = useState<InterestMapResult | null>(null);
+  const [stage5Result, setStage5Result] = useState<RelationshipPatternResult | null>(null);
+  const [stage6Result, setStage6Result] = useState<HiddenPatternResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadInsightData = useCallback(() => {
@@ -67,6 +73,8 @@ export default function InsightCards({
         { stage: 2, title: '성격 조합', emoji: '🔗' },
         { stage: 3, title: '판단 스타일', emoji: '⚖️' },
         { stage: 4, title: '관심사 지도', emoji: '🗺️' },
+        { stage: 5, title: '관계 패턴', emoji: '💕' },
+        { stage: 6, title: '숨은 패턴', emoji: '🔮' },
       ];
 
       const stageData: StageData[] = stageConfigs.slice(0, maxStages).map((config) => {
@@ -83,7 +91,7 @@ export default function InsightCards({
 
       setStages(stageData);
 
-      // Stage 2-4 인사이트 로드
+      // Stage 2-6 인사이트 로드
       if (insightService.isStageUnlocked(2)) {
         setStage2Rules(insightService.getStage2Insight(3));
       }
@@ -92,6 +100,12 @@ export default function InsightCards({
       }
       if (insightService.isStageUnlocked(4)) {
         setStage4Result(insightService.getStage4Insight());
+      }
+      if (insightService.isStageUnlocked(5)) {
+        setStage5Result(insightService.getStage5Insight());
+      }
+      if (insightService.isStageUnlocked(6)) {
+        setStage6Result(insightService.getStage6Insight());
       }
     } catch (error) {
       console.error('[InsightCards] Error loading data:', error);
@@ -155,6 +169,8 @@ export default function InsightCards({
             stage2Rules={stage.stage === 2 ? stage2Rules : null}
             stage3Result={stage.stage === 3 ? stage3Result : null}
             stage4Result={stage.stage === 4 ? stage4Result : null}
+            stage5Result={stage.stage === 5 ? stage5Result : null}
+            stage6Result={stage.stage === 6 ? stage6Result : null}
             onClick={() => onCardClick?.(stage.stage)}
           />
         ))}
@@ -217,12 +233,16 @@ function StageCard({
   stage2Rules,
   stage3Result,
   stage4Result,
+  stage5Result,
+  stage6Result,
   onClick,
 }: {
   stage: StageData;
   stage2Rules: Stage2Rule[] | null;
   stage3Result: DecisionStyleResult | null;
   stage4Result: InterestMapResult | null;
+  stage5Result: RelationshipPatternResult | null;
+  stage6Result: HiddenPatternResult | null;
   onClick?: () => void;
 }) {
   if (!stage.unlocked) {
@@ -239,6 +259,10 @@ function StageCard({
       return <Stage3Card stage={stage} result={stage3Result} onClick={onClick} />;
     case 4:
       return <Stage4Card stage={stage} result={stage4Result} onClick={onClick} />;
+    case 5:
+      return <Stage5Card stage={stage} result={stage5Result} onClick={onClick} />;
+    case 6:
+      return <Stage6Card stage={stage} result={stage6Result} onClick={onClick} />;
     default:
       return null;
   }
@@ -503,6 +527,144 @@ function Stage4Card({
               <span className="text-xs text-gray-600 w-8">{entry.percentage}%</span>
             </div>
           ))}
+        </div>
+      )}
+    </button>
+  );
+}
+
+// ============================================================================
+// Stage5Card - 관계 패턴
+// ============================================================================
+
+function Stage5Card({
+  stage,
+  result,
+  onClick,
+}: {
+  stage: StageData;
+  result: RelationshipPatternResult | null;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-4 border border-rose-200 text-left transition-all hover:shadow-md"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center">
+            <Heart className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <div className="font-bold text-gray-900">{stage.title}</div>
+            <div className="text-sm text-rose-600">
+              {result?.profile.nameKr || '관계 태그 수집 중...'}
+            </div>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-gray-400" />
+      </div>
+
+      {/* 관계 스타일 요약 */}
+      {result ? (
+        <div className="bg-white/80 rounded-xl p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">{result.conflictStyle.primary.emoji}</span>
+            <span className="font-medium text-gray-900">
+              {result.conflictStyle.primary.nameKr}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <span className="px-2 py-0.5 bg-rose-100 rounded-full text-xs text-rose-700">
+              {result.intimacyPreference.interpretation}
+            </span>
+            <span className="px-2 py-0.5 bg-pink-100 rounded-full text-xs text-pink-700">
+              {result.careDirection.interpretation}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white/60 rounded-xl p-3 text-center">
+          <p className="text-sm text-gray-500">
+            관계/갈등 관련 콘텐츠를 더 참여해보세요
+          </p>
+        </div>
+      )}
+    </button>
+  );
+}
+
+// ============================================================================
+// Stage6Card - 숨은 패턴
+// ============================================================================
+
+function Stage6Card({
+  stage,
+  result,
+  onClick,
+}: {
+  stage: StageData;
+  result: HiddenPatternResult | null;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-4 border border-violet-200 text-left transition-all hover:shadow-md"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center">
+            <Eye className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <div className="font-bold text-gray-900">{stage.title}</div>
+            <div className="text-sm text-violet-600">
+              {result ? `일관성 ${result.consistency.score}%` : '태그 수집 중...'}
+            </div>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-gray-400" />
+      </div>
+
+      {/* 숨은 패턴 요약 */}
+      {result ? (
+        <div className="space-y-2">
+          {/* 모순 패턴 */}
+          {result.contradictions.length > 0 && (
+            <div className="bg-white/80 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">{result.contradictions[0].emoji}</span>
+                <span className="font-medium text-gray-900 text-sm">
+                  {result.contradictions[0].interpretation}
+                </span>
+              </div>
+              <p className="text-xs text-gray-600 line-clamp-1">
+                {result.contradictions[0].insight}
+              </p>
+            </div>
+          )}
+
+          {/* 희귀 조합 */}
+          {result.rarePatterns.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {result.rarePatterns.slice(0, 2).map((pattern, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 bg-violet-100 rounded-full text-xs text-violet-700"
+                >
+                  {pattern.emoji} {pattern.interpretation}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="bg-white/60 rounded-xl p-3 text-center">
+          <p className="text-sm text-gray-500">
+            10개 이상의 태그가 필요해요 (콘텐츠 더 참여하기)
+          </p>
         </div>
       )}
     </button>
