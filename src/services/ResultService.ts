@@ -38,7 +38,7 @@ interface TestResultData {
   };
 }
 
-interface TestResultCamel {
+export interface TestResultCamel {
   id: string;
   userId: string;
   project: string;

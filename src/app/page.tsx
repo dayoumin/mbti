@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { CHEMI_DATA } from '../data/index';
 import { SUBJECT_CONFIG } from '../data/config';
 import { SCORING } from '@/config';
@@ -84,6 +85,8 @@ interface ParentInfo {
 // ============================================================================
 
 export default function Home() {
+    const router = useRouter();
+
     // 뷰/테스트 상태
     const [view, setView] = useState<ViewType>('dashboard');
     const [mode, setMode] = useState<SubjectKey>('human');
@@ -176,6 +179,12 @@ export default function Home() {
 
     // 하단 내비게이션 탭 변경 핸들러
     const handleNavTabChange = (tab: NavTab) => {
+        // profile 탭은 별도 페이지로 이동
+        if (tab === 'profile') {
+            router.push('/profile');
+            return;
+        }
+
         setActiveNavTab(tab);
         closeModal(); // 모든 모달 닫기
         setView('dashboard');
@@ -186,7 +195,7 @@ export default function Home() {
             explore: 'contentExplore', // 퀴즈/투표 (참여형 콘텐츠)
             talk: 'community',
             ranking: 'ranking',
-            profile: 'profile',
+            profile: null, // 별도 페이지로 처리
         };
 
         if (tabToModal[tab]) {
