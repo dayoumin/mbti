@@ -9,6 +9,7 @@ import { ANIME_TIER_TOURNAMENTS } from './anime-tier';
 import { RAMEN_TIER_TOURNAMENTS } from './food-tier';
 import { CELEBRITY_MALE_TIER_TOURNAMENTS } from './celebrity-male-tier';
 import { CELEBRITY_FEMALE_TIER_TOURNAMENTS } from './celebrity-female-tier';
+import { PERSONALITY_TIER_TOURNAMENTS } from './personality-tier';
 
 // ============================================================================
 // 토너먼트 레지스트리
@@ -19,6 +20,7 @@ const TOURNAMENT_REGISTRY: TierTournament[][] = [
   RAMEN_TIER_TOURNAMENTS,
   CELEBRITY_MALE_TIER_TOURNAMENTS,
   CELEBRITY_FEMALE_TIER_TOURNAMENTS,
+  PERSONALITY_TIER_TOURNAMENTS,
   // 추가 토너먼트 파일 여기에 등록
 ];
 
@@ -33,6 +35,7 @@ export { ANIME_TIER_TOURNAMENTS } from './anime-tier';
 export { RAMEN_TIER_TOURNAMENTS } from './food-tier';
 export { CELEBRITY_MALE_TIER_TOURNAMENTS } from './celebrity-male-tier';
 export { CELEBRITY_FEMALE_TIER_TOURNAMENTS } from './celebrity-female-tier';
+export { PERSONALITY_TIER_TOURNAMENTS } from './personality-tier';
 
 // ============================================================================
 // 조회 함수

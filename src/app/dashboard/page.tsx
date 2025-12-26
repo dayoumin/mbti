@@ -43,6 +43,10 @@ import {
   ThumbsDown,
   Copy,
   Shield,
+  Image,
+  ImagePlus,
+  FolderOpen,
+  Wand2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { CHEMI_DATA } from '@/data';
@@ -84,6 +88,7 @@ import ContentStatusDashboard from './components/ContentStatusDashboard';
 import IdeaPipeline from './components/IdeaPipeline';
 import DeveloperGuide from './components/DeveloperGuide';
 import ImagePromptManager from './components/ImagePromptManager';
+import PromptEditor from './components/PromptEditor';
 import CopyrightGuide from './components/CopyrightGuide';
 import { getTestIcon } from '@/utils/testIcons';
 
@@ -91,7 +96,7 @@ import { getTestIcon } from '@/utils/testIcons';
 // Types
 // ============================================================================
 
-type SidebarCategory = 'overview' | 'tests' | 'planning' | 'devtools' | 'reference';
+type SidebarCategory = 'overview' | 'tests' | 'content' | 'planning' | 'devtools' | 'reference';
 
 interface SubTabGroup {
   groupLabel: string;
@@ -135,6 +140,17 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'questions', label: '질문 미리보기', icon: <Eye className="w-4 h-4" /> },
       { key: 'simulator', label: '시뮬레이터', icon: <Play className="w-4 h-4" /> },
       { key: 'logic', label: '로직 뷰어', icon: <Code2 className="w-4 h-4" /> },
+    ],
+  },
+  {
+    key: 'content',
+    label: '콘텐츠',
+    icon: <Image className="w-5 h-5" />,
+    subTabs: [
+      { key: 'contentOverview', label: '콘텐츠 현황', icon: <FolderOpen className="w-4 h-4" /> },
+      { key: 'imagePrompts', label: '이미지 프롬프트', icon: <ImagePlus className="w-4 h-4" /> },
+      { key: 'promptEditor', label: '프롬프트 에디터', icon: <Wand2 className="w-4 h-4" /> },
+      { key: 'contentReview', label: '콘텐츠 검수', icon: <CheckCircle2 className="w-4 h-4" /> },
     ],
   },
   {
@@ -198,10 +214,9 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'facts', label: '팩트 DB', icon: <FileText className="w-4 h-4" /> },
       { key: 'demographicTest', label: '연령 테스터', icon: <User className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },
+      { key: 'resultDistribution', label: '결과 분포', icon: <BarChart3 className="w-4 h-4" /> },
       { key: 'troubleshoot', label: '트러블슈팅', icon: <Bug className="w-4 h-4" /> },
       { key: 'learning', label: '학습', icon: <BookOpen className="w-4 h-4" /> },
-      { key: 'contentReview', label: '콘텐츠 검수', icon: <CheckCircle2 className="w-4 h-4" /> },
-      { key: 'imagePrompts', label: '이미지 프롬프트', icon: <Palette className="w-4 h-4" /> },
       { key: 'copyright', label: '저작권 가이드', icon: <Shield className="w-4 h-4" /> },
     ],
   },
@@ -496,6 +511,11 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'care' && <CareSystem />}
           {activeCategory === 'planning' && activeSubTab === 'business' && <BusinessStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'global' && <GlobalExpansion />}
+          {/* 콘텐츠 */}
+          {activeCategory === 'content' && activeSubTab === 'contentOverview' && <ContentOverview />}
+          {activeCategory === 'content' && activeSubTab === 'imagePrompts' && <ImagePromptManager />}
+          {activeCategory === 'content' && activeSubTab === 'promptEditor' && <PromptEditor />}
+          {activeCategory === 'content' && activeSubTab === 'contentReview' && <ContentReview />}
           {/* 개발 */}
           {activeCategory === 'devtools' && activeSubTab === 'aiTools' && <DeveloperGuide />}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
@@ -503,12 +523,9 @@ export default function DashboardPage() {
           {activeCategory === 'devtools' && activeSubTab === 'facts' && <FactManager />}
           {activeCategory === 'devtools' && activeSubTab === 'demographicTest' && <DemographicTester />}
           {activeCategory === 'devtools' && activeSubTab === 'tokens' && <DesignTokens />}
-          {activeCategory === 'devtools' && activeSubTab === 'contentOverview' && <ContentOverview />}
           {activeCategory === 'devtools' && activeSubTab === 'resultDistribution' && <ResultDistributionMonitor />}
-          {activeCategory === 'devtools' && activeSubTab === 'contentReview' && <ContentReview />}
           {activeCategory === 'devtools' && activeSubTab === 'troubleshoot' && <Troubleshooting />}
           {activeCategory === 'devtools' && activeSubTab === 'learning' && <Learning />}
-          {activeCategory === 'devtools' && activeSubTab === 'imagePrompts' && <ImagePromptManager />}
           {activeCategory === 'devtools' && activeSubTab === 'copyright' && <CopyrightGuide />}
           {/* 참고 */}
           {activeCategory === 'reference' && activeSubTab === 'references' && <References />}

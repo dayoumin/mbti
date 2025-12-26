@@ -18,6 +18,8 @@ import {
   Trophy,
 } from 'lucide-react';
 
+import ContentValidityManager from './ContentValidityManager';
+
 // 콘텐츠 데이터 import (레지스트리에서 통합 배열 사용 - 타로 포함)
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS, CHOICE_POLLS } from '@/data/content/polls';
@@ -356,6 +358,9 @@ export default function ContentOverview() {
           </div>
         </div>
       </div>
+
+      {/* 유효기간 관리 */}
+      <ContentValidityManager />
     </div>
   );
 }
