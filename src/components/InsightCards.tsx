@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import {
   Brain,
   Sparkles,
@@ -11,6 +11,8 @@ import {
   TrendingUp,
   Heart,
   Eye,
+  Zap,
+  type LucideIcon,
 } from 'lucide-react';
 import { insightService } from '@/services/InsightService';
 import { eventBus } from '@/services/EventBus';
@@ -19,6 +21,95 @@ import type { DecisionStyleResult } from '@/data/insight/stage3-decision-style';
 import type { InterestMapResult } from '@/data/insight/stage4-interest-map';
 import type { RelationshipPatternResult } from '@/data/insight/stage5-relationship-pattern';
 import type { HiddenPatternResult } from '@/data/insight/stage6-hidden-pattern';
+import type { AIAnalysisResult } from '@/data/insight/stage7-ai-analysis';
+
+// ============================================================================
+// Stage 설정 데이터 (SSOT)
+// ============================================================================
+
+interface StageConfig {
+  stage: number;
+  title: string;
+  emoji: string;
+  icon: LucideIcon;
+  gradient: string;         // 배경 그라디언트
+  iconGradient: string;     // 아이콘 그라디언트
+  borderColor: string;      // 테두리 색상
+  subtitleColor: string;    // 부제목 색상
+}
+
+const STAGE_CONFIGS: StageConfig[] = [
+  {
+    stage: 1,
+    title: '기본 성향',
+    emoji: '🧠',
+    icon: Brain,
+    gradient: 'from-purple-50 to-pink-50',
+    iconGradient: 'from-purple-500 to-pink-500',
+    borderColor: 'border-purple-200',
+    subtitleColor: 'text-purple-600',
+  },
+  {
+    stage: 2,
+    title: '성격 조합',
+    emoji: '🔗',
+    icon: Sparkles,
+    gradient: 'from-blue-50 to-purple-50',
+    iconGradient: 'from-blue-500 to-purple-500',
+    borderColor: 'border-blue-200',
+    subtitleColor: 'text-blue-600',
+  },
+  {
+    stage: 3,
+    title: '판단 스타일',
+    emoji: '⚖️',
+    icon: Target,
+    gradient: 'from-amber-50 to-orange-50',
+    iconGradient: 'from-amber-500 to-orange-500',
+    borderColor: 'border-amber-200',
+    subtitleColor: 'text-amber-600',
+  },
+  {
+    stage: 4,
+    title: '관심사 지도',
+    emoji: '🗺️',
+    icon: Map,
+    gradient: 'from-green-50 to-teal-50',
+    iconGradient: 'from-green-500 to-teal-500',
+    borderColor: 'border-green-200',
+    subtitleColor: 'text-green-600',
+  },
+  {
+    stage: 5,
+    title: '관계 패턴',
+    emoji: '💕',
+    icon: Heart,
+    gradient: 'from-rose-50 to-pink-50',
+    iconGradient: 'from-rose-500 to-pink-500',
+    borderColor: 'border-rose-200',
+    subtitleColor: 'text-rose-600',
+  },
+  {
+    stage: 6,
+    title: '숨은 패턴',
+    emoji: '🔮',
+    icon: Eye,
+    gradient: 'from-violet-50 to-purple-50',
+    iconGradient: 'from-violet-500 to-purple-500',
+    borderColor: 'border-violet-200',
+    subtitleColor: 'text-violet-600',
+  },
+  {
+    stage: 7,
+    title: 'AI 종합 분석',
+    emoji: '✨',
+    icon: Zap,
+    gradient: 'from-indigo-50 to-cyan-50',
+    iconGradient: 'from-indigo-500 to-cyan-500',
+    borderColor: 'border-indigo-200',
+    subtitleColor: 'text-indigo-600',
+  },
+];
 
 // ============================================================================
 // Types
@@ -43,12 +134,51 @@ interface StageData {
 }
 
 // ============================================================================
+// InsightStageCard - 공통 카드 컴포넌트
+// ============================================================================
+
+interface InsightStageCardProps {
+  config: StageConfig;
+  subtitle: string;
+  children?: ReactNode;
+  onClick?: () => void;
+}
+
+function InsightStageCard({ config, subtitle, children, onClick }: InsightStageCardProps) {
+  const Icon = config.icon;
+
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full bg-gradient-to-br ${config.gradient} rounded-2xl p-4 ${config.borderColor} border text-left transition-all hover:shadow-md`}
+    >
+      {/* 헤더 */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 bg-gradient-to-br ${config.iconGradient} rounded-xl flex items-center justify-center`}>
+            <Icon className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <div className="font-bold text-gray-900">{config.title}</div>
+            <div className={`text-sm ${config.subtitleColor}`}>{subtitle}</div>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-gray-400" />
+      </div>
+
+      {/* 커스텀 콘텐츠 */}
+      {children}
+    </button>
+  );
+}
+
+// ============================================================================
 // InsightCards - 메인 컴포넌트
 // ============================================================================
 
 export default function InsightCards({
   compact = false,
-  maxStages = 4,
+  maxStages = 6,
   onCardClick,
 }: InsightCardsProps) {
   const [stages, setStages] = useState<StageData[]>([]);
@@ -57,6 +187,7 @@ export default function InsightCards({
   const [stage4Result, setStage4Result] = useState<InterestMapResult | null>(null);
   const [stage5Result, setStage5Result] = useState<RelationshipPatternResult | null>(null);
   const [stage6Result, setStage6Result] = useState<HiddenPatternResult | null>(null);
+  const [stage7Result, setStage7Result] = useState<AIAnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadInsightData = useCallback(() => {
@@ -68,21 +199,14 @@ export default function InsightCards({
       const progress = insightService.getProgressToNextStage();
 
       // 스테이지 데이터 구성
-      const stageConfigs = [
-        { stage: 1, title: '기본 성향', emoji: '🧠' },
-        { stage: 2, title: '성격 조합', emoji: '🔗' },
-        { stage: 3, title: '판단 스타일', emoji: '⚖️' },
-        { stage: 4, title: '관심사 지도', emoji: '🗺️' },
-        { stage: 5, title: '관계 패턴', emoji: '💕' },
-        { stage: 6, title: '숨은 패턴', emoji: '🔮' },
-      ];
-
-      const stageData: StageData[] = stageConfigs.slice(0, maxStages).map((config) => {
+      const stageData: StageData[] = STAGE_CONFIGS.slice(0, maxStages).map((config) => {
         const isUnlocked = unlockedStages.some((s) => s.stage === config.stage);
         const isNextStage = progress?.nextStage === config.stage;
 
         return {
-          ...config,
+          stage: config.stage,
+          title: config.title,
+          emoji: config.emoji,
           unlocked: isUnlocked,
           progress: isNextStage ? progress?.progress : undefined,
           remaining: isNextStage ? progress?.remaining : undefined,
@@ -91,7 +215,7 @@ export default function InsightCards({
 
       setStages(stageData);
 
-      // Stage 2-6 인사이트 로드
+      // Stage 2-7 인사이트 로드
       if (insightService.isStageUnlocked(2)) {
         setStage2Rules(insightService.getStage2Insight(3));
       }
@@ -106,6 +230,10 @@ export default function InsightCards({
       }
       if (insightService.isStageUnlocked(6)) {
         setStage6Result(insightService.getStage6Insight());
+      }
+      if (insightService.isStageUnlocked(6)) {
+        // Stage 7은 Stage 6 해금 후 사용 가능
+        setStage7Result(insightService.getStage7Insight());
       }
     } catch (error) {
       console.error('[InsightCards] Error loading data:', error);
@@ -122,7 +250,6 @@ export default function InsightCards({
   // 활동 완료 시 자동 갱신 (eventBus 구독)
   useEffect(() => {
     const unsubscribe = eventBus.subscribe(() => {
-      // 약간의 딜레이 후 갱신 (InsightService가 먼저 처리하도록)
       setTimeout(() => {
         loadInsightData();
       }, 100);
@@ -147,6 +274,16 @@ export default function InsightCards({
     return <CompactView stages={stages} onCardClick={onCardClick} />;
   }
 
+  // Stage별 결과 매핑
+  const stageResults: Record<number, unknown> = {
+    2: stage2Rules,
+    3: stage3Result,
+    4: stage4Result,
+    5: stage5Result,
+    6: stage6Result,
+    7: stage7Result,
+  };
+
   return (
     <div className="space-y-4">
       {/* 헤더 */}
@@ -162,21 +299,59 @@ export default function InsightCards({
 
       {/* 스테이지 카드들 */}
       <div className="space-y-3">
-        {stages.map((stage) => (
-          <StageCard
-            key={stage.stage}
-            stage={stage}
-            stage2Rules={stage.stage === 2 ? stage2Rules : null}
-            stage3Result={stage.stage === 3 ? stage3Result : null}
-            stage4Result={stage.stage === 4 ? stage4Result : null}
-            stage5Result={stage.stage === 5 ? stage5Result : null}
-            stage6Result={stage.stage === 6 ? stage6Result : null}
-            onClick={() => onCardClick?.(stage.stage)}
-          />
-        ))}
+        {stages.map((stage) => {
+          if (!stage.unlocked) {
+            return <LockedStageCard key={stage.stage} stage={stage} />;
+          }
+
+          const config = STAGE_CONFIGS.find((c) => c.stage === stage.stage);
+          if (!config) return null;
+
+          return (
+            <StageCardContent
+              key={stage.stage}
+              config={config}
+              result={stageResults[stage.stage]}
+              onClick={() => onCardClick?.(stage.stage)}
+            />
+          );
+        })}
       </div>
     </div>
   );
+}
+
+// ============================================================================
+// StageCardContent - Stage별 콘텐츠 렌더링
+// ============================================================================
+
+function StageCardContent({
+  config,
+  result,
+  onClick,
+}: {
+  config: StageConfig;
+  result: unknown;
+  onClick?: () => void;
+}) {
+  switch (config.stage) {
+    case 1:
+      return <Stage1Content config={config} onClick={onClick} />;
+    case 2:
+      return <Stage2Content config={config} rules={result as Stage2Rule[] | null} onClick={onClick} />;
+    case 3:
+      return <Stage3Content config={config} result={result as DecisionStyleResult | null} onClick={onClick} />;
+    case 4:
+      return <Stage4Content config={config} result={result as InterestMapResult | null} onClick={onClick} />;
+    case 5:
+      return <Stage5Content config={config} result={result as RelationshipPatternResult | null} onClick={onClick} />;
+    case 6:
+      return <Stage6Content config={config} result={result as HiddenPatternResult | null} onClick={onClick} />;
+    case 7:
+      return <Stage7Content config={config} result={result as AIAnalysisResult | null} onClick={onClick} />;
+    default:
+      return null;
+  }
 }
 
 // ============================================================================
@@ -225,50 +400,6 @@ function CompactView({
 }
 
 // ============================================================================
-// StageCard - 개별 스테이지 카드
-// ============================================================================
-
-function StageCard({
-  stage,
-  stage2Rules,
-  stage3Result,
-  stage4Result,
-  stage5Result,
-  stage6Result,
-  onClick,
-}: {
-  stage: StageData;
-  stage2Rules: Stage2Rule[] | null;
-  stage3Result: DecisionStyleResult | null;
-  stage4Result: InterestMapResult | null;
-  stage5Result: RelationshipPatternResult | null;
-  stage6Result: HiddenPatternResult | null;
-  onClick?: () => void;
-}) {
-  if (!stage.unlocked) {
-    return <LockedStageCard stage={stage} />;
-  }
-
-  // Stage별 컨텐츠 렌더링
-  switch (stage.stage) {
-    case 1:
-      return <Stage1Card stage={stage} onClick={onClick} />;
-    case 2:
-      return <Stage2Card stage={stage} rules={stage2Rules} onClick={onClick} />;
-    case 3:
-      return <Stage3Card stage={stage} result={stage3Result} onClick={onClick} />;
-    case 4:
-      return <Stage4Card stage={stage} result={stage4Result} onClick={onClick} />;
-    case 5:
-      return <Stage5Card stage={stage} result={stage5Result} onClick={onClick} />;
-    case 6:
-      return <Stage6Card stage={stage} result={stage6Result} onClick={onClick} />;
-    default:
-      return null;
-  }
-}
-
-// ============================================================================
 // LockedStageCard - 잠긴 스테이지
 // ============================================================================
 
@@ -308,10 +439,10 @@ function LockedStageCard({ stage }: { stage: StageData }) {
 }
 
 // ============================================================================
-// Stage1Card - 기본 성향
+// Stage1Content - 기본 성향
 // ============================================================================
 
-function Stage1Card({ stage, onClick }: { stage: StageData; onClick?: () => void }) {
+function Stage1Content({ config, onClick }: { config: StageConfig; onClick?: () => void }) {
   const [insight, setInsight] = useState<{
     testResults: { testId: string; resultName: string }[];
     dominantTags: { tag: string; percentage: number }[];
@@ -345,26 +476,11 @@ function Stage1Card({ stage, onClick }: { stage: StageData; onClick?: () => void
   }, []);
 
   return (
-    <button
+    <InsightStageCard
+      config={config}
+      subtitle={`${insight?.testResults.length || 0}개 테스트 완료`}
       onClick={onClick}
-      className="w-full bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-200 text-left transition-all hover:shadow-md"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-            <Brain className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900">{stage.title}</div>
-            <div className="text-sm text-purple-600">
-              {insight?.testResults.length || 0}개 테스트 완료
-            </div>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      </div>
-
-      {/* 상위 태그 */}
       {insight && insight.dominantTags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {insight.dominantTags.slice(0, 3).map((tag) => (
@@ -377,44 +493,31 @@ function Stage1Card({ stage, onClick }: { stage: StageData; onClick?: () => void
           ))}
         </div>
       )}
-    </button>
+    </InsightStageCard>
   );
 }
 
 // ============================================================================
-// Stage2Card - 성격 조합
+// Stage2Content - 성격 조합
 // ============================================================================
 
-function Stage2Card({
-  stage,
+function Stage2Content({
+  config,
   rules,
   onClick,
 }: {
-  stage: StageData;
+  config: StageConfig;
   rules: Stage2Rule[] | null;
   onClick?: () => void;
 }) {
   const topRule = rules?.[0];
 
   return (
-    <button
+    <InsightStageCard
+      config={config}
+      subtitle={`${rules?.length || 0}개 패턴 발견`}
       onClick={onClick}
-      className="w-full bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 border border-blue-200 text-left transition-all hover:shadow-md"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900">{stage.title}</div>
-            <div className="text-sm text-blue-600">{rules?.length || 0}개 패턴 발견</div>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      </div>
-
-      {/* 상위 룰 표시 */}
       {topRule && (
         <div className="bg-white/80 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-1">
@@ -426,44 +529,29 @@ function Stage2Card({
           </p>
         </div>
       )}
-    </button>
+    </InsightStageCard>
   );
 }
 
 // ============================================================================
-// Stage3Card - 판단 스타일
+// Stage3Content - 판단 스타일
 // ============================================================================
 
-function Stage3Card({
-  stage,
+function Stage3Content({
+  config,
   result,
   onClick,
 }: {
-  stage: StageData;
+  config: StageConfig;
   result: DecisionStyleResult | null;
   onClick?: () => void;
 }) {
   return (
-    <button
+    <InsightStageCard
+      config={config}
+      subtitle={result?.profile.nameKr || '분석 중...'}
       onClick={onClick}
-      className="w-full bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200 text-left transition-all hover:shadow-md"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
-            <Target className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900">{stage.title}</div>
-            <div className="text-sm text-amber-600">
-              {result?.profile.nameKr || '분석 중...'}
-            </div>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      </div>
-
-      {/* 프로필 표시 */}
       {result && (
         <div className="bg-white/80 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-1">
@@ -475,44 +563,29 @@ function Stage3Card({
           </p>
         </div>
       )}
-    </button>
+    </InsightStageCard>
   );
 }
 
 // ============================================================================
-// Stage4Card - 관심사 지도
+// Stage4Content - 관심사 지도
 // ============================================================================
 
-function Stage4Card({
-  stage,
+function Stage4Content({
+  config,
   result,
   onClick,
 }: {
-  stage: StageData;
+  config: StageConfig;
   result: InterestMapResult | null;
   onClick?: () => void;
 }) {
   return (
-    <button
+    <InsightStageCard
+      config={config}
+      subtitle={result?.interestProfile.nameKr || '분석 중...'}
       onClick={onClick}
-      className="w-full bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-4 border border-green-200 text-left transition-all hover:shadow-md"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center">
-            <Map className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900">{stage.title}</div>
-            <div className="text-sm text-green-600">
-              {result?.interestProfile.nameKr || '분석 중...'}
-            </div>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      </div>
-
-      {/* 관심사 바 차트 */}
       {result && result.entries.length > 0 && (
         <div className="space-y-2">
           {result.entries.slice(0, 3).map((entry) => (
@@ -529,44 +602,29 @@ function Stage4Card({
           ))}
         </div>
       )}
-    </button>
+    </InsightStageCard>
   );
 }
 
 // ============================================================================
-// Stage5Card - 관계 패턴
+// Stage5Content - 관계 패턴
 // ============================================================================
 
-function Stage5Card({
-  stage,
+function Stage5Content({
+  config,
   result,
   onClick,
 }: {
-  stage: StageData;
+  config: StageConfig;
   result: RelationshipPatternResult | null;
   onClick?: () => void;
 }) {
   return (
-    <button
+    <InsightStageCard
+      config={config}
+      subtitle={result?.profile.nameKr || '관계 태그 수집 중...'}
       onClick={onClick}
-      className="w-full bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-4 border border-rose-200 text-left transition-all hover:shadow-md"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center">
-            <Heart className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900">{stage.title}</div>
-            <div className="text-sm text-rose-600">
-              {result?.profile.nameKr || '관계 태그 수집 중...'}
-            </div>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      </div>
-
-      {/* 관계 스타일 요약 */}
       {result ? (
         <div className="bg-white/80 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-2">
@@ -591,44 +649,29 @@ function Stage5Card({
           </p>
         </div>
       )}
-    </button>
+    </InsightStageCard>
   );
 }
 
 // ============================================================================
-// Stage6Card - 숨은 패턴
+// Stage6Content - 숨은 패턴
 // ============================================================================
 
-function Stage6Card({
-  stage,
+function Stage6Content({
+  config,
   result,
   onClick,
 }: {
-  stage: StageData;
+  config: StageConfig;
   result: HiddenPatternResult | null;
   onClick?: () => void;
 }) {
   return (
-    <button
+    <InsightStageCard
+      config={config}
+      subtitle={result ? `일관성 ${result.consistency.score}%` : '태그 수집 중...'}
       onClick={onClick}
-      className="w-full bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-4 border border-violet-200 text-left transition-all hover:shadow-md"
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center">
-            <Eye className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900">{stage.title}</div>
-            <div className="text-sm text-violet-600">
-              {result ? `일관성 ${result.consistency.score}%` : '태그 수집 중...'}
-            </div>
-          </div>
-        </div>
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      </div>
-
-      {/* 숨은 패턴 요약 */}
       {result ? (
         <div className="space-y-2">
           {/* 모순 패턴 */}
@@ -667,7 +710,65 @@ function Stage6Card({
           </p>
         </div>
       )}
-    </button>
+    </InsightStageCard>
+  );
+}
+
+// ============================================================================
+// Stage7Content - AI 종합 분석
+// ============================================================================
+
+function Stage7Content({
+  config,
+  result,
+  onClick,
+}: {
+  config: StageConfig;
+  result: AIAnalysisResult | null;
+  onClick?: () => void;
+}) {
+  return (
+    <InsightStageCard
+      config={config}
+      subtitle={result?.coreIdentity ? '분석 완료' : 'Stage 6 해금 필요'}
+      onClick={onClick}
+    >
+      {result ? (
+        <div className="space-y-2">
+          {/* 핵심 정체성 */}
+          <div className="bg-white/80 rounded-xl p-3">
+            <p className="text-sm text-gray-900 font-medium line-clamp-2">
+              &ldquo;{result.coreIdentity}&rdquo;
+            </p>
+          </div>
+
+          {/* 핵심 특성 */}
+          {result.keyTraits.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {result.keyTraits.slice(0, 3).map((trait, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 bg-indigo-100 rounded-full text-xs text-indigo-700"
+                >
+                  {trait.emoji} {trait.trait}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* 신뢰도 */}
+          <div className="text-xs text-gray-500 text-right">
+            신뢰도: {result.meta.confidenceLevel === 'high' ? '높음' : result.meta.confidenceLevel === 'medium' ? '보통' : '낮음'}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white/60 rounded-xl p-3 text-center">
+          <p className="text-sm text-gray-500">
+            Stage 6까지 해금하면 AI 종합 분석을 받을 수 있어요
+          </p>
+        </div>
+      )}
+    </InsightStageCard>
   );
 }
 
@@ -709,14 +810,7 @@ export function InsightProgress() {
     return null;
   }
 
-  const stageEmojis: Record<number, string> = {
-    1: '🧠',
-    2: '🔗',
-    3: '⚖️',
-    4: '🗺️',
-    5: '💕',
-    6: '🔮',
-  };
+  const stageConfig = STAGE_CONFIGS.find((c) => c.stage === progress.nextStage);
 
   return (
     <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-4 text-white">
@@ -725,7 +819,7 @@ export function InsightProgress() {
           <TrendingUp className="w-5 h-5" />
           <span className="font-bold">다음 인사이트</span>
         </div>
-        <span className="text-2xl">{stageEmojis[progress.nextStage] || '✨'}</span>
+        <span className="text-2xl">{stageConfig?.emoji || '✨'}</span>
       </div>
 
       <div className="mb-2">
