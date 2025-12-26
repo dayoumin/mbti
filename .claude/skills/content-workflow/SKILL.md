@@ -13,6 +13,26 @@ description: 콘텐츠 생성 전체 워크플로우. "00 컨텐츠 만들자", 
 - "연애 투표 5개 만들어줘"
 - "강아지 토너먼트 만들어줘"
 
+---
+
+## 리서치 파일 처리
+
+### 사용자가 파일 경로 제공하면
+```
+"research/cat-health.md 기반으로 고양이 퀴즈 만들어줘"
+→ 해당 파일을 content-creator에 전달
+```
+
+### 파일 경로 없으면 (기본)
+```
+"고양이 퀴즈 만들어줘"
+→ fact-collector가 웹검색으로 팩트 수집 후 생성
+```
+
+**리서치 파일 위치**: `research/` 또는 `research/facts/`
+
+---
+
 ## 워크플로우 (필수 순서!)
 
 ```
@@ -182,3 +202,20 @@ npm run build
 
 4. 결과 보고
    ✅ 생성 완료
+```
+
+---
+
+## test-workflow와의 비교 (동일 구조!)
+
+| 항목 | content-workflow | test-workflow |
+|------|------------------|---------------|
+| **파일 없으면** | fact-collector로 웹검색 | fact-collector로 웹검색 |
+| **파일 있으면** | 사용자가 경로 제공 시 사용 | 사용자가 경로 제공 시 사용 |
+| **Step 1** | content-creator Agent | test-creator Agent |
+| **Step 2** | content-auditor Agent | test-auditor Agent |
+| **Step 3** | npm run build | npm run build |
+| **Step 4** | 결과 보고 | 결과 보고 |
+| 담당 | 참여형 콘텐츠 (Quiz/Poll/Reaction) | 메인 테스트 (personality/matching) |
+| 수정 파일 수 | 1-2개 | 8개 |
+| 인사이트 | ReactionTag 자동 변환 | test-tag-mappings.ts 수동 추가 |

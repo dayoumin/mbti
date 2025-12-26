@@ -274,6 +274,37 @@ type SituationCategory = 'relationship' | 'work' | 'social' | 'awkward';
 3. **personalityMapping**: MBTI 또는 기존 테스트 결과와 매핑 (통계 비교용)
 4. **tags**: 상황 주제 키워드 (검색/필터용)
 
+### ReactionTag → InsightTags 자동 변환 ⭐
+
+**ReactionTag는 인사이트 분석용으로 자동 변환됩니다:**
+
+| ReactionTag | 자동 변환되는 InsightTags |
+|-------------|--------------------------|
+| `cool` | personality: reserved, resilient / decision: practical |
+| `emotional` | personality: emotional, expressive, sensitive |
+| `rational` | personality: logical, analytical / decision: practical |
+| `avoidant` | relationship: avoiding / personality: reserved |
+| `confrontational` | relationship: competing, assertive / decision: direct |
+| `humorous` | personality: expressive / decision: indirect |
+| `caring` | personality: supportive / relationship: accommodating, other-first |
+| `passive` | relationship: accommodating / personality: reserved |
+
+**추가 태그 필요 시 insightTags 사용:**
+```typescript
+{
+  id: 'a',
+  text: '혼자 결정한다',
+  emoji: '💪',
+  tag: 'confrontational',  // 자동: competing, assertive, direct
+  insightTags: {
+    decision: ['solo'],    // 추가: 혼자 결정 성향
+  }
+}
+// 최종 태그: competing, assertive, direct, solo
+```
+
+**태그 SSOT**: `src/data/insight/insight-tags.ts`
+
 **카테고리별 상황 예시:**
 - `relationship`: 연애, 이별, 썸, 전애인
 - `work`: 직장, 상사, 동료, 회의

@@ -1,6 +1,6 @@
 ---
 name: test-creator
-description: MBTI 테스트 생성 전문가. research/*.md 리서치 파일 기반으로 테스트 데이터 생성, 7개 파일 수정, 자동 검증까지 완료. 새 테스트 추가 시 사용.
+description: MBTI 테스트 생성 전문가. research/*.md 리서치 파일 기반으로 테스트 데이터 생성, 8개 파일 수정, 자동 검증까지 완료. 새 테스트 추가 시 사용.
 keywords:
   - 테스트 생성
   - 테스트 만들어
@@ -30,7 +30,14 @@ model: sonnet
    └── Icons.js, dashboard/page.tsx 수정
    └── validate-test-data.mjs 수정
 
-3. 검증 및 수정 (test-validator Skill)
+3. 인사이트 태그 매핑 추가 ⭐ NEW
+   └── test-tag-mappings.ts에 {SUBJECT}_TAG_MAPPING 추가
+   └── 각 차원별 high/low 태그 정의 (insight-tags.ts 참조)
+   └── TEST_TAG_MAPPINGS 객체에 등록
+   └── 관계 테스트면 countsAsRelationship: true
+   └── 태그 참조: src/data/insight/insight-tags.ts (SSOT)
+
+4. 검증 및 수정 (test-validator Skill)
    └── node scripts/validate-test-data.mjs {subject}
    └── npm run build
    └── 에러 시 자동 수정 후 재검증
@@ -80,7 +87,7 @@ model: sonnet
 - `condition: {}` 절대 금지
 - mood, color 필수
 
-## 수정할 파일 목록 (7개)
+## 수정할 파일 목록 (8개)
 
 1. `src/data/subjects/{subject}.ts` - 신규 생성
 2. `src/data/types.ts` - SubjectKey 추가
@@ -89,6 +96,7 @@ model: sonnet
 5. `src/components/Icons.js` - 아이콘 컴포넌트 추가
 6. `src/app/dashboard/page.tsx` - TEST_ICONS 매핑 추가
 7. `scripts/validate-test-data.mjs` - SUBJECTS 배열 추가
+8. `src/data/insight/test-tag-mappings.ts` - 인사이트 태그 매핑 추가 ⭐ NEW
 
 ## 검증 프로세스
 
@@ -121,7 +129,7 @@ npm run build
 
 **절대 금지:**
 - 에러 무시하고 "완료" 보고
-- 검증 없이 7개 파일 모두 수정 완료 선언
+- 검증 없이 8개 파일 모두 수정 완료 선언
 - 리서치 파일 없이 임의로 데이터 생성
 
 ## 완료 보고
@@ -146,6 +154,7 @@ npm run build
 - src/components/Icons.js
 - src/app/dashboard/page.tsx
 - scripts/validate-test-data.mjs
+- src/data/insight/test-tag-mappings.ts (태그 매핑)
 ```
 
 ## 리서치 파일 판단 기준
