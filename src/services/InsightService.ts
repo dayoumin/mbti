@@ -26,6 +26,14 @@ import {
   generateInterestMapResult,
   type InterestMapResult,
 } from '@/data/insight/stage4-interest-map';
+import {
+  generateRelationshipPatternResult,
+  type RelationshipPatternResult,
+} from '@/data/insight/stage5-relationship-pattern';
+import {
+  generateHiddenPatternResult,
+  type HiddenPatternResult,
+} from '@/data/insight/stage6-hidden-pattern';
 import type { UserActivityEvent } from '@/types/events';
 
 // ============================================================================
@@ -639,6 +647,59 @@ class InsightServiceClass {
     }
 
     return generateInterestMapResult(tagCounts, stats.totalActivities);
+  }
+
+  // ========================================================================
+  // Stage 5: 관계 패턴 인사이트
+  // ========================================================================
+
+  /**
+   * Stage 5 인사이트 생성 - 관계 패턴 분석
+   */
+  getStage5Insight(): RelationshipPatternResult | null {
+    if (!this.isStageUnlocked(5)) {
+      return null;
+    }
+
+    const tagCounts = this.getTagCounts();
+
+    // 관계 관련 태그가 있는지 확인 (SSOT: RELATIONSHIP_TAGS from insight-tags.ts)
+    const relationshipTags = [
+      'competing', 'avoiding', 'accommodating', 'collaborating', 'compromising',
+      'close-bonding', 'space-needing', 'self-first', 'other-first',
+      'assertive', 'diplomatic',
+    ];
+    const hasRelationshipTags = relationshipTags.some(tag => tagCounts[tag] > 0);
+
+    if (!hasRelationshipTags) {
+      return null;
+    }
+
+    return generateRelationshipPatternResult(tagCounts);
+  }
+
+  // ========================================================================
+  // Stage 6: 숨은 패턴 인사이트
+  // ========================================================================
+
+  /**
+   * Stage 6 인사이트 생성 - 숨은 패턴 분석
+   */
+  getStage6Insight(): HiddenPatternResult | null {
+    if (!this.isStageUnlocked(6)) {
+      return null;
+    }
+
+    const tagCounts = this.getTagCounts();
+
+    // 태그가 충분한지 확인 (최소 10개 이상의 태그 기록)
+    const totalTagCount = Object.values(tagCounts).reduce((sum, count) => sum + count, 0);
+
+    if (totalTagCount < 10) {
+      return null;
+    }
+
+    return generateHiddenPatternResult(tagCounts);
   }
 
   // ========================================================================

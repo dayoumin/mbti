@@ -16,7 +16,10 @@ import {
   ChevronRight,
   CheckCircle2,
   Zap,
+  Eye,
+  RefreshCw,
 } from 'lucide-react';
+import InsightCards, { InsightProgress } from '@/components/InsightCards';
 import {
   INSIGHT_CONCEPT,
   INSIGHT_STAGES,
@@ -46,7 +49,7 @@ import { TEST_TAG_MAPPINGS } from '@/data/insight/test-tag-mappings';
 // Types
 // ============================================================================
 
-type TabKey = 'overview' | 'stages' | 'tags' | 'mappings' | 'service' | 'rules' | 'roadmap' | 'pricing' | 'matching' | 'metrics';
+type TabKey = 'overview' | 'preview' | 'stages' | 'tags' | 'mappings' | 'service' | 'rules' | 'roadmap' | 'pricing' | 'matching' | 'metrics';
 
 // ============================================================================
 // Main Component
@@ -57,6 +60,7 @@ export default function InsightSystem() {
 
   const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
     { key: 'overview', label: '개요', icon: <Brain className="w-4 h-4" /> },
+    { key: 'preview', label: '라이브 프리뷰', icon: <Eye className="w-4 h-4" /> },
     { key: 'stages', label: '7단계 해금', icon: <Layers className="w-4 h-4" /> },
     { key: 'tags', label: '태그 SSOT', icon: <Tag className="w-4 h-4" /> },
     { key: 'mappings', label: '테스트 매핑', icon: <Zap className="w-4 h-4" /> },
@@ -90,6 +94,7 @@ export default function InsightSystem() {
 
       {/* Content */}
       {activeTab === 'overview' && <OverviewTab />}
+      {activeTab === 'preview' && <PreviewTab />}
       {activeTab === 'stages' && <StagesTab />}
       {activeTab === 'tags' && <TagsTab />}
       {activeTab === 'mappings' && <MappingsTab />}
@@ -304,6 +309,131 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
         <div>
           <div className="text-2xl font-bold text-[var(--db-text)]">{value}</div>
           <div className="text-sm text-[var(--db-muted)]">{label}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Preview Tab - 라이브 프리뷰
+// ============================================================================
+
+function PreviewTab() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRefresh = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* 헤더 */}
+      <div className="db-card">
+        <div className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <Eye className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-[var(--db-text)]">라이브 프리뷰</h3>
+                <p className="text-sm text-[var(--db-muted)]">현재 localStorage 데이터 기반 실시간 미리보기</p>
+              </div>
+            </div>
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--db-brand)] text-[#081023] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              <RefreshCw className="w-4 h-4" />
+              새로고침
+            </button>
+          </div>
+          <div className="p-3 bg-[var(--db-bg)] rounded-lg">
+            <p className="text-sm text-[var(--db-muted)]">
+              💡 테스트/퀴즈/투표를 완료하면 자동으로 인사이트 데이터가 축적됩니다.
+              새로고침 버튼을 눌러 최신 상태를 확인하세요.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 2열 레이아웃 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 좌측: 인사이트 카드 */}
+        <div className="db-card">
+          <div className="db-card-header px-5 py-4">
+            <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+              <Brain className="w-5 h-5" />
+              인사이트 카드
+            </h3>
+          </div>
+          <div className="p-5">
+            <div key={refreshKey} className="[&_button]:!bg-[var(--db-bg)] [&_button]:!border-[var(--db-border)] [&_.font-bold]:!text-[var(--db-text)] [&_.text-gray-900]:!text-[var(--db-text)] [&_.text-gray-600]:!text-[var(--db-muted)] [&_.text-gray-400]:!text-[var(--db-muted)] [&_.text-gray-500]:!text-[var(--db-muted)]">
+              <InsightCards maxStages={4} />
+            </div>
+          </div>
+        </div>
+
+        {/* 우측: 진행률 위젯 */}
+        <div className="space-y-6">
+          <div className="db-card">
+            <div className="db-card-header px-5 py-4">
+              <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+                <Sparkles className="w-5 h-5" />
+                진행률 위젯
+              </h3>
+            </div>
+            <div className="p-5">
+              <div key={refreshKey}>
+                <InsightProgress />
+              </div>
+            </div>
+          </div>
+
+          {/* 컴팩트 뷰 */}
+          <div className="db-card">
+            <div className="db-card-header px-5 py-4">
+              <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+                <Layers className="w-5 h-5" />
+                컴팩트 뷰
+              </h3>
+            </div>
+            <div className="p-5">
+              <div key={refreshKey} className="[&_button]:!bg-[var(--db-bg)] [&_button]:!border-[var(--db-border)] [&_.text-purple-700]:!text-[var(--db-brand)] [&_.text-gray-400]:!text-[var(--db-muted)]">
+                <InsightCards compact maxStages={4} />
+              </div>
+            </div>
+          </div>
+
+          {/* 사용법 */}
+          <div className="db-card">
+            <div className="db-card-header px-5 py-4">
+              <h3 className="text-lg font-semibold text-[var(--db-text)]">사용법</h3>
+            </div>
+            <div className="p-5 space-y-3">
+              <div className="p-3 bg-[var(--db-bg)] rounded-lg">
+                <code className="text-sm text-[var(--db-brand)] font-mono">
+                  {`import InsightCards from '@/components/InsightCards';`}
+                </code>
+              </div>
+              <div className="p-3 bg-[var(--db-bg)] rounded-lg">
+                <code className="text-sm text-[var(--db-brand)] font-mono">
+                  {`<InsightCards maxStages={4} />`}
+                </code>
+              </div>
+              <div className="p-3 bg-[var(--db-bg)] rounded-lg">
+                <code className="text-sm text-[var(--db-brand)] font-mono">
+                  {`<InsightCards compact />`}
+                </code>
+              </div>
+              <div className="p-3 bg-[var(--db-bg)] rounded-lg">
+                <code className="text-sm text-[var(--db-brand)] font-mono">
+                  {`<InsightProgress />`}
+                </code>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
