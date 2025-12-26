@@ -76,6 +76,7 @@
       "title": "음식 취향 MBTI",
       "description": "음식 선호도로 성향 분석",
       "status": "idea",
+      "relatedSubject": "food",
       "viral": {
         "potential": "high",
         "reasons": ["MBTI 인기", "결과 공유 욕구", "음식 추천으로 실용성"]

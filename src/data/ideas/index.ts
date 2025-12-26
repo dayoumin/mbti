@@ -4,6 +4,8 @@
 // JSON 파일에서 테마별 아이디어를 로드하고 통합 관리
 
 import type { Theme, ThemeJson, ContentIdea, ThemeMeta, IdeaStatus, ViralPotential, Priority } from './_types';
+import { IDEA_TO_SUBJECT_MAP } from './_types';
+import { SUBJECT_CONFIG } from '@/data/config';
 
 // JSON 파일들 import
 import japaneseAnimeData from './japanese-anime.json';
@@ -23,13 +25,64 @@ import jobsCareerData from './jobs-career.json';
 import psychologyTestsData from './psychology-tests.json';
 
 // ============================================================================
-// JSON → Theme 변환
+// 구현된 테스트 키 목록 (자동 감지)
+// ============================================================================
+
+const IMPLEMENTED_SUBJECTS = new Set(Object.keys(SUBJECT_CONFIG));
+
+/**
+ * 아이디어가 구현되었는지 확인
+ * @param idea 아이디어 객체
+ * @returns 구현 여부
+ */
+function isIdeaImplemented(idea: ContentIdea): boolean {
+  // 1. relatedSubject 필드가 있으면 먼저 확인
+  if (idea.relatedSubject && IMPLEMENTED_SUBJECTS.has(idea.relatedSubject)) {
+    return true;
+  }
+
+  // 2. IDEA_TO_SUBJECT_MAP에서 매핑 확인
+  const mappedSubject = IDEA_TO_SUBJECT_MAP[idea.id];
+  if (mappedSubject && IMPLEMENTED_SUBJECTS.has(mappedSubject)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * 아이디어의 실제 상태 계산 (자동 완료 감지)
+ * @param idea 원본 아이디어
+ * @returns 계산된 상태가 적용된 아이디어
+ */
+function computeIdeaStatus(idea: ContentIdea): ContentIdea {
+  // 이미 completed 상태면 그대로
+  if (idea.status === 'completed') {
+    return idea;
+  }
+
+  // 구현 여부 확인
+  if (isIdeaImplemented(idea)) {
+    return {
+      ...idea,
+      status: 'completed' as IdeaStatus,
+      // 자동 완료 표시
+      updatedAt: idea.updatedAt || '자동 감지',
+    };
+  }
+
+  return idea;
+}
+
+// ============================================================================
+// JSON → Theme 변환 (자동 상태 계산 포함)
 // ============================================================================
 
 function toTheme(json: ThemeJson): Theme {
   return {
     ...json.meta,
-    ideas: json.ideas as ContentIdea[],
+    // 각 아이디어에 자동 상태 계산 적용
+    ideas: (json.ideas as ContentIdea[]).map(computeIdeaStatus),
   };
 }
 

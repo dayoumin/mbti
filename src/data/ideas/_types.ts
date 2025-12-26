@@ -63,10 +63,31 @@ export interface ContentIdea {
     notes?: string[];
   };
   examples?: string[];
+  /** 구현된 파일 경로 (subjects/attachment.ts → 'attachment') */
+  relatedSubject?: string;
+  /** 레거시: 전체 경로 (하위 호환) */
   relatedFile?: string;
   addedAt: string;
   updatedAt?: string;
 }
+
+// ============================================================================
+// 아이디어 → 테스트 매핑 (자동 완료 감지용)
+// ============================================================================
+
+/**
+ * 아이디어 ID → SubjectKey 매핑 (자동 완료 감지용)
+ *
+ * 사용법:
+ * 1. 아이디어 JSON에 relatedSubject 필드 추가 (권장)
+ * 2. 또는 여기에 매핑 추가 (레거시 지원)
+ *
+ * 주의: 구현된 테스트만 추가 (SUBJECT_CONFIG에 있는 것만)
+ */
+export const IDEA_TO_SUBJECT_MAP: Record<string, string> = {
+  // JSON에 relatedSubject 없는 레거시 아이디어용
+  // 새 아이디어는 JSON에 relatedSubject 추가 권장
+};
 
 // ============================================================================
 // 테마 정의

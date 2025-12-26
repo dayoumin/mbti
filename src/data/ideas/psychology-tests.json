@@ -15,6 +15,7 @@
       "title": "애착 유형 테스트",
       "description": "나의 연애 애착 스타일 분석 (불안형/회피형/안정형/혼란형)",
       "status": "review",
+      "relatedSubject": "attachment",
       "viral": {
         "potential": "very-high",
         "reasons": ["TikTok 190만 포스트 검증된 인기", "연애/관계 콘텐츠와 시너지 최고", "결과 공유 욕구 높음", "매칭 테스트로 확장 가능"]

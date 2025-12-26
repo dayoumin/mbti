@@ -60,9 +60,12 @@ interface IdeaCardProps {
 function IdeaCard({ idea }: IdeaCardProps) {
   const [expanded, setExpanded] = useState(false);
   const viralInfo = VIRAL_LABEL[idea.viral.potential];
+  const isAutoCompleted = idea.status === 'completed' && idea.updatedAt === '자동 감지';
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow">
+    <div className={`bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow ${
+      isAutoCompleted ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200'
+    }`}>
       {/* 헤더 */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
@@ -71,8 +74,16 @@ function IdeaCard({ idea }: IdeaCardProps) {
             <span className="truncate">{idea.themeName}</span>
             <span>·</span>
             <span>{CATEGORY_LABEL[idea.category]}</span>
+            {isAutoCompleted && (
+              <>
+                <span>·</span>
+                <span className="text-emerald-600 font-medium">🔗 구현됨</span>
+              </>
+            )}
           </div>
-          <h4 className="font-medium text-gray-900 text-sm leading-tight">
+          <h4 className={`font-medium text-sm leading-tight ${
+            isAutoCompleted ? 'text-emerald-800' : 'text-gray-900'
+          }`}>
             {idea.title}
           </h4>
         </div>
@@ -226,6 +237,13 @@ export default function IdeaPipeline() {
   const quickWins = useMemo(() => getQuickWins(), []);
   const highPriority = useMemo(() => getHighPriorityIdeas(), []);
 
+  // 자동 완료 감지된 아이디어 수
+  const autoCompletedCount = useMemo(() => {
+    return allIdeas.filter(idea =>
+      idea.status === 'completed' && idea.updatedAt === '자동 감지'
+    ).length;
+  }, [allIdeas]);
+
   return (
     <div className="space-y-6">
       {/* 헤더 */}
@@ -234,6 +252,11 @@ export default function IdeaPipeline() {
           <h2 className="text-2xl font-bold text-gray-900">아이디어 파이프라인</h2>
           <p className="text-gray-500 mt-1">
             {stats.totalThemes}개 테마 · {stats.totalIdeas}개 아이디어
+            {autoCompletedCount > 0 && (
+              <span className="ml-2 text-emerald-600">
+                (🔗 {autoCompletedCount}개 자동 완료)
+              </span>
+            )}
           </p>
         </div>
 
@@ -369,8 +392,18 @@ export default function IdeaPipeline() {
         <ul className="text-blue-700 space-y-1">
           <li>• <strong>추가:</strong> "심리테스트에 OO 아이디어 추가해줘"</li>
           <li>• <strong>상태 변경:</strong> "애니 월드컵을 planning으로 변경"</li>
-          <li>• <strong>완료 처리:</strong> "음식 밸런스 게임 완료 처리"</li>
+          <li>• <strong>수동 완료:</strong> "음식 밸런스 게임 완료 처리"</li>
           <li>• 데이터 위치: <code className="bg-blue-100 px-1 rounded">src/data/ideas/*.json</code></li>
+        </ul>
+      </div>
+
+      {/* 자동 완료 안내 */}
+      <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-4 text-sm">
+        <h4 className="font-medium text-emerald-900 mb-2">🔗 자동 완료 감지</h4>
+        <ul className="text-emerald-700 space-y-1">
+          <li>• 테스트가 구현되면 (<code className="bg-emerald-100 px-1 rounded">subjects/*.ts</code>) 자동으로 완료 표시</li>
+          <li>• 매핑 설정: <code className="bg-emerald-100 px-1 rounded">src/data/ideas/_types.ts</code> → <code>IDEA_TO_SUBJECT_MAP</code></li>
+          <li>• 아이디어의 <code className="bg-emerald-100 px-1 rounded">relatedSubject</code> 필드로도 연결 가능</li>
         </ul>
       </div>
     </div>
