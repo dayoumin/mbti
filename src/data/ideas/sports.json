@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "id": "sports",
+    "name": "스포츠/선수",
+    "icon": "⚽",
+    "description": "축구/야구/농구 등 스포츠 선수/팀 투표",
+    "color": "#fd79a8",
+    "targetAudience": "10-50대 (특히 남성)",
+    "estimatedData": { "min": 100, "max": 300, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "sports-worldcup",
+      "category": "worldcup",
+      "title": "축구 선수 월드컵",
+      "description": "역대 축구 선수 중 최고 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["팬덤 강함", "메시 vs 호날두 등 영원한 논쟁", "손흥민/이강인 등 한국 선수 인기"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["선수 데이터/사진"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["역대 축구선수 월드컵 64강", "현역 축구선수 월드컵 32강", "EPL 팀 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "sports-tier-vote",
+      "category": "tier-vote",
+      "title": "축구팀 티어 투표",
+      "description": "세계 축구팀 순위/티어 투표",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["팬덤 전쟁"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템"]
+      },
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

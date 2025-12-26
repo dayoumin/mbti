@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "id": "webtoon",
+    "name": "웹툰/웹소설",
+    "icon": "📖",
+    "description": "웹툰, 웹소설 작품/캐릭터 월드컵/투표",
+    "color": "#00b894",
+    "targetAudience": "10-30대",
+    "estimatedData": { "min": 100, "max": 300, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "webtoon-worldcup",
+      "category": "worldcup",
+      "title": "웹툰 월드컵",
+      "description": "역대 웹툰 중 최고 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["10-20대 독자층 두꺼움", "네이버/카카오 플랫폼 활성화", "드라마/영화 원작 화제성"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["웹툰 썸네일", "작품 정보"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["역대 웹툰 월드컵 64강", "웹툰 주인공 월드컵", "장르별 웹툰 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "webtoon-tier-vote",
+      "category": "tier-vote",
+      "title": "웹툰 티어 투표",
+      "description": "웹툰 순위/티어 투표",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["독자 충성도", "플랫폼별 논쟁"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템"]
+      },
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

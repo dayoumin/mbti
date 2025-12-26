@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "id": "travel",
+    "name": "여행지",
+    "icon": "✈️",
+    "description": "국내/해외 여행지, 관광지 월드컵/투표",
+    "color": "#74b9ff",
+    "targetAudience": "20-40대",
+    "estimatedData": { "min": 50, "max": 200, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "travel-worldcup",
+      "category": "worldcup",
+      "title": "여행지 월드컵",
+      "description": "국내/해외 여행지 중 최고 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["시각적 콘텐츠 (사진/영상)", "버킷리스트 욕구 자극", "여행 수요 증가"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["여행지 사진", "지역 정보"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["국내 여행지 월드컵 32강", "해외 여행지 월드컵 64강", "유럽 도시 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "travel-checklist",
+      "category": "checklist",
+      "title": "평생 가봐야 할 여행지 100",
+      "description": "가봐야 할 여행지 체크리스트",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["버킷리스트 효과", "FOMO"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["여행지 리스트 100개"]
+      },
+      "strategy": { "phase": "Phase 3", "priority": "low" },
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "travel-tier-vote",
+      "category": "tier-vote",
+      "title": "가고 싶은 나라 티어 투표",
+      "description": "전 세계 여행지를 S~F 티어로 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["여행 로망 자극", "국가별 이미지 논쟁", "여행 트렌드 반영", "지역별 취향 차이 극명"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템", "국가/도시 데이터 100개"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "high", "notes": ["국가 이미지 논쟁 가능성", "카테고리 분리: 국가, 도시, 휴양지, 관광지"] },
+      "examples": ["가고 싶은 나라 티어", "유럽 도시 티어", "아시아 여행지 티어", "휴양지 티어"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "travel-balance-game",
+      "category": "balance-game",
+      "title": "여행 밸런스 게임",
+      "description": "극한의 여행 선택",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["여행 FOMO 자극", "현실적 고민 반영", "선택 고통 극대화", "댓글 공감 폭발"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["VS 질문 30개"]
+      },
+      "strategy": { "phase": "Phase 1", "priority": "high", "notes": ["Quick Win - 쉽고 바이럴 높음", "여행 시즌 타겟"] },
+      "examples": ["평생 국내만 vs 평생 해외만?", "유럽 1달 vs 동남아 3달?", "혼자 자유여행 vs 친구랑 패키지?", "럭셔리 3일 vs 배낭여행 2주?", "일본 10번 vs 유럽 1번?", "맛집 투어 vs 관광지 투어?", "도시 여행 vs 자연 여행?", "사진 많이 vs 눈에 담기?", "계획적 여행 vs 즉흥 여행?", "평생 여름 휴양지만 vs 평생 겨울 스키장만?"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "travel-mbti",
+      "category": "mbti-test",
+      "title": "여행 스타일 MBTI",
+      "description": "여행 성향으로 여행자 유형 분석",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["여행 동행자 매칭 가능", "자기 이해 + 실용성", "결과 공유 욕구"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3-5일",
+        "dependencies": ["차원 정의", "결과 유형 8-12개"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["차원: 계획형 vs 즉흥형", "차원: 활동적 vs 휴식형", "차원: 문화 체험 vs 자연 감상", "차원: 혼행 vs 단체", "결과: 당신은 모험가형 여행자!", "결과: 힐링 추구형 여행자"],
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

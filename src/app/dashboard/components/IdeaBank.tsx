@@ -46,10 +46,11 @@ const CATEGORY_INFO: Record<ContentCategory, { name: string; icon: string; color
 
 const STATUS_INFO: Record<IdeaStatus, { name: string; icon: string; color: string }> = {
   idea: { name: '아이디어', icon: '📝', color: '#95a5a6' },
-  planning: { name: '기획 중', icon: '🎨', color: '#3498db' },
+  review: { name: '검토 중', icon: '🔍', color: '#3498db' },
+  planning: { name: '기획 중', icon: '🎨', color: '#9b59b6' },
   ready: { name: '준비됨', icon: '✅', color: '#2ecc71' },
   'in-progress': { name: '진행 중', icon: '🚧', color: '#f39c12' },
-  completed: { name: '완료', icon: '✨', color: '#9b59b6' },
+  completed: { name: '완료', icon: '✨', color: '#27ae60' },
   paused: { name: '보류', icon: '⏸️', color: '#7f8c8d' },
 };
 

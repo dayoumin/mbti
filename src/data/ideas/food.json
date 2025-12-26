@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "id": "food",
+    "name": "외식/음식",
+    "icon": "🍕",
+    "description": "음식, 맛집, 메뉴 월드컵/투표",
+    "color": "#ff6b6b",
+    "targetAudience": "전 연령대",
+    "estimatedData": { "min": 50, "max": 200, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "food-worldcup",
+      "category": "worldcup",
+      "title": "음식 월드컵",
+      "description": "최고의 음식/메뉴 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["음식은 보편적 관심사", "선택 고통 + 입맛 논쟁", "배고픔 유발로 체류 시간 증가", "다양한 카테고리 가능"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["음식 이미지/사진 수집", "카테고리별 후보 선정"]
+      },
+      "strategy": {
+        "phase": "Phase 1",
+        "priority": "high",
+        "notes": ["이미지 중요", "카테고리별 분리: 한식, 중식, 일식, 양식, 분식, 치킨, 디저트", "음식 배달 앱 연동 가능성"]
+      },
+      "examples": ["한식 월드컵 64강", "치킨 메뉴 월드컵 32강", "디저트 월드컵 32강", "편의점 음식 월드컵 32강"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "food-tier-vote",
+      "category": "tier-vote",
+      "title": "음식 티어 투표",
+      "description": "음식/메뉴를 S~F 티어로 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["취향 논쟁 유발", "지역/세대별 차이", "의외의 결과로 화제"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템", "음식 데이터 100개"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["한식 티어", "치킨 브랜드 티어", "편의점 도시락 티어"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "food-balance-game",
+      "category": "balance-game",
+      "title": "음식 밸런스 게임",
+      "description": "극한의 음식 선택",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["선택 고통 극대화", "댓글 폭발 예상", "친구와 비교 욕구"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["VS 질문 30개"]
+      },
+      "strategy": { "phase": "Phase 1", "priority": "high", "notes": ["Quick Win - 쉽고 바이럴 높음"] },
+      "examples": ["평생 치킨만 vs 평생 피자만?", "평생 매운 음식 금지 vs 평생 단 음식 금지?", "맛있는데 살찌는 음식 vs 맛없는데 살 안찌는 음식?", "평생 배달만 vs 평생 직접 요리만?", "평생 한식만 vs 평생 양식만?", "평생 점심 거르기 vs 평생 저녁 거르기?"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "food-mbti",
+      "category": "mbti-test",
+      "title": "음식 취향 MBTI",
+      "description": "음식 선호도로 성향 분석",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["MBTI 인기", "결과 공유 욕구", "음식 추천으로 실용성"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3-5일",
+        "dependencies": ["차원 정의", "결과 유형 8-12개"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["차원: 매운맛/단맛/짠맛 선호도", "차원: 식감 (부드러움/바삭함)", "차원: 양 (소식/대식)", "차원: 새로운 음식 도전 vs 익숙한 음식", "결과: 당신은 모험가형 미식가!"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "food-checklist",
+      "category": "checklist",
+      "title": "이 음식 먹어봤어?",
+      "description": "한국인 필수 음식 체크리스트",
+      "status": "idea",
+      "viral": {
+        "potential": "medium",
+        "reasons": ["FOMO 자극", "버킷리스트 효과"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["음식 리스트 100개"]
+      },
+      "strategy": { "phase": "Phase 3", "priority": "low" },
+      "examples": ["한국인 필수 음식 100", "서울 맛집 체크리스트", "한국 길거리 음식 체크리스트"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "ramen-worldcup",
+      "category": "worldcup",
+      "title": "라면 월드컵",
+      "description": "최고의 라면 선정 토너먼트",
+      "status": "ready",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["국민 야식", "브랜드별 팬층 존재", "신상 라면 화제성", "가격 대비 만족도 논쟁"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["라면 이미지 32개", "브랜드/맛 정보"]
+      },
+      "strategy": { "phase": "Phase 1", "priority": "high", "notes": ["Quick Win", "신라면 vs 진라면 영원한 논쟁"] },
+      "examples": ["신라면 vs 진라면", "짜파게티 vs 너구리", "불닭볶음면 vs 팔도비빔면"],
+      "addedAt": "2025-12-26"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "id": "drama-movie",
+    "name": "드라마/영화",
+    "icon": "📺",
+    "description": "한국/해외 드라마, 영화 월드컵/투표",
+    "color": "#6c5ce7",
+    "targetAudience": "전 연령대",
+    "estimatedData": { "min": 100, "max": 400, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "drama-worldcup",
+      "category": "worldcup",
+      "title": "드라마 월드컵",
+      "description": "역대 한국 드라마 중 최고 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["넷플릭스/티빙 시대 관심도 높음", "한국 드라마 해외 인기", "OST, 배우, 명대사 파생 콘텐츠", "세대별 추억 드라마 논쟁"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["드라마 포스터 이미지", "방영년도 정보"]
+      },
+      "strategy": { "phase": "Phase 1", "priority": "high" },
+      "examples": ["역대 한국 드라마 월드컵 64강", "넷플릭스 시리즈 월드컵 32강", "한국 영화 월드컵 64강", "드라마 OST 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "drama-tier-vote",
+      "category": "tier-vote",
+      "title": "드라마/영화 티어 투표",
+      "description": "드라마/영화를 S~F 티어로 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["명작 논쟁", "취향 차이 극명"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템"]
+      },
+      "examples": ["한국 드라마 티어", "넷플릭스 오리지널 티어"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "drama-balance-game",
+      "category": "balance-game",
+      "title": "드라마/영화 밸런스 게임",
+      "description": "드라마/영화 관련 양자택일 밸런스 게임",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["선택 고통"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["VS 질문 20개"]
+      },
+      "examples": ["평생 로맨스만 vs 평생 액션만?", "평생 한국 드라마만 vs 평생 미드만?"],
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

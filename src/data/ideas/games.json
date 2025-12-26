@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "id": "games",
+    "name": "게임",
+    "icon": "🎮",
+    "description": "PC/모바일/콘솔 게임 월드컵/투표",
+    "color": "#00b894",
+    "targetAudience": "10-30대 (특히 남성)",
+    "estimatedData": { "min": 100, "max": 500, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "game-worldcup",
+      "category": "worldcup",
+      "title": "게임 월드컵",
+      "description": "역대 명작 게임 중 최고 선정 (플랫폼별/장르별)",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["게이머 커뮤니티 활발", "e스포츠 팬덤 동원력", "플랫폼/장르별 논쟁 유발", "게임 캐릭터, OST 등 파생 콘텐츠 풍부"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["게임 데이터 수집", "이미지/로고 확보"]
+      },
+      "strategy": { "phase": "Phase 1", "priority": "high" },
+      "examples": ["PC게임 월드컵 64강", "모바일게임 월드컵 32강", "콘솔게임 월드컵 64강", "게임 캐릭터 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "game-tier-vote",
+      "category": "tier-vote",
+      "title": "게임 티어 투표",
+      "description": "역대 게임을 S~F 티어로 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["게이머들의 강한 의견", "명작 논쟁"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "game-balance-game",
+      "category": "balance-game",
+      "title": "게임 밸런스 게임",
+      "description": "극한의 게임 선택",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["선택 고통", "SNS 공유 욕구"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["VS 질문 20개"]
+      },
+      "examples": ["평생 롤만 vs 평생 배그만?", "평생 PC게임만 vs 평생 모바일만?", "좋아하는 게임 서비스 종료 vs 싫어하는 게임 역대급 업데이트?"],
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

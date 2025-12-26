@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "id": "brands",
+    "name": "브랜드/제품",
+    "icon": "📱",
+    "description": "스마트폰, 카페, 편의점 등 일상 브랜드",
+    "color": "#0984e3",
+    "targetAudience": "전 연령대",
+    "estimatedData": { "min": 50, "max": 150, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "brands-tier-vote",
+      "category": "tier-vote",
+      "title": "스마트폰 브랜드 티어 투표",
+      "description": "애플, 삼성 등 브랜드 티어 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["일상 밀접 제품", "애플 vs 삼성 논쟁", "수익화 가능성"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["스마트폰 브랜드 티어", "카페 브랜드 티어", "편의점 티어", "라면 브랜드 티어"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "brands-worldcup",
+      "category": "worldcup",
+      "title": "라면 월드컵",
+      "description": "최애 라면 이상형 월드컵",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["국민 간식"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["라면 제품 이미지"]
+      },
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "id": "cars",
+    "name": "자동차",
+    "icon": "🚗",
+    "description": "자동차 브랜드/모델 월드컵/투표",
+    "color": "#636e72",
+    "targetAudience": "20-50대 남성",
+    "estimatedData": { "min": 50, "max": 150, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "cars-tier-vote",
+      "category": "tier-vote",
+      "title": "자동차 브랜드 티어 투표",
+      "description": "자동차 브랜드를 S~F 티어로 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["브랜드 충성도 강함", "현대 vs 기아, 수입차 vs 국산차 논쟁"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템", "브랜드 데이터"]
+      },
+      "strategy": { "phase": "Phase 3", "priority": "low" },
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "cars-worldcup",
+      "category": "worldcup",
+      "title": "드림카 월드컵",
+      "description": "내 드림카 이상형 월드컵",
+      "status": "idea",
+      "viral": {
+        "potential": "medium",
+        "reasons": ["남성 타겟 관심사"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "2일",
+        "dependencies": ["자동차 이미지"]
+      },
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

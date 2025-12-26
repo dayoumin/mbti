@@ -80,6 +80,9 @@ import ContentReview from './components/ContentReview';
 import ContentOverview from './components/ContentOverview';
 import ResultDistributionMonitor from './components/ResultDistributionMonitor';
 import InsightSystem from './components/InsightSystem';
+import ContentStatusDashboard from './components/ContentStatusDashboard';
+import IdeaPipeline from './components/IdeaPipeline';
+import DeveloperGuide from './components/DeveloperGuide';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -113,6 +116,8 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <LayoutDashboard className="w-5 h-5" />,
     subTabs: [
       { key: 'summary', label: '요약', icon: <BarChart3 className="w-4 h-4" /> },
+      { key: 'contentStatus', label: '콘텐츠 현황', icon: <Layers className="w-4 h-4" /> },
+      { key: 'ideaPipeline', label: '아이디어 파이프라인', icon: <Lightbulb className="w-4 h-4" /> },
       { key: 'recent', label: '최근 활동', icon: <Clock className="w-4 h-4" /> },
       { key: 'todos', label: 'TODO', icon: <ListChecks className="w-4 h-4" /> },
     ],
@@ -185,6 +190,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     label: '개발',
     icon: <Wrench className="w-5 h-5" />,
     subTabs: [
+      { key: 'aiTools', label: 'AI 도구 가이드', icon: <Sparkles className="w-4 h-4" /> },
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'automation', label: '자동화', icon: <Zap className="w-4 h-4" /> },
       { key: 'facts', label: '팩트 DB', icon: <FileText className="w-4 h-4" /> },
@@ -444,6 +450,8 @@ export default function DashboardPage() {
         {/* Content Area */}
         <div className="p-6 pt-8">
           {activeCategory === 'overview' && activeSubTab === 'summary' && <OverviewSummary />}
+          {activeCategory === 'overview' && activeSubTab === 'contentStatus' && <ContentStatusDashboard />}
+          {activeCategory === 'overview' && activeSubTab === 'ideaPipeline' && <IdeaPipeline />}
           {activeCategory === 'overview' && activeSubTab === 'recent' && <RecentActivity />}
           {activeCategory === 'tests' && activeSubTab === 'list' && (
             <TestList selectedTest={selectedTest} onSelectTest={setSelectedTest} />
@@ -485,6 +493,7 @@ export default function DashboardPage() {
           {activeCategory === 'planning' && activeSubTab === 'business' && <BusinessStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'global' && <GlobalExpansion />}
           {/* 개발 */}
+          {activeCategory === 'devtools' && activeSubTab === 'aiTools' && <DeveloperGuide />}
           {activeCategory === 'devtools' && activeSubTab === 'architecture' && <Architecture />}
           {activeCategory === 'devtools' && activeSubTab === 'automation' && <AutomationSystem />}
           {activeCategory === 'devtools' && activeSubTab === 'facts' && <FactManager />}

@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "id": "beauty-fashion",
+    "name": "뷰티/패션",
+    "icon": "💄",
+    "description": "화장품, 패션 브랜드/제품 월드컵/투표",
+    "color": "#fd79a8",
+    "targetAudience": "10-30대 여성",
+    "estimatedData": { "min": 50, "max": 200, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "beauty-worldcup",
+      "category": "worldcup",
+      "title": "립스틱 월드컵",
+      "description": "인기 립스틱 제품 중 최고 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["여성 타겟 관심사", "인스타그램 문화 연계", "제품 추천으로 수익화 가능"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["제품 이미지", "브랜드 정보"]
+      },
+      "strategy": { "phase": "Phase 3", "priority": "low" },
+      "examples": ["립스틱 월드컵", "쿠션 월드컵", "향수 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "fashion-tier-vote",
+      "category": "tier-vote",
+      "title": "패션 브랜드 티어 투표",
+      "description": "패션 브랜드 순위/티어 투표",
+      "status": "idea",
+      "viral": {
+        "potential": "medium",
+        "reasons": ["브랜드 선호도"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템"]
+      },
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

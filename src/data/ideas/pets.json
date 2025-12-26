@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "id": "pets",
+    "name": "반려동물",
+    "icon": "🐶",
+    "description": "강아지/고양이 품종, 반려동물 콘텐츠",
+    "color": "#fdcb6e",
+    "targetAudience": "전 연령대 (반려인)",
+    "estimatedData": { "min": 30, "max": 100, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "pets-worldcup",
+      "category": "worldcup",
+      "title": "강아지 품종 월드컵",
+      "description": "인기 강아지 품종 중 최고 선정",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["반려인구 1,500만 시대", "귀여움 = 바이럴", "사진/영상 중심 콘텐츠"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["품종 사진", "품종 정보"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["강아지 품종 월드컵", "고양이 품종 월드컵", "반려동물 이름 월드컵"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "pets-balance-game",
+      "category": "balance-game",
+      "title": "반려동물 밸런스 게임",
+      "description": "반려동물 관련 양자택일 밸런스 게임",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["강아지 vs 고양이 영원한 논쟁"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일",
+        "dependencies": ["VS 질문 20개"]
+      },
+      "examples": ["평생 강아지만 vs 평생 고양이만?"],
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

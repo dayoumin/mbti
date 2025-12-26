@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "id": "japanese-anime",
+    "name": "일본 애니메이션",
+    "icon": "🎬",
+    "description": "애니메이션 덕후들을 위한 다양한 콘텐츠",
+    "color": "#ff6b9d",
+    "targetAudience": "10-30대 애니메이션 팬층",
+    "estimatedData": { "min": 100, "max": 200, "current": 30 }
+  },
+  "ideas": [
+    {
+      "id": "anime-worldcup",
+      "category": "worldcup",
+      "title": "애니메이션 월드컵",
+      "description": "32강/64강 토너먼트로 최애 애니 선택",
+      "status": "in-progress",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["선택 강제로 몰입도 최고", "논쟁 유발", "반복 플레이 유도", "매번 다른 매칭으로 리플레이성 높음"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1일 (기존 worldcup 구조 활용)",
+        "dependencies": ["100개 후보 데이터 수집"]
+      },
+      "strategy": {
+        "phase": "Phase 1",
+        "priority": "high",
+        "notes": ["기존 worldcups/ 폴더 구조 활용 가능", "candidates.md에 이미 30개 수집 중", "빠른 출시로 초기 트래픽 확보"]
+      },
+      "relatedFile": "worldcups/japanese-anime/",
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "anime-tier-vote",
+      "category": "tier-vote",
+      "title": "애니메이션 티어 리스트 투표",
+      "description": "집단지성으로 애니메이션을 S~F 티어로 분류",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["논쟁 폭발", "실시간 순위 변동으로 재방문 유도", "팬덤 동원력", "언론 기사화 가능성"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3-5일",
+        "dependencies": ["투표 시스템 구현", "실시간 집계 로직", "티어 변동 알고리즘"]
+      },
+      "strategy": {
+        "phase": "Phase 1",
+        "priority": "high",
+        "notes": ["월드컵과 상호 보완 (개인 vs 집단)", "크로스 프로모션: 월드컵 우승작 vs 티어 S급"]
+      },
+      "examples": ["S티어: 신작/명작", "A티어: 인기작", "B티어: 평타", "C~F티어: 호불호/실패작"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "anime-balance-game",
+      "category": "balance-game",
+      "title": "애니 밸런스 게임",
+      "description": "극한의 선택으로 취향 테스트",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["선택 고통으로 공감대 형성", "댓글 폭발 예상", "진영 싸움 유도"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["VS 질문 20개 이상 기획"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "medium" },
+      "examples": ["나루토 vs 원피스 평생 1개만?", "작붕 심한 띵작 vs 작화 좋은 쓰레기", "신작 몰아보기 vs 명작 천천히 정주행", "완결 애니 vs 미완결 애니"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "anime-mbti-test",
+      "category": "mbti-test",
+      "title": "애니 취향으로 보는 MBTI",
+      "description": "애니 선호도 기반 성향 분석 테스트",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["MBTI 콘텐츠 인기", "결과 공유 욕구", "추천 알고리즘 자연스럽게 연결"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3-5일",
+        "dependencies": ["기존 MBTI 시스템 재활용", "결과 유형 8-12개 설계", "차원 정의"]
+      },
+      "strategy": {
+        "phase": "Phase 2",
+        "priority": "medium",
+        "notes": ["기존 src/data/subjects/ 구조 활용", "결과별 추천 애니 리스트 포함"]
+      },
+      "examples": ["질문: 주말에 뭐 볼까?", "질문: 좋아하는 장르는?", "질문: 최애 캐릭터 유형은?", "결과: 당신은 소년만화형!"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "anime-quiz",
+      "category": "quiz",
+      "title": "애니 덕후 인증 퀴즈",
+      "description": "난이도별 애니 지식 테스트",
+      "status": "idea",
+      "viral": {
+        "potential": "medium",
+        "reasons": ["점수 자랑으로 SNS 공유", "난이도 조절로 재도전 유도"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "2-3일",
+        "dependencies": ["난이도별 문제 30개 이상", "점수 등급 시스템"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "low", "notes": ["오답 시 이탈 위험 있음"] },
+      "examples": ["Lv1: 국민 애니", "Lv2: 인기작", "Lv3: 마니아", "등급: 뉴비/애니러/오타쿠/갓타쿠"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "anime-checklist",
+      "category": "checklist",
+      "title": "이 애니 봤어? 안 봤어?",
+      "description": "FOMO 자극하는 시청 체크리스트",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["사회적 증거", "체크리스트 중독성", "데이터 수집 용이"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["애니 목록 100개"]
+      },
+      "strategy": { "phase": "Phase 3", "priority": "medium", "notes": ["추천 알고리즘 데이터 수집", "결과: 상위 X% 애니덕!"] },
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "anime-recommend",
+      "category": "recommend",
+      "title": "취향 저격 애니 추천",
+      "description": "최애 3개 선택하면 AI 추천",
+      "status": "idea",
+      "viral": {
+        "potential": "medium",
+        "reasons": ["개인화 만족도", "발견의 기쁨"]
+      },
+      "implementation": {
+        "difficulty": 3,
+        "estimatedTime": "1주 이상",
+        "dependencies": ["유사도 알고리즘", "충분한 데이터", "장르/태그 시스템"]
+      },
+      "strategy": { "phase": "Phase 3", "priority": "low", "notes": ["초기 데이터 필요", "다른 콘텐츠로 데이터 쌓은 후 구현"] },
+      "examples": ["원피스, 헌터헌터, 강철의 연금술사를 좋아한다면...", "이건 어때요?"],
+      "addedAt": "2025-12-23"
+    }
+  ]
+}

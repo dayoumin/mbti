@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "id": "youtubers",
+    "name": "유튜버/인플루언서",
+    "icon": "🎥",
+    "description": "유튜버, 스트리머, 인플루언서 투표",
+    "color": "#e17055",
+    "targetAudience": "10-30대 (Z세대)",
+    "estimatedData": { "min": 100, "max": 300, "current": 0 }
+  },
+  "ideas": [
+    {
+      "id": "youtubers-tier-vote",
+      "category": "tier-vote",
+      "title": "유튜버 티어 투표",
+      "description": "한국 유튜버를 S~F 티어로 평가",
+      "status": "idea",
+      "viral": {
+        "potential": "very-high",
+        "reasons": ["Z세대 관심사 1순위", "팬덤 강함", "구독자 순위 논쟁", "실시간 이슈 반영 가능"]
+      },
+      "implementation": {
+        "difficulty": 2,
+        "estimatedTime": "3일",
+        "dependencies": ["투표 시스템", "유튜버 데이터"]
+      },
+      "strategy": { "phase": "Phase 2", "priority": "high", "notes": ["논란 유튜버 제외 필요", "카테고리별 분리"] },
+      "examples": ["한국 유튜버 티어", "먹방 유튜버 티어", "게임 스트리머 티어"],
+      "addedAt": "2025-12-23"
+    },
+    {
+      "id": "youtubers-worldcup",
+      "category": "worldcup",
+      "title": "유튜버 월드컵",
+      "description": "최애 유튜버 이상형 월드컵",
+      "status": "idea",
+      "viral": {
+        "potential": "high",
+        "reasons": ["팬덤 동원"]
+      },
+      "implementation": {
+        "difficulty": 1,
+        "estimatedTime": "1-2일",
+        "dependencies": ["유튜버 프로필 사진"]
+      },
+      "addedAt": "2025-12-23"
+    }
+  ]
+}
