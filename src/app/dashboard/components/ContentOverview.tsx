@@ -15,6 +15,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
+  Trophy,
 } from 'lucide-react';
 
 // 콘텐츠 데이터 import (레지스트리에서 통합 배열 사용 - 타로 포함)
@@ -22,6 +23,7 @@ import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from '@/data/content/quiz
 import { VS_POLLS, CHOICE_POLLS } from '@/data/content/polls';
 import { ALL_SITUATION_REACTIONS } from '@/data/content/situation-reactions';
 import { ZODIAC_FORTUNES_2025, ZODIAC_POLLS, CONSTELLATIONS, ALL_DAILY_MESSAGES, LUCKY_TIPS } from '@/data/content/fortune';
+import { TIER_TOURNAMENTS, TOURNAMENT_STATS } from '@/data/content/tournaments';
 import { CATEGORY_LABELS } from '@/data/content/categories';
 import type { ContentCategory, SituationCategory } from '@/data/content/types';
 
@@ -99,6 +101,19 @@ export default function ContentOverview() {
           { name: '일일 메시지', count: ALL_DAILY_MESSAGES.length },
           { name: '행운 팁', count: LUCKY_TIPS.length },
         ],
+      },
+      {
+        name: '티어 토너먼트',
+        count: TIER_TOURNAMENTS.length,
+        icon: <Trophy className="w-5 h-5" />,
+        color: 'bg-orange-500',
+        subTypes: (() => {
+          const byCategory = TOURNAMENT_STATS.byCategory();
+          return Object.entries(byCategory).map(([cat, count]) => ({
+            name: CATEGORY_LABELS[cat as ContentCategory]?.name || cat,
+            count: count as number,
+          }));
+        })(),
       },
     ];
 
@@ -292,6 +307,35 @@ export default function ContentOverview() {
           </div>
         </div>
       </div>
+
+      {/* 토너먼트 상세 */}
+      {TIER_TOURNAMENTS.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-orange-500" />
+            티어 토너먼트 목록
+            <span className="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-sm rounded-full">
+              총 아이템 {TOURNAMENT_STATS.totalItems()}개
+            </span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {TIER_TOURNAMENTS.map((t) => (
+              <div
+                key={t.id}
+                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <span className="text-2xl">{t.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">{t.title}</div>
+                  <div className="text-sm text-gray-500">
+                    {CATEGORY_LABELS[t.category]?.name || t.category} · {t.items.length}개 아이템
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 최근 변경 (placeholder) */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
