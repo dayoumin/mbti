@@ -1099,7 +1099,7 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
   const recommendedTests = RANKABLE_TESTS.slice(0, 3);
 
   return (
-    <aside className="hidden xl:block w-72 flex-shrink-0">
+    <aside className="hidden xl:block w-80 flex-shrink-0">
       <div className="sticky top-4 space-y-4">
         {/* 랭킹 바로가기 */}
         <section className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-4 text-white">

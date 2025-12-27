@@ -13,6 +13,50 @@ type ViewMode = 'preview' | 'compare';
 const MAX_SCORE_FOR_DISPLAY = 6;
 
 // ============================================================================
+// 점수 계산 헬퍼 함수
+// ============================================================================
+
+type ConditionLevel = 'high' | 'medium' | 'low';
+type ConditionRecord = Record<string, ConditionLevel | undefined>;
+
+/**
+ * 단일 조건 레벨에 따른 점수 계산
+ * @param level - 조건 레벨 ('high' | 'medium' | 'low')
+ * @param scores - 레벨별 점수 { high, medium, low }
+ */
+function scoreByLevel(
+  level: ConditionLevel | undefined,
+  scores: { high?: number; medium?: number; low?: number } = { high: 3, medium: 2, low: 1 }
+): number {
+  if (!level) return 0;
+  return scores[level] ?? 0;
+}
+
+/**
+ * 여러 조건 키에 대해 점수 합산
+ * @param condition - 조건 객체
+ * @param keys - 체크할 키 배열
+ * @param scores - 레벨별 점수
+ */
+function sumScoresByKeys(
+  condition: ConditionRecord,
+  keys: string[],
+  scores: { high?: number; medium?: number; low?: number } = { high: 2, medium: 1 }
+): number {
+  return keys.reduce((sum, key) => sum + scoreByLevel(condition[key], scores), 0);
+}
+
+/**
+ * 역방향 점수 계산 (낮을수록 높은 점수)
+ */
+function reverseScoreByLevel(
+  level: ConditionLevel | undefined,
+  scores: { high?: number; medium?: number; low?: number } = { high: 1, medium: 2, low: 3 }
+): number {
+  return scoreByLevel(level, scores);
+}
+
+// ============================================================================
 // 랭킹 카테고리 정의
 // ============================================================================
 
@@ -35,14 +79,10 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🏃',
       description: '활발하고 에너지 넘치는 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.activity === 'high') score += 3;
-        else if (c.activity === 'medium') score += 2;
-        else if (c.activity === 'low') score += 1;
-        if (c.time === 'high') score += 2;
-        if (c.touch === 'high') score += 1;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return scoreByLevel(c.activity) +
+               scoreByLevel(c.time, { high: 2 }) +
+               scoreByLevel(c.touch, { high: 1 });
       }
     },
     {
@@ -51,13 +91,8 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🤗',
       description: '교감과 스킨십을 좋아하는 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.touch === 'high') score += 3;
-        else if (c.touch === 'medium') score += 2;
-        else if (c.touch === 'low') score += 1;
-        if (c.time === 'high') score += 1;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return scoreByLevel(c.touch) + scoreByLevel(c.time, { high: 1 });
       }
     },
     {
@@ -66,14 +101,10 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🌱',
       description: '키우기 쉬운 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 6; // 높은 점수에서 시작, 어려운 조건이면 감점
-        if (c.activity === 'high') score -= 1;
-        if (c.time === 'high') score -= 1;
-        if (c.space === 'high') score -= 1;
-        if (c.care === 'high') score -= 1;
-        if (c.noise === 'high') score -= 1;
-        return Math.max(0, score);
+        const c = result.condition as ConditionRecord;
+        // 높은 점수에서 시작, 어려운 조건이면 감점
+        const penalty = sumScoresByKeys(c, ['activity', 'time', 'space', 'care', 'noise'], { high: 1 });
+        return Math.max(0, 6 - penalty);
       }
     },
     {
@@ -82,13 +113,8 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🏠',
       description: '작은 공간에서도 가능한 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.space === 'low') score += 3;
-        else if (c.space === 'medium') score += 2;
-        else if (c.space === 'high') score += 1;
-        if (c.noise === 'low') score += 1;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return reverseScoreByLevel(c.space) + reverseScoreByLevel(c.noise, { low: 1 });
       }
     },
     {
@@ -97,13 +123,10 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🔇',
       description: '조용하고 독립적인 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.noise === 'low') score += 3;
-        else if (c.noise === 'medium') score += 2;
-        if (c.touch === 'low') score += 2;
-        if (c.activity === 'low') score += 1;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return reverseScoreByLevel(c.noise, { low: 3, medium: 2 }) +
+               reverseScoreByLevel(c.touch, { low: 2 }) +
+               reverseScoreByLevel(c.activity, { low: 1 });
       }
     }
   ],
@@ -116,12 +139,11 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🌱',
       description: '관리가 쉬운 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 6;
-        if (c.care === 'high') score -= 2;
-        if (c.water === 'high') score -= 1;
-        if (c.light === 'high') score -= 1;
-        return Math.max(0, score);
+        const c = result.condition as ConditionRecord;
+        const penalty = scoreByLevel(c.care, { high: 2 }) +
+                       scoreByLevel(c.water, { high: 1 }) +
+                       scoreByLevel(c.light, { high: 1 });
+        return Math.max(0, 6 - penalty);
       }
     },
     {
@@ -130,11 +152,8 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🌙',
       description: '햇빛 적어도 되는 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.light === 'low') score += 3;
-        else if (c.light === 'medium') score += 2;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return reverseScoreByLevel(c.light, { low: 3, medium: 2 });
       }
     },
     {
@@ -143,12 +162,9 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '😴',
       description: '물 잘 안 줘도 되는 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.water === 'low') score += 3;
-        else if (c.water === 'medium') score += 2;
-        if (c.care === 'low') score += 2;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return reverseScoreByLevel(c.water, { low: 3, medium: 2 }) +
+               reverseScoreByLevel(c.care, { low: 2 });
       }
     }
   ],
@@ -161,12 +177,10 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '💪',
       description: '진하고 강한 맛 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.bitter === 'high') score += 3;
-        if (c.caffeine === 'high') score += 2;
-        if (c.sweet === 'low') score += 1;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return scoreByLevel(c.bitter, { high: 3 }) +
+               scoreByLevel(c.caffeine, { high: 2 }) +
+               reverseScoreByLevel(c.sweet, { low: 1 });
       }
     },
     {
@@ -175,12 +189,9 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🍬',
       description: '달콤한 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.sweet === 'high') score += 3;
-        else if (c.sweet === 'medium') score += 2;
-        if (c.bitter === 'low') score += 1;
-        return score;
+        const c = result.condition as ConditionRecord;
+        return scoreByLevel(c.sweet, { high: 3, medium: 2 }) +
+               reverseScoreByLevel(c.bitter, { low: 1 });
       }
     },
     {
@@ -189,9 +200,8 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🧊',
       description: '시원하고 상쾌한 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        if (c.temperature === 'low') score += 3; // 차가운
+        const c = result.condition as ConditionRecord;
+        let score = reverseScoreByLevel(c.temperature, { low: 3 }); // 차가운
         // mood는 result 직접 속성
         if (result.mood === 'refresh' || result.mood === 'cool') score += 2;
         return score;
@@ -207,14 +217,8 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '⚡',
       description: '활발하고 에너지 넘치는 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        // 다양한 활동성 관련 차원 체크
-        ['activity', 'energy', 'active', 'inssa', 'adventure'].forEach(key => {
-          if (c[key] === 'high') score += 2;
-          else if (c[key] === 'medium') score += 1;
-        });
-        return score;
+        const c = result.condition as ConditionRecord;
+        return sumScoresByKeys(c, ['activity', 'energy', 'active', 'inssa', 'adventure']);
       }
     },
     {
@@ -223,13 +227,8 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '💬',
       description: '사교적이고 친화적인 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        ['social', 'inssa', 'humanLove', 'dogFriend', 'cute', 'express'].forEach(key => {
-          if (c[key] === 'high') score += 2;
-          else if (c[key] === 'medium') score += 1;
-        });
-        return score;
+        const c = result.condition as ConditionRecord;
+        return sumScoresByKeys(c, ['social', 'inssa', 'humanLove', 'dogFriend', 'cute', 'express']);
       }
     },
     {
@@ -238,17 +237,12 @@ const RANKING_CATEGORIES: Record<string, RankingCategory[]> = {
       emoji: '🧘',
       description: '차분하고 신중한 순',
       getScore: (result) => {
-        const c = result.condition;
-        let score = 0;
-        ['plan', 'chill', 'focus', 'persist'].forEach(key => {
-          if (c[key] === 'high') score += 2;
-          else if (c[key] === 'medium') score += 1;
-        });
+        const c = result.condition as ConditionRecord;
+        // 차분한 성향 점수
+        const calmScore = sumScoresByKeys(c, ['plan', 'chill', 'focus', 'persist']);
         // 낮은 활동성도 점수 추가
-        ['activity', 'energy', 'active', 'inssa'].forEach(key => {
-          if (c[key] === 'low') score += 1;
-        });
-        return score;
+        const lowActivityScore = sumScoresByKeys(c, ['activity', 'energy', 'active', 'inssa'], { low: 1 });
+        return calmScore + lowActivityScore;
       }
     }
   ]
