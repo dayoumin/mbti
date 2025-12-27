@@ -241,35 +241,44 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
         onBack={onClose}
       >
         {/* 메인 탭 */}
-        <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar" role="tablist" aria-label="콘텐츠 탐색 탭">
           <button
             onClick={() => { setActiveTab('quiz'); setSelectedCategory('all'); }}
+            role="tab"
+            aria-selected={activeTab === 'quiz'}
+            aria-controls="quiz-panel"
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'quiz'
               ? 'bg-blue-500 text-white shadow-sm'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
-            <HelpCircle className="w-3.5 h-3.5" />
+            <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
             퀴즈
           </button>
           <button
             onClick={() => { setActiveTab('poll'); setSelectedCategory('all'); }}
+            role="tab"
+            aria-selected={activeTab === 'poll'}
+            aria-controls="poll-panel"
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'poll'
               ? 'bg-purple-500 text-white shadow-sm'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
-            <Vote className="w-3.5 h-3.5" />
+            <Vote className="w-3.5 h-3.5" aria-hidden="true" />
             투표
           </button>
           <button
             onClick={() => { setActiveTab('community'); setSelectedCategory('all'); }}
+            role="tab"
+            aria-selected={activeTab === 'community'}
+            aria-controls="community-panel"
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'community'
               ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
-            <MessageCircle className="w-3.5 h-3.5" />
+            <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
             커뮤니티
           </button>
         </div>
@@ -404,7 +413,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
               />
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-3" role="tabpanel" id={`${activeTab}-panel`} aria-labelledby={`${activeTab}-tab`}>
               {activeTab === 'quiz' && (
                 filteredQuizzes.length > 0 ? (
                   filteredQuizzes.map((quiz) => {

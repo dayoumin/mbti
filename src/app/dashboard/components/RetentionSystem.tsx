@@ -347,6 +347,8 @@ const LiveMonitoringSection = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     const loadStats = async () => {
       try {
         // 게이미피케이션 통계 (null 체크)
@@ -356,9 +358,11 @@ const LiveMonitoringSection = () => {
         // 콘텐츠 참여 통계
         const participation = contentParticipationService.getParticipation();
 
-        // 테스트 완료 통계
+        // 테스트 완료 통계 (한 번만 페칭)
         const completedTests = await resultService.getCompletedTests();
-        const incompleteTests = await resultService.getIncompleteTests();
+        const incompleteTests = await resultService.getIncompleteTests(completedTests);
+
+        if (!mounted) return;
 
         setStats({
           totalPoints: gameStats.totalPoints,
@@ -377,11 +381,17 @@ const LiveMonitoringSection = () => {
       } catch (error) {
         console.error('Failed to load stats:', error);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     loadStats();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (loading) {

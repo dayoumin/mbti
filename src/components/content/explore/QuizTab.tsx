@@ -148,10 +148,13 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
               key={option.id}
               onClick={() => handleSelect(option.id)}
               disabled={showResult}
+              aria-label={`${option.text}${showResult && isCorrect ? ' (정답)' : ''}`}
+              aria-pressed={isSelected}
+              aria-disabled={showResult}
               className={`w-full text-left px-3 py-2 rounded-xl text-sm border transition-all ${bgClass}`}
             >
               {option.text}
-              {showResult && isCorrect && <span className="ml-2">✓</span>}
+              {showResult && isCorrect && <span className="ml-2" aria-hidden="true">✓</span>}
             </button>
           );
         })}

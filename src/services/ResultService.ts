@@ -246,8 +246,8 @@ class ResultServiceClass {
     return Array.from(completed);
   }
 
-  async getIncompleteTests(): Promise<string[]> {
-    const completed = await this.getCompletedTests();
+  async getIncompleteTests(completedTests?: string[]): Promise<string[]> {
+    const completed = completedTests ?? await this.getCompletedTests();
     const allTests = Object.keys(CHEMI_DATA);
     return allTests.filter((test) => !completed.includes(test));
   }

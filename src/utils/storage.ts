@@ -41,9 +41,22 @@ export const storage = {
     if (typeof window === 'undefined') return;
 
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      const serialized = JSON.stringify(value);
+      localStorage.setItem(key, serialized);
     } catch (error) {
-      console.error(`[Storage] Failed to set ${key}:`, error);
+      // QuotaExceededError 명시적 처리
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        console.error(`[Storage] 저장 공간 부족. "${key}" 저장 실패.`);
+        console.warn('[Storage] localStorage 용량이 가득 찼습니다. 오래된 데이터를 정리해주세요.');
+
+        // 선택: 자동 정리 로직 (주석 처리됨 - 필요시 활성화)
+        // this.clearOldData();
+      } else if (error instanceof TypeError && error.message.includes('circular')) {
+        // 순환 참조 감지
+        console.error(`[Storage] 순환 참조 객체는 저장할 수 없습니다: "${key}"`);
+      } else {
+        console.error(`[Storage] Failed to set ${key}:`, error);
+      }
     }
   },
 

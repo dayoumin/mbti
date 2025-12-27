@@ -120,11 +120,14 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
 
       <p className="text-sm font-bold text-slate-700 mb-4 text-center">{poll.question}</p>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3" role="group" aria-label="투표 선택지">
         {/* Option A */}
         <button
           onClick={() => handleVote('a')}
           disabled={!!voted}
+          aria-label={`${poll.optionA.text}${voted === 'a' ? ' (선택됨)' : ''}`}
+          aria-pressed={voted === 'a'}
+          aria-disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
             voted ? 'border-gray-200 bg-gray-50' :
               'border-purple-200 bg-slate-50 hover:border-purple-300 hover:bg-purple-50'
@@ -154,6 +157,9 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
         <button
           onClick={() => handleVote('b')}
           disabled={!!voted}
+          aria-label={`${poll.optionB.text}${voted === 'b' ? ' (선택됨)' : ''}`}
+          aria-pressed={voted === 'b'}
+          aria-disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
             voted ? 'border-gray-200 bg-gray-50' :
               'border-pink-200 bg-slate-50 hover:border-pink-300 hover:bg-pink-50'
