@@ -109,6 +109,7 @@ import ImagePromptManager from './components/ImagePromptManager';
 import PromptEditor from './components/PromptEditor';
 import CopyrightGuide from './components/CopyrightGuide';
 import ViralOptimization from './components/ViralOptimization';
+import DeploymentChecklist from './components/DeploymentChecklist';
 
 // ============================================================================
 // Types
@@ -189,6 +190,7 @@ const ROUTE_MAP: Record<string, Record<string, RouteConfig>> = {
   },
   devtools: {
     aiTools: { component: DeveloperGuide },
+    deployment: { component: DeploymentChecklist },
     architecture: { component: Development },
     automation: { component: AutomationSystem },
     facts: { component: FactManager },
@@ -303,6 +305,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <Wrench className="w-5 h-5" />,
     subTabs: [
       { key: 'aiTools', label: 'AI 도구 가이드', icon: <Sparkles className="w-4 h-4" /> },
+      { key: 'deployment', label: '배포 체크리스트', icon: <CheckCircle2 className="w-4 h-4" /> },
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'automation', label: '자동화', icon: <Zap className="w-4 h-4" /> },
       { key: 'facts', label: '팩트 DB', icon: <FileText className="w-4 h-4" /> },

@@ -203,12 +203,12 @@ export function sortByExpiryDate<T extends { meta?: { timeSensitivity?: TimeSens
     const resultA = checkContentValidity(a.meta?.timeSensitivity);
     const resultB = checkContentValidity(b.meta?.timeSensitivity);
 
-    // 둘 다 유효하지 않으면 순서 유지
-    if (!resultA.daysRemaining && !resultB.daysRemaining) return 0;
-    if (!resultA.daysRemaining) return 1;
-    if (!resultB.daysRemaining) return -1;
+    // 둘 다 날짜가 없으면 순서 유지
+    if (resultA.daysRemaining == null && resultB.daysRemaining == null) return 0;
+    if (resultA.daysRemaining == null) return 1;
+    if (resultB.daysRemaining == null) return -1;
 
-    // 남은 일수 적은 순 (오름차순)
+    // 남은 일수 적은 순 (오름차순) - 0일(오늘 만료)도 정상 처리됨
     return resultA.daysRemaining - resultB.daysRemaining;
   });
 }

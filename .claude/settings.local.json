@@ -120,7 +120,8 @@
       "Bash(prompts/code-review-timesensitivity.md)",
       "Bash(npm ls:*)",
       "Bash(del /f /q \"src\\\\data\\\\subjects\\\\*.backup\")",
-      "Bash(del /f /q \"prompts\\\\add-timesensitivity-to-existing-content.md\" \"prompts\\\\code-review-timesensitivity.md\")"
+      "Bash(del /f /q \"prompts\\\\add-timesensitivity-to-existing-content.md\" \"prompts\\\\code-review-timesensitivity.md\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

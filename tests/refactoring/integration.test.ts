@@ -2,28 +2,17 @@
  * 리팩토링 통합 테스트
  *
  * 실제 사용자 시나리오를 기반으로 기능이 정상 작동하는지 검증
+ *
+ * 환경: jsdom (window, localStorage 사용 가능)
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { store = {}; },
-  };
-})();
-
-global.localStorage = localStorageMock as any;
-
 import { storage } from '@/utils/storage';
 import { resultService } from '@/services';
 
 describe('통합 테스트: 사용자 시나리오', () => {
   beforeEach(() => {
+    // jsdom의 localStorage 초기화
     localStorage.clear();
   });
 
