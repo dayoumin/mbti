@@ -13,6 +13,7 @@ export const POSITIVE_FRAMING_MAP: Record<string, string> = {
   '소극적': '신중하고 사려 깊은',
   '계획성 없음': '즉흥적이고 유연한',
   '계획성 없는': '즉흥적이고 유연한',
+  '감정적으로': '공감적으로',
   '감정적인': '공감 능력이 뛰어난',
   '감정적': '공감 능력이 뛰어난',
   '냉정하게': '이성적이고 객관적으로',
@@ -36,22 +37,29 @@ export const POSITIVE_FRAMING_MAP: Record<string, string> = {
   진보적: '혁신적인',
   진보적인: '혁신적인',
 
-  // 사고 방식
-  현실적: '실용적인',
-  현실적인: '실용적인',
-  이상적: '비전이 있는',
-  이상적인: '비전이 있는',
-  논리적: '분석적인',
-  논리적인: '분석적인',
-  직관적: '통찰력 있는',
-  직관적인: '통찰력 있는',
+  // 사고 방식 (부사형 추가)
+  '현실적으로': '실용적으로',
+  '현실적': '실용적인',
+  '현실적인': '실용적인',
+  '이상적으로': '비전을 가지고',
+  '이상적': '비전이 있는',
+  '이상적인': '비전이 있는',
+  '논리적으로': '분석적으로',
+  '논리적': '분석적인',
+  '논리적인': '분석적인',
+  '직관적으로': '통찰력 있게',
+  '직관적': '통찰력 있는',
+  '직관적인': '통찰력 있는',
 
   // 부정적 표현 (조사 포함 버전 우선)
+  '비판적으로': '분석적으로',
   '비판적인': '분석적인',
   '비판적': '분석적인',
   '부정적으로': '신중하게',
   '부정적인': '신중한',
   '부정적': '신중한',
+  '소극적으로': '신중하게',
+  '충동적으로': '즉흥적으로',
   '실패를': '도전을',
   '실패': '도전',
   '거절을': '선택을',
@@ -127,7 +135,7 @@ export function applyPositiveFramingToTest(testData: {
   questions?: Array<{
     q: string;
     dimension: string;
-    a: Array<{ text: string; score: number; [key: string]: any }>;
+    a: Array<{ text: string; score: number;[key: string]: any }>;
     [key: string]: any;
   }>;
   resultLabels?: Array<{
@@ -145,21 +153,21 @@ export function applyPositiveFramingToTest(testData: {
     subtitle: testData.subtitle ? toPositiveFraming(testData.subtitle) : testData.subtitle,
     dimensions: testData.dimensions
       ? Object.fromEntries(
-          Object.entries(testData.dimensions).map(([key, dim]) => [
-            key,
-            applyPositiveFramingToDimension(dim),
-          ])
-        )
+        Object.entries(testData.dimensions).map(([key, dim]) => [
+          key,
+          applyPositiveFramingToDimension(dim),
+        ])
+      )
       : testData.dimensions,
     questions: testData.questions
       ? testData.questions.map(q => ({
-          ...q,
-          q: toPositiveFraming(q.q),
-          a: q.a.map(answer => ({
-            ...answer,
-            text: toPositiveFraming(answer.text)
-          }))
-        }))
+        ...q,
+        q: q.q ? toPositiveFraming(q.q) : q.q,
+        a: q.a ? q.a.map(answer => ({
+          ...answer,
+          text: answer.text ? toPositiveFraming(answer.text) : answer.text
+        })) : q.a
+      }))
       : testData.questions,
     resultLabels: testData.resultLabels
       ? testData.resultLabels.map(applyPositiveFramingToResult)

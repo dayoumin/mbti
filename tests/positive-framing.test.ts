@@ -44,6 +44,15 @@ describe('Positive Framing - toPositiveFraming', () => {
     const expected = '이성적이고 객관적인 판단과 분석적인 사고';
     expect(toPositiveFraming(input)).toBe(expected);
   });
+
+  test('부사형 변환 (감정적으로 → 공감적으로)', () => {
+    expect(toPositiveFraming('감정적으로 받아들인다')).toBe('공감적으로 받아들인다');
+  });
+
+  test('조사 포함 변환 (실패를, 거절을)', () => {
+    expect(toPositiveFraming('실패를 두려워')).toBe('도전을 두려워');
+    expect(toPositiveFraming('거절을 당했을')).toBe('선택을 당했을');
+  });
 });
 
 describe('Positive Framing - applyPositiveFramingToTest', () => {
@@ -84,7 +93,8 @@ describe('Positive Framing - applyPositiveFramingToTest', () => {
           dimension: 'empathy',
           a: [
             { text: '냉정하게 평가해야 공정하다', score: 1 },
-            { text: '감정적으로 받아들인다', score: 5 }
+            { text: '감정적으로 받아들인다', score: 5 },
+            { text: null, score: 3 }  // null 안전성 테스트
           ]
         }
       ]
@@ -94,7 +104,8 @@ describe('Positive Framing - applyPositiveFramingToTest', () => {
 
     expect(result.questions?.[0].q).toBe('분석적인 댓글을 받으면?');
     expect(result.questions?.[0].a[0].text).toBe('이성적이고 객관적으로 평가해야 공정하다');
-    expect(result.questions?.[0].a[1].text).toBe('공감 능력이 뛰어난으로 받아들인다');
+    expect(result.questions?.[0].a[1].text).toBe('공감적으로 받아들인다');
+    expect(result.questions?.[0].a[2].text).toBeNull();  // null 유지 확인
   });
 
   test('resultLabels 변환', () => {
@@ -113,7 +124,7 @@ describe('Positive Framing - applyPositiveFramingToTest', () => {
 
     expect(result.resultLabels?.[0].name).toBe('이성적이고 객관적인 분석가');
     expect(result.resultLabels?.[0].desc).toBe('분석적인 사고');
-    expect(result.resultLabels?.[0].interpretation).toBe('신중하고 사려 깊지만 신중함');
+    expect(result.resultLabels?.[0].interpretation).toBe('신중하고 사려 깊지만 사려 깊음');
     expect(result.resultLabels?.[0].guide).toBe('신중하게 생각하지 마세요');
   });
 
@@ -148,7 +159,7 @@ describe('Positive Framing - applyPositiveFramingToTest', () => {
 
     // Questions
     expect(result.questions?.[0].q).toBe('신중하고 사려 깊은 태도?');
-    expect(result.questions?.[0].a[0].text).toBe('분석적인으로');
+    expect(result.questions?.[0].a[0].text).toBe('분석적으로');
 
     // Results
     expect(result.resultLabels?.[0].desc).toBe('이성적이고 객관적인');
@@ -205,7 +216,15 @@ describe('Positive Framing - 실제 데이터 검증', () => {
       expect(positive.length).toBeGreaterThan(0);
     });
 
-    // 중복 값 체크 (같은 긍정 표현으로 여러 부정 표현 매핑 가능)
-    expect(entries.length).toBeGreaterThan(20); // 최소 20개 이상 매핑
+    // 매핑 개수 확인 (2025-12-27 기준: 53개)
+    expect(entries.length).toBe(53);
+  });
+
+  test('부사형 매핑 누락 확인', () => {
+    // 부사형 변환 시 비문법적 결과 방지
+    expect(toPositiveFraming('감정적으로')).not.toContain('뛰어난으로');
+    expect(toPositiveFraming('비판적으로')).not.toContain('분석적인으로');
+    expect(toPositiveFraming('소극적으로')).not.toContain('사려 깊은으로');
+    expect(toPositiveFraming('논리적으로')).toBe('분석적으로');
   });
 });
