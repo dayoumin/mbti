@@ -61,6 +61,35 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
       }));
   }, [showResult, quiz, allQuizzes, answeredQuizIds]);
 
+  // 통계 계산 (useMemo로 최적화 - 매 렌더링마다 재계산 방지)
+  const mockStats = useMemo(() => {
+    const CORRECT_BASE = 25;
+    const CORRECT_RANGE = 30;
+    const INCORRECT_BASE = 10;
+    const INCORRECT_RANGE = 25;
+
+    const hash = quiz.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    const totalRaw = quiz.options.reduce((sum, o) => {
+      return sum + (o.isCorrect ? CORRECT_BASE + (hash % CORRECT_RANGE) : INCORRECT_BASE + (hash % INCORRECT_RANGE));
+    }, 0);
+
+    // 퍼센트 계산 (합계 100% 보장)
+    const rawPercents = quiz.options.map((option) => {
+      const basePercent = option.isCorrect
+        ? CORRECT_BASE + (hash % CORRECT_RANGE)
+        : INCORRECT_BASE + (hash % INCORRECT_RANGE);
+      return (basePercent / totalRaw) * 100;
+    });
+
+    // floor로 계산 후 나머지를 가장 큰 값에 할당
+    const floored = rawPercents.map(p => Math.floor(p));
+    const remainder = 100 - floored.reduce((a, b) => a + b, 0);
+    const maxIndex = rawPercents.indexOf(Math.max(...rawPercents));
+    floored[maxIndex] += remainder;
+
+    return floored;
+  }, [quiz.id, quiz.options]);
+
   // 관련 퀴즈 클릭 시 스크롤 이동
   const handleQuizSelect = useCallback((quizId: string) => {
     const element = document.getElementById(`quiz-${quizId}`);
@@ -137,50 +166,22 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
           <div className="mt-3 pt-3 border-t border-current/10">
             <p className="text-xs font-bold mb-2 opacity-80">📊 다른 사람들의 선택</p>
             <div className="space-y-1.5">
-              {(() => {
-                // 결정론적 mock 통계 (실제 API 연동 전)
-                // hash를 한 번만 계산하여 재사용
-                const CORRECT_BASE = 25;
-                const CORRECT_RANGE = 30;
-                const INCORRECT_BASE = 10;
-                const INCORRECT_RANGE = 25;
+              {quiz.options.map((option, idx) => {
+                const percent = mockStats[idx];
 
-                const hash = quiz.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-                const totalRaw = quiz.options.reduce((sum, o) => {
-                  return sum + (o.isCorrect ? CORRECT_BASE + (hash % CORRECT_RANGE) : INCORRECT_BASE + (hash % INCORRECT_RANGE));
-                }, 0);
-
-                // 퍼센트 계산 (합계 100% 보장)
-                const rawPercents = quiz.options.map((option) => {
-                  const basePercent = option.isCorrect
-                    ? CORRECT_BASE + (hash % CORRECT_RANGE)
-                    : INCORRECT_BASE + (hash % INCORRECT_RANGE);
-                  return (basePercent / totalRaw) * 100;
-                });
-
-                // floor로 계산 후 나머지를 가장 큰 값에 할당
-                const floored = rawPercents.map(p => Math.floor(p));
-                const remainder = 100 - floored.reduce((a, b) => a + b, 0);
-                const maxIndex = rawPercents.indexOf(Math.max(...rawPercents));
-                floored[maxIndex] += remainder;
-
-                return quiz.options.map((option, idx) => {
-                  const percent = floored[idx];
-
-                  return (
-                    <div key={option.id} className="flex items-center gap-2">
-                      <div className="flex-1 h-5 bg-slate-50/50 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${option.isCorrect ? 'bg-emerald-400' : 'bg-slate-300'
-                            }`}
-                          style={{ width: `${percent}%` }}
-                        />
-                      </div>
-                      <span className="text-xs w-10 text-right font-bold">{percent}%</span>
+                return (
+                  <div key={option.id} className="flex items-center gap-2">
+                    <div className="flex-1 h-5 bg-slate-50/50 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${option.isCorrect ? 'bg-emerald-400' : 'bg-slate-300'
+                          }`}
+                        style={{ width: `${percent}%` }}
+                      />
                     </div>
-                  );
-                });
-              })()}
+                    <span className="text-xs w-10 text-right font-bold">{percent}%</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

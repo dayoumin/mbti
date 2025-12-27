@@ -55,16 +55,23 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
   // 포커스된 아이템으로 스크롤
   useEffect(() => {
-    if (focusedItemId) {
-      const timer = setTimeout(() => {
-        const element = itemRefs.current.get(focusedItemId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        setTimeout(() => setFocusedItemId(null), 3000);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
+    if (!focusedItemId) return;
+
+    let timer1: ReturnType<typeof setTimeout> | null = null;
+    let timer2: ReturnType<typeof setTimeout> | null = null;
+
+    timer1 = setTimeout(() => {
+      const element = itemRefs.current.get(focusedItemId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      timer2 = setTimeout(() => setFocusedItemId(null), 3000);
+    }, 100);
+
+    return () => {
+      if (timer1) clearTimeout(timer1);
+      if (timer2) clearTimeout(timer2);
+    };
   }, [focusedItemId]);
 
   useEffect(() => {
