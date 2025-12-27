@@ -244,13 +244,22 @@ interface InsightTags {
 
 **태그 유효값 (SSOT: `src/data/insight/insight-tags.ts`)**
 
-| 카테고리 | 유효 태그 |
-|---------|----------|
-| personality | `extroverted`, `introverted`, `logical`, `emotional`, `planned`, `spontaneous`, `structured`, `independent`, `supportive`, `expressive`, `reserved` 등 |
-| decision | `practical`, `sentimental`, `adventurous`, `safe`, `cautious`, `solo`, `together`, `direct`, `indirect`, `present-focused`, `future-focused` |
-| relationship | `competing`, `avoiding`, `accommodating`, `collaborating`, `compromising`, `close-bonding`, `space-needing`, `assertive`, `diplomatic` |
-| interest | `interest-cat`, `interest-dog`, `interest-plant`, `interest-coffee`, `interest-love` 등 (category에서 자동 추가됨) |
-| lifestyle | `active`, `homebody`, `frugal`, `splurger`, `morning-person`, `night-owl`, `creative`, `consuming` |
+⚠️ **아래 목록에 없는 태그는 빌드 에러 발생!** 반드시 확인 후 사용하세요.
+
+| 카테고리 | 유효 태그 (전체) |
+|---------|----------------|
+| **personality** (32개) | `extroverted`, `introverted`, `ambiverted`, `socially-confident`, `socially-anxious`, `logical`, `emotional`, `intuitive`, `analytical`, `data-driven`, `systematic`, `holistic`, `planned`, `spontaneous`, `flexible`, `structured`, `organized`, `independent`, `collaborative`, `supportive`, `leading`, `empathetic`, `nurturing`, `resilient`, `sensitive`, `calm`, `excitable`, `expressive`, `reserved`, `articulate`, `observant`, `romantic` |
+| **decision** (21개) | `practical`, `sentimental`, `idealistic`, `pragmatic`, `adventurous`, `safe`, `cautious`, `risk-taking`, `conservative`, `quick-decisive`, `deliberate`, `research-based`, `instinctive`, `solo`, `together`, `direct`, `indirect`, `tactful`, `present-focused`, `future-focused`, `nostalgic` |
+| **relationship** (11개) | `competing`, `avoiding`, `accommodating`, `collaborating`, `compromising`, `close-bonding`, `space-needing`, `self-first`, `other-first`, `assertive`, `diplomatic` |
+| **interest** (20개) | `interest-cat`, `interest-dog`, `interest-rabbit`, `interest-hamster`, `interest-bird`, `interest-fish`, `interest-reptile`, `interest-pet`, `interest-plant`, `interest-nature`, `interest-coffee`, `interest-food`, `interest-alcohol`, `interest-money`, `interest-travel`, `interest-tarot`, `interest-zodiac`, `interest-psychology`, `interest-love`, `interest-lifestyle` |
+| **lifestyle** (19개) | `active`, `homebody`, `frugal`, `splurger`, `morning-person`, `night-owl`, `routine-oriented`, `spontaneous-lifestyle`, `minimalist`, `collector`, `creative`, `consuming`, `energetic`, `relaxed`, `artistic`, `innovative`, `traditional`, `health-conscious`, `wellness-focused`, `balanced-lifestyle` |
+
+**흔한 실수 (빌드 에러 원인):**
+- ❌ `passionate` → ✅ `excitable` 또는 `expressive`
+- ❌ `independent` (relationship에서) → ✅ `self-first` 또는 `space-needing`
+- ❌ `nurturing` (relationship에서) → ✅ `other-first` 또는 `accommodating`
+- ❌ `energetic` (personality에서) → ✅ `excitable` (personality) 또는 `energetic` (lifestyle)
+- ❌ `flexible` (lifestyle에서) → ✅ `spontaneous-lifestyle` (lifestyle) 또는 `flexible` (personality)
 
 **insightTags 적용 대상:**
 - love 카테고리: 필수! (연애 스타일 분석)

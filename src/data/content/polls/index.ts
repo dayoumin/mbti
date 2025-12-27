@@ -21,6 +21,7 @@ import { TAROT_VS_POLLS, TAROT_CHOICE_POLLS } from './tarot-polls';
 import { BLOODTYPE_VS_POLLS } from './bloodtype-vs-polls';
 import { SEASONAL_VS_POLLS, SEASONAL_CHOICE_POLLS, CHRISTMAS_VS_POLLS, NEWYEAR_VS_POLLS } from './seasonal-polls';
 import { CAT_VS_POLLS } from './cat-vs-polls';
+import { DOG_VS_POLLS } from './dog-vs-polls';
 
 // ============================================================================
 // 투표 레지스트리 (분리 시 여기에 추가)
@@ -36,7 +37,7 @@ const POLL_REGISTRY: VSPoll[][] = [
   BLOODTYPE_VS_POLLS,
   SEASONAL_VS_POLLS,
   CAT_VS_POLLS,
-  // 투표 분리 시 여기에 추가 (예: DOG_POLLS)
+  DOG_VS_POLLS,
 ];
 
 // ============================================================================
