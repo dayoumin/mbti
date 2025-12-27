@@ -57,7 +57,7 @@ export const PERSONALITY_TAGS = [
 export type PersonalityTag = typeof PERSONALITY_TAGS[number];
 
 // ============================================================================
-// 2. 판단 태그 (Decision Tags) - 의사결정 스타일 (23개)
+// 2. 판단 태그 (Decision Tags) - 의사결정 스타일 (21개)
 // ============================================================================
 
 export const DECISION_TAGS = [
@@ -98,7 +98,7 @@ export const DECISION_TAGS = [
 export type DecisionTag = typeof DECISION_TAGS[number];
 
 // ============================================================================
-// 3. 관계 태그 (Relationship Tags) - TKI 갈등 모델 기반 (12개)
+// 3. 관계 태그 (Relationship Tags) - TKI 갈등 모델 기반 (11개)
 // ============================================================================
 
 export const RELATIONSHIP_TAGS = [
@@ -125,7 +125,7 @@ export const RELATIONSHIP_TAGS = [
 export type RelationshipTag = typeof RELATIONSHIP_TAGS[number];
 
 // ============================================================================
-// 4. 관심사 태그 (Interest Tags) - Stage 4 관심사 지도 (21개)
+// 4. 관심사 태그 (Interest Tags) - Stage 4 관심사 지도 (20개)
 // ============================================================================
 // 카테고리 기반 관심사 자동 추출
 
@@ -164,7 +164,7 @@ export const INTEREST_TAGS = [
 export type InterestTag = typeof INTEREST_TAGS[number];
 
 // ============================================================================
-// 5. 라이프스타일 태그 (Lifestyle Tags) - 생활 방식 (18개)
+// 5. 라이프스타일 태그 (Lifestyle Tags) - 생활 방식 (19개)
 // ============================================================================
 
 export const LIFESTYLE_TAGS = [
@@ -201,7 +201,7 @@ export const LIFESTYLE_TAGS = [
 export type LifestyleTag = typeof LIFESTYLE_TAGS[number];
 
 // ============================================================================
-// 통합 타입 (총 106개 태그)
+// 통합 타입 (총 103개 태그)
 // ============================================================================
 
 export type InsightTag =
@@ -233,9 +233,13 @@ export const CATEGORY_TO_INTEREST: Record<string, InterestTag> = {
   bird: 'interest-bird',
   fish: 'interest-fish',
   reptile: 'interest-reptile',
+  pet: 'interest-pet',         // 반려동물 전반
 
-  // 식물/음료
+  // 식물/자연
   plant: 'interest-plant',
+  nature: 'interest-nature',
+
+  // 음식/음료
   coffee: 'interest-coffee',
   food: 'interest-food',
   alcohol: 'interest-alcohol',
@@ -246,9 +250,10 @@ export const CATEGORY_TO_INTEREST: Record<string, InterestTag> = {
   money: 'interest-money',
   travel: 'interest-travel',
 
-  // 운세
+  // 운세/심리
   tarot: 'interest-tarot',
   zodiac: 'interest-zodiac',
+  psychology: 'interest-psychology',
 };
 
 /**
