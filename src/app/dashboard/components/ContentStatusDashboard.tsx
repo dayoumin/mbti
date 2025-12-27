@@ -25,6 +25,7 @@ import {
   XCircle,
   Calendar,
   RefreshCw,
+  Users,
 } from 'lucide-react';
 
 // 데이터 imports
@@ -37,8 +38,9 @@ import { ZODIAC_FORTUNES_2025, ZODIAC_POLLS, CONSTELLATIONS, ALL_DAILY_MESSAGES,
 import { TIER_TOURNAMENTS } from '@/data/content/tournaments';
 import { getTotalStats, getQuickWins, getHighPriorityIdeas } from '../data/idea-bank';
 import { CATEGORY_LABELS } from '@/data/content/categories';
-import type { ContentCategory, ValidityStatus } from '@/data/content/types';
-import { getValidityStatus, VALIDITY_PERIODS, type TimeSensitivity } from '@/data/content/types';
+import type { ContentCategory } from '@/data/content/types';
+import { AGE_GROUP_LABELS, GENDER_LABELS, type AgeGroup, type Gender } from '@/services/DemographicService';
+import ContentValidityManager from './ContentValidityManager';
 
 // ============================================================================
 // Types
@@ -277,9 +279,8 @@ export default function ContentStatusDashboard() {
                     {card.count}
                   </p>
                   <ChevronDown
-                    className={`w-4 h-4 text-[var(--db-muted)] transition-transform ml-auto ${
-                      expandedCard === card.id ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 text-[var(--db-muted)] transition-transform ml-auto ${expandedCard === card.id ? 'rotate-180' : ''
+                      }`}
                   />
                 </div>
               </div>
@@ -368,6 +369,9 @@ export default function ContentStatusDashboard() {
 
       {/* 카테고리별 콘텐츠 분포 */}
       <ContentByCategory />
+
+      {/* 타겟 커버리지 (연령/성별별) */}
+      <TargetCoverageSection />
     </div>
   );
 }
@@ -407,313 +411,6 @@ function ActionButton({
   );
 }
 
-// ============================================================================
-// 유효기간 관리 컴포넌트
-// ============================================================================
-
-interface ContentValidityItem {
-  id: string;
-  type: 'quiz' | 'poll' | 'situation' | 'tournament';
-  title: string;
-  category: string;
-  sensitivity: TimeSensitivity;
-  sourceYear: number;
-  validUntil: string | null;
-  status: ValidityStatus;
-}
-
-const SENSITIVITY_LABELS: Record<TimeSensitivity, { label: string; color: string; period: string }> = {
-  high: { label: '높음', color: '#ef4444', period: '2년' },
-  medium: { label: '중간', color: '#f59e0b', period: '3년' },
-  low: { label: '낮음', color: '#22c55e', period: '4년' },
-  none: { label: '무기한', color: '#6b7280', period: '∞' },
-};
-
-const STATUS_CONFIG: Record<ValidityStatus, { label: string; color: string; bgColor: string; icon: React.ReactNode }> = {
-  current: { label: '유효', color: '#22c55e', bgColor: 'rgba(34, 197, 94, 0.15)', icon: <CheckCircle2 className="w-4 h-4" /> },
-  needs_review: { label: '검토 필요', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.15)', icon: <AlertTriangle className="w-4 h-4" /> },
-  outdated: { label: '만료됨', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.15)', icon: <XCircle className="w-4 h-4" /> },
-};
-
-function ContentValidityManager() {
-  const [showAllItems, setShowAllItems] = useState(false);
-
-  const validityData = useMemo(() => {
-    const items: ContentValidityItem[] = [];
-    const now = new Date();
-
-    // 퀴즈 검사
-    [...ALL_KNOWLEDGE_QUIZZES, ...ALL_SCENARIO_QUIZZES].forEach((quiz) => {
-      const meta = quiz.meta?.timeSensitivity;
-      if (meta) {
-        const status = getValidityStatus(meta, now);
-        const validUntil = meta.validUntil ?? (
-          VALIDITY_PERIODS[meta.sensitivity]
-            ? `${meta.sourceYear + VALIDITY_PERIODS[meta.sensitivity]!}-12`
-            : null
-        );
-        items.push({
-          id: quiz.id,
-          type: 'quiz',
-          title: 'question' in quiz ? quiz.question.slice(0, 40) + '...' : quiz.title,
-          category: quiz.category,
-          sensitivity: meta.sensitivity,
-          sourceYear: meta.sourceYear,
-          validUntil,
-          status,
-        });
-      }
-    });
-
-    // 투표 검사
-    [...VS_POLLS, ...CHOICE_POLLS].forEach((poll) => {
-      const meta = poll.meta?.timeSensitivity;
-      if (meta) {
-        const status = getValidityStatus(meta, now);
-        const validUntil = meta.validUntil ?? (
-          VALIDITY_PERIODS[meta.sensitivity]
-            ? `${meta.sourceYear + VALIDITY_PERIODS[meta.sensitivity]!}-12`
-            : null
-        );
-        items.push({
-          id: poll.id,
-          type: 'poll',
-          title: poll.question.slice(0, 40) + (poll.question.length > 40 ? '...' : ''),
-          category: poll.category,
-          sensitivity: meta.sensitivity,
-          sourceYear: meta.sourceYear,
-          validUntil,
-          status,
-        });
-      }
-    });
-
-    // 상황반응 검사
-    ALL_SITUATION_REACTIONS.forEach((sr) => {
-      const meta = sr.meta?.timeSensitivity;
-      if (meta) {
-        const status = getValidityStatus(meta, now);
-        const validUntil = meta.validUntil ?? (
-          VALIDITY_PERIODS[meta.sensitivity]
-            ? `${meta.sourceYear + VALIDITY_PERIODS[meta.sensitivity]!}-12`
-            : null
-        );
-        items.push({
-          id: sr.id,
-          type: 'situation',
-          title: sr.situation.slice(0, 40) + (sr.situation.length > 40 ? '...' : ''),
-          category: sr.category,
-          sensitivity: meta.sensitivity,
-          sourceYear: meta.sourceYear,
-          validUntil,
-          status,
-        });
-      }
-    });
-
-    // 토너먼트 검사
-    TIER_TOURNAMENTS.forEach((tournament) => {
-      const meta = tournament.meta?.timeSensitivity;
-      if (meta) {
-        const status = getValidityStatus(meta, now);
-        const validUntil = meta.validUntil ?? (
-          VALIDITY_PERIODS[meta.sensitivity]
-            ? `${meta.sourceYear + VALIDITY_PERIODS[meta.sensitivity]!}-12`
-            : null
-        );
-        items.push({
-          id: tournament.id,
-          type: 'tournament',
-          title: tournament.title,
-          category: tournament.category,
-          sensitivity: meta.sensitivity,
-          sourceYear: meta.sourceYear,
-          validUntil,
-          status,
-        });
-      }
-    });
-
-    // 상태별 집계
-    const byStatus: Record<ValidityStatus, ContentValidityItem[]> = {
-      current: [],
-      needs_review: [],
-      outdated: [],
-    };
-
-    items.forEach(item => {
-      byStatus[item.status].push(item);
-    });
-
-    // 민감도별 집계
-    const bySensitivity: Record<TimeSensitivity, number> = {
-      high: 0,
-      medium: 0,
-      low: 0,
-      none: 0,
-    };
-
-    items.forEach(item => {
-      bySensitivity[item.sensitivity]++;
-    });
-
-    return {
-      items,
-      byStatus,
-      bySensitivity,
-      totalWithMeta: items.length,
-      totalContent: ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length +
-        VS_POLLS.length + CHOICE_POLLS.length +
-        ALL_SITUATION_REACTIONS.length +
-        TIER_TOURNAMENTS.length,
-    };
-  }, []);
-
-  const needsAttention = validityData.byStatus.needs_review.length + validityData.byStatus.outdated.length;
-
-  return (
-    <div className="db-card">
-      <div className="db-card-header px-5 py-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
-          <Calendar className="w-5 h-5" />
-          콘텐츠 유효기간 관리
-          {needsAttention > 0 && (
-            <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400">
-              {needsAttention}개 주의
-            </span>
-          )}
-        </h3>
-        <div className="text-xs text-[var(--db-muted)]">
-          유효기간 설정: {validityData.totalWithMeta}개 / 전체: {validityData.totalContent}개
-        </div>
-      </div>
-
-      <div className="p-5 space-y-5">
-        {/* 상태별 요약 카드 */}
-        <div className="grid grid-cols-3 gap-3">
-          {(Object.entries(STATUS_CONFIG) as [ValidityStatus, typeof STATUS_CONFIG[ValidityStatus]][]).map(([status, config]) => (
-            <div
-              key={status}
-              className="p-4 rounded-xl"
-              style={{ background: config.bgColor }}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <span style={{ color: config.color }}>{config.icon}</span>
-                <span className="text-sm font-medium text-[var(--db-text)]">{config.label}</span>
-              </div>
-              <p className="text-2xl font-bold" style={{ color: config.color }}>
-                {validityData.byStatus[status].length}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* 민감도별 분포 */}
-        <div className="p-4 rounded-xl bg-black/20">
-          <h4 className="text-sm font-medium text-[var(--db-text)] mb-3 flex items-center gap-2">
-            <RefreshCw className="w-4 h-4" />
-            갱신 주기별 분포
-          </h4>
-          <div className="flex gap-4">
-            {(Object.entries(SENSITIVITY_LABELS) as [TimeSensitivity, typeof SENSITIVITY_LABELS[TimeSensitivity]][]).map(([sensitivity, config]) => (
-              <div key={sensitivity} className="flex items-center gap-2">
-                <span
-                  className="w-3 h-3 rounded-full"
-                  style={{ background: config.color }}
-                />
-                <span className="text-xs text-[var(--db-muted)]">
-                  {config.label} ({config.period}): {validityData.bySensitivity[sensitivity]}개
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 주의가 필요한 콘텐츠 목록 */}
-        {needsAttention > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-medium text-[var(--db-text)] flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
-                주의가 필요한 콘텐츠
-              </h4>
-              <button
-                onClick={() => setShowAllItems(!showAllItems)}
-                className="text-xs text-[var(--db-brand)] hover:underline"
-              >
-                {showAllItems ? '접기' : '전체 보기'}
-              </button>
-            </div>
-
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {[...validityData.byStatus.outdated, ...validityData.byStatus.needs_review]
-                .slice(0, showAllItems ? undefined : 5)
-                .map((item) => {
-                  const statusConfig = STATUS_CONFIG[item.status];
-                  const typeLabel = { quiz: '퀴즈', poll: '투표', situation: '상황', tournament: '토너먼트' }[item.type];
-                  const categoryInfo = CATEGORY_LABELS[item.category as ContentCategory];
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-black/20"
-                    >
-                      <span style={{ color: statusConfig.color }}>{statusConfig.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-[var(--db-muted)]">
-                            {typeLabel}
-                          </span>
-                          <span className="text-xs text-[var(--db-muted)]">
-                            {categoryInfo?.emoji} {categoryInfo?.name || item.category}
-                          </span>
-                        </div>
-                        <p className="text-sm text-[var(--db-text)] truncate mt-1">{item.title}</p>
-                      </div>
-                      <div className="text-right">
-                        <div
-                          className="text-xs px-2 py-0.5 rounded-full"
-                          style={{ background: statusConfig.bgColor, color: statusConfig.color }}
-                        >
-                          {statusConfig.label}
-                        </div>
-                        <p className="text-xs text-[var(--db-muted)] mt-1">
-                          {item.validUntil ? `~${item.validUntil}` : '무기한'}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-
-            {!showAllItems && needsAttention > 5 && (
-              <p className="text-xs text-center text-[var(--db-muted)]">
-                외 {needsAttention - 5}개 더...
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* 유효기간 미설정 콘텐츠 안내 */}
-        {validityData.totalWithMeta < validityData.totalContent && (
-          <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-            <div className="flex items-start gap-2">
-              <Clock className="w-4 h-4 text-blue-400 mt-0.5" />
-              <div>
-                <p className="text-sm text-blue-400 font-medium">
-                  유효기간 미설정 콘텐츠: {validityData.totalContent - validityData.totalWithMeta}개
-                </p>
-                <p className="text-xs text-[var(--db-muted)] mt-1">
-                  트렌드/시의성 있는 콘텐츠에 timeSensitivity 메타 추가 권장
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function ContentByCategory() {
   const categoryData = useMemo(() => {
@@ -795,6 +492,213 @@ function ContentByCategory() {
             <span className="w-2 h-2 rounded-full bg-[#ff6b9d]" />
             S = 상황반응
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 타겟 커버리지 섹션 - 연령/성별별 콘텐츠 분포
+// ============================================================================
+
+function TargetCoverageSection() {
+  const coverageData = useMemo(() => {
+    // 연령대별, 성별별 콘텐츠 수 집계
+    const ageGroups: AgeGroup[] = ['~9', '10s', '20s', '30s', '40s+'];
+    const genders: Gender[] = ['male', 'female'];
+
+    // 콘텐츠별 타겟 분석
+    const allQuizzes = [...ALL_KNOWLEDGE_QUIZZES, ...ALL_SCENARIO_QUIZZES];
+    const allPolls = [...VS_POLLS, ...CHOICE_POLLS];
+
+    // 타겟팅된 콘텐츠 vs 전체 대상 콘텐츠 분류
+    let targetedCount = 0;
+    let universalCount = 0;
+    let adultOnlyCount = 0;
+
+    const ageTargetCounts: Record<AgeGroup, number> = {
+      '~9': 0, '10s': 0, '20s': 0, '30s': 0, '40s+': 0
+    };
+    const genderTargetCounts: Record<Gender, number> = {
+      'male': 0, 'female': 0, 'other': 0
+    };
+
+    // 퀴즈 분석
+    allQuizzes.forEach(q => {
+      const meta = q.meta;
+      if (meta?.targetAges?.length || meta?.targetGender?.length) {
+        targetedCount++;
+        meta.targetAges?.forEach(age => {
+          if (ageTargetCounts[age] !== undefined) ageTargetCounts[age]++;
+        });
+        meta.targetGender?.forEach(gender => {
+          if (genderTargetCounts[gender] !== undefined) genderTargetCounts[gender]++;
+        });
+      } else {
+        universalCount++;
+      }
+      if (meta?.ageRating === 'adult' || meta?.isAdultOnly) {
+        adultOnlyCount++;
+      }
+    });
+
+    // 투표 분석
+    allPolls.forEach(p => {
+      const meta = p.meta;
+      if (meta?.targetAges?.length || meta?.targetGender?.length) {
+        targetedCount++;
+        meta.targetAges?.forEach(age => {
+          if (ageTargetCounts[age] !== undefined) ageTargetCounts[age]++;
+        });
+        meta.targetGender?.forEach(gender => {
+          if (genderTargetCounts[gender] !== undefined) genderTargetCounts[gender]++;
+        });
+      } else {
+        universalCount++;
+      }
+      if (meta?.ageRating === 'adult' || meta?.isAdultOnly) {
+        adultOnlyCount++;
+      }
+    });
+
+    // 토너먼트 분석 (성별 특화)
+    TIER_TOURNAMENTS.forEach(t => {
+      const meta = t.meta;
+      if (meta?.targetGender?.length) {
+        targetedCount++;
+        meta.targetGender.forEach(gender => {
+          if (genderTargetCounts[gender] !== undefined) genderTargetCounts[gender]++;
+        });
+      }
+    });
+
+    const totalContent = allQuizzes.length + allPolls.length + TIER_TOURNAMENTS.length;
+    const targetingRate = totalContent > 0 ? Math.round((targetedCount / totalContent) * 100) : 0;
+
+    // 부족한 영역 찾기
+    const avgAgeTarget = Object.values(ageTargetCounts).reduce((a, b) => a + b, 0) / ageGroups.length;
+    const weakAges = ageGroups.filter(age => ageTargetCounts[age] < avgAgeTarget * 0.5);
+
+    return {
+      ageGroups,
+      genders,
+      ageTargetCounts,
+      genderTargetCounts,
+      targetedCount,
+      universalCount,
+      adultOnlyCount,
+      totalContent,
+      targetingRate,
+      weakAges,
+    };
+  }, []);
+
+  return (
+    <div className="db-card">
+      <div className="db-card-header px-5 py-4">
+        <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+          <Users className="w-5 h-5" />
+          타겟 커버리지 (연령/성별)
+        </h3>
+        <p className="text-xs text-[var(--db-muted)] mt-1">
+          프로필 품질을 위해 각 타겟 그룹별 콘텐츠가 균형있게 필요합니다
+        </p>
+      </div>
+
+      <div className="p-5 space-y-6">
+        {/* 요약 통계 */}
+        <div className="grid grid-cols-4 gap-3">
+          <div className="p-3 rounded-xl bg-blue-500/10">
+            <p className="text-2xl font-bold text-blue-400">{coverageData.totalContent}</p>
+            <p className="text-xs text-[var(--db-muted)]">전체 콘텐츠</p>
+          </div>
+          <div className="p-3 rounded-xl bg-purple-500/10">
+            <p className="text-2xl font-bold text-purple-400">{coverageData.targetedCount}</p>
+            <p className="text-xs text-[var(--db-muted)]">타겟팅됨</p>
+          </div>
+          <div className="p-3 rounded-xl bg-gray-500/10">
+            <p className="text-2xl font-bold text-gray-400">{coverageData.universalCount}</p>
+            <p className="text-xs text-[var(--db-muted)]">전체 대상</p>
+          </div>
+          <div className="p-3 rounded-xl bg-amber-500/10">
+            <p className="text-2xl font-bold text-amber-400">{coverageData.targetingRate}%</p>
+            <p className="text-xs text-[var(--db-muted)]">타겟팅률</p>
+          </div>
+        </div>
+
+        {/* 연령대별 분포 */}
+        <div>
+          <h4 className="text-sm font-medium text-[var(--db-text)] mb-3">연령대별 타겟 콘텐츠</h4>
+          <div className="grid grid-cols-5 gap-2">
+            {coverageData.ageGroups.map(age => {
+              const count = coverageData.ageTargetCounts[age];
+              const isWeak = coverageData.weakAges.includes(age);
+              return (
+                <div
+                  key={age}
+                  className={`p-3 rounded-xl text-center ${isWeak ? 'bg-red-500/10 ring-1 ring-red-500/30' : 'bg-black/20'}`}
+                >
+                  <p className={`text-xl font-bold ${isWeak ? 'text-red-400' : 'text-[var(--db-text)]'}`}>
+                    {count}
+                  </p>
+                  <p className="text-xs text-[var(--db-muted)]">{AGE_GROUP_LABELS[age]}</p>
+                  {isWeak && (
+                    <span className="inline-block mt-1 px-1.5 py-0.5 text-[10px] bg-red-500/20 text-red-400 rounded">
+                      부족
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 성별 분포 */}
+        <div>
+          <h4 className="text-sm font-medium text-[var(--db-text)] mb-3">성별 타겟 콘텐츠</h4>
+          <div className="grid grid-cols-2 gap-3">
+            {coverageData.genders.map(gender => {
+              const count = coverageData.genderTargetCounts[gender];
+              return (
+                <div key={gender} className="p-4 rounded-xl bg-black/20 flex items-center justify-between">
+                  <div>
+                    <p className="text-lg font-bold text-[var(--db-text)]">{count}</p>
+                    <p className="text-sm text-[var(--db-muted)]">{GENDER_LABELS[gender]} 타겟</p>
+                  </div>
+                  <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center">
+                    <span className="text-2xl">{gender === 'male' ? '👨' : '👩'}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 권장사항 */}
+        {coverageData.weakAges.length > 0 && (
+          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-amber-400">콘텐츠 균형 개선 필요</p>
+                <p className="text-sm text-[var(--db-muted)] mt-1">
+                  {coverageData.weakAges.map(age => AGE_GROUP_LABELS[age]).join(', ')} 타겟 콘텐츠가 부족합니다.
+                  해당 연령대를 위한 퀴즈/투표 추가를 권장합니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 타겟팅 메타데이터 안내 */}
+        <div className="p-4 rounded-xl bg-black/20 text-xs text-[var(--db-muted)]">
+          <p className="font-medium text-[var(--db-text)] mb-2">💡 콘텐츠 타겟팅 방법</p>
+          <p>
+            퀴즈/투표 생성 시 <code className="px-1 py-0.5 bg-black/30 rounded">meta.targetAges</code>와{' '}
+            <code className="px-1 py-0.5 bg-black/30 rounded">meta.targetGender</code>를 설정하면
+            해당 타겟 그룹에게 우선 노출됩니다.
+          </p>
         </div>
       </div>
     </div>

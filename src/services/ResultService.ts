@@ -35,6 +35,7 @@ interface TestResultData {
     user_agent: string;
     screen_width: number;
     timestamp: number;
+    response_time_ms?: number[];
   };
 }
 
@@ -54,6 +55,7 @@ export interface TestResultCamel {
     userAgent: string;
     screenWidth: number;
     timestamp: number;
+    responseTimeMs?: number[];
   };
 }
 
@@ -120,7 +122,8 @@ class ResultServiceClass {
     result: ResultLabel,
     scores: Record<string, number>,
     isDeep = false,
-    parentInfo?: { testType: string; resultName: string }
+    parentInfo?: { testType: string; resultName: string },
+    responseTimes?: number[]
   ): Promise<SaveResult> {
     const userId = this.getUserId();
 
@@ -135,7 +138,8 @@ class ResultServiceClass {
       scores,
       isDeep,
       parentInfo,
-      timestamp
+      timestamp,
+      responseTimes
     );
 
     // 2. localStorage에도 백업 저장 (동일 타임스탬프)
@@ -155,6 +159,7 @@ class ResultServiceClass {
         user_agent: typeof window !== 'undefined' ? navigator.userAgent : 'server',
         screen_width: typeof window !== 'undefined' ? window.innerWidth : 0,
         timestamp: Date.now(),
+        response_time_ms: responseTimes || [],
       },
     };
 
@@ -218,6 +223,7 @@ class ResultServiceClass {
         userAgent: r.meta.user_agent,
         screenWidth: r.meta.screen_width,
         timestamp: r.meta.timestamp,
+        responseTimeMs: r.meta.response_time_ms,
       },
     }));
 

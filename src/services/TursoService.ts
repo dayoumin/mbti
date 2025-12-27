@@ -341,7 +341,8 @@ class TursoServiceClass {
     scores: Record<string, number>,
     isDeepMode: boolean = false,
     parentInfo?: { testType: string; resultName: string },
-    timestamp?: string
+    timestamp?: string,
+    responseTimes?: number[]
   ): Promise<{ success: boolean; id?: string }> {
     try {
       const res = await fetch(`${this.apiBase}/test-results`, {
@@ -356,6 +357,7 @@ class TursoServiceClass {
           isDeepMode,
           parentInfo,
           timestamp,
+          responseTimes,
         }),
       });
 
