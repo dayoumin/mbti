@@ -110,9 +110,8 @@ export default function MyRankingMini({ onOpenRanking, className = '' }: MyRanki
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  idx === currentIndex ? 'bg-amber-500' : 'bg-amber-200'
-                }`}
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentIndex ? 'bg-amber-500' : 'bg-amber-200'
+                  }`}
               />
             ))}
           </div>
@@ -123,21 +122,21 @@ export default function MyRankingMini({ onOpenRanking, className = '' }: MyRanki
       {currentResult && testInfo && (
         <button
           onClick={onOpenRanking}
-          className="w-full bg-white/70 rounded-lg p-2.5 hover:bg-white transition-colors text-left group"
+          className="w-full bg-slate-50/70 rounded-lg p-2.5 hover:bg-slate-50 transition-colors text-left group"
         >
           {/* 테스트 이름 + 내 결과 */}
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">{testInfo.emoji}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-slate-700 truncate">
+              <p className="text-xs font-bold text-primary truncate">
                 {testInfo.name}
               </p>
-              <p className="text-xs text-slate-500 flex items-center gap-1">
+              <p className="text-xs text-muted flex items-center gap-1">
                 <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
                 {currentResult.resultEmoji} {currentResult.resultName}
               </p>
             </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-amber-500 transition-colors flex-shrink-0" />
+            <ChevronRight className="w-3.5 h-3.5 text-subtle group-hover:text-amber-500 transition-colors flex-shrink-0" />
           </div>
 
           {/* 카테고리별 순위 */}
@@ -146,13 +145,12 @@ export default function MyRankingMini({ onOpenRanking, className = '' }: MyRanki
               {categoryRanks.map((rank) => (
                 <span
                   key={rank.category}
-                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    rank.rank === 1
-                      ? 'bg-amber-100 text-amber-700'
-                      : rank.rank <= 3
+                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${rank.rank === 1
+                    ? 'bg-amber-100 text-amber-700'
+                    : rank.rank <= 3
                       ? 'bg-indigo-50 text-indigo-600'
-                      : 'bg-slate-100 text-slate-500'
-                  }`}
+                      : 'bg-slate-100 text-muted'
+                    }`}
                 >
                   {rank.emoji} {rank.category} {rank.rank}위
                 </span>

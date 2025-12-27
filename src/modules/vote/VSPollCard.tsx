@@ -89,11 +89,10 @@ export default function VSPollCard({
         <button
           onClick={() => handleVote('a')}
           disabled={!!voted}
-          className={`flex-1 relative overflow-hidden rounded-lg border-2 transition-all ${
-            voted === 'a' ? 'border-purple-400 bg-purple-50' :
-            voted ? 'border-slate-200 bg-slate-50' :
-            'border-purple-200 bg-white hover:border-purple-300'
-          }`}
+          className={`flex-1 relative overflow-hidden rounded-lg border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
+              voted ? 'border-slate-200 bg-slate-50' :
+                'border-purple-200 bg-slate-50 hover:border-purple-300'
+            }`}
         >
           <div className="p-2 text-center relative z-10">
             <span className="text-xl block">{poll.optionA.emoji}</span>
@@ -117,11 +116,10 @@ export default function VSPollCard({
         <button
           onClick={() => handleVote('b')}
           disabled={!!voted}
-          className={`flex-1 relative overflow-hidden rounded-lg border-2 transition-all ${
-            voted === 'b' ? 'border-pink-400 bg-pink-50' :
-            voted ? 'border-slate-200 bg-slate-50' :
-            'border-pink-200 bg-white hover:border-pink-300'
-          }`}
+          className={`flex-1 relative overflow-hidden rounded-lg border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
+              voted ? 'border-slate-200 bg-slate-50' :
+                'border-pink-200 bg-slate-50 hover:border-pink-300'
+            }`}
         >
           <div className="p-2 text-center relative z-10">
             <span className="text-xl block">{poll.optionB.emoji}</span>

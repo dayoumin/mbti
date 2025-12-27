@@ -9,6 +9,7 @@ import { BADGES, getBadgeById } from '../data/gamification/badges';
 import { getLevelByPoints, getPointsToNextLevel, DAILY_MISSIONS } from '../data/gamification/levels';
 import { POINTS } from '../data/gamification/points';
 import { STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // SubjectKey 또는 category에서 ExpertSubject 추출 (전문가 트랙 대상)
 // 퀴즈/투표의 category는 SubjectKey에 없는 값('fish' 등)도 포함할 수 있음
@@ -127,37 +128,32 @@ class GamificationService {
   private load(): void {
     if (typeof window === 'undefined') return;
 
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        const defaults = createDefaultStats();
+    const saved = storage.get<UserGameStats | null>(STORAGE_KEY, null);
+    if (saved) {
+      const defaults = createDefaultStats();
 
-        // 깊은 병합: 중첩 객체 필드들을 개별적으로 병합
-        this.stats = {
-          ...defaults,
-          ...parsed,
-          // streak 깊은 병합 (undefined 방지)
-          streak: {
-            ...defaults.streak,
-            ...(parsed.streak || {}),
-          },
-          // expertProgress 깊은 병합
-          expertProgress: this.mergeExpertProgress(defaults.expertProgress, parsed.expertProgress),
-          // community 깊은 병합
-          community: {
-            ...defaults.community,
-            ...(parsed.community || {}),
-          },
-          // duel 깊은 병합
-          duel: {
-            ...defaults.duel,
-            ...(parsed.duel || {}),
-          },
-        };
-      }
-    } catch (e) {
-      console.error('Failed to load game stats:', e);
+      // 깊은 병합: 중첩 객체 필드들을 개별적으로 병합
+      this.stats = {
+        ...defaults,
+        ...saved,
+        // streak 깊은 병합 (undefined 방지)
+        streak: {
+          ...defaults.streak,
+          ...(saved.streak || {}),
+        },
+        // expertProgress 깊은 병합
+        expertProgress: this.mergeExpertProgress(defaults.expertProgress, saved.expertProgress),
+        // community 깊은 병합
+        community: {
+          ...defaults.community,
+          ...(saved.community || {}),
+        },
+        // duel 깊은 병합
+        duel: {
+          ...defaults.duel,
+          ...(saved.duel || {}),
+        },
+      };
     }
   }
 
@@ -182,12 +178,7 @@ class GamificationService {
 
   private save(): void {
     if (typeof window === 'undefined') return;
-
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.stats));
-    } catch (e) {
-      console.error('Failed to save game stats:', e);
-    }
+    storage.set(STORAGE_KEY, this.stats);
   }
 
   // ============================================================================

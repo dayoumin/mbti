@@ -45,7 +45,7 @@ function LoginContent() {
         )}
 
         {/* 로그인 혜택 안내 */}
-        <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-gray-100">
+        <div className="bg-slate-50 rounded-xl p-4 mb-6 shadow-sm border border-gray-100">
           <h3 className="font-medium text-gray-800 mb-2">로그인하면</h3>
           <ul className="space-y-2 text-sm text-gray-600">
             <li className="flex items-center gap-2">

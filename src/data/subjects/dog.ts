@@ -822,7 +822,7 @@ export const DOG_DATA = {
         {
             name: "균형 멍멍이",
             emoji: "⚖️",
-            desc: "모든 면에서 조화로운 이상적인 반려견",
+            desc: "모든 면에서 조화로운 비전이 있는 반려견",
             condition: {
                 energy: "medium",
                 humanLove: "medium",
@@ -831,7 +831,7 @@ export const DOG_DATA = {
                 brave: "medium",
                 persist: "medium"
             },
-            interpretation: "모든 면에서 균형 잡힌 이상적인 성격입니다. 어떤 환경에서도 잘 적응하고 훈련하기 좋습니다.",
+            interpretation: "모든 면에서 균형 잡힌 비전이 있는 성격입니다. 어떤 환경에서도 잘 적응하고 훈련하기 좋습니다.",
             guide: "다양한 경험과 훈련을 제공해주세요. 특별한 주의사항 없이 행복한 반려 생활이 가능합니다.",
             mood: "happy",
             color: "bg-gray-100"

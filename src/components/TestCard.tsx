@@ -3,6 +3,7 @@
 import React from 'react';
 import * as Icons from './Icons';
 import type { SubjectKey } from '../data/types';
+import type { Mood } from './Icons';
 
 interface TestCardProps {
     item: {
@@ -16,17 +17,37 @@ interface TestCardProps {
 }
 
 const TestCard = ({ item, onStart, badge }: TestCardProps) => {
-    const IconComponent = (Icons as any)[item.icon] || (Icons as any).HumanIcon;
+    // Type-safe icon lookup
+    const iconMap: Record<string, React.FC<{ mood?: Mood; className?: string }>> = {
+        HumanIcon: Icons.HumanIcon,
+        CatFace: Icons.CatFace,
+        DogFace: Icons.DogFace,
+        RabbitFace: Icons.RabbitFace,
+        HamsterFace: Icons.HamsterFace,
+        HeartIcon: Icons.HeartIcon,
+        PlantIcon: Icons.PlantIcon,
+        PetMatchIcon: Icons.PetMatchIcon,
+        CoffeeIcon: Icons.CoffeeIcon,
+        ChefHatIcon: Icons.ChefHatIcon,
+        WhiskeySampleIcon: Icons.WhiskeySampleIcon,
+        TeaIcon: Icons.TeaIcon,
+        ConflictIcon: Icons.ConflictIcon,
+        FruitIcon: Icons.FruitIcon,
+        AlcoholIcon: Icons.AlcoholIcon,
+        BreadIcon: Icons.BreadIcon,
+        PerfumeIcon: Icons.PerfumeIcon,
+    };
+    const IconComponent = iconMap[item.icon] || Icons.HumanIcon;
 
     return (
         <button
             onClick={() => onStart?.(item.key as SubjectKey)}
-            className="group flex flex-col items-center gap-2 pt-4 pb-3 px-2 rounded-xl bg-white/80 hover:bg-white border border-white/60 hover:border-indigo-200 transition-all duration-200 hover:shadow-md hover:-translate-y-1 relative"
+            className="glass-card rounded-md border-subtle shadow-sm hover:shadow-brand hover:border-brand transition-all duration-200 hover:-translate-y-1 relative"
         >
             {badge && (
-                <span className={`absolute top-1 right-1 px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm z-10 ${badge === 'HOT' ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white' :
-                    badge === 'NEW' ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-white' :
-                        badge === 'UPDATE' ? 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white' :
+                <span className={`absolute top-1 right-1 px-1.5 py-0.5 text-xs font-bold rounded-full shadow-sm z-10 ${badge === 'HOT' ? 'bg-gradient-warm' :
+                    badge === 'NEW' ? 'bg-gradient-success' :
+                        badge === 'UPDATE' ? 'bg-gradient-brand-primary' :
                             'bg-slate-200 text-slate-600'
                     }`}>
                     {badge}

@@ -8,6 +8,7 @@
 import { getDeviceId } from '@/utils/device';
 import type { ContentCategory } from '@/data/content/types';
 import { STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // ========== 타입 정의 ==========
 
@@ -209,14 +210,10 @@ class DemographicServiceClass {
     };
 
     if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem(DEMOGRAPHIC_KEY, JSON.stringify(updated));
+      storage.set(DEMOGRAPHIC_KEY, updated);
 
-        // 프로필 변경 이벤트 발생 (Sidebar 등에서 캐시 무효화 및 갱신용)
-        window.dispatchEvent(new CustomEvent('chemi:profileUpdated'));
-      } catch (e) {
-        console.warn('Failed to save demographic data:', e);
-      }
+      // 프로필 변경 이벤트 발생 (Sidebar 등에서 캐시 무효화 및 갱신용)
+      window.dispatchEvent(new CustomEvent('chemi:profileUpdated'));
 
       // 연령대와 성별 둘 다 있으면 서버에도 저장
       if (updated.ageGroup && updated.gender) {
@@ -255,16 +252,11 @@ class DemographicServiceClass {
   getDemographic(): DemographicData | null {
     if (typeof window === 'undefined') return null;
 
-    try {
-      const stored = localStorage.getItem(DEMOGRAPHIC_KEY);
-      if (!stored) return null;
-      const parsed = JSON.parse(stored);
-      // 유효성 검증 후 반환 (손상된 데이터 필터링)
-      return validateDemographicData(parsed);
-    } catch {
-      // localStorage 접근 실패 또는 JSON 파싱 실패
-      return null;
-    }
+    const parsed = storage.get<DemographicData | null>(DEMOGRAPHIC_KEY, null);
+    if (!parsed) return null;
+
+    // 유효성 검증 후 반환 (손상된 데이터 필터링)
+    return validateDemographicData(parsed);
   }
 
   // 연령대 정보 있는지 확인

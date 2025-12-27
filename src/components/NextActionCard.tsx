@@ -42,7 +42,7 @@ const PRIORITY_STYLES: Record<ActionPriority, { bg: string; border: string; text
     text: 'text-white',
   },
   secondary: {
-    bg: 'bg-white',
+    bg: 'bg-slate-50',
     border: 'border-slate-200',
     text: 'text-slate-700',
   },
@@ -101,7 +101,7 @@ export function NextActionCard({ action, onClick, variant = 'default', position 
         className={`
           flex items-center gap-2 px-3 py-2 rounded-xl border transition-all
           hover:scale-[1.02] active:scale-[0.98]
-          ${isPrimary ? styles.bg + ' ' + styles.text : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}
+          ${isPrimary ? styles.bg + ' ' + styles.text : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}
         `}
       >
         <span className="text-base">{action.icon}</span>
@@ -124,16 +124,16 @@ export function NextActionCard({ action, onClick, variant = 'default', position 
         <div className="flex items-center gap-3">
           <span className="text-3xl">{action.icon}</span>
           <div className="flex-1 text-left">
-            <p className={`font-bold ${isPrimary ? 'text-white' : 'text-slate-800'}`}>
+            <p className={`font-bold ${isPrimary ? 'text-white' : 'text-primary'}`}>
               {action.label}
             </p>
-            <p className={`text-sm ${isPrimary ? 'text-white/80' : 'text-slate-500'}`}>
+            <p className={`text-sm ${isPrimary ? 'text-white/80' : 'text-muted'}`}>
               {action.description}
             </p>
           </div>
           <div className={`
             px-4 py-2 rounded-xl font-bold text-sm
-            ${isPrimary ? 'bg-white/20 text-white' : 'bg-indigo-500 text-white'}
+            ${isPrimary ? 'bg-slate-50/20 text-white' : 'bg-indigo-500 text-white'}
           `}>
             {action.ctaText}
           </div>
@@ -158,14 +158,14 @@ export function NextActionCard({ action, onClick, variant = 'default', position 
       <div className="flex items-center gap-3">
         <span className={`text-2xl ${isPrimary ? '' : 'opacity-80'}`}>{action.icon}</span>
         <div className="flex-1 min-w-0">
-          <p className={`font-bold text-sm truncate ${isPrimary ? 'text-white' : 'text-slate-800'}`}>
+          <p className={`font-bold text-sm truncate ${isPrimary ? 'text-white' : 'text-primary'}`}>
             {action.label}
           </p>
-          <p className={`text-xs truncate ${isPrimary ? 'text-white/70' : 'text-slate-500'}`}>
+          <p className={`text-xs truncate ${isPrimary ? 'text-white/70' : 'text-muted'}`}>
             {action.description}
           </p>
         </div>
-        <ChevronRight className={`w-5 h-5 flex-shrink-0 ${isPrimary ? 'text-white/70' : 'text-slate-400'}`} />
+        <ChevronRight className={`w-5 h-5 flex-shrink-0 ${isPrimary ? 'text-white/70' : 'text-subtle'}`} />
       </div>
     </button>
   );
@@ -315,7 +315,7 @@ export function NextActionInline({ actions, onActionClick, tracking }: NextActio
         <button
           key={`${action.type}-${index}`}
           onClick={() => handleClick(action, index)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-slate-200
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-200
                      text-xs font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
         >
           <span>{action.icon}</span>

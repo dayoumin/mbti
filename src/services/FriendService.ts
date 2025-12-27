@@ -5,6 +5,7 @@
 
 import { getDeviceId } from '@/utils/device';
 import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // ============================================================================
 // 타입 정의
@@ -157,12 +158,7 @@ class FriendService {
   getFriends(): FriendConnection[] {
     if (typeof window === 'undefined') return [];
 
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.FRIENDS);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
+    return storage.get<FriendConnection[]>(STORAGE_KEYS.FRIENDS, []);
   }
 
   /**
@@ -375,36 +371,23 @@ class FriendService {
   private getInviteCodes(): InviteCode[] {
     if (typeof window === 'undefined') return [];
 
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.INVITE_CODES);
-      const codes: InviteCode[] = saved ? JSON.parse(saved) : [];
+    const codes = storage.get<InviteCode[]>(STORAGE_KEYS.INVITE_CODES, []);
 
-      // 만료된 코드 정리
-      const now = new Date();
-      return codes.filter(c => new Date(c.expiresAt) > now);
-    } catch {
-      return [];
-    }
+    // 만료된 코드 정리
+    const now = new Date();
+    return codes.filter(c => new Date(c.expiresAt) > now);
   }
 
   private saveInviteCodes(codes: InviteCode[]): void {
     if (typeof window === 'undefined') return;
 
-    try {
-      localStorage.setItem(STORAGE_KEYS.INVITE_CODES, JSON.stringify(codes));
-    } catch {
-      // 저장 실패
-    }
+    storage.set(STORAGE_KEYS.INVITE_CODES, codes);
   }
 
   private saveFriends(friends: FriendConnection[]): void {
     if (typeof window === 'undefined') return;
 
-    try {
-      localStorage.setItem(STORAGE_KEYS.FRIENDS, JSON.stringify(friends));
-    } catch {
-      // 저장 실패
-    }
+    storage.set(STORAGE_KEYS.FRIENDS, friends);
   }
 
   // ============================================================================
@@ -414,9 +397,9 @@ class FriendService {
   reset(): void {
     if (typeof window === 'undefined') return;
 
-    localStorage.removeItem(STORAGE_KEYS.INVITE_CODES);
-    localStorage.removeItem(STORAGE_KEYS.FRIENDS);
-    localStorage.removeItem(STORAGE_KEYS.PENDING_INVITES);
+    storage.remove(STORAGE_KEYS.INVITE_CODES);
+    storage.remove(STORAGE_KEYS.FRIENDS);
+    storage.remove(STORAGE_KEYS.PENDING_INVITES);
   }
 }
 

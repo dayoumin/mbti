@@ -61,17 +61,16 @@ export default function BadgeNotification({
 
   return (
     <div
-      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
-        isVisible && !isExiting
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${isVisible && !isExiting
           ? 'opacity-100 translate-y-0'
           : 'opacity-0 -translate-y-4'
-      }`}
+        }`}
     >
       <div
         className={`bg-gradient-to-r ${rarityColors[badge.rarity]} p-[2px] rounded-2xl shadow-2xl`}
         onClick={handleClose}
       >
-        <div className="bg-white rounded-2xl px-6 py-4 flex items-center gap-4">
+        <div className="bg-slate-50 rounded-2xl px-6 py-4 flex items-center gap-4">
           {/* 배지 아이콘 */}
           <div className="relative">
             <div className="w-16 h-16 flex items-center justify-center text-4xl bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full animate-pulse">
@@ -84,13 +83,13 @@ export default function BadgeNotification({
 
           {/* 배지 정보 */}
           <div className="flex flex-col">
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            <span className="text-xs font-medium text-muted uppercase tracking-wide">
               배지 획득!
             </span>
-            <span className="text-lg font-bold text-gray-900">
+            <span className="text-lg font-bold text-primary">
               {badge.name}
             </span>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-secondary">
               {badge.description}
             </span>
             <div className="flex items-center gap-2 mt-1">

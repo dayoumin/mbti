@@ -400,7 +400,7 @@ export const conflictStyleData: SubjectData = {
       "color": "bg-green-100"
     },
     {
-      "name": "신중한 관찰자",
+      "name": "사려 깊은 관찰자",
       "emoji": "🔍",
       "desc": "한 발 물러서 상황을 파악하는 사람",
       "condition": {
@@ -408,12 +408,12 @@ export const conflictStyleData: SubjectData = {
         "express": "low"
       },
       "matchPoints": [
-        "감정적 반응을 자제함",
+        "공감 능력이 뛰어난 반응을 자제함",
         "충분히 생각 후 대응",
         "불필요한 싸움 회피"
       ],
       "interpretation": "당신은 갈등 상황에서 한 발 물러서 상황을 파악해요. 즉각적으로 반응하기보다 생각을 정리한 후 대응하죠. 불필요한 감정 소모를 줄이는 현명함이 있어요.",
-      "guide": "신중함도 좋지만, 너무 오래 기다리면 상대는 무관심으로 느낄 수 있어요. 적절한 타이밍에 대화 의지를 보여주세요.",
+      "guide": "사려 깊음도 좋지만, 너무 오래 기다리면 상대는 무관심으로 느낄 수 있어요. 적절한 타이밍에 대화 의지를 보여주세요.",
       "mood": "neutral",
       "color": "bg-slate-100"
     },

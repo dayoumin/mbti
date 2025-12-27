@@ -88,8 +88,8 @@ export default function NextTestRecommendation({
 
     return (
         <div className="mt-5 w-full">
-            <div className="p-0.5 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-xl border border-white/60">
-                <div className="bg-white/70 rounded-[10px] p-3">
+            <div className="p-0.5 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-xl border border-slate-50/60">
+                <div className="bg-slate-50/70 rounded-[10px] p-3">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />
@@ -105,12 +105,12 @@ export default function NextTestRecommendation({
                         className="w-full flex items-center gap-3 text-left group"
                     >
                         {IconComponent && (
-                            <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                            <div className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                                 <IconComponent mood="happy" className="w-7 h-7" />
                             </div>
                         )}
                         <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
+                            <h4 className="font-bold text-primary group-hover:text-indigo-600 transition-colors text-sm truncate">{data.title}</h4>
                             <p className="text-xs text-slate-400 truncate">
                                 {recommendation.description || (recommendation.reason === 'new' ? '아직 안 해본 테스트예요!' : data.subtitle)}
                             </p>

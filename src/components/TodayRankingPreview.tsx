@@ -55,7 +55,7 @@ export default function TodayRankingPreview({ onClick, className = '' }: TodayRa
 
   if (loading) {
     return (
-      <div className={`bg-white rounded-xl p-3 shadow-sm border border-slate-100 animate-pulse ${className}`}>
+      <div className={`bg-slate-50 rounded-xl p-3 shadow-sm border border-subtle animate-pulse ${className}`}>
         <div className="h-10 bg-slate-100 rounded-lg"></div>
       </div>
     );
@@ -88,14 +88,14 @@ export default function TodayRankingPreview({ onClick, className = '' }: TodayRa
         {/* 랭킹 아이템들 */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {topPolls.map((poll, index) => (
-            <div key={poll.pollId} className={`flex items-center gap-2 p-2 rounded-lg bg-white/50 border border-white/60 ${index >= 1 ? 'hidden md:flex' : ''} ${index >= 2 ? 'hidden lg:flex' : ''}`}>
+            <div key={poll.pollId} className={`flex items-center gap-2 p-2 rounded-lg bg-slate-50/50 border border-slate-200/60 ${index >= 1 ? 'hidden md:flex' : ''} ${index >= 2 ? 'hidden lg:flex' : ''}`}>
               <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${index === 0 ? 'bg-amber-400 text-white' :
-                  index === 1 ? 'bg-slate-300 text-white' :
-                    'bg-orange-200 text-orange-700'
+                index === 1 ? 'bg-slate-300 text-white' :
+                  'bg-orange-200 text-orange-700'
                 }`}>
                 {index + 1}
               </span>
-              <p className="text-xs text-slate-700 font-bold truncate flex-1 text-left">
+              <p className="text-xs text-primary font-bold truncate flex-1 text-left">
                 {poll.question}
               </p>
             </div>

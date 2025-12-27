@@ -108,7 +108,7 @@ export default function BreedDetailCard({
                     {/* 기본 정보 */}
                     <div className="grid grid-cols-2 gap-2">
                         {detailInfo.origin && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
+                            <div className="flex items-center gap-2 p-2 bg-slate-50/70 rounded-lg">
                                 <MapPin className="w-4 h-4 text-slate-400" />
                                 <div>
                                     <p className="text-xs text-slate-400">원산지</p>
@@ -117,7 +117,7 @@ export default function BreedDetailCard({
                             </div>
                         )}
                         {detailInfo.lifespan && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
+                            <div className="flex items-center gap-2 p-2 bg-slate-50/70 rounded-lg">
                                 <Clock className="w-4 h-4 text-slate-400" />
                                 <div>
                                     <p className="text-xs text-slate-400">평균 수명</p>
@@ -126,7 +126,7 @@ export default function BreedDetailCard({
                             </div>
                         )}
                         {detailInfo.size && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
+                            <div className="flex items-center gap-2 p-2 bg-slate-50/70 rounded-lg">
                                 <Scale className="w-4 h-4 text-slate-400" />
                                 <div>
                                     <p className="text-xs text-slate-400">크기</p>
@@ -135,7 +135,7 @@ export default function BreedDetailCard({
                             </div>
                         )}
                         {detailInfo.weight && (
-                            <div className="flex items-center gap-2 p-2 bg-white/70 rounded-lg">
+                            <div className="flex items-center gap-2 p-2 bg-slate-50/70 rounded-lg">
                                 <Scale className="w-4 h-4 text-slate-400" />
                                 <div>
                                     <p className="text-xs text-slate-400">체중</p>
@@ -196,7 +196,7 @@ export default function BreedDetailCard({
                         </h4>
                         <div className="grid grid-cols-2 gap-2">
                             {detailInfo.exerciseNeeds && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
+                                <div className="flex items-center justify-between p-2 bg-slate-50/70 rounded-lg">
                                     <span className="text-xs text-slate-500 flex items-center gap-1">
                                         <Zap className="w-3 h-3" /> 운동량
                                     </span>
@@ -206,7 +206,7 @@ export default function BreedDetailCard({
                                 </div>
                             )}
                             {detailInfo.groomingNeeds && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
+                                <div className="flex items-center justify-between p-2 bg-slate-50/70 rounded-lg">
                                     <span className="text-xs text-slate-500 flex items-center gap-1">
                                         <Scissors className="w-3 h-3" /> 미용관리
                                     </span>
@@ -216,7 +216,7 @@ export default function BreedDetailCard({
                                 </div>
                             )}
                             {detailInfo.sheddingLevel && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
+                                <div className="flex items-center justify-between p-2 bg-slate-50/70 rounded-lg">
                                     <span className="text-xs text-slate-500">털빠짐</span>
                                     <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${needsLevelColor(detailInfo.sheddingLevel)}`}>
                                         {needsLevelLabel(detailInfo.sheddingLevel)}
@@ -224,7 +224,7 @@ export default function BreedDetailCard({
                                 </div>
                             )}
                             {detailInfo.trainingDifficulty && (
-                                <div className="flex items-center justify-between p-2 bg-white/70 rounded-lg">
+                                <div className="flex items-center justify-between p-2 bg-slate-50/70 rounded-lg">
                                     <span className="text-xs text-slate-500">훈련난이도</span>
                                     <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${difficultyColor(detailInfo.trainingDifficulty)}`}>
                                         {difficultyLabel(detailInfo.trainingDifficulty)}
@@ -258,7 +258,7 @@ export default function BreedDetailCard({
                             </h4>
                             <div className="grid grid-cols-2 gap-2">
                                 {detailInfo.initialCost && (
-                                    <div className="p-2.5 bg-white/70 rounded-lg">
+                                    <div className="p-2.5 bg-slate-50/70 rounded-lg">
                                         <p className="text-xs text-slate-400 mb-0.5">초기 비용</p>
                                         <p className="text-sm font-bold text-slate-700">
                                             {detailInfo.initialCost.min}~{detailInfo.initialCost.max}만원
@@ -269,7 +269,7 @@ export default function BreedDetailCard({
                                     </div>
                                 )}
                                 {detailInfo.monthlyCost && (
-                                    <div className="p-2.5 bg-white/70 rounded-lg">
+                                    <div className="p-2.5 bg-slate-50/70 rounded-lg">
                                         <p className="text-xs text-slate-400 mb-0.5">월 비용</p>
                                         <p className="text-sm font-bold text-slate-700">
                                             {detailInfo.monthlyCost.min}~{detailInfo.monthlyCost.max}만원

@@ -112,7 +112,15 @@
       "Bash(src/data/content/situation-reactions/index.ts )",
       "Bash(scripts/test-situation-reactions.ts)",
       "Bash(git mv:*)",
-      "Bash(del /f /q \"d:\\\\Projects\\\\MBTI\\\\.next\\\\lock\")"
+      "Bash(del /f /q \"d:\\\\Projects\\\\MBTI\\\\.next\\\\lock\")",
+      "Bash(.claude/skills/content-validator/SKILL.md )",
+      "Bash(src/app/dashboard/components/ContentStatusDashboard.tsx )",
+      "Bash(src/data/content/polls/*.ts)",
+      "Bash(src/data/content/quizzes/*.ts)",
+      "Bash(prompts/code-review-timesensitivity.md)",
+      "Bash(npm ls:*)",
+      "Bash(del /f /q \"src\\\\data\\\\subjects\\\\*.backup\")",
+      "Bash(del /f /q \"prompts\\\\add-timesensitivity-to-existing-content.md\" \"prompts\\\\code-review-timesensitivity.md\")"
     ],
     "deny": [],
     "ask": []

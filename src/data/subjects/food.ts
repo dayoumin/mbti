@@ -197,7 +197,7 @@ export const foodData: SubjectData = {
             guide: "때로는 즉흥적인 선택도 즐거울 수 있어요. 예상치 못한 맛의 발견이 기다리고 있을지도!",
             mood: "calm",
             color: "bg-stone-100",
-            matchPoints: ["신중함", "품격", "신뢰감"]
+            matchPoints: ["사려 깊음", "품격", "신뢰감"]
         },
         // MEDIUM 포함 조합들
         {

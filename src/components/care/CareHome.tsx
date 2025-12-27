@@ -78,11 +78,10 @@ export default function CareHome() {
           <button
             key={tab.key}
             onClick={() => setActiveView(tab.key as typeof activeView)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              activeView === tab.key
-                ? 'bg-white text-slate-800 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
-            }`}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeView === tab.key
+              ? 'bg-slate-50 text-slate-800 shadow-sm'
+              : 'text-slate-500 hover:text-slate-700'
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -200,11 +199,10 @@ function TaskCard({ task, onComplete, urgent }: TaskCardProps) {
 
   return (
     <div
-      className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
-        urgent
-          ? 'bg-red-50 border border-red-200'
-          : 'bg-white border border-slate-200'
-      }`}
+      className={`flex items-center gap-4 p-4 rounded-xl transition-all ${urgent
+        ? 'bg-red-50 border border-red-200'
+        : 'bg-slate-50 border border-slate-200'
+        }`}
     >
       <div className={`w-10 h-10 ${targetConfig.color} rounded-full flex items-center justify-center text-xl`}>
         {targetConfig.emoji}
@@ -217,11 +215,10 @@ function TaskCard({ task, onComplete, urgent }: TaskCardProps) {
       </div>
       <button
         onClick={() => onComplete(task.id)}
-        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-          urgent
-            ? 'bg-red-500 text-white hover:bg-red-600'
-            : `${targetConfig.accentColor} text-white hover:opacity-90`
-        }`}
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${urgent
+          ? 'bg-red-500 text-white hover:bg-red-600'
+          : `${targetConfig.accentColor} text-white hover:opacity-90`
+          }`}
       >
         <Check className="w-5 h-5" />
       </button>
@@ -280,7 +277,7 @@ function FriendsListView({ profiles, onAddClick, refresh }: FriendsListViewProps
                   <button
                     key={profile.id}
                     onClick={() => setSelectedProfile(profile)}
-                    className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 hover:border-slate-300 transition-all text-left"
+                    className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-300 transition-all text-left"
                   >
                     <div className={`w-12 h-12 ${config.color} rounded-xl flex items-center justify-center text-2xl`}>
                       {config.emoji}
@@ -382,7 +379,7 @@ function HistoryView({ refreshKey }: { refreshKey: number }) {
         return (
           <div
             key={log.id}
-            className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100"
+            className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"
           >
             <div className={`w-8 h-8 ${profileInfo.config.color} rounded-full flex items-center justify-center text-sm`}>
               {profileInfo.config.emoji}
@@ -480,7 +477,7 @@ function AddProfileModal({ onClose, onAdd }: AddProfileModalProps) {
       aria-modal="true"
       aria-labelledby="add-profile-title"
     >
-      <div className="bg-white rounded-2xl w-full max-w-md p-6">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 id="add-profile-title" className="text-lg font-bold text-slate-800">
             {step === 'type' ? '누구를 추가할까요?' : `${CARE_TARGET_CONFIG[selectedType!].emoji} ${CARE_TARGET_CONFIG[selectedType!].name} 추가`}
@@ -603,7 +600,7 @@ function ProfileDetailModal({ profile, onClose, onDelete, refresh }: ProfileDeta
       aria-modal="true"
       aria-labelledby="profile-detail-title"
     >
-      <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-slate-100">
           <div className="flex items-center justify-between">
@@ -637,7 +634,7 @@ function ProfileDetailModal({ profile, onClose, onDelete, refresh }: ProfileDeta
                     {new Date(profile.testResult.completedAt).toLocaleDateString('ko-KR')} 진단
                   </p>
                 </div>
-                <span className="px-2 py-1 bg-white/80 rounded-lg text-xs font-medium text-slate-600">
+                <span className="px-2 py-1 bg-slate-50/80 rounded-lg text-xs font-medium text-slate-600">
                   {profile.testResult.resultKey}
                 </span>
               </div>

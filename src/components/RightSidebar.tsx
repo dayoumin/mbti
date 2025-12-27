@@ -160,8 +160,8 @@ function RankingMini({ onOpenRanking }: { onOpenRanking: () => void }) {
               className="flex items-center gap-2.5 p-2.5 bg-slate-50/60 rounded-lg"
             >
               <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${index === 0 ? 'bg-amber-400 text-white' :
-                  index === 1 ? 'bg-slate-300 text-white' :
-                    'bg-orange-200 text-orange-700'
+                index === 1 ? 'bg-slate-300 text-white' :
+                  'bg-orange-200 text-orange-700'
                 }`}>
                 {index + 1}
               </span>
@@ -412,13 +412,12 @@ function PopularTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) =
           <button
             key={test.testType}
             onClick={() => onStartTest(test.testType as SubjectKey)}
-            className="w-full flex items-center gap-2.5 p-2.5 bg-white/70 rounded-lg hover:bg-white transition-colors group"
+            className="w-full flex items-center gap-2.5 p-2.5 bg-slate-50/70 rounded-lg hover:bg-slate-50 transition-colors group"
           >
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
-              index === 0 ? 'bg-emerald-500 text-white' :
-              index === 1 ? 'bg-emerald-300 text-emerald-800' :
-              'bg-emerald-100 text-emerald-600'
-            }`}>
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${index === 0 ? 'bg-emerald-500 text-white' :
+                index === 1 ? 'bg-emerald-300 text-emerald-800' :
+                  'bg-emerald-100 text-emerald-600'
+              }`}>
               {index + 1}
             </span>
             <span className="text-lg">{test.emoji}</span>

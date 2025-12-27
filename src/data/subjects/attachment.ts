@@ -159,7 +159,7 @@ export const attachmentData = {
       color: "bg-yellow-100",
       matchPoints: [
         "확신을 주는 표현을 자주 해줄 수 있는 분",
-        "감정적으로 안정적이고 인내심 있는 분",
+        "공감 능력이 뛰어난으로 안정적이고 인내심 있는 분",
         "자주 연락하고 만나는 것을 부담스러워하지 않는 분"
       ]
     },
@@ -212,7 +212,7 @@ export const attachmentData = {
       mood: "happy",
       color: "bg-yellow-100",
       matchPoints: [
-        "감정적으로 안정적이면서도 공감력 있는 분",
+        "공감 능력이 뛰어난으로 안정적이면서도 공감력 있는 분",
         "적절한 확신을 주면서도 독립성을 존중하는 분",
         "솔직한 대화를 통해 관계를 발전시킬 수 있는 분"
       ]

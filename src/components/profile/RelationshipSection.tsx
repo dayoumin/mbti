@@ -56,7 +56,7 @@ export default function RelationshipSection({ profile, onStartTest }: Relationsh
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl p-4 md:p-6">
+      <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
         <div className="animate-pulse">
           <div className="h-5 bg-gray-200 rounded w-32 mb-4" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,7 +69,7 @@ export default function RelationshipSection({ profile, onStartTest }: Relationsh
   }
 
   return (
-    <section className="bg-white rounded-2xl p-4 md:p-6">
+    <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-4">
         <Heart className="w-5 h-5 text-pink-500" />
@@ -121,7 +121,7 @@ export default function RelationshipSection({ profile, onStartTest }: Relationsh
                   <span className="text-sm text-gray-600">친밀도</span>
                   <span className="text-sm font-medium text-gray-800">
                     {stage5Result.intimacyPreference.type === 'close' ? '밀착형' :
-                     stage5Result.intimacyPreference.type === 'distant' ? '거리형' : '균형형'}
+                      stage5Result.intimacyPreference.type === 'distant' ? '거리형' : '균형형'}
                   </span>
                 </div>
 
@@ -130,7 +130,7 @@ export default function RelationshipSection({ profile, onStartTest }: Relationsh
                   <span className="text-sm text-gray-600">소통 방식</span>
                   <span className="text-sm font-medium text-gray-800">
                     {stage5Result.communicationStyle.type === 'assertive' ? '주장적' :
-                     stage5Result.communicationStyle.type === 'diplomatic' ? '외교적' : '균형적'}
+                      stage5Result.communicationStyle.type === 'diplomatic' ? '외교적' : '균형적'}
                   </span>
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function RelationshipSection({ profile, onStartTest }: Relationsh
                   <p className="font-medium text-gray-800">{relationshipResults.idealType.resultName}</p>
                 </div>
                 <button
-                  onClick={() => {/* TODO: 공유 */}}
+                  onClick={() => {/* TODO: 공유 */ }}
                   className="p-2 hover:bg-gray-200 rounded-full transition-colors"
                 >
                   <Share2 className="w-4 h-4 text-gray-400" />
@@ -174,7 +174,7 @@ export default function RelationshipSection({ profile, onStartTest }: Relationsh
                   <p className="font-medium text-gray-800">{relationshipResults.conflictStyle.resultName}</p>
                 </div>
                 <button
-                  onClick={() => {/* TODO: 공유 */}}
+                  onClick={() => {/* TODO: 공유 */ }}
                   className="p-2 hover:bg-gray-200 rounded-full transition-colors"
                 >
                   <Share2 className="w-4 h-4 text-gray-400" />

@@ -101,7 +101,7 @@ export default function TestResultsSection({ profile, onStartTest }: TestResults
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl p-4 md:p-6">
+      <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
         <div className="animate-pulse">
           <div className="h-5 bg-gray-200 rounded w-32 mb-4" />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -115,7 +115,7 @@ export default function TestResultsSection({ profile, onStartTest }: TestResults
   }
 
   return (
-    <section className="bg-white rounded-2xl p-4 md:p-6">
+    <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-4">
         <Grid3X3 className="w-5 h-5 text-gray-600" />
@@ -128,11 +128,10 @@ export default function TestResultsSection({ profile, onStartTest }: TestResults
           <button
             key={category.key}
             onClick={() => setActiveCategory(category.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              activeCategory === category.key
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${activeCategory === category.key
                 ? 'bg-gray-900 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             <span>{category.emoji}</span>
             <span>{category.label}</span>

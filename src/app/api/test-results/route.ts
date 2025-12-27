@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       isDeepMode,
       parentInfo, // { testType: string, resultName: string }
       timestamp: clientTimestamp, // 클라이언트에서 전달한 타임스탬프 (일관성 보장)
+      responseTimes, // Phase 2: 응답 시간 배열 (밀리초)
     } = body;
 
     if (!deviceId || !testType || !resultName) {
@@ -51,6 +52,14 @@ export async function POST(request: NextRequest) {
       timestamp = new Date().toISOString();
     }
 
+    // Phase 2: 응답 시간 검증 (선택적)
+    let validatedResponseTimes: number[] | undefined;
+    if (responseTimes && Array.isArray(responseTimes)) {
+      validatedResponseTimes = responseTimes
+        .filter(t => typeof t === 'number' && t >= 0 && t <= 3600000) // 0ms ~ 1시간
+        .map(t => Math.round(t)); // 정수로 변환
+    }
+
     // 저장 시도
     try {
       const result = await query(
@@ -60,7 +69,12 @@ export async function POST(request: NextRequest) {
           deviceId,
           testType,
           resultName,
-          JSON.stringify({ emoji: resultEmoji, scores, isDeepMode }),
+          JSON.stringify({
+            emoji: resultEmoji,
+            scores,
+            isDeepMode,
+            meta: validatedResponseTimes ? { response_time_ms: validatedResponseTimes } : undefined,
+          }),
           parentInfo ? JSON.stringify(parentInfo) : null,
           timestamp,
         ]

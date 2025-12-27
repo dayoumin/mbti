@@ -94,13 +94,12 @@ const CurrentStateSection = () => {
         {analysis.map((item) => (
           <div
             key={item.endpoint}
-            className={`p-4 rounded-xl border ${
-              item.currentStatus === 'missing'
+            className={`p-4 rounded-xl border ${item.currentStatus === 'missing'
                 ? 'bg-red-50 border-red-200'
                 : item.currentStatus === 'needs_improvement'
-                ? 'bg-amber-50 border-amber-200'
-                : 'bg-green-50 border-green-200'
-            }`}
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-green-50 border-green-200'
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span className="font-bold text-slate-800">{getEndpointLabel(item.endpoint)}</span>
@@ -115,7 +114,7 @@ const CurrentStateSection = () => {
                 <span className="text-slate-500">현재 액션:</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {item.currentActions.map((action, idx) => (
-                    <span key={idx} className="px-2 py-0.5 bg-white rounded-full text-xs text-slate-600 border">
+                    <span key={idx} className="px-2 py-0.5 bg-slate-50 rounded-full text-xs text-slate-600 border">
                       {action}
                     </span>
                   ))}
@@ -176,11 +175,10 @@ const ConnectionMatrix = () => {
                   <td className="py-2 px-3 text-slate-600">{conn.to}</td>
                   <td className="py-2 px-3">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                        conn.type === 'quiz'
+                      className={`px-2 py-0.5 rounded-full text-xs font-bold ${conn.type === 'quiz'
                           ? 'bg-amber-100 text-amber-700'
                           : 'bg-green-100 text-green-700'
-                      }`}
+                        }`}
                     >
                       {conn.type}
                     </span>
@@ -190,9 +188,8 @@ const ConnectionMatrix = () => {
                       {[1, 2, 3, 4, 5].map((n) => (
                         <div
                           key={n}
-                          className={`w-2 h-2 rounded-full ${
-                            n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
+                            }`}
                         />
                       ))}
                     </div>
@@ -231,9 +228,8 @@ const ConnectionMatrix = () => {
                       {[1, 2, 3, 4, 5].map((n) => (
                         <div
                           key={n}
-                          className={`w-2 h-2 rounded-full ${
-                            n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${n <= conn.relevance ? 'bg-indigo-500' : 'bg-slate-200'
+                            }`}
                         />
                       ))}
                     </div>
@@ -264,7 +260,7 @@ const RoadmapSection = () => {
 
       <div className="space-y-4">
         {RETENTION_ROADMAP.map((phase) => (
-          <div key={phase.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div key={phase.id} className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
             <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
               <span className="font-bold text-slate-800">{phase.name}</span>
               <StatusBadge status={phase.status} />
@@ -272,11 +268,10 @@ const RoadmapSection = () => {
             <div className="p-4 space-y-3">
               {phase.items.map((item, idx) => (
                 <div key={idx} className="flex items-start gap-3">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                    phase.status === 'done' ? 'bg-green-100 text-green-700' :
-                    phase.status === 'in_progress' ? 'bg-amber-100 text-amber-700' :
-                    'bg-slate-100 text-slate-500'
-                  }`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${phase.status === 'done' ? 'bg-green-100 text-green-700' :
+                      phase.status === 'in_progress' ? 'bg-amber-100 text-amber-700' :
+                        'bg-slate-100 text-slate-500'
+                    }`}>
                     {idx + 1}
                   </div>
                   <div className="flex-1">
@@ -444,7 +439,7 @@ const LiveMonitoringSection = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-white/60 rounded-lg p-2 text-center">
+          <div className="bg-slate-50/60 rounded-lg p-2 text-center">
             <p className="text-xl font-black text-amber-600">🔥 {stats.currentStreak}</p>
             <p className="text-xs text-slate-500">현재 스트릭</p>
           </div>
@@ -463,11 +458,11 @@ const LiveMonitoringSection = () => {
             <p className="text-lg font-black text-blue-600">{stats.quizzesAnswered}</p>
             <p className="text-xs text-slate-500">퀴즈 응답</p>
           </div>
-          <div className="bg-white/60 rounded-lg p-2 text-center">
+          <div className="bg-slate-50/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-emerald-600">{quizAccuracy}%</p>
             <p className="text-xs text-slate-500">정답률</p>
           </div>
-          <div className="bg-white/60 rounded-lg p-2 text-center">
+          <div className="bg-slate-50/60 rounded-lg p-2 text-center">
             <p className="text-lg font-black text-purple-600">{stats.pollsVoted}</p>
             <p className="text-xs text-slate-500">투표 참여</p>
           </div>
@@ -664,11 +659,10 @@ export default function RetentionSystem() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${activeTab === tab.key
                 ? 'bg-indigo-500 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
+              }`}
           >
             <span>{tab.icon}</span>
             <span>{tab.label}</span>

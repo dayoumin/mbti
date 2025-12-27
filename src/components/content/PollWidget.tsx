@@ -38,7 +38,7 @@ export default function PollWidget({
   const { count: commentCount } = useCommentCount({ targetType: 'poll', targetId: poll.id });
 
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+    <div className="bg-slate-50 rounded-2xl p-5 shadow-sm border border-slate-100">
       {/* 헤더 */}
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -133,7 +133,7 @@ export default function PollWidget({
             {showComments && (
               <button
                 onClick={() => setCommentsOpen(!commentsOpen)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold rounded-xl transition-all ${commentsOpen
+                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold rounded-md transition-all ${commentsOpen
                   ? 'bg-slate-100 text-slate-600'
                   : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
                   }`}
@@ -147,7 +147,7 @@ export default function PollWidget({
             {remainingCount > 0 && onNext && (
               <button
                 onClick={onNext}
-                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold text-white bg-gradient-brand-primary hover:from-purple-600 hover:to-pink-600 rounded-md transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
                 다음 투표 ({remainingCount}개)
                 <ChevronRight className="w-4 h-4" />
@@ -200,14 +200,14 @@ function PollOptionButton({
   const colors = {
     a: {
       border: isSelected ? 'border-purple-400' : selectedOption ? 'border-slate-200' : 'border-purple-200',
-      bg: isSelected ? 'bg-purple-50' : selectedOption ? 'bg-slate-50' : 'bg-white',
+      bg: isSelected ? 'bg-purple-50' : selectedOption ? 'bg-slate-50' : 'bg-slate-50',
       hover: !selectedOption ? 'hover:border-purple-300 hover:bg-purple-50' : '',
       bar: 'bg-purple-200/60',
       percent: 'text-purple-600',
     },
     b: {
       border: isSelected ? 'border-pink-400' : selectedOption ? 'border-slate-200' : 'border-pink-200',
-      bg: isSelected ? 'bg-pink-50' : selectedOption ? 'bg-slate-50' : 'bg-white',
+      bg: isSelected ? 'bg-pink-50' : selectedOption ? 'bg-slate-50' : 'bg-slate-50',
       hover: !selectedOption ? 'hover:border-pink-300 hover:bg-pink-50' : '',
       bar: 'bg-pink-200/60',
       percent: 'text-pink-600',
@@ -220,7 +220,7 @@ function PollOptionButton({
     <button
       onClick={() => onVote(choice)}
       disabled={!!selectedOption || isLoadingStats}
-      className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${c.border} ${c.bg} ${c.hover}`}
+      className={`flex-1 relative overflow-hidden rounded-md border-2 transition-all ${c.border} ${c.bg} ${c.hover}`}
     >
       {/* 결과 바 (배경) */}
       {selectedOption && (

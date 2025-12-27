@@ -56,6 +56,9 @@ export interface ResultMeta {
   isAdultOnly?: boolean;  // 성인 전용 콘텐츠 (예: 와인, 술)
   minAge?: string;        // 최소 연령 ("20s" 등)
 
+  // === 응답 시간 (Phase 2: 확신도 계산용) ===
+  response_time_ms?: number[];  // 각 질문별 응답 시간 (밀리초)
+
   // === 바이럴 콘텐츠용 ===
   funFacts?: FunFacts;
 }

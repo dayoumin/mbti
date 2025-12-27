@@ -170,7 +170,7 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
 
   if (loading) {
     return (
-      <div className={`bg-white rounded-2xl p-4 shadow-sm border border-gray-100 ${className}`}>
+      <div className={`bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100 ${className}`}>
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
           <div className="space-y-3">
@@ -186,12 +186,12 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
   const hasData = pollRankings.length > 0 || resultRankings.length > 0;
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden ${className}`}>
+    <div className={`bg-slate-50 rounded-2xl shadow-sm border border-gray-100 overflow-hidden ${className}`}>
       {/* 헤더 */}
       <div className="bg-gradient-to-r from-orange-500 to-rose-500 p-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-slate-50/20 rounded-xl flex items-center justify-center">
               <Flame className="w-5 h-5" />
             </div>
             <div>
@@ -212,22 +212,20 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
       <div className="flex border-b border-gray-100">
         <button
           onClick={() => setActiveTab('polls')}
-          className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-            activeTab === 'polls'
-              ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
-              : 'text-gray-400 hover:text-gray-600'
-          }`}
+          className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${activeTab === 'polls'
+            ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
+            : 'text-gray-400 hover:text-gray-600'
+            }`}
         >
           <BarChart3 className="w-4 h-4" />
           투표 랭킹
         </button>
         <button
           onClick={() => setActiveTab('results')}
-          className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-            activeTab === 'results'
-              ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
-              : 'text-gray-400 hover:text-gray-600'
-          }`}
+          className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${activeTab === 'results'
+            ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
+            : 'text-gray-400 hover:text-gray-600'
+            }`}
         >
           <Star className="w-4 h-4" />
           결과 랭킹
@@ -259,12 +257,11 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
                   className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-orange-50 transition-all group"
                 >
                   {/* 순위 */}
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
-                    idx === 0 ? 'bg-amber-400 text-white' :
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${idx === 0 ? 'bg-amber-400 text-white' :
                     idx === 1 ? 'bg-gray-400 text-white' :
-                    idx === 2 ? 'bg-orange-400 text-white' :
-                    'bg-gray-200 text-gray-600'
-                  }`}>
+                      idx === 2 ? 'bg-orange-400 text-white' :
+                        'bg-gray-200 text-gray-600'
+                    }`}>
                     {idx + 1}
                   </div>
 
@@ -317,12 +314,11 @@ export default function TodayRanking({ onPollClick, className = '' }: TodayRanki
                   className="flex items-center gap-3 p-3 rounded-xl bg-gray-50"
                 >
                   {/* 순위 */}
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
-                    idx === 0 ? 'bg-amber-400 text-white' :
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${idx === 0 ? 'bg-amber-400 text-white' :
                     idx === 1 ? 'bg-gray-400 text-white' :
-                    idx === 2 ? 'bg-orange-400 text-white' :
-                    'bg-gray-200 text-gray-600'
-                  }`}>
+                      idx === 2 ? 'bg-orange-400 text-white' :
+                        'bg-gray-200 text-gray-600'
+                    }`}>
                     {idx + 1}
                   </div>
 

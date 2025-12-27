@@ -226,15 +226,15 @@ export function generateRanking(
           return typeof value === 'number' && value >= (targetValue as number);
         case 'in':
           if (Array.isArray(value) && Array.isArray(targetValue)) {
-            return value.some(v => targetValue.includes(v));
+            return value.some(v => targetValue.includes(String(v)));
           }
           if (Array.isArray(targetValue)) {
-            return targetValue.includes(value as string);
+            return targetValue.includes(String(value));
           }
           return false;
         case 'notIn':
           if (Array.isArray(targetValue)) {
-            return !targetValue.includes(value as string);
+            return !targetValue.includes(String(value));
           }
           return true;
         default:

@@ -60,7 +60,7 @@ export default function PopularPolls({
 
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 ${className}`}>
+      <div className={`bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100 ${className}`}>
         <div className="animate-pulse space-y-3">
           <div className="h-5 bg-slate-200 rounded w-1/3" />
           <div className="h-16 bg-slate-100 rounded-xl" />
@@ -72,7 +72,7 @@ export default function PopularPolls({
 
   return (
     <>
-      <div className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 ${className}`}>
+      <div className={`bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100 ${className}`}>
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -281,7 +281,7 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-md bg-slate-50 rounded-2xl shadow-xl overflow-hidden max-h-[90vh] overflow-y-auto">
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
@@ -316,11 +316,10 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
             <button
               onClick={() => handleVote('a')}
               disabled={!!selectedOption || isLoading}
-              className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
-                selectedOption === 'a' ? 'border-purple-400 bg-purple-50' :
-                selectedOption ? 'border-slate-200 bg-slate-50' :
-                'border-purple-200 bg-white hover:border-purple-300 hover:bg-purple-50'
-              }`}
+              className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${selectedOption === 'a' ? 'border-purple-400 bg-purple-50' :
+                  selectedOption ? 'border-slate-200 bg-slate-50' :
+                    'border-purple-200 bg-slate-50 hover:border-purple-300 hover:bg-slate-50'
+                }`}
             >
               {selectedOption && (
                 <div
@@ -346,11 +345,10 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
             <button
               onClick={() => handleVote('b')}
               disabled={!!selectedOption || isLoading}
-              className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${
-                selectedOption === 'b' ? 'border-pink-400 bg-pink-50' :
-                selectedOption ? 'border-slate-200 bg-slate-50' :
-                'border-pink-200 bg-white hover:border-pink-300 hover:bg-pink-50'
-              }`}
+              className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${selectedOption === 'b' ? 'border-pink-400 bg-pink-50' :
+                  selectedOption ? 'border-slate-200 bg-slate-50' :
+                    'border-pink-200 bg-slate-50 hover:border-pink-300 hover:bg-slate-50'
+                }`}
             >
               {selectedOption && (
                 <div
@@ -384,9 +382,8 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
                   </span>
                   <button
                     onClick={handleLike}
-                    className={`flex items-center gap-1 transition-colors ${
-                      liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
-                    }`}
+                    className={`flex items-center gap-1 transition-colors ${liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'
+                      }`}
                   >
                     <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
                     <span>{likeCount}</span>
@@ -401,11 +398,10 @@ function PollDetailModal({ poll, onClose, onVoted }: PollDetailModalProps) {
               {/* 댓글 버튼 */}
               <button
                 onClick={() => setCommentsOpen(!commentsOpen)}
-                className={`w-full flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${
-                  commentsOpen
+                className={`w-full flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all ${commentsOpen
                     ? 'bg-slate-100 text-slate-600'
                     : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
-                }`}
+                  }`}
               >
                 <MessageCircle className="w-4 h-4" />
                 의견 나누기

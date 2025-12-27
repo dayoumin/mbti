@@ -46,7 +46,7 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
   return (
     <button
       onClick={() => onStart?.(testKey)}
-      className="flex-shrink-0 w-28 lg:w-full bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all hover:-translate-y-0.5 relative group flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3"
+      className="flex-shrink-0 w-28 lg:w-full bg-slate-50 rounded-xl p-3 border border-subtle hover:border-indigo-200 hover:shadow-md transition-all hover:-translate-y-0.5 relative group flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3"
     >
       {/* 순위 배지 */}
       {rank && (
@@ -70,10 +70,10 @@ function SmallTestCard({ testKey, onStart, badge, rank }: SmallTestCardProps) {
       </div>
 
       <div className="flex-1 min-w-0 text-center lg:text-left">
-        <p className="text-sm font-bold text-slate-700 truncate">
+        <p className="text-sm font-bold text-primary truncate">
           {data.title || config.label}
         </p>
-        <p className="text-xs text-slate-400 mt-0.5 truncate">
+        <p className="text-xs text-muted mt-0.5 truncate">
           {data.subtitle || `${data.resultLabels?.length || 0}가지 결과`}
         </p>
       </div>
@@ -99,8 +99,8 @@ function SectionHeader({ icon, title, subtitle, onMore, moreLabel = '더보기' 
       <div className="flex items-center gap-2">
         {icon}
         <div>
-          <h3 className="text-sm font-bold text-slate-700">{title}</h3>
-          {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+          <h3 className="text-sm font-bold text-primary">{title}</h3>
+          {subtitle && <p className="text-xs text-muted">{subtitle}</p>}
         </div>
       </div>
       {onMore && (
@@ -237,7 +237,7 @@ export function RecentSection({ onStartTest }: RecentSectionProps) {
   return (
     <section className="mb-5">
       <SectionHeader
-        icon={<Clock className="w-4 h-4 text-slate-500" />}
+        icon={<Clock className="w-4 h-4 text-secondary" />}
         title="최근 본 테스트"
         subtitle="다시 해보기"
       />

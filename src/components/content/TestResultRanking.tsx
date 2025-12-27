@@ -104,7 +104,7 @@ export default function TestResultRanking({
 
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 ${className}`}>
+      <div className={`bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100 ${className}`}>
         <div className="animate-pulse space-y-3">
           <div className="h-6 bg-slate-200 rounded w-2/3" />
           <div className="h-12 bg-slate-100 rounded-xl" />
@@ -116,7 +116,7 @@ export default function TestResultRanking({
   }
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden ${className}`}>
+    <div className={`bg-slate-50 rounded-2xl shadow-sm border border-slate-100 overflow-hidden ${className}`}>
       {/* 헤더 */}
       <div className="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100">
         <div className="flex items-center justify-between">
@@ -136,7 +136,7 @@ export default function TestResultRanking({
               <div className="relative">
                 <button
                   onClick={() => { setShowTestDropdown(!showTestDropdown); setShowAgeDropdown(false); }}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-white rounded-full text-xs font-medium text-slate-600 border border-slate-200 hover:border-purple-300 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 rounded-full text-xs font-medium text-slate-600 border border-slate-200 hover:border-purple-300 transition-colors"
                 >
                   <span>{testEmoji}</span>
                   <span>{testLabel}</span>
@@ -144,16 +144,15 @@ export default function TestResultRanking({
                 </button>
 
                 {showTestDropdown && (
-                  <div className="absolute right-0 top-full mt-1 w-36 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-20 max-h-64 overflow-y-auto">
+                  <div className="absolute right-0 top-full mt-1 w-36 bg-slate-50 rounded-xl shadow-lg border border-slate-100 py-1 z-20 max-h-64 overflow-y-auto">
                     {RANKABLE_TESTS.map(key => {
                       const config = SUBJECT_CONFIG[key];
                       return (
                         <button
                           key={key}
                           onClick={() => { setSelectedTest(key); setShowTestDropdown(false); }}
-                          className={`w-full px-3 py-2 text-xs text-left hover:bg-purple-50 flex items-center gap-2 ${
-                            selectedTest === key ? 'text-purple-600 font-bold bg-purple-50' : 'text-slate-600'
-                          }`}
+                          className={`w-full px-3 py-2 text-xs text-left hover:bg-purple-50 flex items-center gap-2 ${selectedTest === key ? 'text-purple-600 font-bold bg-purple-50' : 'text-slate-600'
+                            }`}
                         >
                           <span>{config.emoji}</span>
                           <span>{config.label}</span>
@@ -169,19 +168,18 @@ export default function TestResultRanking({
             <div className="relative">
               <button
                 onClick={() => { setShowAgeDropdown(!showAgeDropdown); setShowTestDropdown(false); }}
-                className="flex items-center gap-1 px-3 py-1.5 bg-white rounded-full text-xs font-medium text-slate-600 border border-slate-200 hover:border-purple-300 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 rounded-full text-xs font-medium text-slate-600 border border-slate-200 hover:border-purple-300 transition-colors"
               >
                 {selectedAgeGroup === 'all' ? '전체' : AGE_GROUP_LABELS[selectedAgeGroup]}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showAgeDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {showAgeDropdown && (
-                <div className="absolute right-0 top-full mt-1 w-24 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-20">
+                <div className="absolute right-0 top-full mt-1 w-24 bg-slate-50 rounded-xl shadow-lg border border-slate-100 py-1 z-20">
                   <button
                     onClick={() => { setSelectedAgeGroup('all'); setShowAgeDropdown(false); }}
-                    className={`w-full px-3 py-2 text-xs text-left hover:bg-purple-50 ${
-                      selectedAgeGroup === 'all' ? 'text-purple-600 font-bold' : 'text-slate-600'
-                    }`}
+                    className={`w-full px-3 py-2 text-xs text-left hover:bg-purple-50 ${selectedAgeGroup === 'all' ? 'text-purple-600 font-bold' : 'text-slate-600'
+                      }`}
                   >
                     전체
                   </button>
@@ -189,9 +187,8 @@ export default function TestResultRanking({
                     <button
                       key={key}
                       onClick={() => { setSelectedAgeGroup(key); setShowAgeDropdown(false); }}
-                      className={`w-full px-3 py-2 text-xs text-left hover:bg-purple-50 ${
-                        selectedAgeGroup === key ? 'text-purple-600 font-bold' : 'text-slate-600'
-                      }`}
+                      className={`w-full px-3 py-2 text-xs text-left hover:bg-purple-50 ${selectedAgeGroup === key ? 'text-purple-600 font-bold' : 'text-slate-600'
+                        }`}
                     >
                       {label}
                     </button>
@@ -214,9 +211,8 @@ export default function TestResultRanking({
           rankings.map((item, index) => (
             <div
               key={`${item.testType}-${item.resultName}`}
-              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                index < 3 ? 'bg-gradient-to-r from-purple-50 to-transparent' : 'bg-slate-50'
-              }`}
+              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${index < 3 ? 'bg-gradient-to-r from-purple-50 to-transparent' : 'bg-slate-50'
+                }`}
             >
               {/* 순위 */}
               <div className="flex-shrink-0 w-8 flex justify-center">

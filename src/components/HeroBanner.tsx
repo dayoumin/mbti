@@ -29,10 +29,10 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
   const IconComponent = getIconComponent(config.icon);
 
   const styles = [
-    { bg: 'bg-[#EEF2FF]', border: 'border-indigo-100', iconBg: 'bg-white', iconColor: 'text-indigo-500', accent: 'bg-indigo-500', badge: 'bg-indigo-100/50 text-indigo-600' },
-    { bg: 'bg-[#FDF2F8]', border: 'border-pink-100', iconBg: 'bg-white', iconColor: 'text-pink-500', accent: 'bg-pink-500', badge: 'bg-pink-100/50 text-pink-600' },
-    { bg: 'bg-[#F0FDF4]', border: 'border-emerald-100', iconBg: 'bg-white', iconColor: 'text-emerald-500', accent: 'bg-emerald-500', badge: 'bg-emerald-100/50 text-emerald-600' },
-    { bg: 'bg-[#FFFBEB]', border: 'border-amber-100', iconBg: 'bg-white', iconColor: 'text-amber-500', accent: 'bg-amber-500', badge: 'bg-amber-100/50 text-amber-600' }
+    { bg: 'bg-slate-50', border: 'border-subtle', iconBg: 'bg-slate-50', iconColor: 'text-indigo-500', accent: 'bg-indigo-500', badge: 'bg-indigo-100/50 text-indigo-600' },
+    { bg: 'bg-slate-50', border: 'border-subtle', iconBg: 'bg-slate-50', iconColor: 'text-pink-500', accent: 'bg-pink-500', badge: 'bg-pink-100/50 text-pink-600' },
+    { bg: 'bg-slate-50', border: 'border-subtle', iconBg: 'bg-slate-50', iconColor: 'text-emerald-500', accent: 'bg-emerald-500', badge: 'bg-emerald-100/50 text-emerald-600' },
+    { bg: 'bg-slate-50', border: 'border-subtle', iconBg: 'bg-slate-50', iconColor: 'text-amber-500', accent: 'bg-amber-500', badge: 'bg-amber-100/50 text-amber-600' }
   ];
 
   const s = styles[index % styles.length];
@@ -53,7 +53,7 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
       onClick={() => onStart?.(testKey)}
       disabled={isDisabled}
       aria-disabled={isDisabled}
-      className={`relative w-full h-[100px] md:h-32 ${s.bg} rounded-[1.25rem] md:rounded-[1.5rem] p-3 md:p-5 border ${s.border} transition-all overflow-hidden group text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl hover:shadow-slate-200/50 hover:border-white hover:-translate-y-1 active:scale-[0.98]'}`}
+      className={`relative w-full h-[100px] md:h-32 ${s.bg} rounded-md p-3 md:p-5 border ${s.border} transition-all overflow-hidden group text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-brand hover:border-brand hover:-translate-y-1 active:scale-[0.98]'}`}
     >
       <div className={`absolute top-0 right-0 w-24 h-24 ${s.accent} opacity-[0.03] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000`} />
 
@@ -61,11 +61,11 @@ const HeroCard = ({ testKey, onStart, index }: HeroCardProps) => {
         {/* 상단: 아이콘 + 제목 (같은 Row) */}
         <div className="flex items-center gap-2 md:gap-3">
           <div className="relative flex-shrink-0">
-            <div className={`w-8 h-8 md:w-11 md:h-11 ${s.iconBg} rounded-[0.6rem] md:rounded-[0.75rem] flex items-center justify-center shadow-sm border border-white group-hover:rotate-3 transition-transform`}>
+            <div className={`w-8 h-8 md:w-11 md:h-11 ${s.iconBg} rounded-sm flex items-center justify-center shadow-sm border border-slate-200 group-hover:rotate-3 transition-transform`}>
               <IconComponent mood="happy" className={`w-5 h-5 md:w-8 md:h-8 ${s.iconColor}`} />
             </div>
             {/* 기호 배지: 아이콘 박스 좌측 상단 */}
-            <div className={`absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 rounded-full ${s.iconBg} border border-slate-100 flex items-center justify-center text-xs shadow-sm z-10`}>
+            <div className={`absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 rounded-full ${s.iconBg} border border-subtle flex items-center justify-center text-xs shadow-sm z-10`}>
               {isMatching ? '💫' : '🧠'}
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function HeroBanner({ onStartTest, className = '' }: HeroBannerPr
           <div className="flex items-center gap-2">
             <button
               onClick={prevPage}
-              className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-200 transition-all active:scale-95 shadow-sm"
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-200 transition-all active:scale-95 shadow-sm"
             >
               <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
             </button>
@@ -148,7 +148,7 @@ export default function HeroBanner({ onStartTest, className = '' }: HeroBannerPr
             </div>
             <button
               onClick={nextPage}
-              className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-200 transition-all active:scale-95 shadow-sm"
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-200 transition-all active:scale-95 shadow-sm"
             >
               <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
             </button>

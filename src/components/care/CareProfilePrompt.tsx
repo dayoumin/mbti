@@ -118,7 +118,7 @@ export default function CareProfilePrompt({
           aria-modal="true"
           aria-labelledby="care-profile-modal-title"
         >
-          <div className="bg-white rounded-2xl w-full max-w-sm p-6">
+          <div className="bg-slate-50 rounded-2xl w-full max-w-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">{config.emoji}</span>

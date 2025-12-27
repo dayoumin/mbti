@@ -59,7 +59,7 @@ function OverviewTab() {
         {SOCIAL_PHASES.map((phase, idx) => (
           <div
             key={phase.id}
-            className="bg-white rounded-lg border-2 p-4 text-center"
+            className="bg-slate-50 rounded-lg border-2 p-4 text-center"
             style={{ borderColor: phase.color }}
           >
             <div className="text-3xl mb-2">{phase.emoji}</div>
@@ -90,23 +90,23 @@ function OverviewTab() {
 
       {/* 요약 통계 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-slate-50 rounded-lg border border-gray-200 p-4 text-center">
           <div className="text-2xl font-bold text-blue-600">{SOCIAL_FEATURES.length}</div>
           <div className="text-sm text-gray-500">총 기능 수</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-slate-50 rounded-lg border border-gray-200 p-4 text-center">
           <div className="text-2xl font-bold text-red-600">
             {SOCIAL_FEATURES.filter(f => f.priority === 'high').length}
           </div>
           <div className="text-sm text-gray-500">높은 우선순위</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-slate-50 rounded-lg border border-gray-200 p-4 text-center">
           <div className="text-2xl font-bold text-green-600">
             {SOCIAL_FEATURES.filter(f => f.status === 'done').length}
           </div>
           <div className="text-sm text-gray-500">완료된 기능</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <div className="bg-slate-50 rounded-lg border border-gray-200 p-4 text-center">
           <div className="text-2xl font-bold text-yellow-600">
             {SOCIAL_IMPLEMENTATION_PRIORITY.length}
           </div>
@@ -135,11 +135,10 @@ function PhasesTab() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setSelectedPhase('all')}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            selectedPhase === 'all'
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedPhase === 'all'
               ? 'bg-gray-800 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+            }`}
         >
           전체 ({SOCIAL_FEATURES.length})
         </button>
@@ -147,11 +146,10 @@ function PhasesTab() {
           <button
             key={phase.id}
             onClick={() => setSelectedPhase(phase.id)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
-              selectedPhase === phase.id
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${selectedPhase === phase.id
                 ? 'bg-gray-800 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             <span>{phase.emoji}</span>
             <span>{phase.name}</span>
@@ -165,7 +163,7 @@ function PhasesTab() {
         {filteredFeatures.map(feature => (
           <div
             key={feature.id}
-            className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+            className="bg-slate-50 rounded-lg border border-gray-200 overflow-hidden"
           >
             {/* 헤더 */}
             <button
@@ -251,7 +249,7 @@ function ObserveTab() {
       {/* 시나리오별 카드 */}
       <div className="space-y-4">
         {OBSERVE_OTHERS_FEATURES.scenarios.map(scenario => (
-          <div key={scenario.id} className="bg-white rounded-lg border border-gray-200 p-4">
+          <div key={scenario.id} className="bg-slate-50 rounded-lg border border-gray-200 p-4">
             <div className="flex items-start gap-3 mb-3">
               <span className="text-2xl">👀</span>
               <div>
@@ -284,7 +282,7 @@ function RoadmapTab() {
   return (
     <div className="space-y-6">
       {SOCIAL_IMPLEMENTATION_PRIORITY.map((phase, idx) => (
-        <div key={phase.phase} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div key={phase.phase} className="bg-slate-50 rounded-lg border border-gray-200 overflow-hidden">
           {/* 헤더 */}
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 text-white">
             <div className="flex items-center justify-between">
@@ -315,13 +313,12 @@ function RoadmapTab() {
                   return (
                     <span
                       key={featureId}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        feature?.priority === 'high'
+                      className={`px-3 py-1 rounded-full text-sm ${feature?.priority === 'high'
                           ? 'bg-red-100 text-red-700'
                           : feature?.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
                     >
                       {feature?.name || featureId}
                     </span>
@@ -350,7 +347,7 @@ function MetricsTab() {
   return (
     <div className="space-y-6">
       {SOCIAL_METRICS.map(category => (
-        <div key={category.category} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div key={category.category} className="bg-slate-50 rounded-lg border border-gray-200 overflow-hidden">
           <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
             <h3 className="font-bold text-gray-800">{category.category}</h3>
           </div>
@@ -398,11 +395,10 @@ export default function SocialFeatures() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
-              activeTab === tab.id
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${activeTab === tab.id
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             <span>{tab.icon}</span>
             <span className="text-sm font-medium">{tab.name}</span>

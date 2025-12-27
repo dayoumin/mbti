@@ -65,11 +65,10 @@ export default function PlantCare() {
           <button
             key={tab.key}
             onClick={() => setActiveView(tab.key as typeof activeView)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              activeView === tab.key
-                ? 'bg-white text-slate-800 shadow-sm'
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeView === tab.key
+                ? 'bg-slate-50 text-primary shadow-sm'
                 : 'text-slate-500 hover:text-slate-700'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -186,11 +185,10 @@ function TaskCard({ task, onComplete, urgent }: TaskCardProps) {
 
   return (
     <div
-      className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
-        urgent
+      className={`flex items-center gap-4 p-4 rounded-xl transition-all ${urgent
           ? 'bg-red-50 border border-red-200'
-          : 'bg-white border border-slate-200'
-      }`}
+          : 'bg-slate-50 border border-slate-200'
+        }`}
     >
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl">
         {task.emoji}
@@ -203,11 +201,10 @@ function TaskCard({ task, onComplete, urgent }: TaskCardProps) {
       </div>
       <button
         onClick={() => onComplete(task.id)}
-        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-          urgent
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${urgent
             ? 'bg-red-500 text-white hover:bg-red-600'
             : 'bg-green-500 text-white hover:bg-green-600'
-        }`}
+          }`}
       >
         <Check className="w-5 h-5" />
       </button>
@@ -250,7 +247,7 @@ function PlantListView({ profiles, onAddClick, refresh }: PlantListViewProps) {
           <button
             key={plant.id}
             onClick={() => setSelectedPlant(plant)}
-            className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 hover:border-green-300 transition-all text-left"
+            className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-green-300 transition-all text-left"
           >
             <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl">
               🌱
@@ -319,7 +316,7 @@ function HistoryView({ refreshKey }: { refreshKey: number }) {
         return (
           <div
             key={log.id}
-            className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100"
+            className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"
           >
             <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center">
               {care.emoji}
@@ -382,7 +379,7 @@ function AddPlantModal({ onClose, onAdd }: AddPlantModalProps) {
       aria-modal="true"
       aria-labelledby="add-plant-title"
     >
-      <div className="bg-white rounded-2xl w-full max-w-md p-6">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 id="add-plant-title" className="text-lg font-bold text-slate-800">새 식물 추가</h3>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg">
@@ -499,7 +496,7 @@ function PlantDetailModal({ plant, onClose, onDelete, refresh }: PlantDetailModa
       aria-modal="true"
       aria-labelledby="plant-detail-title"
     >
-      <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-slate-100">
           <div className="flex items-center justify-between">

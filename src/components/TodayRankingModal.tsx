@@ -125,6 +125,8 @@ export default function TodayRankingModal({
   useEffect(() => {
     if (!isOpen) return;
 
+    let isCancelled = false;
+
     const loadRankings = async () => {
       setLoading(true);
       try {
@@ -155,6 +157,8 @@ export default function TodayRankingModal({
           })
         );
 
+        if (isCancelled) return;
+
         // 투표수 순으로 정렬
         const sortedPolls = pollStats
           .filter(p => p.totalVotes > 0)
@@ -174,8 +178,10 @@ export default function TodayRankingModal({
             if (!res.ok) throw new Error('Failed to fetch rankings');
             const data = await res.json();
 
+            if (isCancelled) return;
             setResultRankings(data.rankings || []);
           } catch (error) {
+            if (isCancelled) return;
             console.error('[TodayRankingModal] 결과 랭킹 로드 실패:', error);
             // DB 실패 시 localStorage 폴백
             try {
@@ -212,13 +218,20 @@ export default function TodayRankingModal({
 
         await loadResultRankings();
       } catch (error) {
+        if (isCancelled) return;
         console.error('[TodayRankingModal] 랭킹 로드 실패:', error);
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     };
 
     loadRankings();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isOpen]);
 
   // ESC 키로 닫기
@@ -373,7 +386,7 @@ export default function TodayRankingModal({
                 <>
                   <button
                     onClick={closeCommentView}
-                    className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition-colors"
+                    className="w-10 h-10 bg-slate-50/20 rounded-xl flex items-center justify-center hover:bg-slate-50/30 transition-colors"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
@@ -387,7 +400,7 @@ export default function TodayRankingModal({
               ) : (
                 // 일반 헤더
                 <>
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-slate-50/20 rounded-xl flex items-center justify-center">
                     <Flame className="w-5 h-5" />
                   </div>
                   <div>
@@ -406,7 +419,7 @@ export default function TodayRankingModal({
               )}
               <button
                 onClick={handleClose}
-                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-slate-50/20 hover:bg-slate-50/30 flex items-center justify-center transition-colors"
                 aria-label="닫기"
               >
                 <X className="w-4 h-4" />
@@ -494,8 +507,8 @@ export default function TodayRankingModal({
               <button
                 onClick={() => setActiveTab('polls')}
                 className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${activeTab === 'polls'
-                    ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
-                    : 'text-gray-400 hover:text-gray-600'
+                  ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
+                  : 'text-gray-400 hover:text-gray-600'
                   }`}
               >
                 <BarChart3 className="w-4 h-4" />
@@ -504,8 +517,8 @@ export default function TodayRankingModal({
               <button
                 onClick={() => setActiveTab('results')}
                 className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${activeTab === 'results'
-                    ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
-                    : 'text-gray-400 hover:text-gray-600'
+                  ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
+                  : 'text-gray-400 hover:text-gray-600'
                   }`}
               >
                 <Star className="w-4 h-4" />
@@ -545,9 +558,9 @@ export default function TodayRankingModal({
                       >
                         {/* 순위 */}
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${idx === 0 ? 'bg-amber-400 text-white' :
-                            idx === 1 ? 'bg-gray-400 text-white' :
-                              idx === 2 ? 'bg-orange-400 text-white' :
-                                'bg-gray-200 text-gray-600'
+                          idx === 1 ? 'bg-gray-400 text-white' :
+                            idx === 2 ? 'bg-orange-400 text-white' :
+                              'bg-gray-200 text-gray-600'
                           }`}>
                           {idx + 1}
                         </div>
@@ -605,9 +618,9 @@ export default function TodayRankingModal({
                       >
                         {/* 순위 */}
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${idx === 0 ? 'bg-amber-400 text-white' :
-                            idx === 1 ? 'bg-gray-400 text-white' :
-                              idx === 2 ? 'bg-orange-400 text-white' :
-                                'bg-gray-200 text-gray-600'
+                          idx === 1 ? 'bg-gray-400 text-white' :
+                            idx === 2 ? 'bg-orange-400 text-white' :
+                              'bg-gray-200 text-gray-600'
                           }`}>
                           {idx + 1}
                         </div>

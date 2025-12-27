@@ -13,6 +13,7 @@ import { demographicService } from './DemographicService';
 import type { ContentCategory, KnowledgeQuiz, VSPoll } from '@/data/content/types';
 import { isContentAllowedForAge, getKidsBoostFactor } from '@/data/content/types';
 import { contentRecommendationService } from './ContentRecommendationService';
+import { storage } from '@/utils';
 
 // ============================================================================
 // 타입 정의
@@ -69,16 +70,7 @@ class UserPreferenceServiceClass {
       return this.getDefaultData();
     }
 
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (e) {
-      console.error('UserPreferenceService: Failed to load from storage', e);
-    }
-
-    return this.getDefaultData();
+    return storage.get<UserPreferenceData>(STORAGE_KEY, this.getDefaultData());
   }
 
   // 기본 데이터
@@ -95,12 +87,8 @@ class UserPreferenceServiceClass {
   private saveToStorage(): void {
     if (typeof window === 'undefined') return;
 
-    try {
-      this.data.updatedAt = new Date().toISOString();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
-    } catch (e) {
-      console.error('UserPreferenceService: Failed to save to storage', e);
-    }
+    this.data.updatedAt = new Date().toISOString();
+    storage.set(STORAGE_KEY, this.data);
   }
 
   // ========================================================================
@@ -328,16 +316,11 @@ class UserPreferenceServiceClass {
   private getParticipatedQuizIds(): string[] {
     if (typeof window === 'undefined') return [];
 
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.CONTENT_PARTICIPATION);
-      if (stored) {
-        const data = JSON.parse(stored);
-        return (data.quizzes || []).map((q: { quizId: string }) => q.quizId);
-      }
-    } catch {
-      // ignore
-    }
-    return [];
+    const data = storage.get<{ quizzes?: Array<{ quizId: string }> }>(
+      STORAGE_KEYS.CONTENT_PARTICIPATION,
+      {}
+    );
+    return (data.quizzes || []).map((q) => q.quizId);
   }
 
   /**
@@ -346,16 +329,11 @@ class UserPreferenceServiceClass {
   private getParticipatedPollIds(): string[] {
     if (typeof window === 'undefined') return [];
 
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.CONTENT_PARTICIPATION);
-      if (stored) {
-        const data = JSON.parse(stored);
-        return (data.polls || []).map((p: { pollId: string }) => p.pollId);
-      }
-    } catch {
-      // ignore
-    }
-    return [];
+    const data = storage.get<{ polls?: Array<{ pollId: string }> }>(
+      STORAGE_KEYS.CONTENT_PARTICIPATION,
+      {}
+    );
+    return (data.polls || []).map((p) => p.pollId);
   }
 
   /**

@@ -58,9 +58,8 @@ function ViralMeter({ score }: { score: number }) {
       {[1, 2, 3, 4, 5].map((i) => (
         <div
           key={i}
-          className={`w-2 h-2 rounded-full ${
-            i <= score ? 'bg-pink-500' : 'bg-slate-200'
-          }`}
+          className={`w-2 h-2 rounded-full ${i <= score ? 'bg-pink-500' : 'bg-slate-200'
+            }`}
         />
       ))}
     </div>
@@ -71,7 +70,7 @@ function CategoryCard({ category }: { category: CategoryDefinition }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div className="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -238,7 +237,7 @@ function TestIdeaCard({ idea }: { idea: TestIdea }) {
 
 function RoadmapCard({ phase }: { phase: RoadmapPhase }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4">
+    <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
           <span className="text-sm font-black text-indigo-600">{phase.phase}</span>
@@ -328,11 +327,10 @@ export default function CategoryStrategy() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.key
                 ? 'bg-indigo-500 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -374,7 +372,7 @@ export default function CategoryStrategy() {
               <Lightbulb className="w-5 h-5" /> 카테고리 확장 핵심 포인트
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-white rounded-xl">
+              <div className="p-4 bg-slate-50 rounded-xl">
                 <h4 className="font-bold text-pink-600 mb-2 flex items-center gap-1">
                   <Heart className="w-4 h-4" /> 관계 카테고리
                 </h4>
@@ -384,7 +382,7 @@ export default function CategoryStrategy() {
                   <li>• <b>결과 비교</b>: 친구/연인과 결과 비교 기능</li>
                 </ul>
               </div>
-              <div className="p-4 bg-white rounded-xl">
+              <div className="p-4 bg-slate-50 rounded-xl">
                 <h4 className="font-bold text-emerald-600 mb-2 flex items-center gap-1">
                   <Home className="w-4 h-4" /> 라이프 카테고리
                 </h4>
@@ -399,14 +397,14 @@ export default function CategoryStrategy() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl p-4 border border-slate-200">
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="flex items-center gap-2 mb-2">
                 <Layers className="w-4 h-4 text-indigo-500" />
                 <span className="text-xs text-slate-500">총 카테고리</span>
               </div>
               <span className="text-2xl font-black text-slate-800">{CATEGORY_DEFINITIONS.length}</span>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-200">
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="flex items-center gap-2 mb-2">
                 <Lightbulb className="w-4 h-4 text-amber-500" />
                 <span className="text-xs text-slate-500">테스트 아이디어</span>
@@ -415,14 +413,14 @@ export default function CategoryStrategy() {
                 {CATEGORY_DEFINITIONS.reduce((sum, c) => sum + c.testIdeas.length, 0)}
               </span>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-200">
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="flex items-center gap-2 mb-2">
                 <MessageSquare className="w-4 h-4 text-purple-500" />
                 <span className="text-xs text-slate-500">토론 주제</span>
               </div>
               <span className="text-2xl font-black text-slate-800">{SUGGESTED_DEBATES.length}</span>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-200">
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-4 h-4 text-emerald-500" />
                 <span className="text-xs text-slate-500">로드맵 단계</span>

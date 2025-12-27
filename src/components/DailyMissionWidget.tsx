@@ -32,7 +32,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
     const progressPercent = Math.round((completedCount / missions.length) * 100);
 
     return (
-        <div className={`bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300 ${className} ${isExpanded ? 'ring-2 ring-indigo-500/10' : ''}`}>
+        <div className={`bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300 ${className} ${isExpanded ? 'ring-2 ring-indigo-500/10' : ''}`}>
             {/* Header */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
@@ -43,7 +43,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                         <Target className="w-5 h-5 text-indigo-600" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
+                        <h3 className="text-sm font-black text-primary flex items-center gap-1.5">
                             일일 미션
                             {completedCount === missions.length ? (
                                 <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold animate-bounce">완료!</span>
@@ -68,7 +68,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                     <div className="text-right hidden sm:block">
                         <div className="flex items-center gap-1 justify-end">
                             <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                            <span className="text-xs font-black text-slate-700">{totalPoints}P</span>
+                            <span className="text-xs font-black text-secondary">{totalPoints}P</span>
                         </div>
                         <p className="text-xs text-slate-400 font-medium whitespace-nowrap">오늘 획득한 포인트</p>
                     </div>
@@ -83,7 +83,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                         {missions.map(mission => {
                             const isDone = mission.currentCount >= mission.targetCount;
                             return (
-                                <div key={mission.id} className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-slate-100 shadow-xs">
+                                <div key={mission.id} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-100 shadow-xs">
                                     <div className="flex items-center gap-3">
                                         {isDone ? (
                                             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -91,7 +91,7 @@ export default function DailyMissionWidget({ className = '' }: { className?: str
                                             <Circle className="w-4 h-4 text-slate-200" />
                                         )}
                                         <div className="flex flex-col">
-                                            <span className={`text-xs font-bold ${isDone ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                                            <span className={`text-xs font-bold ${isDone ? 'text-subtle line-through' : 'text-secondary'}`}>
                                                 {mission.label}
                                             </span>
                                             <span className="text-xs text-slate-400">

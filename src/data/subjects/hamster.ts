@@ -561,7 +561,7 @@ export const HAMSTER_DATA = {
                 {
                         "name": "균형잡힌 햄찌",
                         "emoji": "⚖️",
-                        "desc": "모든 면에서 균형 잡힌 이상적인 햄스터",
+                        "desc": "모든 면에서 균형 잡힌 비전이 있는 햄스터",
                         "condition": {
                                 "curious": "medium",
                                 "hoard": "medium",

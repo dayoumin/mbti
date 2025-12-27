@@ -113,7 +113,7 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunF
                                 <p className="text-xs font-bold text-violet-600 uppercase tracking-wider mb-1">
                                     SNS 공유용 한 마디
                                 </p>
-                                <p className="text-sm font-bold text-slate-800 leading-relaxed break-keep">
+                                <p className="text-sm font-bold text-primary leading-relaxed break-keep">
                                     {viralOneLiner}
                                 </p>
                             </div>
@@ -130,11 +130,10 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunF
                             </button>
                             <button
                                 onClick={handleCopyOneLiner}
-                                className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
-                                    copiedOneLiner
+                                className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 ${copiedOneLiner
                                         ? 'bg-emerald-500 text-white'
-                                        : 'bg-white border border-violet-200 text-violet-600 hover:bg-violet-50'
-                                }`}
+                                        : 'bg-slate-50 border border-violet-200 text-violet-600 hover:bg-violet-50'
+                                    }`}
                             >
                                 {copiedOneLiner ? (
                                     <>
@@ -154,7 +153,7 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunF
             )}
 
             {/* 확장 가능한 상세 정보 */}
-            <div className="bg-white/60 rounded-xl border border-slate-200/50 overflow-hidden">
+            <div className="bg-slate-50/60 rounded-xl border border-slate-200/50 overflow-hidden">
                 {/* 헤더 - 클릭하면 펼쳐짐 */}
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
@@ -162,7 +161,7 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunF
                 >
                     <div className="flex items-center gap-2">
                         <span className="text-lg">{resultEmoji}</span>
-                        <span className="font-bold text-slate-700 text-sm">
+                        <span className="font-bold text-secondary text-sm">
                             {resultName}에 대해 더 알아보기
                         </span>
                     </div>
@@ -185,11 +184,10 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunF
                                     <button
                                         key={tab.key}
                                         onClick={() => setActiveTab(tab.key)}
-                                        className={`flex-1 py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                                            isActive
-                                                ? `bg-white shadow-sm text-${tab.color}-600`
+                                        className={`flex-1 py-2 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${isActive
+                                                ? `bg-slate-50 shadow-sm text-${tab.color}-600`
                                                 : 'text-slate-400 hover:text-slate-600'
-                                        }`}
+                                            }`}
                                     >
                                         <Icon className="w-3 h-3" />
                                         <span className="hidden sm:inline">{tab.label}</span>
@@ -203,21 +201,19 @@ export default function FunFactsCard({ funFacts, resultName, resultEmoji }: FunF
                             {currentTab?.data.map((item, idx) => (
                                 <div
                                     key={idx}
-                                    className={`flex items-start gap-2.5 p-3 rounded-xl ${
-                                        currentTab.key === 'didYouKnow' ? 'bg-amber-50/80' :
-                                        currentTab.key === 'commonMistakes' ? 'bg-rose-50/80' :
-                                        'bg-emerald-50/80'
-                                    }`}
+                                    className={`flex items-start gap-2.5 p-3 rounded-xl ${currentTab.key === 'didYouKnow' ? 'bg-amber-50/80' :
+                                            currentTab.key === 'commonMistakes' ? 'bg-rose-50/80' :
+                                                'bg-emerald-50/80'
+                                        }`}
                                 >
-                                    <span className={`text-sm mt-0.5 ${
-                                        currentTab.key === 'didYouKnow' ? 'text-amber-500' :
-                                        currentTab.key === 'commonMistakes' ? 'text-rose-500' :
-                                        'text-emerald-500'
-                                    }`}>
+                                    <span className={`text-sm mt-0.5 ${currentTab.key === 'didYouKnow' ? 'text-amber-500' :
+                                            currentTab.key === 'commonMistakes' ? 'text-rose-500' :
+                                                'text-emerald-500'
+                                        }`}>
                                         {currentTab.key === 'didYouKnow' ? '✨' :
-                                         currentTab.key === 'commonMistakes' ? '⚠️' : '💡'}
+                                            currentTab.key === 'commonMistakes' ? '⚠️' : '💡'}
                                     </span>
-                                    <p className="text-sm text-slate-700 leading-relaxed flex-1">
+                                    <p className="text-sm text-secondary leading-relaxed flex-1">
                                         {item}
                                     </p>
                                 </div>

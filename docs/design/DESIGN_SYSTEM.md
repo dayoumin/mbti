@@ -1,50 +1,111 @@
 # 디자인 시스템
 
 > 케미 테스트 앱의 UI 컴포넌트, 스타일 가이드, 로직 규칙을 정의합니다.
+> 업데이트: 2025-12-26 (대시보드 실제 사용 패턴 반영)
 
 ---
 
-## 1. 컬러 시스템
+## 1. 컬러 시스템 (다크/라이트 모드 지원)
+
+### 1.0 CSS 변수 기반 디자인 토큰
+
+다크/라이트 모드를 지원하기 위해 CSS 변수 기반의 디자인 토큰 시스템을 구축했습니다. `src/app/globals.css`에 정의된 CSS 변수를 사용하면 테마 변경 시 모든 컴포넌트가 자동으로 업데이트됩니다.
+
+#### 라이트 모드 (기본)
+```css
+:root {
+    /* Backgrounds */
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-card: #f8fafc;
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    
+    /* Text */
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    
+    /* Brand Colors */
+    --brand-primary: #6366f1;
+    --brand-secondary: #a855f7;
+    --brand-accent: #ec4899;
+    
+    /* Borders */
+    --border-subtle: #e2e8f0;
+    --border-default: #cbd5e1;
+    --border-glass: rgba(255, 255, 255, 0.6);
+    
+    /* Semantic Colors */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+```
+
+#### 다크 모드
+```css
+.dark {
+    /* Backgrounds */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: #1e293b;
+    --bg-glass: rgba(30, 41, 59, 0.85);
+    
+    /* Text */
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    
+    /* Brand Colors */
+    --brand-primary: #818cf8;
+    --brand-secondary: #c084fc;
+    --brand-accent: #f472b6;
+    
+    /* Borders */
+    --border-subtle: #334155;
+    --border-default: #475569;
+    --border-glass: rgba(255, 255, 255, 0.1);
+    
+    /* Semantic Colors */
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+}
+```
+
+#### 사용 방법
+```jsx
+// 테마 변경 (body 또는 최상위 요소에 .dark 클래스 추가)
+document.body.classList.toggle('dark');
+
+// CSS 변수 사용 (Tailwind v4 @theme 디렉티브로 자동 매핑됨)
+<div className="bg-bg-primary text-text-primary border-border-subtle">
+```
+
+### 1.1 브랜드 컬러
 
 ### 1.1 브랜드 컬러
 
 | 이름 | 값 | 용도 |
 |------|-----|------|
-| Brand Primary | `#7aa2ff` | 메인 액션, 링크 |
-| Brand Secondary | `#55e6c1` | 보조 강조 |
+| Brand Primary | `#6366f1` | 메인 액션, 로고, 타이틀 |
+| Brand Secondary | `#8b5cf6` | 보조 강조 |
+| Brand Accent | `#ec4899` | 액센트 |
 | Warning | `#ffd166` | 경고, 스트릭 |
 | Danger | `#ff6b6b` | 오류, 삭제 |
 | Success | `#7CFF8A` | 성공, 완료 |
 
-### 1.2 라이트 테마 (메인 앱)
+### 1.2 그라디언트 (대시보드 실제 사용 패턴)
 
 ```css
-/* 배경 */
---bg-body: #F0F2F5;          /* 페이지 배경 */
---bg-card: rgba(255,255,255,0.85);  /* 카드 배경 (glass) */
-
-/* 텍스트 */
---text-primary: #1E293B;     /* slate-800 */
---text-secondary: #64748B;   /* slate-500 */
---text-muted: #94A3B8;       /* slate-400 */
-
-/* 그라디언트 */
---gradient-primary: linear-gradient(to right, #6366f1, #8b5cf6);  /* indigo-purple */
---gradient-warm: linear-gradient(to right, #f59e0b, #ea580c);     /* amber-orange */
+/* 브랜드 그라디언트 */
+--gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);  /* indigo-violet */
+--gradient-accent: linear-gradient(135deg, #6366f1, #ec4899);  /* indigo-pink */
+--gradient-warm: linear-gradient(135deg, #f59e0b, #ea580c);     /* amber-orange - HOT 배지 */
+--gradient-success: linear-gradient(135deg, #10b981, #14b8a6);   /* emerald-teal - 완료/NEW 배지 */
 ```
 
-### 1.3 다크 테마 (개발자 대시보드)
-
-```css
---db-bg: #0b0f19;
---db-panel: #0f1629;
---db-text: #e8eefc;
---db-muted: #a9b4d0;
---db-line: #223055;
---db-brand: #7aa2ff;
-```
-
-### 1.4 테스트별 테마 컬러
+### 1.3 테스트별 테마 컬러 (실제 사용 패턴)
 
 | 테스트 | 주 색상 | Tailwind |
 |--------|---------|----------|
@@ -70,54 +131,28 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
              "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 ```
 
-- **Pretendard**: 메인 폰트 (가변 폰트)
-- 깔끔하고 현대적인 한글 폰트
-- CDN: `cdn.jsdelivr.net/gh/orioncactus/pretendard`
-
 ### 2.2 크기 체계
 
 > **원칙: Tailwind 표준 토큰만 사용. `text-[Npx]` 수동 지정 금지.**
 
 | 용도 | Tailwind | 크기 | 비고 |
 |------|----------|------|------|
-| 페이지 타이틀 | `text-3xl` / `text-4xl` | 30-36px | |
-| 섹션 타이틀 | `text-2xl` | 24px | |
-| 카드 타이틀 | `text-xl` | 20px | |
-| 버튼/선택지 | `text-lg` | 18px | |
-| 강조 본문 | `text-base` | 16px | |
+| 페이지 타이틀 | `text-3xl` / `text-4xl` | 30-36px |
+| 섹션 타이틀 | `text-2xl` | 24px |
+| 카드 타이틀 | `text-xl` | 20px |
+| 버튼/선택지 | `text-lg` | 18px |
+| 강조 본문 | `text-base` | 16px |
 | 본문 | `text-sm` | 14px | 기본 본문 크기 |
 | 캡션/힌트/배지 | `text-xs` | 12px | **최소 크기** |
 
-### 2.2.1 금지 사항
-
-```jsx
-// ❌ 금지 - 수동 크기 지정
-<span className="text-[8px]">너무 작음</span>
-<span className="text-[10px]">비표준</span>
-<span className="text-[11px]">비표준</span>
-
-// ✅ 권장 - Tailwind 표준 토큰
-<span className="text-xs">캡션/배지 (12px)</span>
-<span className="text-sm">본문 (14px)</span>
-```
-
-### 2.2.2 예외 처리
-
-정말 12px보다 작은 크기가 필요한 경우, globals.css에 시맨틱 클래스로 정의:
-
-```css
-/* globals.css */
-.text-micro { font-size: 10px; } /* 극히 제한적 사용 */
-```
-
 ### 2.3 폰트 웨이트
 
-| 용도 | Tailwind |
-|------|----------|
-| 타이틀, 강조 | `font-black` (900) |
-| 버튼, 레이블 | `font-bold` (700) |
-| 본문 | `font-medium` (500) |
-| 힌트 | `font-normal` (400) |
+| 용도 | Tailwind | 웨이트 | 비고 |
+|------|----------|------|------|
+| 타이틀, 강조 | `font-black` (900) | |
+| 버튼, 레이블 | `font-bold` (700) | |
+| 본문 | `font-medium` (500) | |
+| 힌트 | `font-normal` (400) | |
 
 ---
 
@@ -127,7 +162,7 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
 
 ```css
 .glass-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.6);
@@ -137,30 +172,27 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
 
 **Tailwind 패턴:**
 ```jsx
-<div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/60 shadow-sm">
+<div className="bg-white/80 backdrop-blur-xl rounded-xl border-white/60 shadow-sm">
 ```
 
 ### 3.2 버튼
 
-**Primary (그라디언트)**
+#### Primary (그라디언트)
+
 ```jsx
-<button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white
-                   rounded-xl py-4 font-bold shadow-lg
-                   hover:shadow-indigo-500/30 hover:-translate-y-0.5
-                   active:scale-95 transition-all">
+<button className="bg-gradient-primary text-white font-bold py-3 px-6 rounded-lg shadow-brand hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all">
 ```
 
-**Secondary (투명)**
+#### Secondary (투명)
+
 ```jsx
-<button className="bg-white/60 hover:bg-white/90 text-slate-700
-                   border border-white/60 rounded-xl py-3
-                   shadow-sm hover:shadow-md backdrop-blur-sm">
+<button className="glass-card text-slate-700 font-medium py-2.5 px-5 rounded-lg border border-white/60 hover:bg-white hover:border-brand transition-all">
 ```
 
-**Ghost**
+#### Ghost
+
 ```jsx
-<button className="text-slate-500 hover:bg-slate-100/50 hover:text-slate-800
-                   rounded-lg py-2 transition-colors">
+<button className="text-slate-500 hover:bg-slate-100/50 hover:text-slate-800 rounded-lg py-2 transition-colors">
 ```
 
 ### 3.3 카드 아이템
@@ -175,26 +207,29 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
 
 ### 3.4 배지/칩
 
+#### HOT 배지
+
 ```jsx
-{/* HOT 배지 */}
-<span className="bg-gradient-to-r from-amber-400 to-orange-400 text-white
-                 text-xs font-bold px-1.5 py-0.5 rounded-full">
+<span className="bg-gradient-warm text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+```
 
-{/* NEW 배지 */}
-<span className="bg-gradient-to-r from-emerald-400 to-teal-400 text-white
-                 text-xs font-bold px-1.5 py-0.5 rounded-full">
+#### NEW 배지
 
-{/* 완료 배지 */}
-<span className="bg-emerald-100 text-emerald-700
-                 text-xs font-bold px-1.5 py-0.5 rounded-full">
+```jsx
+<span className="bg-gradient-success text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+```
+
+#### 완료 배지
+
+```jsx
+<span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-1.5 py-0.5 rounded-full">
 ```
 
 ### 3.5 프로그레스 바
 
 ```jsx
 <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-    <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500
-                    rounded-full transition-all duration-700"
+    <div className="h-full bg-gradient-primary rounded-full transition-all duration-700"
          style={{ width: `${percent}%` }} />
 </div>
 ```
@@ -215,30 +250,22 @@ font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFon
 ```css
 /* Fade In Up */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
 .animate-fade-in-up {
-    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Bounce In (Toast) */
-@keyframes bounceIn {
-    0% { opacity: 0; transform: translate(-50%, -20px) scale(0.9); }
-    50% { transform: translate(-50%, 5px) scale(1.02); }
-    100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
-.animate-bounce-in {
-    animation: bounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+/* Scale In (모달/팝업) */
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
-/* Bounce Slight (아이콘) */
-@keyframes bounceSlight {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-}
-.animate-bounce-slight {
-    animation: bounceSlight 2s ease-in-out infinite;
+.animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 ```
 
@@ -259,7 +286,7 @@ className="active:scale-95 transition-transform"
 
 ## 5. 레이아웃
 
-### 5.1 메인 컨테이너
+### 5.1 메인 컨테이너 (대시보드)
 
 ```jsx
 {/* 대시보드 (반응형) */}
@@ -274,18 +301,7 @@ className="active:scale-95 transition-transform"
 ```jsx
 {/* 테스트 목록: 모바일 4열 → 태블릿 5열 → PC 6열 */}
 <div className="grid gap-1.5 grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-
-{/* 2열 그리드 */}
-<div className="grid grid-cols-2 gap-3">
 ```
-
-### 5.3 반응형 브레이크포인트
-
-| 크기 | Tailwind | 용도 |
-|------|----------|------|
-| Mobile | `sm:` (640px) | 기본 |
-| Tablet | `md:` (768px) | 2열 확장 |
-| Desktop | `lg:` (1024px) | 사이드바 표시 |
 
 ---
 
@@ -298,9 +314,6 @@ className="active:scale-95 transition-transform"
 | `HumanIcon` | 사람 테스트 | happy, sad, excited, cool |
 | `CatFace` | 고양이 테스트 | happy, sad, excited, cool |
 | `DogFace` | 강아지 테스트 | happy, sad, excited, cool |
-| `RabbitFace` | 토끼 테스트 | happy, sad, excited, cool |
-| `HamsterFace` | 햄스터 테스트 | happy, sad, excited, cool |
-| `Capsule` | 로딩 | - |
 
 ### 6.2 Lucide Icons
 
@@ -378,9 +391,100 @@ npm run build    # 타입 검증 + 빌드
 
 ---
 
+## 10. 대시보드 디자인 일관성 개선 (2025-12-26)
+
+### 10.1 마이그레이션 개요
+
+대시보드 컴포넌트의 디자인 일관성을 개선하기 위해 다음 4단계로 진행:
+
+1. **Phase 1**: 디자인 토큰 정의 (완료)
+2. **Phase 2**: 컴포넌트 스타일 마이그레이션 (완료)
+3. **Phase 3**: 문서 업데이트 (진행 중)
+4. **Phase 4**: 사용하지 않는 스타일 정리 (대기 중)
+
+### 10.2 디자인 토큰 (Phase 1)
+
+| 토큰 | Tailwind 클래스 | 용도 |
+|-------|---------------|------|
+| `--gradient-primary` | `bg-gradient-brand-primary` | 브랜드 그라디언트 (indigo-violet) |
+| `--radius-md` | `rounded-md` | 표준 둥근 모서리 |
+| `--shadow-sm` | `shadow-sm` | 표준 그림자 |
+| `--shadow-brand` | `shadow-brand` | 브랜드 그림자 (호버 시) |
+| `--border-subtle` | `border-subtle` | 표준 테두리 |
+| `--glass-card` | `glass-card` | 글래스모피즘 카드 배경 |
+
+### 10.3 마이그레이션 완료 컴포넌트 (Phase 2)
+
+| 컴포넌트 | 경로 | 변경 내용 |
+|----------|------|----------|
+| **TestCard** | `src/components/TestCard.tsx` | `rounded-md`, `border-subtle`, `shadow-sm`, `hover:shadow-brand` 적용 |
+| **HeroBanner** (HeroCard) | `src/components/HeroBanner.tsx` | `bg-slate-50`, `rounded-md`, `border-subtle`, `hover:shadow-brand` 적용 |
+| **TodayQuizPoll** | `src/components/TodayQuizPoll.tsx` | `bg-slate-50`, `rounded-md`, `border-subtle`, `bg-gradient-brand-primary` 적용 |
+| **DiscoveryFeed** | `src/components/DiscoveryFeed.tsx` | `glass-card`, `rounded-md`, `bg-gradient-brand-primary`, `shadow-brand` 적용 |
+
+### 10.4 변경 전후 비교
+
+#### 변경 전 (불일치 예시)
+```jsx
+// 다양한 그라디언트 패턴
+className="bg-gradient-to-br from-indigo-500 to-purple-500"
+className="bg-gradient-to-br from-indigo-500 to-pink-500"
+className="bg-gradient-to-br from-emerald-500 to-teal-500"
+
+// 다양한 둥근 모서리
+className="rounded-xl"
+className="rounded-2xl"
+className="rounded-[1.25rem]"
+className="rounded-[1.5rem]"
+
+// 다양한 그림자
+className="shadow-sm"
+className="shadow-md"
+className="shadow-lg"
+className="shadow-xl"
+```
+
+#### 변경 후 (일관성 적용)
+```jsx
+// 통일된 그라디언트 패턴
+className="bg-gradient-brand-primary"
+
+// 통일된 둥근 모서리
+className="rounded-md"
+
+// 통일된 그림자
+className="shadow-sm"        // 기본
+className="hover:shadow-brand" // 호버 시
+```
+
+### 10.5 다음 단계 (Phase 4)
+
+다음 컴포넌트들도 동일한 패턴으로 마이그레이션 필요:
+
+- `FeedTestCard.tsx`
+- `QuizWidget.tsx`
+- `PollWidget.tsx`
+- `TalkPreview.tsx`
+- `DailyContentCards.tsx`
+- 기타 대시보드 컴포넌트
+
+### 10.5 추가 마이그레이션 완료 컴포넌트
+
+| 컴포넌트 | 경로 | 변경 내용 |
+|----------|------|----------|
+| **FeedTestCard** | `src/components/FeedTestCard.tsx` | `glass-card`, `rounded-md`, `border-subtle` 적용 |
+| **QuizWidget** | `src/components/content/QuizWidget.tsx` | `glass-card`, `rounded-md`, `border-subtle`, `bg-gradient-brand-primary` 적용 |
+| **PollWidget** | `src/components/content/PollWidget.tsx` | `glass-card`, `rounded-md`, `border-subtle`, `bg-gradient-brand-primary` 적용 |
+| **TalkPreview** | `src/components/TalkPreview.tsx` | `glass-card`, `rounded-md`, `border-subtle` 적용 |
+
+---
+
 ## 업데이트 이력
 
 | 날짜 | 변경 내용 |
 |------|-----------|
 | 2025-01-25 | 초기 디자인 시스템 문서 작성 |
 | 2025-12-14 | Pretendard 폰트, Glassmorphism 스타일로 전면 업데이트 |
+| 2025-12-26 | 대시보드 실제 사용 패턴 반영 (DESIGN_SYSTEM.md 업데이트) |
+| 2025-12-26 | 대시보드 디자인 일관성 개선 (Phase 1-3 완료, 추가 컴포넌트 마이그레이션 완료) |
+| 2025-12-26 | 대시보드 디자인 일관성 개선 (Phase 1-3 완료) |

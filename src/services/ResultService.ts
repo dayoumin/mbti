@@ -13,7 +13,7 @@ import {
   pickFirstAvailable,
   RECOMMENDATION_ORDER,
 } from '@/data/recommendationPolicy';
-import { getDeviceId, USER_KEY } from '@/utils/device';
+import { getDeviceId, USER_KEY, storage } from '@/utils';
 import { STORAGE_KEYS } from '@/lib/storage';
 import { tursoService, TestResult } from './TursoService';
 
@@ -84,22 +84,14 @@ interface Stats {
 // ========== localStorage 백업 함수 ==========
 
 function saveToLocalStorage(key: string, data: TestResultData): void {
-  try {
-    const existing = JSON.parse(localStorage.getItem(key) || '[]') as TestResultData[];
-    existing.push(data);
-    localStorage.setItem(key, JSON.stringify(existing));
-  } catch (error) {
-    console.error('[ResultService] localStorage 백업 실패:', error);
-  }
+  const existing = storage.get<TestResultData[]>(key, []);
+  existing.push(data);
+  storage.set(key, existing);
 }
 
 function getFromLocalStorage(key: string, userId: string): TestResultData[] {
-  try {
-    const all = JSON.parse(localStorage.getItem(key) || '[]') as TestResultData[];
-    return all.filter((item) => item.user_id === userId);
-  } catch {
-    return [];
-  }
+  const all = storage.get<TestResultData[]>(key, []);
+  return all.filter((item) => item.user_id === userId);
 }
 
 // ========== ResultService Class ==========
@@ -112,9 +104,7 @@ class ResultServiceClass {
   }
 
   setUserId(userId: string): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(USER_KEY, userId);
-    }
+    storage.set(USER_KEY, userId);
   }
 
   async saveResult(
@@ -319,9 +309,7 @@ class ResultServiceClass {
   }
 
   async clearAll(): Promise<SaveResult> {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(this.RESULTS_KEY);
-    }
+    storage.remove(this.RESULTS_KEY);
     return { success: true };
   }
 

@@ -26,7 +26,7 @@ export default function PageHeader({
   className = '',
 }: PageHeaderProps) {
   return (
-    <div className={`sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10 ${className}`}>
+    <div className={`sticky top-0 bg-slate-50/80 backdrop-blur-md border-b border-subtle z-10 ${className}`}>
       <div className="px-4 lg:px-6 py-3">
         <div className="flex items-center gap-3">
           {/* 뒤로가기 버튼 - 모바일만 */}
@@ -39,12 +39,12 @@ export default function PageHeader({
             </button>
           )}
           <div className="flex-1">
-            <h1 className="font-bold text-slate-800 flex items-center gap-2">
+            <h1 className="font-bold text-primary flex items-center gap-2">
               {icon}
               {title}
             </h1>
             {subtitle && (
-              <p className="text-xs text-slate-500">{subtitle}</p>
+              <p className="text-xs text-muted">{subtitle}</p>
             )}
           </div>
         </div>

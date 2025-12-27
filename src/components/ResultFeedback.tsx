@@ -81,7 +81,7 @@ export default function ResultFeedback({ testType, resultName }: ResultFeedbackP
           <button
             onClick={() => handleFeedback(true)}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border-2 border-emerald-200 text-emerald-600 font-bold text-sm hover:bg-emerald-50 hover:border-emerald-300 transition-all active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-50 border-2 border-emerald-200 text-emerald-600 font-bold text-sm hover:bg-emerald-50 hover:border-emerald-300 transition-all active:scale-95"
           >
             <ThumbsUp className="w-4 h-4" />
             맞아요
@@ -89,7 +89,7 @@ export default function ResultFeedback({ testType, resultName }: ResultFeedbackP
           <button
             onClick={() => handleFeedback(false)}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border-2 border-rose-200 text-rose-500 font-bold text-sm hover:bg-rose-50 hover:border-rose-300 transition-all active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-50 border-2 border-rose-200 text-rose-500 font-bold text-sm hover:bg-rose-50 hover:border-rose-300 transition-all active:scale-95"
           >
             <ThumbsDown className="w-4 h-4" />
             아니에요

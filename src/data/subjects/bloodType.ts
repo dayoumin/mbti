@@ -17,7 +17,7 @@ export const bloodTypeData: SubjectData = {
     flexible: { name: '유연성', emoji: '🌊', desc: '원칙적 vs 융통성' },
     express: { name: '표현력', emoji: '💬', desc: '속마음 vs 직설적' },
     // 추가 2개 차원 (리서치 기반)
-    logical: { name: '논리성', emoji: '🧠', desc: '감정적 vs 이성적' }, // AB형 특성
+    logical: { name: '논리성', emoji: '🧠', desc: '공감 능력이 뛰어난 vs 이성적' }, // AB형 특성
     stable: { name: '안정성', emoji: '🛡️', desc: '예민함 vs 안정' }, // A형 특성
   },
   questions: [
@@ -138,7 +138,7 @@ export const bloodTypeData: SubjectData = {
       q: '중요한 결정을 내릴 때 나는?',
       dimension: 'logical',
       a: [
-        { text: '장단점 분석! 논리적으로 판단', score: 5 },
+        { text: '장단점 분석! 분석적으로 판단', score: 5 },
         { text: '논리와 감정 둘 다 고려', score: 3 },
         { text: '직감을 믿어! 마음 가는 대로', score: 1 },
       ],
@@ -149,7 +149,7 @@ export const bloodTypeData: SubjectData = {
       a: [
         { text: '누가 잘못했는지 객관적으로 분석', score: 5 },
         { text: '상황 봐가며 적당히 풀기', score: 3 },
-        { text: '그냥 감정적으로 풀자, 분석은 피곤해', score: 1 },
+        { text: '그냥 공감 능력이 뛰어난으로 풀자, 분석은 피곤해', score: 1 },
       ],
     },
     {
@@ -234,15 +234,15 @@ export const bloodTypeData: SubjectData = {
     {
       name: 'AB형 스타일',
       emoji: '🎭',
-      desc: '냉철하고 논리적인 분석가',
+      desc: '냉철하고 분석적인 분석가',
       condition: { logical: 'high', social: 'low', organized: 'high' },
       mood: 'cool',
       color: 'bg-purple-200',
       interpretation:
-        '당신은 전형적인 AB형 스타일! 논리적이고 냉철하며 자신만의 세계가 있는 독특한 성향이에요. 감정보다 이성으로 판단하고, 효율적으로 문제를 해결합니다.',
+        '당신은 전형적인 AB형 스타일! 분석적인이고 냉철하며 자신만의 세계가 있는 독특한 성향이에요. 감정보다 이성으로 판단하고, 효율적으로 문제를 해결합니다.',
       guide:
         '사람들에게 마음을 조금 더 열어보세요. 감정도 소중한 판단 기준이에요. 너무 혼자 고민하지 말고 주변에 도움을 요청해보세요.',
-      matchPoints: ['논리적인 분', '냉철한 분', '독특한 분', '분석적인 분'],
+      matchPoints: ['분석적인 분', '냉철한 분', '독특한 분', '분석적인 분'],
     },
     // === 혼합 유형 ===
     {
@@ -271,7 +271,7 @@ export const bloodTypeData: SubjectData = {
       matchPoints: ['자유로운 분', '활발한 분', '긍정적인 분', '적응력 좋은 분'],
     },
     {
-      name: '논리적 A형',
+      name: '분석적인 A형',
       emoji: '🔍',
       desc: '완벽주의 분석가',
       condition: { organized: 'high', logical: 'high' },
@@ -280,7 +280,7 @@ export const bloodTypeData: SubjectData = {
       interpretation:
         'A형의 계획성과 AB형의 논리성을 모두 가진 당신! 체계적이면서도 이성적으로 판단하는 능력이 뛰어나요. 혼자 문제를 분석하고 해결하는 걸 잘합니다.',
       guide: '가끔은 감정도 중요한 판단 기준이에요. 직감을 무시하지 마세요.',
-      matchPoints: ['꼼꼼한 분', '논리적인 분', '신중한 분', '분석적인 분'],
+      matchPoints: ['꼼꼼한 분', '분석적인 분', '사려 깊은 분', '분석적인 분'],
     },
     {
       name: '균형잡힌 만능형',
@@ -316,10 +316,10 @@ export const bloodTypeData: SubjectData = {
       mood: 'cool',
       color: 'bg-slate-200',
       interpretation:
-        '논리적이면서도 멘탈이 강한 당신! 남의 시선에 연연하지 않고 자기만의 길을 갑니다. 감정에 휘둘리지 않고 이성적으로 판단해요.',
+        '분석적인이면서도 멘탈이 강한 당신! 남의 시선에 연연하지 않고 자기만의 길을 갑니다. 감정에 휘둘리지 않고 이성적으로 판단해요.',
       guide:
         '가끔은 감정도 표현해보세요. 너무 쿨하면 차갑게 보일 수 있어요. 주변 사람들에게 마음을 열어보세요.',
-      matchPoints: ['독립적인 분', '논리적인 분', '멘탈 강한 분', '쿨한 분'],
+      matchPoints: ['독립적인 분', '분석적인 분', '멘탈 강한 분', '쿨한 분'],
     },
     {
       name: '솔직한 행동파',

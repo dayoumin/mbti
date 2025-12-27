@@ -120,7 +120,7 @@ export default function TabletSlidePanel({
           tabIndex={-1}
           className={`
             hidden md:flex lg:hidden fixed right-0 top-0 h-full w-80 z-50
-            bg-white/95 backdrop-blur-xl shadow-2xl
+            bg-slate-50/95 backdrop-blur-xl shadow-2xl
             flex-col
             ${isClosing ? 'animate-slide-out-right' : 'animate-slide-in-right'}
           `}

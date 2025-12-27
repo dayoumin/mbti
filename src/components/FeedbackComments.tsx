@@ -64,14 +64,13 @@ export default function FeedbackComments({ testType, resultName, maxDisplay = 5 
         {displayComments.map((comment) => (
           <div
             key={comment.id}
-            className="p-3 bg-white rounded-lg border border-slate-200 shadow-sm"
+            className="p-3 bg-slate-50 rounded-lg border border-slate-200 shadow-sm"
           >
             <div className="flex items-start gap-2">
-              <div className={`mt-0.5 p-1 rounded-full ${
-                comment.isAccurate
+              <div className={`mt-0.5 p-1 rounded-full ${comment.isAccurate
                   ? 'bg-emerald-100 text-emerald-600'
                   : 'bg-rose-100 text-rose-500'
-              }`}>
+                }`}>
                 {comment.isAccurate
                   ? <ThumbsUp className="w-3 h-3" />
                   : <ThumbsDown className="w-3 h-3" />

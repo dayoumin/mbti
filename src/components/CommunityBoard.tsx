@@ -111,7 +111,7 @@ function CommunitySidebar({ posts, onSelectPost, onCategoryChange }: CommunitySi
     <aside className="hidden xl:block w-80 flex-shrink-0">
       <div className="sticky top-4 space-y-4">
         {/* HOT 게시물 TOP3 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-orange-500 rounded-lg flex items-center justify-center">
               <Flame className="w-4 h-4 text-white" />
@@ -125,11 +125,10 @@ function CommunitySidebar({ posts, onSelectPost, onCategoryChange }: CommunitySi
                 onClick={() => onSelectPost(post.id)}
                 className="w-full flex items-start gap-2.5 p-2.5 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group text-left"
               >
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
-                  index === 0 ? 'bg-amber-400 text-white' :
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${index === 0 ? 'bg-amber-400 text-white' :
                   index === 1 ? 'bg-slate-300 text-white' :
-                  'bg-orange-200 text-orange-700'
-                }`}>
+                    'bg-orange-200 text-orange-700'
+                  }`}>
                   {index + 1}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -151,7 +150,7 @@ function CommunitySidebar({ posts, onSelectPost, onCategoryChange }: CommunitySi
         </section>
 
         {/* 활발한 유저 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
               <Award className="w-4 h-4 text-indigo-600" />
@@ -180,7 +179,7 @@ function CommunitySidebar({ posts, onSelectPost, onCategoryChange }: CommunitySi
         </section>
 
         {/* 인기 태그 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
               <Hash className="w-4 h-4 text-emerald-600" />
@@ -221,15 +220,15 @@ function CommunitySidebar({ posts, onSelectPost, onCategoryChange }: CommunitySi
             <h3 className="text-sm font-bold text-indigo-700">커뮤니티 통계</h3>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-white/60 rounded-xl p-2.5 text-center">
+            <div className="bg-slate-50/60 rounded-xl p-2.5 text-center">
               <p className="text-lg font-black text-indigo-600">{stats.todayPosts}</p>
               <p className="text-xs text-slate-500">오늘 글</p>
             </div>
-            <div className="bg-white/60 rounded-xl p-2.5 text-center">
+            <div className="bg-slate-50/60 rounded-xl p-2.5 text-center">
               <p className="text-lg font-black text-rose-500">{stats.totalLikes}</p>
               <p className="text-xs text-slate-500">좋아요</p>
             </div>
-            <div className="bg-white/60 rounded-xl p-2.5 text-center">
+            <div className="bg-slate-50/60 rounded-xl p-2.5 text-center">
               <p className="text-lg font-black text-emerald-500">{stats.totalComments}</p>
               <p className="text-xs text-slate-500">댓글</p>
             </div>
@@ -294,7 +293,7 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
     <aside className="hidden xl:block w-72 flex-shrink-0">
       <div className="sticky top-20 space-y-4">
         {/* 작성자 정보 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
               {currentPost.author.charAt(0)}
@@ -321,7 +320,7 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
         </section>
 
         {/* 이전/다음 글 네비게이션 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-3 pb-2">
             <h3 className="text-sm font-bold text-slate-600 flex items-center gap-1">
               📖 글 이동
@@ -367,7 +366,7 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
 
         {/* 관련 글 */}
         {relatedPosts.length > 0 && (
-          <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-4 pt-3 pb-2 flex items-center gap-2">
               <Hash className="w-4 h-4 text-emerald-500" />
               <h3 className="text-sm font-bold text-slate-600">관련 글</h3>
@@ -397,7 +396,7 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
         )}
 
         {/* 인기 게시물 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-3 pb-2 flex items-center gap-2">
             <Flame className="w-4 h-4 text-rose-500" />
             <h3 className="text-sm font-bold text-slate-600">인기 글</h3>
@@ -409,11 +408,10 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
                 onClick={() => onSelectPost(post.id)}
                 className="w-full flex items-start gap-2 p-2 bg-slate-50 rounded-lg hover:bg-rose-50 transition-colors text-left group"
               >
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
-                  index === 0 ? 'bg-amber-400 text-white' :
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${index === 0 ? 'bg-amber-400 text-white' :
                   index === 1 ? 'bg-slate-300 text-white' :
-                  'bg-orange-200 text-orange-700'
-                }`}>
+                    'bg-orange-200 text-orange-700'
+                  }`}>
                   {index + 1}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -446,9 +444,9 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
                 <button
                   key={testKey}
                   onClick={() => onStartTest?.(testKey)}
-                  className="w-full flex items-center gap-3 p-2.5 bg-white/80 rounded-xl hover:bg-white transition-colors group"
+                  className="w-full flex items-center gap-3 p-2.5 bg-slate-50/80 rounded-xl hover:bg-slate-50 transition-colors group"
                 >
-                  <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 bg-slate-50 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                     <IconComponent mood="happy" className="w-7 h-7" />
                   </div>
                   <div className="flex-1 text-left min-w-0">
@@ -537,7 +535,7 @@ function PostCard({ post, onClick }: PostCardProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full bg-white p-4 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all text-left group relative overflow-hidden"
+      className="w-full bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all text-left group relative overflow-hidden"
     >
       {/* HOT 배지 */}
       {isHot && (
@@ -671,7 +669,7 @@ export default function CommunityBoard({ className = '', onStartTest, onClose }:
         )}
 
         {/* Post Detail Header */}
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between">
+        <div className="sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between">
           <button onClick={() => setSelectedPostId(null)} className="text-slate-500 font-bold flex items-center gap-1">
             <ChevronRight className="w-5 h-5 rotate-180" /> 목록으로
           </button>
@@ -686,7 +684,7 @@ export default function CommunityBoard({ className = '', onStartTest, onClose }:
           <div className="flex justify-center p-4 pb-24 lg:p-6 lg:pb-6">
             <div className="flex gap-6 w-full max-w-[1000px]">
               {/* 메인 콘텐츠 */}
-              <article className="flex-1 min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              <article className="flex-1 min-w-0 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm p-6">
                 <div className="mb-6">
                   <span className={`px-2 py-0.5 text-xs font-bold rounded-full mb-2 inline-block ${getPostCategoryStyle(selectedPost.category)}`}>
                     {getPostCategoryLabel(selectedPost.category)}
@@ -752,7 +750,7 @@ export default function CommunityBoard({ className = '', onStartTest, onClose }:
             placeholder="검색어를 입력하세요"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+            className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-slate-50 transition-all outline-none"
           />
           {searchQuery && (
             <button
@@ -768,11 +766,10 @@ export default function CommunityBoard({ className = '', onStartTest, onClose }:
         <div className="flex gap-2 overflow-x-auto no-scrollbar py-1 mt-3">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-              activeCategory === 'all'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-            }`}
+            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeCategory === 'all'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+              : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+              }`}
           >
             전체
           </button>
@@ -780,11 +777,10 @@ export default function CommunityBoard({ className = '', onStartTest, onClose }:
             <button
               key={key}
               onClick={() => setActiveCategory(key as CategoryKey)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                activeCategory === key
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-              }`}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeCategory === key
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
             >
               {label}
             </button>
@@ -811,7 +807,7 @@ export default function CommunityBoard({ className = '', onStartTest, onClose }:
               ))}
 
               {filteredPosts.length === 0 && (
-                <div className="py-20 text-center text-slate-400 flex flex-col items-center gap-3 bg-white rounded-2xl">
+                <div className="py-20 text-center text-slate-400 flex flex-col items-center gap-3 bg-slate-50 rounded-2xl">
                   <Filter className="w-8 h-8 opacity-20" />
                   <p className="text-sm font-medium">
                     {debouncedSearchQuery.trim() ? '검색 결과가 없습니다' : '게시글이 없습니다'}

@@ -43,7 +43,7 @@ export default function QuizWidget({
     : false;
 
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+    <div className="bg-slate-50 rounded-2xl p-5 shadow-sm border border-slate-100">
       {/* 헤더 */}
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -92,10 +92,10 @@ export default function QuizWidget({
               <button
                 key={option.id}
                 onClick={() => onAnswer(option.id)}
-                className="w-full text-left px-4 py-3 md:px-5 md:py-3.5 rounded-xl text-sm font-bold bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all hover:shadow-sm active:scale-[0.98]"
+                className="w-full text-left px-4 py-3 md:px-5 md:py-3.5 rounded-md text-sm font-bold bg-slate-50 hover:bg-blue-50 border border-subtle hover:border-blue-300 transition-all hover:shadow-sm active:scale-[0.98]"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs text-slate-400 group-hover:text-blue-500 group-hover:border-blue-300 transition-all flex-shrink-0">
+                  <span className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-xs text-slate-400 group-hover:text-blue-500 group-hover:border-blue-300 transition-all flex-shrink-0">
                     {quiz.options.indexOf(option) + 1}
                   </span>
                   {option.text}
@@ -107,9 +107,9 @@ export default function QuizWidget({
       ) : (
         <div className="space-y-3">
           {/* 정답/오답 + 포인트 표시 */}
-          <div className={`p-4 rounded-xl ${isCorrect
+          <div className={`p-4 rounded-md ${isCorrect
             ? 'bg-emerald-50 border border-emerald-200'
-            : 'bg-amber-50 border border-amber-200'
+            : 'bg-amber-50 border border-subtle'
             }`}>
             <div className="flex items-center justify-between">
               <span className={`text-base font-bold ${isCorrect ? 'text-emerald-700' : 'text-amber-700'}`}>
@@ -149,7 +149,7 @@ export default function QuizWidget({
             {showComments && (
               <button
                 onClick={() => setCommentsOpen(!commentsOpen)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold rounded-xl transition-all ${commentsOpen
+                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold rounded-md transition-all ${commentsOpen
                   ? 'bg-slate-100 text-slate-600'
                   : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
                   }`}
@@ -163,7 +163,7 @@ export default function QuizWidget({
             {remainingCount > 0 && onNext && (
               <button
                 onClick={onNext}
-                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 rounded-xl transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-bold text-white bg-gradient-brand-primary hover:from-blue-600 hover:to-indigo-600 rounded-md transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
                 다음 퀴즈 ({remainingCount}개)
                 <ChevronRight className="w-4 h-4" />

@@ -99,7 +99,7 @@ export default function BonusInsightCard({
           </div>
           <span className="text-sm font-bold text-green-700">인사이트 해금!</span>
         </div>
-        <div className="bg-white/80 rounded-lg p-3 border border-green-100">
+        <div className="bg-slate-50/80 rounded-lg p-3 border border-green-100">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-lg">{resultEmoji}</span>
             <span className="font-bold text-slate-800">{resultName}</span>
@@ -153,10 +153,9 @@ export default function BonusInsightCard({
                       onClick={() => handleSelectAge(key)}
                       className={`
                         py-2.5 px-2 rounded-lg text-sm font-bold transition-all
-                        ${
-                          selectedAge === key
-                            ? 'bg-amber-500 text-white shadow-md scale-105'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:border-amber-300 hover:bg-amber-50'
+                        ${selectedAge === key
+                          ? 'bg-amber-500 text-white shadow-md scale-105'
+                          : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-amber-300 hover:bg-amber-50'
                         }
                       `}
                     >
@@ -165,7 +164,7 @@ export default function BonusInsightCard({
                   )
                 )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-500 bg-white/60 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50/60 rounded-lg px-3 py-2">
                 <ChevronRight className="w-3 h-3 text-amber-500" />
                 <span>응답하면 <strong className="text-amber-600">&quot;20대 남성 중 상위 15%!&quot;</strong> 같은 비교를 볼 수 있어요</span>
               </div>
@@ -186,10 +185,9 @@ export default function BonusInsightCard({
                       onClick={() => handleSelectGender(key)}
                       className={`
                         py-3 px-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-1
-                        ${
-                          selectedGender === key
-                            ? 'bg-amber-500 text-white shadow-md scale-105'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:border-amber-300 hover:bg-amber-50'
+                        ${selectedGender === key
+                          ? 'bg-amber-500 text-white shadow-md scale-105'
+                          : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-amber-300 hover:bg-amber-50'
                         }
                       `}
                     >

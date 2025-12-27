@@ -105,7 +105,7 @@ function RankCard({
   return (
     <button
       onClick={onClick}
-      className="w-full bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all text-left group"
+      className="w-full bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all text-left group"
     >
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-2xl">
@@ -127,13 +127,12 @@ function RankCard({
                   {myRanking.categoryRanks.slice(0, 3).map((rank) => (
                     <span
                       key={rank.category}
-                      className={`text-xs px-1.5 py-0.5 rounded-full ${
-                        rank.rank === 1
-                          ? 'bg-amber-100 text-amber-700'
-                          : rank.rank <= 3
+                      className={`text-xs px-1.5 py-0.5 rounded-full ${rank.rank === 1
+                        ? 'bg-amber-100 text-amber-700'
+                        : rank.rank <= 3
                           ? 'bg-indigo-50 text-indigo-600'
                           : 'bg-gray-100 text-gray-500'
-                      }`}
+                        }`}
                     >
                       {rank.emoji} {rank.rank}위
                     </span>
@@ -204,7 +203,7 @@ function TestRankingDetail({
       {/* 테스트 정보 */}
       <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-4 text-white">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-slate-50/20 rounded-xl flex items-center justify-center">
             <Trophy className="w-6 h-6" />
           </div>
           <div>
@@ -213,7 +212,7 @@ function TestRankingDetail({
           </div>
         </div>
         {myResultName && myRank && (
-          <div className="mt-3 p-3 bg-white/20 rounded-xl flex items-center justify-between">
+          <div className="mt-3 p-3 bg-slate-50/20 rounded-xl flex items-center justify-between">
             <span className="text-sm">내 결과</span>
             <span className="font-bold">{myRank}위 / {data.resultLabels.length}</span>
           </div>
@@ -226,11 +225,10 @@ function TestRankingDetail({
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
-              selectedCategory === cat.id
-                ? 'bg-indigo-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${selectedCategory === cat.id
+              ? 'bg-indigo-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
             <span>{cat.emoji}</span>
             <span>{cat.name}</span>
@@ -243,21 +241,19 @@ function TestRankingDetail({
         {rankedResults?.map(({ result, rank, isMyResult }) => (
           <div
             key={result.name}
-            className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-              isMyResult
-                ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400'
-                : rank <= 3
+            className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${isMyResult
+              ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400'
+              : rank <= 3
                 ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'
-                : 'bg-white border-gray-100'
-            }`}
+                : 'bg-slate-50 border-gray-100'
+              }`}
           >
             {/* 순위 */}
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-              rank === 1 ? 'bg-amber-400 text-white' :
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${rank === 1 ? 'bg-amber-400 text-white' :
               rank === 2 ? 'bg-gray-400 text-white' :
-              rank === 3 ? 'bg-orange-400 text-white' :
-              'bg-gray-200 text-gray-600'
-            }`}>
+                rank === 3 ? 'bg-orange-400 text-white' :
+                  'bg-gray-200 text-gray-600'
+              }`}>
               {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
             </div>
 
@@ -312,7 +308,7 @@ function RankingSidebar({
       {/* 통계 요약 */}
       <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-white">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-slate-50/20 rounded-xl flex items-center justify-center">
             <BarChart3 className="w-5 h-5" />
           </div>
           <div>
@@ -321,11 +317,11 @@ function RankingSidebar({
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-white/20 rounded-xl p-3 text-center">
+          <div className="bg-slate-50/20 rounded-xl p-3 text-center">
             <p className="text-2xl font-black">{completedCount}</p>
             <p className="text-xs text-white/80">완료한 테스트</p>
           </div>
-          <div className="bg-white/20 rounded-xl p-3 text-center">
+          <div className="bg-slate-50/20 rounded-xl p-3 text-center">
             <p className="text-2xl font-black">{RANKABLE_TESTS.length - completedCount}</p>
             <p className="text-xs text-white/80">남은 테스트</p>
           </div>
@@ -348,11 +344,10 @@ function RankingSidebar({
               <button
                 key={test.key}
                 onClick={() => onSelectTest(test.key)}
-                className={`w-full p-3 rounded-xl text-left transition-all ${
-                  isSelected
-                    ? 'bg-indigo-100 border-2 border-indigo-400 shadow-md'
-                    : 'bg-white border border-gray-100 hover:border-indigo-200 hover:shadow-sm'
-                }`}
+                className={`w-full p-3 rounded-xl text-left transition-all ${isSelected
+                  ? 'bg-indigo-100 border-2 border-indigo-400 shadow-md'
+                  : 'bg-slate-50 border border-gray-100 hover:border-indigo-200 hover:shadow-sm'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{test.emoji}</span>
@@ -414,7 +409,7 @@ function RankingDiscoverySidebar({ onNavigate }: { onNavigate?: (target: string)
     <aside className="hidden xl:block w-72 flex-shrink-0">
       <div className="sticky top-4 space-y-4">
         {/* 인기 투표 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
               <Vote className="w-4 h-4 text-purple-600" />
@@ -440,7 +435,7 @@ function RankingDiscoverySidebar({ onNavigate }: { onNavigate?: (target: string)
         </section>
 
         {/* 오늘의 퀴즈 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
               <HelpCircle className="w-4 h-4 text-blue-600" />
@@ -463,7 +458,7 @@ function RankingDiscoverySidebar({ onNavigate }: { onNavigate?: (target: string)
         </section>
 
         {/* HOT 커뮤니티 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-orange-500 rounded-lg flex items-center justify-center">
               <Flame className="w-4 h-4 text-white" />
@@ -477,11 +472,10 @@ function RankingDiscoverySidebar({ onNavigate }: { onNavigate?: (target: string)
                 onClick={() => onNavigate?.('community')}
                 className="w-full flex items-start gap-2 p-2.5 bg-slate-50 rounded-xl hover:bg-rose-50 transition-colors text-left group"
               >
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
-                  index === 0 ? 'bg-amber-400 text-white' :
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${index === 0 ? 'bg-amber-400 text-white' :
                   index === 1 ? 'bg-slate-300 text-white' :
-                  'bg-orange-200 text-orange-700'
-                }`}>
+                    'bg-orange-200 text-orange-700'
+                  }`}>
                   {index + 1}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -601,7 +595,7 @@ export default function RankingTab({ onClose, onStartTest, onNavigate }: Ranking
               {/* 통계 요약 */}
               <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-white">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-slate-50/20 rounded-xl flex items-center justify-center">
                     <BarChart3 className="w-5 h-5" />
                   </div>
                   <div>
@@ -610,11 +604,11 @@ export default function RankingTab({ onClose, onStartTest, onNavigate }: Ranking
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-white/20 rounded-xl p-3 text-center">
+                  <div className="bg-slate-50/20 rounded-xl p-3 text-center">
                     <p className="text-2xl font-black">{completedCount}</p>
                     <p className="text-xs text-white/80">완료한 테스트</p>
                   </div>
-                  <div className="bg-white/20 rounded-xl p-3 text-center">
+                  <div className="bg-slate-50/20 rounded-xl p-3 text-center">
                     <p className="text-2xl font-black">{RANKABLE_TESTS.length - completedCount}</p>
                     <p className="text-xs text-white/80">남은 테스트</p>
                   </div>

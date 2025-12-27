@@ -104,11 +104,10 @@ export default function AnalyticsSystem() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-t-lg flex items-center gap-2 transition-colors ${
-              activeTab === tab.key
+            className={`px-4 py-2 rounded-t-lg flex items-center gap-2 transition-colors ${activeTab === tab.key
                 ? 'bg-indigo-100 text-indigo-700 font-medium'
                 : 'text-gray-600 hover:bg-gray-100'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -121,7 +120,7 @@ export default function AnalyticsSystem() {
         <div className="space-y-6">
           {/* 현황 카드 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <div className="bg-slate-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 bg-indigo-100 rounded-lg">
                   <Activity className="w-5 h-5 text-indigo-600" />
@@ -140,7 +139,7 @@ export default function AnalyticsSystem() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <div className="bg-slate-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <Target className="w-5 h-5 text-green-600" />
@@ -159,7 +158,7 @@ export default function AnalyticsSystem() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <div className="bg-slate-50 border border-gray-200 rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <Clock className="w-5 h-5 text-purple-600" />
@@ -227,7 +226,7 @@ export default function AnalyticsSystem() {
             if (events.length === 0) return null;
 
             return (
-              <div key={type} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div key={type} className="bg-slate-50 border border-gray-200 rounded-xl overflow-hidden">
                 <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
                   {EVENT_ICONS[type]}
                   <span className="font-medium text-gray-900 capitalize">{type.replace('_', ' ')}</span>
@@ -290,7 +289,7 @@ export default function AnalyticsSystem() {
             </a>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-slate-50 border border-gray-200 rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
@@ -314,12 +313,11 @@ export default function AnalyticsSystem() {
       {activeTab === 'roadmap' && (
         <div className="space-y-6">
           {ANALYTICS_ROADMAP.map(phase => (
-            <div key={phase.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div key={phase.id} className="bg-slate-50 border border-gray-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    STATUS_STYLES[phase.status].bg
-                  } ${STATUS_STYLES[phase.status].text}`}>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[phase.status].bg
+                    } ${STATUS_STYLES[phase.status].text}`}>
                     {STATUS_STYLES[phase.status].label}
                   </span>
                   <span className="font-semibold text-gray-900">{phase.name}</span>
@@ -329,17 +327,15 @@ export default function AnalyticsSystem() {
               <div className="divide-y divide-gray-100">
                 {phase.tasks.map(task => (
                   <div key={task.id} className="px-4 py-3 flex items-start gap-3">
-                    <span className={`mt-0.5 px-2 py-0.5 rounded text-xs ${
-                      STATUS_STYLES[task.status].bg
-                    } ${STATUS_STYLES[task.status].text}`}>
+                    <span className={`mt-0.5 px-2 py-0.5 rounded text-xs ${STATUS_STYLES[task.status].bg
+                      } ${STATUS_STYLES[task.status].text}`}>
                       {STATUS_STYLES[task.status].label}
                     </span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900">{task.task}</span>
-                        <span className={`px-1.5 py-0.5 rounded text-xs ${
-                          PRIORITY_STYLES[task.priority].bg
-                        } ${PRIORITY_STYLES[task.priority].text}`}>
+                        <span className={`px-1.5 py-0.5 rounded text-xs ${PRIORITY_STYLES[task.priority].bg
+                          } ${PRIORITY_STYLES[task.priority].text}`}>
                           {task.priority}
                         </span>
                       </div>
@@ -365,9 +361,8 @@ export default function AnalyticsSystem() {
 function EventRow({ event }: { event: TrackingEvent }) {
   return (
     <div className="px-4 py-3 flex items-start gap-3">
-      <span className={`mt-1 w-2 h-2 rounded-full ${
-        event.implemented ? 'bg-green-500' : 'bg-gray-300'
-      }`} />
+      <span className={`mt-1 w-2 h-2 rounded-full ${event.implemented ? 'bg-green-500' : 'bg-gray-300'
+        }`} />
       <div className="flex-1">
         <div className="flex items-center gap-2">
           <span className="font-medium text-gray-900">{event.name}</span>
@@ -375,9 +370,8 @@ function EventRow({ event }: { event: TrackingEvent }) {
             {event.id}
           </code>
           {!event.implemented && (
-            <span className={`px-1.5 py-0.5 rounded text-xs ${
-              PRIORITY_STYLES[event.priority].bg
-            } ${PRIORITY_STYLES[event.priority].text}`}>
+            <span className={`px-1.5 py-0.5 rounded text-xs ${PRIORITY_STYLES[event.priority].bg
+              } ${PRIORITY_STYLES[event.priority].text}`}>
               {event.priority}
             </span>
           )}
@@ -398,13 +392,12 @@ function EventRow({ event }: { event: TrackingEvent }) {
 // KPI 카드 컴포넌트
 function KPICard({ kpi }: { kpi: KPI }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className="bg-slate-50 border border-gray-200 rounded-lg p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${
-              kpi.implemented ? 'bg-green-500' : 'bg-gray-300'
-            }`} />
+            <span className={`w-2 h-2 rounded-full ${kpi.implemented ? 'bg-green-500' : 'bg-gray-300'
+              }`} />
             <h4 className="font-medium text-gray-900">{kpi.name}</h4>
           </div>
           <p className="text-sm text-gray-600 mt-1">{kpi.description}</p>
@@ -430,13 +423,12 @@ function GAComparisonRow({ item }: { item: GAComparison }) {
       <td className="px-4 py-3 text-gray-600">{item.ourSystem}</td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className={`px-2 py-1 rounded text-xs font-medium ${
-            item.recommendation === 'ga' ? 'bg-blue-100 text-blue-700' :
-            item.recommendation === 'our' ? 'bg-green-100 text-green-700' :
-            'bg-purple-100 text-purple-700'
-          }`}>
+          <span className={`px-2 py-1 rounded text-xs font-medium ${item.recommendation === 'ga' ? 'bg-blue-100 text-blue-700' :
+              item.recommendation === 'our' ? 'bg-green-100 text-green-700' :
+                'bg-purple-100 text-purple-700'
+            }`}>
             {item.recommendation === 'ga' ? 'GA4' :
-             item.recommendation === 'our' ? '자체' : '둘 다'}
+              item.recommendation === 'our' ? '자체' : '둘 다'}
           </span>
         </div>
         <p className="text-xs text-gray-500 mt-1">{item.reason}</p>
@@ -448,15 +440,13 @@ function GAComparisonRow({ item }: { item: GAComparison }) {
 // 권장 사항 카드
 function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3">
-      <div className={`p-2 rounded-lg ${
-        recommendation.priority === 'high' ? 'bg-red-100' :
-        recommendation.priority === 'medium' ? 'bg-yellow-100' : 'bg-gray-100'
-      }`}>
-        <Zap className={`w-4 h-4 ${
-          recommendation.priority === 'high' ? 'text-red-600' :
-          recommendation.priority === 'medium' ? 'text-yellow-600' : 'text-gray-600'
-        }`} />
+    <div className="bg-slate-50 border border-gray-200 rounded-lg p-4 flex items-start gap-3">
+      <div className={`p-2 rounded-lg ${recommendation.priority === 'high' ? 'bg-red-100' :
+          recommendation.priority === 'medium' ? 'bg-yellow-100' : 'bg-gray-100'
+        }`}>
+        <Zap className={`w-4 h-4 ${recommendation.priority === 'high' ? 'text-red-600' :
+            recommendation.priority === 'medium' ? 'text-yellow-600' : 'text-gray-600'
+          }`} />
       </div>
       <div className="flex-1">
         <h4 className="font-medium text-gray-900">{recommendation.title}</h4>

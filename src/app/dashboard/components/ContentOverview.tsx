@@ -191,7 +191,7 @@ export default function ContentOverview() {
         {stats.contentTypes.map((type) => (
           <div
             key={type.name}
-            className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
+            className="bg-slate-50 rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2 rounded-lg ${type.color} text-white`}>
@@ -215,7 +215,7 @@ export default function ContentOverview() {
       </div>
 
       {/* 카테고리별 분포 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-gray-600" />
           카테고리별 분포
@@ -244,7 +244,7 @@ export default function ContentOverview() {
       </div>
 
       {/* 콘텐츠 비율 차트 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-gray-600" />
           콘텐츠 유형 비율
@@ -312,7 +312,7 @@ export default function ContentOverview() {
 
       {/* 토너먼트 상세 */}
       {TIER_TOURNAMENTS.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Trophy className="w-5 h-5 text-orange-500" />
             티어 토너먼트 목록
@@ -340,7 +340,7 @@ export default function ContentOverview() {
       )}
 
       {/* 최근 변경 (placeholder) */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <Clock className="w-5 h-5 text-gray-600" />
           최근 추가된 콘텐츠 유형

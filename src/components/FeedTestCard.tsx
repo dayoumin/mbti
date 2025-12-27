@@ -28,13 +28,13 @@ export default function FeedTestCard({ testKey, onStart, className = '' }: FeedT
             onClick={() => onStart?.(testKey)}
             disabled={isDisabled}
             aria-disabled={isDisabled}
-            className={`w-full bg-white rounded-2xl p-4 border border-slate-100 transition-all group relative overflow-hidden text-left ${className} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-indigo-200 hover:shadow-lg'}`}
+            className={`w-full glass-card rounded-md p-4 border border-subtle transition-all group relative overflow-hidden text-left ${className} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-brand hover:shadow-brand'}`}
         >
             {/* Decorative Background */}
             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50/30 rounded-full blur-2xl -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-500" />
 
             <div className="flex gap-3 relative z-10">
-                <div className="w-14 h-14 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-14 h-14 bg-slate-50 rounded-md flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                     <IconComponent mood="happy" className="w-10 h-10" />
                 </div>
 
@@ -57,7 +57,7 @@ export default function FeedTestCard({ testKey, onStart, className = '' }: FeedT
                 </div>
 
                 <div className="flex items-center justify-center flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                    <div className="w-8 h-8 rounded-md bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                         <ChevronRight className="w-4 h-4" />
                     </div>
                 </div>

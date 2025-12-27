@@ -527,14 +527,14 @@ export const RABBIT_DATA = {
                         "color": "bg-green-100"
                 },
                 {
-                        "name": "신중한 토끼",
+                        "name": "사려 깊은 토끼",
                         "emoji": "🤔",
                         "desc": "일단 지켜본다... 안전 제일!",
                         "condition": {
                                 "curious": "low",
                                 "brave": "low"
                         },
-                        "interpretation": "조심성이 많고 신중한 성격입니다. 새로운 것에 시간을 두고 천천히 적응해요.",
+                        "interpretation": "조심성이 많고 사려 깊은 성격입니다. 새로운 것에 시간을 두고 천천히 적응해요.",
                         "guide": "급격한 환경 변화를 피하고 천천히 새로운 것을 소개해주세요. 숨을 공간을 항상 제공해주세요.",
                         "mood": "sad",
                         "color": "bg-blue-100"
@@ -595,7 +595,7 @@ export const RABBIT_DATA = {
                 {
                         "name": "밸런스 토끼",
                         "emoji": "⚖️",
-                        "desc": "모든 면에서 균형 잡힌 이상적인 토끼",
+                        "desc": "모든 면에서 균형 잡힌 비전이 있는 토끼",
                         "condition": {
                                 "curious": "medium",
                                 "social": "medium",

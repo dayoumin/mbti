@@ -135,7 +135,7 @@ export default function ResultDistributionMonitor() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-slate-50 rounded-lg shadow p-6">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
           <div className="space-y-3">
@@ -150,7 +150,7 @@ export default function ResultDistributionMonitor() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-slate-50 rounded-lg shadow p-6">
         <div className="text-red-500 flex items-center gap-2">
           <span>⚠️</span>
           <span>데이터 로드 실패: {error}</span>
@@ -167,7 +167,7 @@ export default function ResultDistributionMonitor() {
 
   if (!data || data.distributions.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-slate-50 rounded-lg shadow p-6">
         <h2 className="text-lg font-bold mb-4">📊 결과 분포 모니터링</h2>
         <p className="text-gray-500">아직 수집된 테스트 결과가 없습니다.</p>
       </div>
@@ -179,7 +179,7 @@ export default function ResultDistributionMonitor() {
     : data.distributions;
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-slate-50 rounded-lg shadow">
       {/* 헤더 */}
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
@@ -203,21 +203,19 @@ export default function ResultDistributionMonitor() {
         <div className="flex gap-2 mt-3">
           <button
             onClick={() => setFilter('all')}
-            className={`px-3 py-1 text-sm rounded ${
-              filter === 'all'
+            className={`px-3 py-1 text-sm rounded ${filter === 'all'
                 ? 'bg-gray-800 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             전체 ({data.totalTests})
           </button>
           <button
             onClick={() => setFilter('alerts')}
-            className={`px-3 py-1 text-sm rounded ${
-              filter === 'alerts'
+            className={`px-3 py-1 text-sm rounded ${filter === 'alerts'
                 ? 'bg-red-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             이상 감지 ({data.distributions.filter(d => d.hasAlerts).length})
           </button>
@@ -300,11 +298,10 @@ export default function ResultDistributionMonitor() {
                       {/* 막대 그래프 */}
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-sm ${
-                            isHigh ? 'text-red-600 font-medium' :
-                            isZero ? 'text-gray-400 italic' :
-                            isLow ? 'text-yellow-600' : ''
-                          }`}>
+                          <span className={`text-sm ${isHigh ? 'text-red-600 font-medium' :
+                              isZero ? 'text-gray-400 italic' :
+                                isLow ? 'text-yellow-600' : ''
+                            }`}>
                             {item.resultName}
                           </span>
                           {isHigh && <span className="text-xs text-red-500">⚠️ 쏠림</span>}
@@ -313,11 +310,10 @@ export default function ResultDistributionMonitor() {
                         </div>
                         <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all ${
-                              isHigh ? 'bg-red-400' :
-                              isZero ? 'bg-gray-300' :
-                              isLow ? 'bg-yellow-400' : 'bg-blue-400'
-                            }`}
+                            className={`h-full rounded-full transition-all ${isHigh ? 'bg-red-400' :
+                                isZero ? 'bg-gray-300' :
+                                  isLow ? 'bg-yellow-400' : 'bg-blue-400'
+                              }`}
                             style={{ width: `${Math.max(item.percentage, isZero ? 0 : 1)}%` }}
                           />
                         </div>
@@ -327,7 +323,7 @@ export default function ResultDistributionMonitor() {
                       <div className="w-24 text-right text-sm">
                         <span className={
                           isHigh ? 'text-red-600 font-medium' :
-                          isZero ? 'text-gray-400' : 'text-gray-600'
+                            isZero ? 'text-gray-400' : 'text-gray-600'
                         }>
                           {formatPercentage(item.rawPercentage, item.percentage)}%
                         </span>

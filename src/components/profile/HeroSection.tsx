@@ -69,13 +69,13 @@ export default function HeroSection({ profile, onShare }: HeroSectionProps) {
   const primaryResult = profile.personality;
 
   return (
-    <section className="bg-white rounded-2xl overflow-hidden shadow-sm">
+    <section className="bg-slate-50 rounded-2xl overflow-hidden shadow-sm">
       {/* 상단 그라디언트 헤더 */}
       <div className={`bg-gradient-to-r ${colors.gradient} p-4 md:p-6`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 md:gap-4">
             {/* 레벨 배지 */}
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-slate-50/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-lg md:text-xl">Lv.{level}</span>
             </div>
 
@@ -91,7 +91,7 @@ export default function HeroSection({ profile, onShare }: HeroSectionProps) {
           {/* 공유 버튼 - PC에서 표시 */}
           <button
             onClick={handleShare}
-            className="hidden lg:flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-full text-white text-sm font-medium transition-colors"
+            className="hidden lg:flex items-center gap-2 px-4 py-2 bg-slate-50/20 hover:bg-slate-50/30 rounded-full text-white text-sm font-medium transition-colors"
           >
             {shareStatus === 'copied' ? (
               <>

@@ -75,11 +75,11 @@ function JourneyTab() {
           {USER_JOURNEY_FLOW.stages.map((stage, idx) => (
             <div key={stage.id} className="relative flex items-start gap-4">
               {/* 아이콘 */}
-              <div className="relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-white border-2 border-gray-200 text-2xl">
+              <div className="relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 border-2 border-gray-200 text-2xl">
                 {stage.emoji}
               </div>
               {/* 내용 */}
-              <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4">
+              <div className="flex-1 bg-slate-50 rounded-lg border border-gray-200 p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-medium text-gray-400">STEP {idx + 1}</span>
                 </div>
@@ -113,11 +113,10 @@ function NeedsTab() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setSelectedPhase('all')}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            selectedPhase === 'all'
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedPhase === 'all'
               ? 'bg-gray-800 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+            }`}
         >
           전체 ({USER_NEEDS.length})
         </button>
@@ -125,11 +124,10 @@ function NeedsTab() {
           <button
             key={phase}
             onClick={() => setSelectedPhase(phase)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedPhase === phase
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedPhase === phase
                 ? 'bg-gray-800 text-white'
                 : `${phaseColors[phase]} hover:opacity-80`
-            }`}
+              }`}
           >
             {phaseLabels[phase]} ({USER_NEEDS.filter(n => n.phase === phase).length})
           </button>
@@ -141,7 +139,7 @@ function NeedsTab() {
         {filteredNeeds.map(need => (
           <div
             key={need.id}
-            className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+            className="bg-slate-50 rounded-lg border border-gray-200 overflow-hidden"
           >
             {/* 헤더 */}
             <button
@@ -241,11 +239,10 @@ function CategoriesTab() {
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-            className={`p-4 rounded-lg border-2 transition-colors text-left ${
-              selectedCategory === cat.id
+            className={`p-4 rounded-lg border-2 transition-colors text-left ${selectedCategory === cat.id
                 ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-            }`}
+                : 'border-gray-200 bg-slate-50 hover:border-gray-300'
+              }`}
           >
             <div className="text-2xl mb-2">{cat.icon}</div>
             <h4 className="font-bold text-gray-800">{cat.name}</h4>
@@ -256,7 +253,7 @@ function CategoriesTab() {
 
       {/* 선택된 카테고리 상세 */}
       {selectedCategory && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-slate-50 rounded-lg border border-gray-200 p-4">
           {(() => {
             const cat = DETAIL_TEST_CATEGORIES.find(c => c.id === selectedCategory);
             if (!cat) return null;
@@ -322,7 +319,7 @@ function RoadmapTab() {
   return (
     <div className="space-y-6">
       {IMPLEMENTATION_ROADMAP.map((phase, phaseIdx) => (
-        <div key={phase.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div key={phase.id} className="bg-slate-50 rounded-lg border border-gray-200 overflow-hidden">
           {/* 페이즈 헤더 */}
           <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
             <div className="flex items-center justify-between">
@@ -380,7 +377,7 @@ function MetricsTab() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {KEY_METRICS.map(metric => (
-        <div key={metric.id} className="bg-white rounded-lg border border-gray-200 p-4">
+        <div key={metric.id} className="bg-slate-50 rounded-lg border border-gray-200 p-4">
           <div className="flex items-start justify-between mb-2">
             <h4 className="font-bold text-gray-800">{metric.name}</h4>
             <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
@@ -406,7 +403,7 @@ function CommunityTab() {
   return (
     <div className="space-y-4">
       {COMMUNITY_CONNECTIONS.map(conn => (
-        <div key={conn.id} className="bg-white rounded-lg border border-gray-200 p-4">
+        <div key={conn.id} className="bg-slate-50 rounded-lg border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xl">👥</span>
             <h4 className="font-bold text-gray-800">{conn.name}</h4>
@@ -473,11 +470,10 @@ export default function PostDetailTestStrategy() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
-              activeTab === tab.id
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${activeTab === tab.id
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             <span>{tab.icon}</span>
             <span className="text-sm font-medium">{tab.name}</span>

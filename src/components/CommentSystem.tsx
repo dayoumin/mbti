@@ -378,7 +378,7 @@ export default function CommentSystem({
             placeholder={isReady ? placeholder : '준비 중...'}
             maxLength={500}
             disabled={!isReady}
-            className="w-full px-4 py-2.5 pr-12 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all disabled:bg-slate-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2.5 pr-12 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all disabled:bg-slate-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={() => handleSubmit()}
@@ -503,14 +503,13 @@ function CommentItem({
 
   return (
     <div className={`${isReply ? 'ml-8 border-l-2 border-slate-100 pl-3' : ''}`}>
-      <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+      <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
         {/* 헤더: 배지 + 이름 + 시간 */}
         <div className="flex items-center gap-2 mb-2">
-          <span className={`text-xs px-2 py-0.5 rounded-full ${
-            isOwnComment
+          <span className={`text-xs px-2 py-0.5 rounded-full ${isOwnComment
               ? 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700'
               : 'bg-slate-100 text-slate-600'
-          }`}>
+            }`}>
             {badge}
           </span>
           <span className="text-xs text-slate-400">{displayName}</span>
@@ -531,11 +530,10 @@ function CommentItem({
           {/* 좋아요 */}
           <button
             onClick={() => onLike(comment.id)}
-            className={`flex items-center gap-1 transition-colors ${
-              liked
+            className={`flex items-center gap-1 transition-colors ${liked
                 ? 'text-rose-500'
                 : 'text-slate-400 hover:text-rose-400'
-            }`}
+              }`}
           >
             <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
             <span>{comment.likes || 0}</span>

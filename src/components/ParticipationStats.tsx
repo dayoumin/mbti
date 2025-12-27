@@ -48,15 +48,15 @@ export default function ParticipationStats({
   }
 
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-4 ${className}`}>
-      <h3 className="text-sm font-medium text-gray-500 mb-3">나의 참여 현황</h3>
+    <div className={`bg-slate-50 rounded-xl shadow-sm border border-subtle p-4 ${className}`}>
+      <h3 className="text-sm font-medium text-muted mb-3">나의 참여 현황</h3>
 
       <div className="grid grid-cols-3 gap-4">
         {/* 투표 통계 */}
         <div className="text-center">
           <div className="text-2xl mb-1">🗳️</div>
-          <div className="text-xl font-bold text-gray-900">{stats.polls.total}</div>
-          <div className="text-xs text-gray-500">투표 참여</div>
+          <div className="text-xl font-bold text-primary">{stats.polls.total}</div>
+          <div className="text-xs text-muted">투표 참여</div>
           {stats.polls.minorityRatio > 0 && (
             <div className="text-xs text-purple-600 mt-1">
               🦄 {stats.polls.minorityRatio}% 소수파
@@ -67,8 +67,8 @@ export default function ParticipationStats({
         {/* 퀴즈 통계 */}
         <div className="text-center">
           <div className="text-2xl mb-1">🧠</div>
-          <div className="text-xl font-bold text-gray-900">{stats.quizzes.total}</div>
-          <div className="text-xs text-gray-500">퀴즈 도전</div>
+          <div className="text-xl font-bold text-primary">{stats.quizzes.total}</div>
+          <div className="text-xs text-muted">퀴즈 도전</div>
           {stats.quizzes.correctRate > 0 && (
             <div className="text-xs text-green-600 mt-1">
               ✓ {stats.quizzes.correctRate}% 정답률
@@ -79,8 +79,8 @@ export default function ParticipationStats({
         {/* 배지 통계 */}
         <div className="text-center">
           <div className="text-2xl mb-1">🏅</div>
-          <div className="text-xl font-bold text-gray-900">{stats.badges.total}</div>
-          <div className="text-xs text-gray-500">획득 배지</div>
+          <div className="text-xl font-bold text-primary">{stats.badges.total}</div>
+          <div className="text-xs text-muted">획득 배지</div>
           {stats.badges.recent.length > 0 && (
             <div className="text-xs text-yellow-600 mt-1">
               최근 +{stats.badges.recent.length}
@@ -91,8 +91,8 @@ export default function ParticipationStats({
 
       {/* 상위 관심 카테고리 */}
       {stats.polls.topCategories.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-gray-100">
-          <div className="text-xs text-gray-500 mb-2">관심 카테고리</div>
+        <div className="mt-4 pt-3 border-t border-subtle">
+          <div className="text-xs text-muted mb-2">관심 카테고리</div>
           <div className="flex gap-2">
             {stats.polls.topCategories.map(({ category, count }) => (
               <CategoryTag key={category} category={category} count={count} />
@@ -116,8 +116,8 @@ function StatBadge({
   return (
     <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
       <span>{emoji}</span>
-      <span className="font-medium text-gray-900">{value}</span>
-      <span className="text-xs text-gray-500">{label}</span>
+      <span className="font-medium text-primary">{value}</span>
+      <span className="text-xs text-muted">{label}</span>
     </div>
   );
 }

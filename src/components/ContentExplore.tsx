@@ -83,13 +83,12 @@ function StreakBanner({ currentStreak, longestStreak, hasParticipatedToday }: St
   }
 
   return (
-    <div className={`rounded-2xl p-4 mb-4 ${
-      hasParticipatedToday
-        ? 'bg-gradient-to-r from-orange-500 to-amber-500'
-        : 'bg-gradient-to-r from-orange-400 to-amber-400'
-    }`}>
+    <div className={`rounded-2xl p-4 mb-4 ${hasParticipatedToday
+      ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+      : 'bg-gradient-to-r from-orange-400 to-amber-400'
+      }`}>
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+        <div className="w-12 h-12 bg-slate-50/20 rounded-xl flex items-center justify-center">
           <span className="text-2xl">🔥</span>
         </div>
         <div className="flex-1">
@@ -105,7 +104,7 @@ function StreakBanner({ currentStreak, longestStreak, hasParticipatedToday }: St
           </p>
         </div>
         {hasParticipatedToday && (
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 bg-slate-50/20 rounded-full flex items-center justify-center">
             <CheckCircle className="w-5 h-5 text-white" />
           </div>
         )}
@@ -131,21 +130,20 @@ function HotTopicItem({ rank, emoji, title, type, stat, onClick }: HotTopicItemP
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/50 transition-all group"
+      className="w-full flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-subtle hover:border-orange-200 hover:bg-orange-50/50 transition-all group"
     >
-      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
-        rank === 1 ? 'bg-amber-400 text-white' :
+      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${rank === 1 ? 'bg-amber-400 text-white' :
         rank === 2 ? 'bg-slate-300 text-white' :
-        'bg-orange-200 text-orange-700'
-      }`}>
+          'bg-orange-200 text-orange-700'
+        }`}>
         {rank}
       </span>
       <span className="text-lg">{emoji}</span>
       <div className="flex-1 text-left min-w-0">
-        <p className="text-sm font-bold text-slate-700 truncate group-hover:text-orange-600">
+        <p className="text-sm font-bold text-secondary truncate group-hover:text-orange-600">
           {title}
         </p>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-muted">
           {type === 'quiz' ? '퀴즈' : '투표'} · {stat}
         </p>
       </div>
@@ -296,7 +294,7 @@ function CategoryProgress({ quizzes, polls, participation, activeTab, onCategory
           <button
             key={category}
             onClick={() => onCategoryClick(category)}
-            className="p-3 bg-white rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all text-left group"
+            className="p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all text-left group"
           >
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg">{label?.emoji}</span>
@@ -304,9 +302,8 @@ function CategoryProgress({ quizzes, polls, participation, activeTab, onCategory
             </div>
             <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-1">
               <div
-                className={`h-full rounded-full transition-all ${
-                  percent === 100 ? 'bg-emerald-500' : 'bg-indigo-500'
-                }`}
+                className={`h-full rounded-full transition-all ${percent === 100 ? 'bg-emerald-500' : 'bg-indigo-500'
+                  }`}
                 style={{ width: `${percent}%` }}
               />
             </div>
@@ -400,7 +397,7 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction, al
   const categoryInfo = getCategoryInfo(quiz.category);
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-center gap-2 mb-3">
         <HelpCircle className="w-4 h-4 text-blue-500" />
         <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
@@ -486,11 +483,10 @@ function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAction, al
 
                   return (
                     <div key={option.id} className="flex items-center gap-2">
-                      <div className="flex-1 h-5 bg-white/50 rounded-full overflow-hidden">
+                      <div className="flex-1 h-5 bg-slate-50/50 rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            option.isCorrect ? 'bg-emerald-400' : 'bg-slate-300'
-                          }`}
+                          className={`h-full rounded-full transition-all duration-500 ${option.isCorrect ? 'bg-emerald-400' : 'bg-slate-300'
+                            }`}
                           style={{ width: `${percent}%` }}
                         />
                       </div>
@@ -573,29 +569,35 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, allPolls 
 
   // 투표 후 실제 통계 가져오기
   useEffect(() => {
-    if (voted && !realStats) {
-      fetch(`/api/poll?pollId=${poll.id}`)
-        .then(res => res.json())
-        .then(data => {
-          // totalVotes가 0 이상이면 통계 표시 (0표도 유효한 상태)
-          if (typeof data.totalVotes === 'number') {
-            const aOpt = data.options?.find((o: { optionId: string }) => o.optionId === 'a');
-            const bOpt = data.options?.find((o: { optionId: string }) => o.optionId === 'b');
-            setRealStats({
-              a: aOpt?.percentage ?? 50,
-              b: bOpt?.percentage ?? 50,
-              total: data.totalVotes,
-            });
-          } else {
-            // API 응답이 비정상인 경우
-            setRealStats({ a: 50, b: 50, total: -1 });
-          }
-        })
-        .catch(() => {
-          // API 실패 시 명시적으로 실패 상태 설정
+    if (!voted || realStats) return;
+
+    const controller = new AbortController();
+
+    fetch(`/api/poll?pollId=${poll.id}`, { signal: controller.signal })
+      .then(res => res.json())
+      .then(data => {
+        // totalVotes가 0 이상이면 통계 표시 (0표도 유효한 상태)
+        if (typeof data.totalVotes === 'number') {
+          const aOpt = data.options?.find((o: { optionId: string }) => o.optionId === 'a');
+          const bOpt = data.options?.find((o: { optionId: string }) => o.optionId === 'b');
+          setRealStats({
+            a: aOpt?.percentage ?? 50,
+            b: bOpt?.percentage ?? 50,
+            total: data.totalVotes,
+          });
+        } else {
+          // API 응답이 비정상인 경우
           setRealStats({ a: 50, b: 50, total: -1 });
-        });
-    }
+        }
+      })
+      .catch((error) => {
+        // AbortError는 정상적인 cleanup이므로 무시
+        if (error.name === 'AbortError') return;
+        // API 실패 시 명시적으로 실패 상태 설정
+        setRealStats({ a: 50, b: 50, total: -1 });
+      });
+
+    return () => controller.abort();
   }, [voted, poll.id, realStats]);
 
   // 다음 액션 추천
@@ -640,7 +642,7 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, allPolls 
   const categoryInfo = getCategoryInfo(poll.category);
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-center gap-2 mb-3">
         <Vote className="w-4 h-4 text-purple-500" />
         <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">
@@ -662,7 +664,7 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, allPolls 
           disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-              'border-purple-200 bg-white hover:border-purple-300 hover:bg-purple-50'
+              'border-purple-200 bg-slate-50 hover:border-purple-300 hover:bg-purple-50'
             }`}
         >
           <div className="p-3 text-center relative z-10">
@@ -691,7 +693,7 @@ function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, allPolls 
           disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-              'border-pink-200 bg-white hover:border-pink-300 hover:bg-pink-50'
+              'border-pink-200 bg-slate-50 hover:border-pink-300 hover:bg-pink-50'
             }`}
         >
           <div className="p-3 text-center relative z-10">
@@ -785,7 +787,7 @@ function TipCard({ tip, onNextAction }: TipCardProps) {
   }).filter(a => a.type === 'test').slice(0, 1);
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100">
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-lg flex-shrink-0">
           💡
@@ -851,7 +853,7 @@ function QnACard({ question, onNextAction }: QnACardProps) {
   }).filter(a => a.type === 'test').slice(0, 1);
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-subtle">
       <div className="flex items-start gap-3">
         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0 ${question.status === 'answered'
           ? 'bg-gradient-to-br from-emerald-100 to-green-100'
@@ -867,7 +869,7 @@ function QnACard({ question, onNextAction }: QnACardProps) {
               }`}>
               {question.status === 'answered' ? '답변완료' : '답변대기'}
             </span>
-            <span className="text-xs text-gray-400">{question.author.nickname}</span>
+            <span className="text-xs text-muted">{question.author.nickname}</span>
             {question.author.resultBadge && (
               <span className="text-xs text-indigo-500">{question.author.resultBadge}</span>
             )}
@@ -917,10 +919,10 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
     : [];
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-subtle">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">⚔️</span>
-        <span className="font-bold text-sm text-slate-800">{debate.title}</span>
+        <span className="font-bold text-sm text-primary">{debate.title}</span>
         {debate.status === 'active' && (
           <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-xs font-bold rounded ml-auto">
             진행중
@@ -934,7 +936,7 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
           disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-              'border-purple-200 bg-white hover:border-purple-300'
+              'border-purple-200 bg-slate-50 hover:border-purple-300'
             }`}
         >
           <div className="p-3 text-center relative z-10">
@@ -961,7 +963,7 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
           disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
             voted ? 'border-gray-200 bg-gray-50' :
-              'border-pink-200 bg-white hover:border-pink-300'
+              'border-pink-200 bg-slate-50 hover:border-pink-300'
             }`}
         >
           <div className="p-3 text-center relative z-10">
@@ -1094,7 +1096,7 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
         {/* 랭킹 바로가기 */}
         <section className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-4 text-white">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-slate-50/20 rounded-xl flex items-center justify-center">
               <Trophy className="w-5 h-5" />
             </div>
             <div>
@@ -1104,14 +1106,14 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
           </div>
           <button
             onClick={() => onNavigate?.('ranking')}
-            className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-bold transition-colors"
+            className="w-full py-2 bg-slate-50/20 hover:bg-slate-50/30 rounded-xl text-sm font-bold transition-colors"
           >
             전체 랭킹 보기 →
           </button>
         </section>
 
         {/* HOT 커뮤니티 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-subtle shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-orange-500 rounded-lg flex items-center justify-center">
               <Flame className="w-4 h-4 text-white" />
@@ -1125,11 +1127,10 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
                 onClick={() => onNavigate?.('community')}
                 className="w-full flex items-start gap-2 p-2.5 bg-slate-50 rounded-xl hover:bg-rose-50 transition-colors text-left group"
               >
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
-                  index === 0 ? 'bg-amber-400 text-white' :
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${index === 0 ? 'bg-amber-400 text-white' :
                   index === 1 ? 'bg-slate-300 text-white' :
-                  'bg-orange-200 text-orange-700'
-                }`}>
+                    'bg-orange-200 text-orange-700'
+                  }`}>
                   {index + 1}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -1151,7 +1152,7 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
         </section>
 
         {/* 추천 테스트 */}
-        <section className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <section className="bg-slate-50 rounded-2xl border border-subtle shadow-sm overflow-hidden">
           <div className="px-4 pt-4 pb-3 flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-indigo-600" />
@@ -1171,7 +1172,7 @@ function ContentDiscoverySidebar({ onNavigate, onStartTest }: { onNavigate?: (ta
                   onClick={() => onStartTest?.(test.key)}
                   className="w-full flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group"
                 >
-                  <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 bg-slate-50 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                     <IconComponent mood="happy" className="w-7 h-7" />
                   </div>
                   <div className="flex-1 text-left min-w-0">
@@ -1273,7 +1274,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
       const mappedCategory = SITUATION_TO_CONTENT_CATEGORY[s.category];
       const matchesCategory = selectedCategory === 'all' || mappedCategory === selectedCategory;
       const matchesSearch = s.situation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           s.question.toLowerCase().includes(searchQuery.toLowerCase());
+        s.question.toLowerCase().includes(searchQuery.toLowerCase());
       const isAnswered = participation.situations?.some(ps => ps.situationId === s.id) || false;
       const matchesCompletionFilter = !showUncompletedOnly || !isAnswered;
       return matchesCategory && matchesSearch && matchesCompletionFilter;
@@ -1408,7 +1409,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
   const headerInfo = getHeaderInfo();
 
   return (
-    <div className="fixed inset-0 z-50 bg-white flex flex-col lg:left-60">
+    <div className="fixed inset-0 z-50 bg-slate-50 flex flex-col lg:left-60">
       {/* 헤더 */}
       <PageHeader
         title={headerInfo.title}
@@ -1458,7 +1459,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
               placeholder={`${activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+              className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-slate-50 transition-all outline-none"
             />
             {searchQuery && (
               <button
@@ -1518,21 +1519,18 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
               role="switch"
               aria-checked={showUncompletedOnly}
               aria-label="안 한 것만 보기"
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                showUncompletedOnly
-                  ? 'bg-indigo-100 text-indigo-700'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-              }`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${showUncompletedOnly
+                ? 'bg-indigo-100 text-indigo-700'
+                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
             >
               <div
-                className={`w-8 h-4 rounded-full transition-colors relative ${
-                  showUncompletedOnly ? 'bg-indigo-500' : 'bg-slate-300'
-                }`}
+                className={`w-8 h-4 rounded-full transition-colors relative ${showUncompletedOnly ? 'bg-indigo-500' : 'bg-slate-300'
+                  }`}
                 aria-hidden="true"
               >
-                <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${
-                  showUncompletedOnly ? 'translate-x-4' : 'translate-x-0.5'
-                }`} />
+                <div className={`absolute top-0.5 w-3 h-3 bg-slate-50 rounded-full shadow transition-transform ${showUncompletedOnly ? 'translate-x-4' : 'translate-x-0.5'
+                  }`} />
               </div>
               안 한 것만
             </button>
@@ -1543,172 +1541,172 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto pb-24 lg:pb-6">
         <div className="max-w-6xl mx-auto px-4 py-4 xl:flex xl:gap-6">
-        {/* 메인 콘텐츠 영역 */}
-        <div className="flex-1 min-w-0 max-w-2xl mx-auto xl:mx-0">
-          {/* 스트릭 배너 - 퀴즈/투표 탭에서 표시 */}
-          {activeTab !== 'community' && (
-            <StreakBanner
-              currentStreak={streak.currentStreak}
-              longestStreak={streak.longestStreak}
-              hasParticipatedToday={hasParticipatedToday}
-            />
-          )}
-
-          {/* 핫 토픽 섹션 - 전체 카테고리일 때만 */}
-          {activeTab !== 'community' && selectedCategory === 'all' && !showUncompletedOnly && (
-            <HotTopicsSection
-              quizzes={ALL_KNOWLEDGE_QUIZZES}
-              polls={VS_POLLS}
-              participation={participation}
-              onQuizClick={(quizId) => {
-                setActiveTab('quiz');
-                setFocusedItemId(quizId);
-              }}
-              onPollClick={(pollId) => {
-                setActiveTab('poll');
-                setFocusedItemId(pollId);
-              }}
-            />
-          )}
-
-          {/* 카테고리별 진행률 - 전체 카테고리일 때만 */}
-          {activeTab !== 'community' && selectedCategory === 'all' && !showUncompletedOnly && (
-            <CategoryProgress
-              quizzes={ALL_KNOWLEDGE_QUIZZES}
-              polls={VS_POLLS}
-              participation={participation}
-              activeTab={activeTab}
-              onCategoryClick={(category) => setSelectedCategory(category)}
-            />
-          )}
-
-          <div className="space-y-3">
-            {activeTab === 'quiz' && (
-              filteredQuizzes.length > 0 ? (
-                filteredQuizzes.map((quiz) => {
-                  const answered = participation.quizzes.find(q => q.quizId === quiz.id);
-                  const isFocused = focusedItemId === quiz.id;
-                  return (
-                    <div
-                      key={quiz.id}
-                      id={`quiz-${quiz.id}`}
-                      ref={(el) => setItemRef(quiz.id, el)}
-                      className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
-                    >
-                      <QuizCard
-                        quiz={quiz}
-                        isAnswered={!!answered}
-                        previousAnswer={answered?.selectedOption}
-                        onAnswer={handleQuizAnswer}
-                        onNextAction={handleNextAction}
-                        allQuizzes={filteredQuizzes}
-                        answeredQuizIds={participation.quizzes.map(q => q.quizId)}
-                      />
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-12 text-gray-400">
-                  <p>이 카테고리에 퀴즈가 없습니다</p>
-                </div>
-              )
+          {/* 메인 콘텐츠 영역 */}
+          <div className="flex-1 min-w-0 max-w-2xl mx-auto xl:mx-0">
+            {/* 스트릭 배너 - 퀴즈/투표 탭에서 표시 */}
+            {activeTab !== 'community' && (
+              <StreakBanner
+                currentStreak={streak.currentStreak}
+                longestStreak={streak.longestStreak}
+                hasParticipatedToday={hasParticipatedToday}
+              />
             )}
-            {activeTab === 'poll' && (
-              <>
-                {/* 인기 투표 섹션 (카테고리가 '전체'일 때, showUncompletedOnly일 때만) */}
-                {selectedCategory === 'all' && showUncompletedOnly && (
-                  <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
-                )}
 
-                {/* VS 투표 목록 */}
-                {filteredPolls.length > 0 && (
-                  filteredPolls.map((poll) => {
-                    const voted = participation.polls.find(p => p.pollId === poll.id);
-                    const isFocused = focusedItemId === poll.id;
+            {/* 핫 토픽 섹션 - 전체 카테고리일 때만 */}
+            {activeTab !== 'community' && selectedCategory === 'all' && !showUncompletedOnly && (
+              <HotTopicsSection
+                quizzes={ALL_KNOWLEDGE_QUIZZES}
+                polls={VS_POLLS}
+                participation={participation}
+                onQuizClick={(quizId) => {
+                  setActiveTab('quiz');
+                  setFocusedItemId(quizId);
+                }}
+                onPollClick={(pollId) => {
+                  setActiveTab('poll');
+                  setFocusedItemId(pollId);
+                }}
+              />
+            )}
+
+            {/* 카테고리별 진행률 - 전체 카테고리일 때만 */}
+            {activeTab !== 'community' && selectedCategory === 'all' && !showUncompletedOnly && (
+              <CategoryProgress
+                quizzes={ALL_KNOWLEDGE_QUIZZES}
+                polls={VS_POLLS}
+                participation={participation}
+                activeTab={activeTab}
+                onCategoryClick={(category) => setSelectedCategory(category)}
+              />
+            )}
+
+            <div className="space-y-3">
+              {activeTab === 'quiz' && (
+                filteredQuizzes.length > 0 ? (
+                  filteredQuizzes.map((quiz) => {
+                    const answered = participation.quizzes.find(q => q.quizId === quiz.id);
+                    const isFocused = focusedItemId === quiz.id;
                     return (
                       <div
-                        key={poll.id}
-                        id={`poll-${poll.id}`}
-                        ref={(el) => setItemRef(poll.id, el)}
+                        key={quiz.id}
+                        id={`quiz-${quiz.id}`}
+                        ref={(el) => setItemRef(quiz.id, el)}
                         className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
                       >
-                        <PollCard
-                          poll={poll}
-                          isVoted={!!voted}
-                          previousVote={voted?.choice}
-                          onVote={handlePollVote}
+                        <QuizCard
+                          quiz={quiz}
+                          isAnswered={!!answered}
+                          previousAnswer={answered?.selectedOption}
+                          onAnswer={handleQuizAnswer}
                           onNextAction={handleNextAction}
-                          allPolls={filteredPolls}
-                          votedPollIds={participation.polls.map(p => p.pollId)}
+                          allQuizzes={filteredQuizzes}
+                          answeredQuizIds={participation.quizzes.map(q => q.quizId)}
                         />
                       </div>
                     );
                   })
-                )}
+                ) : (
+                  <div className="text-center py-12 text-gray-400">
+                    <p>이 카테고리에 퀴즈가 없습니다</p>
+                  </div>
+                )
+              )}
+              {activeTab === 'poll' && (
+                <>
+                  {/* 인기 투표 섹션 (카테고리가 '전체'일 때, showUncompletedOnly일 때만) */}
+                  {selectedCategory === 'all' && showUncompletedOnly && (
+                    <PopularPolls className="mb-4" limit={3} showCreateButton={true} />
+                  )}
 
-                {/* 상황별 반응 섹션 */}
-                {filteredSituations.length > 0 && (
-                  <>
-                    {filteredPolls.length > 0 && (
-                      <div className="flex items-center gap-2 my-4">
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
-                        <span className="text-xs font-medium text-blue-500 px-3 py-1 bg-blue-50 rounded-full">
-                          💬 상황별 반응
-                        </span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
-                      </div>
-                    )}
-                    {filteredSituations.map((situation) => {
-                      const answered = participation.situations?.find(s => s.situationId === situation.id);
-                      const isFocused = focusedItemId === situation.id;
+                  {/* VS 투표 목록 */}
+                  {filteredPolls.length > 0 && (
+                    filteredPolls.map((poll) => {
+                      const voted = participation.polls.find(p => p.pollId === poll.id);
+                      const isFocused = focusedItemId === poll.id;
                       return (
                         <div
-                          key={situation.id}
-                          id={`situation-${situation.id}`}
-                          ref={(el) => setItemRef(situation.id, el)}
-                          className={isFocused ? 'ring-2 ring-blue-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
+                          key={poll.id}
+                          id={`poll-${poll.id}`}
+                          ref={(el) => setItemRef(poll.id, el)}
+                          className={isFocused ? 'ring-2 ring-orange-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
                         >
-                          <SituationReactionCard
-                            situation={situation}
-                            isAnswered={!!answered}
-                            previousAnswer={answered?.selectedOption}
-                            onAnswer={handleSituationAnswer}
-                            allSituations={filteredSituations}
-                            answeredSituationIds={participation.situations?.map(s => s.situationId) || []}
+                          <PollCard
+                            poll={poll}
+                            isVoted={!!voted}
+                            previousVote={voted?.choice}
+                            onVote={handlePollVote}
+                            onNextAction={handleNextAction}
+                            allPolls={filteredPolls}
+                            votedPollIds={participation.polls.map(p => p.pollId)}
                           />
                         </div>
                       );
-                    })}
-                  </>
-                )}
+                    })
+                  )}
 
-                {/* 아무 콘텐츠도 없을 때 */}
-                {filteredPolls.length === 0 && filteredSituations.length === 0 && (
-                  <div className="text-center py-12 text-gray-400">
-                    <p>이 카테고리에 투표가 없습니다</p>
-                  </div>
-                )}
-              </>
-            )}
-            {activeTab === 'community' && (
-              <CommunityContent onNextAction={handleNextAction} />
-            )}
+                  {/* 상황별 반응 섹션 */}
+                  {filteredSituations.length > 0 && (
+                    <>
+                      {filteredPolls.length > 0 && (
+                        <div className="flex items-center gap-2 my-4">
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
+                          <span className="text-xs font-medium text-blue-500 px-3 py-1 bg-blue-50 rounded-full">
+                            💬 상황별 반응
+                          </span>
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
+                        </div>
+                      )}
+                      {filteredSituations.map((situation) => {
+                        const answered = participation.situations?.find(s => s.situationId === situation.id);
+                        const isFocused = focusedItemId === situation.id;
+                        return (
+                          <div
+                            key={situation.id}
+                            id={`situation-${situation.id}`}
+                            ref={(el) => setItemRef(situation.id, el)}
+                            className={isFocused ? 'ring-2 ring-blue-400 ring-offset-2 rounded-2xl transition-all' : 'transition-all'}
+                          >
+                            <SituationReactionCard
+                              situation={situation}
+                              isAnswered={!!answered}
+                              previousAnswer={answered?.selectedOption}
+                              onAnswer={handleSituationAnswer}
+                              allSituations={filteredSituations}
+                              answeredSituationIds={participation.situations?.map(s => s.situationId) || []}
+                            />
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+
+                  {/* 아무 콘텐츠도 없을 때 */}
+                  {filteredPolls.length === 0 && filteredSituations.length === 0 && (
+                    <div className="text-center py-12 text-gray-400">
+                      <p>이 카테고리에 투표가 없습니다</p>
+                    </div>
+                  )}
+                </>
+              )}
+              {activeTab === 'community' && (
+                <CommunityContent onNextAction={handleNextAction} />
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* 우측 사이드바 - PC용 */}
-        <ContentDiscoverySidebar
-          onNavigate={(target) => {
-            if (target === 'ranking' || target === 'community') {
+          {/* 우측 사이드바 - PC용 */}
+          <ContentDiscoverySidebar
+            onNavigate={(target) => {
+              if (target === 'ranking' || target === 'community') {
+                onClose();
+                onNavigate?.(target);
+              }
+            }}
+            onStartTest={(key) => {
               onClose();
-              onNavigate?.(target);
-            }
-          }}
-          onStartTest={(key) => {
-            onClose();
-            onStartTest?.(key);
-          }}
-        />
+              onStartTest?.(key);
+            }}
+          />
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ export const HUMAN_DATA = {
         empathy: {
             name: "공감력",
             emoji: "💗",
-            desc: "감정적 민감성과 배려"
+            desc: "공감 능력이 뛰어난 민감성과 배려"
         },
         plan: {
             name: "계획력",
@@ -535,7 +535,7 @@ export const HUMAN_DATA = {
             dimension: "empathy",
             a: [
                 {
-                    text: "이것이 논리적으로 타당한가? 효율적인가?",
+                    text: "이것이 분석적으로 타당한가? 효율적인가?",
                     score: 1
                 },
                 {
@@ -777,7 +777,7 @@ export const HUMAN_DATA = {
         {
             name: "전략가",
             emoji: "🎯",
-            desc: "계획적이고 논리적인 마스터마인드",
+            desc: "계획적이고 분석적인 마스터마인드",
             condition: {
                 inssa: "low",
                 plan: "high",
@@ -868,7 +868,7 @@ export const HUMAN_DATA = {
                 plan: "low"
             },
             interpretation: "당신은 틀에 얽매이지 않는 자유로운 사고와 풍부한 감성을 지닌 예술가 타입입니다. 독창적인 시각으로 세상을 바라봅니다.",
-            guide: "현실적인 부분도 조금씩 챙겨보세요. 예술적 영감을 실현하려면 기본적인 토대가 필요합니다.",
+            guide: "실용적인 부분도 조금씩 챙겨보세요. 예술적 영감을 실현하려면 기본적인 토대가 필요합니다.",
             mood: "happy",
             color: "bg-yellow-100"
         },
@@ -881,7 +881,7 @@ export const HUMAN_DATA = {
                 empathy: "low",
                 inssa: "low"
             },
-            interpretation: "당신은 지적 호기심이 왕성하고 논리적 분석을 즐기는 탐구자입니다. 깊이 있는 사고로 문제의 본질을 꿰뚫어 봅니다.",
+            interpretation: "당신은 지적 호기심이 왕성하고 분석적인 분석을 즐기는 탐구자입니다. 깊이 있는 사고로 문제의 본질을 꿰뚫어 봅니다.",
             guide: "사람들과의 교류도 새로운 아이디어의 원천이 될 수 있어요. 가끔은 머리보다 마음으로 소통해보세요.",
             mood: "cool",
             color: "bg-blue-100"
@@ -909,7 +909,7 @@ export const HUMAN_DATA = {
                 inssa: "medium",
                 adventure: "low"
             },
-            interpretation: "당신은 계획을 세우면 반드시 실행하는 행동파입니다. 현실적이고 효율적인 방법으로 목표를 달성해 나갑니다.",
+            interpretation: "당신은 계획을 세우면 반드시 실행하는 행동파입니다. 실용적인이고 효율적인 방법으로 목표를 달성해 나갑니다.",
             guide: "가끔은 새로운 방법도 시도해보세요. 익숙한 것만 고집하면 더 좋은 기회를 놓칠 수 있어요.",
             mood: "cool",
             color: "bg-gray-100"
@@ -937,7 +937,7 @@ export const HUMAN_DATA = {
                 plan: "high",
                 empathy: "low"
             },
-            interpretation: "당신은 현실적이고 실용적인 사고를 가진 사람입니다. 확실한 것을 선호하고, 안정적인 방법으로 목표를 이룹니다.",
+            interpretation: "당신은 실용적인이고 실용적인 사고를 가진 사람입니다. 확실한 것을 선호하고, 안정적인 방법으로 목표를 이룹니다.",
             guide: "가끔은 상상의 나래를 펼쳐보세요. 틀을 벗어난 생각이 새로운 가능성을 열어줄 거예요.",
             mood: "cool",
             color: "bg-blue-100"
@@ -990,6 +990,6 @@ export const HUMAN_DATA = {
 };
 
 if (typeof window !== 'undefined') {
-  window.CHEMI_SUBJECTS = window.CHEMI_SUBJECTS || {};
-  window.CHEMI_SUBJECTS.human = HUMAN_DATA;
+    window.CHEMI_SUBJECTS = window.CHEMI_SUBJECTS || {};
+    window.CHEMI_SUBJECTS.human = HUMAN_DATA;
 }

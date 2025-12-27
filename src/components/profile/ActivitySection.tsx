@@ -61,7 +61,7 @@ export default function ActivitySection() {
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl p-4 md:p-6">
+      <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
         <div className="animate-pulse">
           <div className="h-5 bg-gray-200 rounded w-32 mb-4" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -77,7 +77,7 @@ export default function ActivitySection() {
   const nextBonus = streakInfo ? getNextStreakBonus(streakInfo.currentStreak) : null;
 
   return (
-    <section className="bg-white rounded-2xl p-4 md:p-6">
+    <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-5 h-5 text-indigo-500" />
@@ -123,7 +123,7 @@ export default function ActivitySection() {
               </div>
 
               {nextBonus && (
-                <div className="bg-white/50 rounded-lg px-2 py-1 text-center">
+                <div className="bg-slate-50/50 rounded-lg px-2 py-1 text-center">
                   <p className="text-xs text-orange-600">
                     {nextBonus.days}일 달성 시 +{nextBonus.bonus}P
                   </p>
@@ -182,11 +182,10 @@ export default function ActivitySection() {
               return (
                 <div
                   key={days}
-                  className={`flex-1 text-center py-1 px-2 rounded-lg ${
-                    achieved
-                      ? 'bg-orange-100 text-orange-700'
-                      : 'bg-gray-100 text-gray-400'
-                  }`}
+                  className={`flex-1 text-center py-1 px-2 rounded-lg ${achieved
+                    ? 'bg-orange-100 text-orange-700'
+                    : 'bg-gray-100 text-gray-400'
+                    }`}
                 >
                   <p className="text-xs font-medium">{days}일</p>
                   <p className="text-[10px]">+{bonus}P</p>

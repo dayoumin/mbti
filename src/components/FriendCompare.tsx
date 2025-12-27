@@ -89,18 +89,18 @@ export default function FriendCompare({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto shadow-2xl">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto shadow-2xl">
         {/* 헤더 */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-          <h2 className="font-bold text-gray-900 flex items-center gap-2">
+        <div className="sticky top-0 bg-slate-50 border-b border-subtle px-4 py-3 flex items-center justify-between">
+          <h2 className="font-bold text-primary flex items-center gap-2">
             <Users className="w-5 h-5 text-pink-500" />
             친구와 비교하기
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center"
+            className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-muted" />
           </button>
         </div>
 
@@ -139,7 +139,7 @@ export default function FriendCompare({
                   </div>
                   <button
                     onClick={handleCopyLink}
-                    className="w-full py-3 bg-white border border-purple-200 text-purple-700 font-bold rounded-xl flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-slate-50 border border-purple-200 text-purple-700 font-bold rounded-xl flex items-center justify-center gap-2"
                   >
                     {copied ? (
                       <>
@@ -231,8 +231,8 @@ export default function FriendCompare({
                 </div>
                 <h3 className="font-bold text-gray-900 text-lg">
                   {comparison.matchScore >= 80 ? '찰떡궁합!' :
-                   comparison.matchScore >= 60 ? '잘 맞는 편!' :
-                   comparison.matchScore >= 40 ? '적당히 다름' : '정반대?!'}
+                    comparison.matchScore >= 60 ? '잘 맞는 편!' :
+                      comparison.matchScore >= 40 ? '적당히 다름' : '정반대?!'}
                 </h3>
               </div>
 
@@ -265,10 +265,9 @@ export default function FriendCompare({
                         </span>
                         <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full ${
-                              similarity >= 70 ? 'bg-green-400' :
+                            className={`h-full rounded-full ${similarity >= 70 ? 'bg-green-400' :
                               similarity >= 40 ? 'bg-yellow-400' : 'bg-red-400'
-                            }`}
+                              }`}
                             style={{ width: `${similarity}%` }}
                           />
                         </div>

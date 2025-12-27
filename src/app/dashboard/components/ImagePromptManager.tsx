@@ -64,11 +64,10 @@ export default function ImagePromptManager() {
       <div className="flex gap-2">
         <button
           onClick={() => setSelectedTest('all')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            selectedTest === 'all'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedTest === 'all'
               ? 'bg-purple-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
+            }`}
         >
           전체
         </button>
@@ -76,11 +75,10 @@ export default function ImagePromptManager() {
           <button
             key={group.testKey}
             onClick={() => setSelectedTest(group.testKey)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedTest === group.testKey
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedTest === group.testKey
                 ? 'bg-purple-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {group.testName} ({group.uploadedCount}/{group.totalResults})
           </button>
@@ -89,7 +87,7 @@ export default function ImagePromptManager() {
 
       {/* 테스트별 이미지 목록 */}
       {filteredGroups.map(group => (
-        <div key={group.testKey} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div key={group.testKey} className="bg-slate-50 rounded-xl border border-gray-200 overflow-hidden">
           <div className="bg-gray-50 px-6 py-4 border-b">
             <h3 className="font-bold text-gray-800">{group.testName}</h3>
             <p className="text-sm text-gray-500">{group.uploadedCount}/{group.totalResults} 이미지 업로드됨</p>
@@ -110,7 +108,7 @@ export default function ImagePromptManager() {
                     {item.imagePath ? (
                       <img src={item.imagePath} alt={item.resultName} className="w-full h-full object-cover rounded-lg" />
                     ) : (
-                      <span className="text-gray-400 text-xs text-center">이미지<br/>대기중</span>
+                      <span className="text-gray-400 text-xs text-center">이미지<br />대기중</span>
                     )}
                   </div>
 
@@ -128,11 +126,10 @@ export default function ImagePromptManager() {
                         <span className="text-xs font-medium text-gray-500">English Prompt</span>
                         <button
                           onClick={() => copyToClipboard(item)}
-                          className={`text-xs px-2 py-1 rounded transition-colors ${
-                            copiedId === item.id
+                          className={`text-xs px-2 py-1 rounded transition-colors ${copiedId === item.id
                               ? 'bg-green-100 text-green-700'
                               : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                          }`}
+                            }`}
                         >
                           {copiedId === item.id ? '복사됨!' : '복사'}
                         </button>

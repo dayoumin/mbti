@@ -327,7 +327,7 @@ export default function ResultRankingView({
   if (!data) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl p-6 text-center">
+        <div className="bg-slate-50 rounded-2xl p-6 text-center">
           <p className="text-gray-500">데이터를 불러올 수 없습니다</p>
           <button onClick={onClose} className="mt-4 px-4 py-2 bg-gray-200 rounded-lg">
             닫기
@@ -341,15 +341,14 @@ export default function ResultRankingView({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-xl overflow-hidden">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-xl overflow-hidden">
         {/* 헤더 */}
-        <div className={`px-5 py-4 flex items-center justify-between shrink-0 ${
-          isCompareMode
-            ? 'bg-gradient-to-r from-amber-500 to-orange-500'
-            : 'bg-gradient-to-r from-indigo-500 to-purple-500'
-        }`}>
+        <div className={`px-5 py-4 flex items-center justify-between shrink-0 ${isCompareMode
+          ? 'bg-gradient-to-r from-amber-500 to-orange-500'
+          : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+          }`}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-slate-50/20 rounded-full flex items-center justify-center">
               {isCompareMode ? <Star className="w-5 h-5 text-white" /> : <Trophy className="w-5 h-5 text-white" />}
             </div>
             <div className="text-white">
@@ -365,7 +364,7 @@ export default function ResultRankingView({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-all"
+            className="w-8 h-8 rounded-full bg-slate-50/20 flex items-center justify-center text-white hover:bg-slate-50/30 transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -386,11 +385,10 @@ export default function ResultRankingView({
                       setInternalTestType(key);
                       setSelectedCategory(null);
                     }}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                      isActive
-                        ? 'bg-indigo-500 text-white shadow-md'
-                        : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300'
-                    }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${isActive
+                      ? 'bg-indigo-500 text-white shadow-md'
+                      : 'bg-slate-50 text-gray-600 border border-gray-200 hover:border-indigo-300'
+                      }`}
                   >
                     <span>{testData.resultLabels[0]?.emoji || '📊'}</span>
                     <span>{testData.title.replace(' 테스트', '').replace(' 매칭', '')}</span>
@@ -433,16 +431,14 @@ export default function ResultRankingView({
                     return (
                       <div
                         key={idx}
-                        className={`rounded-lg p-2 text-center border transition-all ${
-                          isMyResultItem
-                            ? 'bg-amber-100 border-amber-300 ring-2 ring-amber-400'
-                            : 'bg-white border-gray-100'
-                        }`}
+                        className={`rounded-lg p-2 text-center border transition-all ${isMyResultItem
+                          ? 'bg-amber-100 border-amber-300 ring-2 ring-amber-400'
+                          : 'bg-slate-50 border-gray-100'
+                          }`}
                       >
                         <span className="text-2xl block mb-1">{result.emoji}</span>
-                        <span className={`text-xs font-medium line-clamp-1 ${
-                          isMyResultItem ? 'text-amber-700' : 'text-gray-700'
-                        }`}>
+                        <span className={`text-xs font-medium line-clamp-1 ${isMyResultItem ? 'text-amber-700' : 'text-gray-700'
+                          }`}>
                           {result.name}
                         </span>
                         {isMyResultItem && (
@@ -465,7 +461,7 @@ export default function ResultRankingView({
                     <button
                       key={category.id}
                       onClick={() => setSelectedCategory(category.id)}
-                      className="w-full flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all text-left group"
+                      className="w-full flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all text-left group"
                     >
                       <span className="text-2xl">{category.emoji}</span>
                       <div className="flex-1">
@@ -518,30 +514,28 @@ export default function ResultRankingView({
                 {rankedResults?.map(({ result, rank, score, isMyResult }) => (
                   <div
                     key={result.name}
-                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                      isMyResult
-                        ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-400 shadow-md'
-                        : rank === 1
+                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${isMyResult
+                      ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-400 shadow-md'
+                      : rank === 1
                         ? 'bg-amber-50 border-amber-300'
                         : rank === 2
-                        ? 'bg-gray-50 border-gray-300'
-                        : rank === 3
-                        ? 'bg-orange-50 border-orange-200'
-                        : 'bg-white border-gray-100'
-                    }`}
+                          ? 'bg-gray-50 border-gray-300'
+                          : rank === 3
+                            ? 'bg-orange-50 border-orange-200'
+                            : 'bg-slate-50 border-gray-100'
+                      }`}
                   >
                     {/* 순위 */}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                      isMyResult
-                        ? 'bg-amber-500 text-white'
-                        : rank === 1
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isMyResult
+                      ? 'bg-amber-500 text-white'
+                      : rank === 1
                         ? 'bg-amber-400 text-white'
                         : rank === 2
-                        ? 'bg-gray-400 text-white'
-                        : rank === 3
-                        ? 'bg-orange-400 text-white'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}>
+                          ? 'bg-gray-400 text-white'
+                          : rank === 3
+                            ? 'bg-orange-400 text-white'
+                            : 'bg-gray-200 text-gray-600'
+                      }`}>
                       {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
                     </div>
 
@@ -565,17 +559,16 @@ export default function ResultRankingView({
                     <div className="w-16">
                       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${
-                            isMyResult
-                              ? 'bg-amber-500'
-                              : rank === 1
+                          className={`h-full rounded-full ${isMyResult
+                            ? 'bg-amber-500'
+                            : rank === 1
                               ? 'bg-amber-400'
                               : rank === 2
-                              ? 'bg-gray-400'
-                              : rank === 3
-                              ? 'bg-orange-400'
-                              : 'bg-indigo-300'
-                          }`}
+                                ? 'bg-gray-400'
+                                : rank === 3
+                                  ? 'bg-orange-400'
+                                  : 'bg-indigo-300'
+                            }`}
                           style={{ width: `${Math.min(100, (score / MAX_SCORE_FOR_DISPLAY) * 100)}%` }}
                         />
                       </div>

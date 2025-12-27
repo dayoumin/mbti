@@ -112,7 +112,7 @@ export function SituationReactionCard({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-subtle">
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
         <MessageCircle className="w-4 h-4 text-blue-500" />
@@ -123,10 +123,10 @@ export function SituationReactionCard({
 
       {/* 상황 설명 */}
       <div className="mb-4">
-        <p className="text-sm text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg">
+        <p className="text-sm text-secondary leading-relaxed bg-gray-50 p-3 rounded-lg">
           {situation.situation}
         </p>
-        <p className="text-base font-bold text-slate-800 mt-3">
+        <p className="text-base font-bold text-primary mt-3">
           {situation.question}
         </p>
       </div>
@@ -155,9 +155,8 @@ export function SituationReactionCard({
               {/* 결과 바 (선택 후) */}
               {showResult && (
                 <div
-                  className={`absolute inset-y-0 left-0 transition-all duration-500 ${
-                    isSelected ? 'bg-blue-200/50' : 'bg-gray-200/50'
-                  }`}
+                  className={`absolute inset-y-0 left-0 transition-all duration-500 ${isSelected ? 'bg-blue-200/50' : 'bg-gray-200/50'
+                    }`}
                   style={{ width: `${percent}%` }}
                 />
               )}

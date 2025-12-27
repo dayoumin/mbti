@@ -124,7 +124,7 @@ function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
   if (loading) {
     return (
       <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3 animate-pulse">
-        <div className="h-12 bg-white/50 rounded-lg"></div>
+        <div className="h-12 bg-slate-50/50 rounded-lg"></div>
       </div>
     );
   }
@@ -162,7 +162,7 @@ function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
 
           {/* 진행률 바 */}
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-1.5 bg-white/60 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-slate-50/60 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full transition-all"
                 style={{ width: `${Math.min(completionRate, 100)}%` }}
@@ -250,8 +250,8 @@ function DetailTestsSection({ onStartTest }: { onStartTest: (key: string) => voi
                 key={key}
                 onClick={() => onStartTest(key)}
                 className={`w-full p-2 rounded-lg text-left transition-all hover:shadow-sm group flex items-center gap-2 ${isRecommended
-                    ? 'bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300'
-                    : 'bg-slate-50/70 hover:bg-slate-50'
+                  ? 'bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300'
+                  : 'bg-slate-50/70 hover:bg-slate-50'
                   }`}
               >
                 {isRecommended && (

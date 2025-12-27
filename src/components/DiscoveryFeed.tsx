@@ -113,8 +113,8 @@ export default function DiscoveryFeed({ onStartTest, onExploreAll, className = '
             {/* End of Feed CTA: Explore All Center */}
             {onExploreAll && (
                 <div className="pt-4 pb-8 text-center animate-fade-in" style={{ animationDelay: '0.5s' }}>
-                    <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 border border-white shadow-sm">
-                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
+                    <div className="glass-card rounded-md p-8 border-subtle shadow-sm">
+                        <div className="w-16 h-16 bg-gradient-brand-primary rounded-md flex items-center justify-center mx-auto mb-4 shadow-brand">
                             <LayoutGrid className="w-8 h-8 text-white" />
                         </div>
                         <h3 className="text-xl font-black text-slate-800 mb-2">테스트가 더 궁금하신가요?</h3>
@@ -124,7 +124,7 @@ export default function DiscoveryFeed({ onStartTest, onExploreAll, className = '
                         </p>
                         <button
                             onClick={onExploreAll}
-                            className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-800 transition-all active:scale-95 shadow-md"
+                            className="w-full py-4 bg-slate-900 text-white font-black rounded-md flex items-center justify-center gap-2 hover:bg-slate-800 transition-all active:scale-95 shadow-md"
                         >
                             전체 테스트 보러가기
                             <ChevronRight className="w-5 h-5" />

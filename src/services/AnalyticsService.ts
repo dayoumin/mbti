@@ -9,6 +9,7 @@ import { resultService } from './ResultService';
 import type { NextActionType, ActionPriority } from './NextActionService';
 import { getUTMForAnalytics } from '@/utils';
 import { STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // ========== 타입 정의 ==========
 // 이벤트 네이밍 규칙:
@@ -150,19 +151,15 @@ const MAX_LOCAL_EVENTS = 100; // 로컬에 최대 100개만 저장
 function saveToLocalStorage(event: EventData): void {
   if (typeof window === 'undefined') return;
 
-  try {
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as EventData[];
-    existing.push(event);
+  const existing = storage.get<EventData[]>(STORAGE_KEY, []);
+  existing.push(event);
 
-    // 오래된 이벤트 정리
-    if (existing.length > MAX_LOCAL_EVENTS) {
-      existing.splice(0, existing.length - MAX_LOCAL_EVENTS);
-    }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-  } catch (error) {
-    console.error('[AnalyticsService] localStorage 저장 실패:', error);
+  // 오래된 이벤트 정리
+  if (existing.length > MAX_LOCAL_EVENTS) {
+    existing.splice(0, existing.length - MAX_LOCAL_EVENTS);
   }
+
+  storage.set(STORAGE_KEY, existing);
 }
 
 // ========== Rate Limiting ==========
@@ -413,11 +410,7 @@ class AnalyticsServiceClass {
   getLocalEvents(): EventData[] {
     if (typeof window === 'undefined') return [];
 
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as EventData[];
-    } catch {
-      return [];
-    }
+    return storage.get<EventData[]>(STORAGE_KEY, []);
   }
 
   /**
@@ -425,7 +418,7 @@ class AnalyticsServiceClass {
    */
   clearLocalEvents(): void {
     if (typeof window === 'undefined') return;
-    localStorage.removeItem(STORAGE_KEY);
+    storage.remove(STORAGE_KEY);
   }
 
   // ========== 전환 분석 (로컬 데이터 기반) ==========

@@ -75,7 +75,7 @@ export default function EngagementPrompt({ className = '' }: EngagementPromptPro
     <div className={`bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 ${className}`}>
       {/* 메시지 */}
       {message && (
-        <p className="text-sm font-medium text-indigo-800 mb-3">
+        <p className="text-sm font-medium text-primary mb-3">
           {message}
         </p>
       )}
@@ -84,12 +84,12 @@ export default function EngagementPrompt({ className = '' }: EngagementPromptPro
       {progressInfo && (
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
-            <span className="text-gray-600">{progressInfo.label}</span>
+            <span className="text-secondary">{progressInfo.label}</span>
             <span className="text-indigo-600 font-medium">
               {progressInfo.current}/{progressInfo.target}
             </span>
           </div>
-          <div className="h-2 bg-white rounded-full overflow-hidden">
+          <div className="h-2 bg-slate-50 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
               style={{

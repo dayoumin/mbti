@@ -53,11 +53,10 @@ export const ModeTabs = ({ mode, onRestart }: ModeTabsProps) => {
                 <button
                   key={tab.key}
                   onClick={() => onRestart(tab.key)}
-                  className={`flex-1 min-w-0 py-2 px-1 doodle-border transition-all ${
-                    mode === tab.key
+                  className={`flex-1 min-w-0 py-2 px-1 doodle-border transition-all ${mode === tab.key
                       ? 'bg-gradient-to-br from-yellow-100 to-pink-100 scale-105'
-                      : 'bg-white hover:bg-gray-50'
-                  }`}
+                      : 'bg-slate-50 hover:bg-slate-50'
+                    }`}
                 >
                   <tab.Icon mood="happy" className="w-8 h-8 mx-auto mb-1" />
                   <div className="text-xs font-bold text-gray-800 truncate">{tab.label}</div>

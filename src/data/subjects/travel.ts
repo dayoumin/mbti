@@ -73,7 +73,7 @@ export const travelData: SubjectData = {
     },
     // escape 차원 (3문항)
     {
-      q: '이상적인 여행 일정은?',
+      q: '비전이 있는 여행 일정은?',
       dimension: 'escape',
       a: [
         { text: '느긋하게 2-3곳만 천천히', score: 5 },

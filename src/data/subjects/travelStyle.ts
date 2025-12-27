@@ -135,7 +135,7 @@ export const travelStyleData = {
       ]
     },
     {
-      q: "이상적인 여행지 숙소는?",
+      q: "비전이 있는 여행지 숙소는?",
       dimension: "relaxation",
       a: [
         { text: "오션뷰 리조트, 수영장 있는 풀빌라", score: 5 },

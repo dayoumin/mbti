@@ -113,7 +113,7 @@ export default function CreatePollModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="w-full max-w-md bg-slate-50 rounded-2xl shadow-xl overflow-hidden">
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
@@ -148,11 +148,10 @@ export default function CreatePollModal({
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                      category === cat.id
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${category === cat.id
                         ? 'bg-purple-100 text-purple-700 border-2 border-purple-300'
                         : 'bg-slate-100 text-slate-600 border-2 border-transparent hover:bg-slate-200'
-                    }`}
+                      }`}
                   >
                     {cat.emoji} {cat.label}
                   </button>

@@ -150,7 +150,7 @@ export default function InsightSection() {
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl p-4 md:p-6">
+      <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
         <div className="animate-pulse">
           <div className="h-5 bg-gray-200 rounded w-32 mb-4" />
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
@@ -164,7 +164,7 @@ export default function InsightSection() {
   }
 
   return (
-    <section className="bg-white rounded-2xl p-4 md:p-6">
+    <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -185,13 +185,12 @@ export default function InsightSection() {
           return (
             <button
               key={config.stage}
-              className={`relative aspect-square rounded-xl p-2 transition-all ${
-                isUnlocked
-                  ? `bg-gradient-to-br ${config.gradient} shadow-md hover:shadow-lg hover:scale-105`
-                  : isNext
+              className={`relative aspect-square rounded-xl p-2 transition-all ${isUnlocked
+                ? `bg-gradient-to-br ${config.gradient} shadow-md hover:shadow-lg hover:scale-105`
+                : isNext
                   ? 'bg-gray-100 border-2 border-dashed border-gray-300 hover:border-gray-400'
                   : 'bg-gray-100 opacity-50'
-              }`}
+                }`}
               disabled={!isUnlocked && !isNext}
             >
               <div className="flex flex-col items-center justify-center h-full">
@@ -199,9 +198,8 @@ export default function InsightSection() {
                   {config.emoji}
                 </span>
                 <span
-                  className={`text-xs font-medium text-center ${
-                    isUnlocked ? 'text-white' : 'text-gray-500'
-                  }`}
+                  className={`text-xs font-medium text-center ${isUnlocked ? 'text-white' : 'text-gray-500'
+                    }`}
                 >
                   {config.title}
                 </span>
@@ -209,7 +207,7 @@ export default function InsightSection() {
 
               {/* 해금됨 표시 */}
               {isUnlocked && (
-                <div className="absolute top-1 right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                <div className="absolute top-1 right-1 w-4 h-4 bg-slate-50 rounded-full flex items-center justify-center">
                   <span className="text-xs">✓</span>
                 </div>
               )}

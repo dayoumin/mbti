@@ -8,6 +8,7 @@
 import { SubjectKey } from '@/data/types';
 import { getDeviceId } from '@/utils/device';
 import { STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // ========== 타입 정의 ==========
 
@@ -269,13 +270,13 @@ const localStorageProvider: StorageProvider = {
   async saveVote(vote: RankingVote): Promise<SaveResult> {
     try {
       // 투표 저장
-      const votes = JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
+      const votes = storage.get<RankingVote[]>(VOTES_KEY, []);
       votes.push(vote);
-      localStorage.setItem(VOTES_KEY, JSON.stringify(votes));
+      storage.set(VOTES_KEY, votes);
 
       // 통계 업데이트
       const statsKey = `${vote.seasonId}:${vote.categoryId}`;
-      const allStats = JSON.parse(localStorage.getItem(STATS_KEY) || '{}') as Record<string, RankingStats>;
+      const allStats = storage.get<Record<string, RankingStats>>(STATS_KEY, {});
 
       if (!allStats[statsKey]) {
         allStats[statsKey] = {
@@ -292,7 +293,7 @@ const localStorageProvider: StorageProvider = {
       stats.totalVotes += 1;
       stats.lastUpdated = new Date().toISOString();
 
-      localStorage.setItem(STATS_KEY, JSON.stringify(allStats));
+      storage.set(STATS_KEY, allStats);
 
       return { success: true, id: vote.id };
     } catch (error) {
@@ -302,76 +303,52 @@ const localStorageProvider: StorageProvider = {
   },
 
   async getVotes(seasonId: string, categoryId?: string): Promise<RankingVote[]> {
-    try {
-      const votes = JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
-      return votes.filter(v => {
-        if (v.seasonId !== seasonId) return false;
-        if (categoryId && v.categoryId !== categoryId) return false;
-        return true;
-      });
-    } catch {
-      return [];
-    }
+    const votes = storage.get<RankingVote[]>(VOTES_KEY, []);
+    return votes.filter(v => {
+      if (v.seasonId !== seasonId) return false;
+      if (categoryId && v.categoryId !== categoryId) return false;
+      return true;
+    });
   },
 
   async getAllVotes(): Promise<RankingVote[]> {
-    try {
-      return JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
-    } catch {
-      return [];
-    }
+    return storage.get<RankingVote[]>(VOTES_KEY, []);
   },
 
   async getVotesByUser(userId: string): Promise<RankingVote[]> {
-    try {
-      const votes = JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
-      return votes.filter(v => v.userId === userId);
-    } catch {
-      return [];
-    }
+    const votes = storage.get<RankingVote[]>(VOTES_KEY, []);
+    return votes.filter(v => v.userId === userId);
   },
 
   async getStats(seasonId: string, categoryId: string): Promise<RankingStats | null> {
-    try {
-      const allStats = JSON.parse(localStorage.getItem(STATS_KEY) || '{}') as Record<string, RankingStats>;
-      const statsKey = `${seasonId}:${categoryId}`;
-      return allStats[statsKey] || null;
-    } catch {
-      return null;
-    }
+    const allStats = storage.get<Record<string, RankingStats>>(STATS_KEY, {});
+    const statsKey = `${seasonId}:${categoryId}`;
+    return allStats[statsKey] || null;
   },
 
   async getAllStats(seasonId: string): Promise<RankingStats[]> {
-    try {
-      const allStats = JSON.parse(localStorage.getItem(STATS_KEY) || '{}') as Record<string, RankingStats>;
-      return Object.values(allStats).filter(s => s.seasonId === seasonId);
-    } catch {
-      return [];
-    }
+    const allStats = storage.get<Record<string, RankingStats>>(STATS_KEY, {});
+    return Object.values(allStats).filter(s => s.seasonId === seasonId);
   },
 
   async getAvailableSeasons(): Promise<string[]> {
-    try {
-      const votes = JSON.parse(localStorage.getItem(VOTES_KEY) || '[]') as RankingVote[];
-      const seasons = new Set(votes.map(v => v.seasonId));
-      // 시즌 정렬: 연도 내림차순 → 분기 내림차순 (2025-Q4 > 2025-Q1 > 2024-yearly)
-      return Array.from(seasons).sort((a, b) => {
-        const [yearA, typeA] = a.split('-');
-        const [yearB, typeB] = b.split('-');
-        // 연도 비교 (내림차순)
-        if (yearA !== yearB) return parseInt(yearB, 10) - parseInt(yearA, 10);
-        // 같은 연도 내 정렬 (내림차순: Q4 > Q3 > Q2 > Q1 > yearly > event)
-        // priority가 높을수록 먼저 오도록 내림차순 정렬
-        const priority = (t: string) => {
-          if (t.startsWith('Q')) return 10 + parseInt(t.replace('Q', ''), 10); // Q4=14, Q1=11
-          if (t === 'yearly') return 5;
-          return 0; // event
-        };
-        return priority(typeB) - priority(typeA); // 내림차순
-      });
-    } catch {
-      return [];
-    }
+    const votes = storage.get<RankingVote[]>(VOTES_KEY, []);
+    const seasons = new Set(votes.map(v => v.seasonId));
+    // 시즌 정렬: 연도 내림차순 → 분기 내림차순 (2025-Q4 > 2025-Q1 > 2024-yearly)
+    return Array.from(seasons).sort((a, b) => {
+      const [yearA, typeA] = a.split('-');
+      const [yearB, typeB] = b.split('-');
+      // 연도 비교 (내림차순)
+      if (yearA !== yearB) return parseInt(yearB, 10) - parseInt(yearA, 10);
+      // 같은 연도 내 정렬 (내림차순: Q4 > Q3 > Q2 > Q1 > yearly > event)
+      // priority가 높을수록 먼저 오도록 내림차순 정렬
+      const priority = (t: string) => {
+        if (t.startsWith('Q')) return 10 + parseInt(t.replace('Q', ''), 10); // Q4=14, Q1=11
+        if (t === 'yearly') return 5;
+        return 0; // event
+      };
+      return priority(typeB) - priority(typeA); // 내림차순
+    });
   },
 };
 

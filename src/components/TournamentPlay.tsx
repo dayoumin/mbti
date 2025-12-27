@@ -201,7 +201,7 @@ export default function TournamentPlay({ tournamentId, onBack, onComplete }: Tou
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
         {/* 헤더 */}
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-amber-100">
+        <div className="sticky top-0 z-10 bg-slate-50/80 backdrop-blur-sm border-b border-amber-100">
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
             <button onClick={onBack} className="p-2 -ml-2 text-slate-600">
               <ChevronLeft className="w-5 h-5" />
@@ -236,26 +236,24 @@ export default function TournamentPlay({ tournamentId, onBack, onComplete }: Tou
           </div>
 
           {/* 순위 */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm mb-6">
+          <div className="bg-slate-50 rounded-2xl p-4 shadow-sm mb-6">
             <h3 className="font-bold text-slate-800 mb-3">🏆 최종 순위</h3>
             <div className="space-y-2">
               {rankings.slice(0, 4).map((contestant, idx) => (
                 <div
                   key={contestant.id}
-                  className={`flex items-center gap-3 p-2 rounded-xl ${
-                    idx === 0 ? 'bg-amber-50' : idx === 1 ? 'bg-slate-50' : idx === 2 ? 'bg-orange-50' : 'bg-slate-50'
-                  }`}
+                  className={`flex items-center gap-3 p-2 rounded-xl ${idx === 0 ? 'bg-amber-50' : idx === 1 ? 'bg-slate-50' : idx === 2 ? 'bg-orange-50' : 'bg-slate-50'
+                    }`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    idx === 0 ? 'bg-amber-200 text-amber-700' :
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${idx === 0 ? 'bg-amber-200 text-amber-700' :
                     idx === 1 ? 'bg-slate-200 text-slate-600' :
-                    idx === 2 ? 'bg-orange-200 text-orange-700' :
-                    'bg-slate-100 text-slate-500'
-                  }`}>
+                      idx === 2 ? 'bg-orange-200 text-orange-700' :
+                        'bg-slate-100 text-slate-500'
+                    }`}>
                     {idx === 0 ? <Crown className="w-4 h-4" /> :
-                     idx === 1 ? <Medal className="w-4 h-4" /> :
-                     idx === 2 ? <Award className="w-4 h-4" /> :
-                     <span className="text-xs font-bold">{idx + 1}</span>}
+                      idx === 1 ? <Medal className="w-4 h-4" /> :
+                        idx === 2 ? <Award className="w-4 h-4" /> :
+                          <span className="text-xs font-bold">{idx + 1}</span>}
                   </div>
                   <span className="text-xl">{contestant.emoji}</span>
                   <span className="font-medium text-slate-700">{contestant.name}</span>
@@ -268,7 +266,7 @@ export default function TournamentPlay({ tournamentId, onBack, onComplete }: Tou
           <div className="flex gap-3">
             <button
               onClick={handleRestart}
-              className="flex-1 flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
               다시하기
@@ -303,7 +301,7 @@ export default function TournamentPlay({ tournamentId, onBack, onComplete }: Tou
           </div>
 
           {/* 진행 바 */}
-          <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-1 bg-slate-50/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-300"
               style={{ width: `${progress}%` }}
@@ -331,13 +329,12 @@ export default function TournamentPlay({ tournamentId, onBack, onComplete }: Tou
             <button
               onClick={() => handleSelect('left')}
               disabled={isAnimating}
-              className={`relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-300 ${
-                selectedSide === 'left'
-                  ? 'scale-105 ring-4 ring-amber-400'
-                  : selectedSide === 'right'
-                    ? 'scale-95 opacity-50'
-                    : 'hover:scale-[1.02] active:scale-[0.98]'
-              }`}
+              className={`relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-300 ${selectedSide === 'left'
+                ? 'scale-105 ring-4 ring-amber-400'
+                : selectedSide === 'right'
+                  ? 'scale-95 opacity-50'
+                  : 'hover:scale-[1.02] active:scale-[0.98]'
+                }`}
             >
               <div className={`absolute inset-0 ${tournament.themeColor} opacity-90`} />
               <div className="relative h-full flex flex-col items-center justify-center p-4 text-center">
@@ -355,13 +352,12 @@ export default function TournamentPlay({ tournamentId, onBack, onComplete }: Tou
             <button
               onClick={() => handleSelect('right')}
               disabled={isAnimating}
-              className={`relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-300 ${
-                selectedSide === 'right'
-                  ? 'scale-105 ring-4 ring-amber-400'
-                  : selectedSide === 'left'
-                    ? 'scale-95 opacity-50'
-                    : 'hover:scale-[1.02] active:scale-[0.98]'
-              }`}
+              className={`relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-300 ${selectedSide === 'right'
+                ? 'scale-105 ring-4 ring-amber-400'
+                : selectedSide === 'left'
+                  ? 'scale-95 opacity-50'
+                  : 'hover:scale-[1.02] active:scale-[0.98]'
+                }`}
             >
               <div className={`absolute inset-0 ${tournament.themeColor} opacity-90`} />
               <div className="relative h-full flex flex-col items-center justify-center p-4 text-center">

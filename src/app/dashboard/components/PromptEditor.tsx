@@ -125,8 +125,8 @@ export default function PromptEditor() {
   // 폼 유효성 검사
   const isFormValid = () => {
     return form.testKey.trim() !== '' &&
-           form.resultName.trim() !== '' &&
-           form.prompt.trim() !== '';
+      form.resultName.trim() !== '' &&
+      form.prompt.trim() !== '';
   };
 
   // 저장 (실제로는 코드 생성)
@@ -207,7 +207,7 @@ export default function PromptEditor() {
 
       {/* 추가/편집 폼 */}
       {(mode === 'add' || mode === 'edit') && (
-        <div className="bg-white rounded-xl border-2 border-indigo-200 p-6 shadow-lg">
+        <div className="bg-slate-50 rounded-xl border-2 border-indigo-200 p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-800">
               {mode === 'add' ? '새 프롬프트 추가' : '프롬프트 편집'}
@@ -311,13 +311,13 @@ export default function PromptEditor() {
             <div className="relative">
               <button
                 onClick={() => setShowStyleDropdown(!showStyleDropdown)}
-                className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-slate-50 hover:bg-slate-50"
               >
                 <span>{form.style}</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               {showStyleDropdown && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                <div className="absolute z-10 w-full mt-1 bg-slate-50 border border-gray-200 rounded-lg shadow-lg">
                   {Object.entries(IMAGE_STYLES).map(([key, value]) => (
                     <button
                       key={key}
@@ -364,7 +364,7 @@ export default function PromptEditor() {
       )}
 
       {/* 프롬프트 목록 */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 overflow-hidden">
         <div className="bg-gray-50 px-6 py-4 border-b flex items-center justify-between">
           <div>
             <h3 className="font-bold text-gray-800">프롬프트 목록</h3>
@@ -411,11 +411,10 @@ export default function PromptEditor() {
                 <div className="flex-shrink-0 flex gap-2">
                   <button
                     onClick={() => copyToClipboard(item)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      copiedId === item.id
+                    className={`p-2 rounded-lg transition-colors ${copiedId === item.id
                         ? 'bg-green-100 text-green-700'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                      }`}
                     title="프롬프트 복사"
                   >
                     {copiedId === item.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}

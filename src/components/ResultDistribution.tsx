@@ -87,7 +87,7 @@ export default function ResultDistribution({
 
   if (loading) {
     return (
-      <div className={`bg-white/60 rounded-xl p-4 border border-white/50 animate-pulse ${className}`}>
+      <div className={`bg-slate-50/60 rounded-xl p-4 border border-slate-50/50 animate-pulse ${className}`}>
         <div className="h-4 bg-slate-200 rounded w-1/3 mb-3"></div>
         <div className="h-8 bg-slate-200 rounded mb-2"></div>
         <div className="h-6 bg-slate-200 rounded w-2/3"></div>
@@ -109,7 +109,7 @@ export default function ResultDistribution({
       {/* 헤더 - 클릭하면 펼침/접힘 */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-4 flex items-center justify-between text-left hover:bg-white/30 transition-colors"
+        className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50/30 transition-colors"
       >
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-indigo-500" />
@@ -137,11 +137,10 @@ export default function ResultDistribution({
                 <button
                   key={age.value}
                   onClick={() => setActiveAgeGroup(age.value)}
-                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
-                    activeAgeGroup === age.value
-                      ? 'bg-indigo-500 text-white'
-                      : 'bg-white/70 text-slate-600 hover:bg-white'
-                  }`}
+                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${activeAgeGroup === age.value
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-slate-50/70 text-slate-600 hover:bg-slate-50'
+                    }`}
                 >
                   {age.label}
                 </button>
@@ -154,11 +153,10 @@ export default function ResultDistribution({
                 <button
                   key={gender.value}
                   onClick={() => setActiveGender(gender.value)}
-                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
-                    activeGender === gender.value
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-white/70 text-slate-600 hover:bg-white'
-                  }`}
+                  className={`px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${activeGender === gender.value
+                    ? 'bg-purple-500 text-white'
+                    : 'bg-slate-50/70 text-slate-600 hover:bg-slate-50'
+                    }`}
                 >
                   {gender.label}
                 </button>
@@ -207,7 +205,7 @@ export default function ResultDistribution({
                         {item.percentage}%
                       </span>
                     </div>
-                    <div className="w-full bg-white/50 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-slate-50/50 rounded-full h-2 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${barColor}`}
                         style={{ width: `${Math.max(item.percentage, 2)}%` }}

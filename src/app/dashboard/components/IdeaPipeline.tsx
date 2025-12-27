@@ -63,9 +63,8 @@ function IdeaCard({ idea }: IdeaCardProps) {
   const isAutoCompleted = idea.status === 'completed' && idea.updatedAt === '자동 감지';
 
   return (
-    <div className={`bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow ${
-      isAutoCompleted ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200'
-    }`}>
+    <div className={`bg-slate-50 rounded-lg border p-3 shadow-sm hover:shadow-md transition-shadow ${isAutoCompleted ? 'border-emerald-300 bg-emerald-50/50' : 'border-gray-200'
+      }`}>
       {/* 헤더 */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
@@ -81,9 +80,8 @@ function IdeaCard({ idea }: IdeaCardProps) {
               </>
             )}
           </div>
-          <h4 className={`font-medium text-sm leading-tight ${
-            isAutoCompleted ? 'text-emerald-800' : 'text-gray-900'
-          }`}>
+          <h4 className={`font-medium text-sm leading-tight ${isAutoCompleted ? 'text-emerald-800' : 'text-gray-900'
+            }`}>
             {idea.title}
           </h4>
         </div>
@@ -264,31 +262,28 @@ export default function IdeaPipeline() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setViewMode('pipeline')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === 'pipeline'
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${viewMode === 'pipeline'
                 ? 'bg-blue-100 text-blue-700'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             파이프라인
           </button>
           <button
             onClick={() => setViewMode('quickwins')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === 'quickwins'
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${viewMode === 'quickwins'
                 ? 'bg-green-100 text-green-700'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             ⚡ Quick Wins ({quickWins.length})
           </button>
           <button
             onClick={() => setViewMode('priority')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === 'priority'
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${viewMode === 'priority'
                 ? 'bg-red-100 text-red-700'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             🎯 우선순위 ({highPriority.length})
           </button>
@@ -318,9 +313,8 @@ export default function IdeaPipeline() {
         <Filter className="w-4 h-4 text-gray-400" />
         <button
           onClick={() => setThemeFilter('all')}
-          className={`px-2 py-1 rounded text-sm ${
-            themeFilter === 'all' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          className={`px-2 py-1 rounded text-sm ${themeFilter === 'all' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
         >
           전체
         </button>
@@ -328,9 +322,8 @@ export default function IdeaPipeline() {
           <button
             key={theme.id}
             onClick={() => setThemeFilter(theme.id)}
-            className={`px-2 py-1 rounded text-sm ${
-              themeFilter === theme.id ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`px-2 py-1 rounded text-sm ${themeFilter === theme.id ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
             {theme.icon} {theme.name}
           </button>
@@ -355,7 +348,7 @@ export default function IdeaPipeline() {
       )}
 
       {viewMode === 'quickwins' && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="w-5 h-5 text-green-600" />
             <h3 className="text-lg font-semibold text-gray-900">
@@ -371,7 +364,7 @@ export default function IdeaPipeline() {
       )}
 
       {viewMode === 'priority' && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">🎯</span>
             <h3 className="text-lg font-semibold text-gray-900">

@@ -5,6 +5,7 @@
  */
 
 import { STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // ============================================================================
 // 타입 정의
@@ -33,7 +34,6 @@ export interface StreakData {
   currentStreak: number;          // 현재 연속 참여 일수
   longestStreak: number;          // 최장 연속 참여 일수
   lastParticipationDate: string | null;  // 마지막 참여 날짜 (YYYY-MM-DD)
-  streakHistory: string[];        // 참여 날짜 기록 (최근 30일)
 }
 
 export interface ContentParticipationData {
@@ -70,16 +70,7 @@ class ContentParticipationServiceClass {
       return this.getDefaultData();
     }
 
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (e) {
-      console.error('ContentParticipationService: Failed to load from storage', e);
-    }
-
-    return this.getDefaultData();
+    return storage.get<ContentParticipationData>(STORAGE_KEY, this.getDefaultData());
   }
 
   // 기본 데이터
@@ -99,7 +90,6 @@ class ContentParticipationServiceClass {
         currentStreak: 0,
         longestStreak: 0,
         lastParticipationDate: null,
-        streakHistory: [],
       },
     };
   }
@@ -145,7 +135,6 @@ class ContentParticipationServiceClass {
         currentStreak: 1,
         longestStreak: 1,
         lastParticipationDate: today,
-        streakHistory: [today],
       };
       return;
     }
@@ -171,26 +160,14 @@ class ContentParticipationServiceClass {
     }
 
     streak.lastParticipationDate = today;
-
-    // 히스토리에 오늘 추가 (최근 30일만 유지)
-    if (!streak.streakHistory.includes(today)) {
-      streak.streakHistory.push(today);
-      if (streak.streakHistory.length > 30) {
-        streak.streakHistory = streak.streakHistory.slice(-30);
-      }
-    }
   }
 
   // 저장소에 저장
   private saveToStorage(): void {
     if (typeof window === 'undefined') return;
 
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
-      window.dispatchEvent(new Event(UPDATE_EVENT));
-    } catch (e) {
-      console.error('ContentParticipationService: Failed to save to storage', e);
-    }
+    storage.set(STORAGE_KEY, this.data);
+    window.dispatchEvent(new Event(UPDATE_EVENT));
   }
 
   // 퀴즈 정답 기록
@@ -324,7 +301,6 @@ class ContentParticipationServiceClass {
         currentStreak: 0,
         longestStreak: 0,
         lastParticipationDate: null,
-        streakHistory: [],
       };
     }
 

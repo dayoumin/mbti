@@ -87,17 +87,16 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
 
   return (
     <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-white transition-all duration-200 ${config.bg} ${
-        isVisible && !isExiting
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-white transition-all duration-200 ${config.bg} ${isVisible && !isExiting
           ? 'opacity-100 translate-y-0'
           : 'opacity-0 translate-y-2'
-      }`}
+        }`}
     >
       <div className="flex-shrink-0">{config.icon}</div>
       <p className="text-sm font-medium flex-1">{toast.message}</p>
       <button
         onClick={handleClose}
-        className="flex-shrink-0 p-1 hover:bg-white/20 rounded-full transition-colors"
+        className="flex-shrink-0 p-1 hover:bg-slate-50/20 rounded-full transition-colors"
       >
         <X className="w-3 h-3" />
       </button>

@@ -10,6 +10,7 @@
 import { resultService } from './ResultService';
 import { eventBus } from './EventBus';
 import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 import {
   extractTagsFromTestResult,
   isRelationshipTest,
@@ -229,16 +230,7 @@ class InsightServiceClass {
       return this.getDefaultStats();
     }
 
-    const stored = localStorage.getItem(STORAGE_KEYS.ACTIVITY_STATS);
-    if (!stored) {
-      return this.getDefaultStats();
-    }
-
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return this.getDefaultStats();
-    }
+    return storage.get<UserActivityStats>(STORAGE_KEYS.ACTIVITY_STATS, this.getDefaultStats());
   }
 
   /**
@@ -274,7 +266,7 @@ class InsightServiceClass {
       stats.totalActivities++;
     }
 
-    localStorage.setItem(STORAGE_KEYS.ACTIVITY_STATS, JSON.stringify(stats));
+    storage.set(STORAGE_KEYS.ACTIVITY_STATS, stats);
   }
 
   // ========================================================================
@@ -287,14 +279,7 @@ class InsightServiceClass {
   getTagCounts(): Record<string, number> {
     if (typeof window === 'undefined') return {};
 
-    const stored = localStorage.getItem(STORAGE_KEYS.TAG_COUNTS);
-    if (!stored) return {};
-
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return {};
-    }
+    return storage.get<Record<string, number>>(STORAGE_KEYS.TAG_COUNTS, {});
   }
 
   /**
@@ -312,7 +297,7 @@ class InsightServiceClass {
       }
     }
 
-    localStorage.setItem(STORAGE_KEYS.TAG_COUNTS, JSON.stringify(counts));
+    storage.set(STORAGE_KEYS.TAG_COUNTS, counts);
   }
 
   /**
@@ -344,14 +329,7 @@ class InsightServiceClass {
   getUnlockedStages(): UnlockedStage[] {
     if (typeof window === 'undefined') return [];
 
-    const stored = localStorage.getItem(STORAGE_KEYS.UNLOCKED_STAGES);
-    if (!stored) return [];
-
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return [];
-    }
+    return storage.get<UnlockedStage[]>(STORAGE_KEYS.UNLOCKED_STAGES, []);
   }
 
   /**
@@ -405,7 +383,7 @@ class InsightServiceClass {
     // 새 해금이 있으면 저장
     if (newUnlocks.length > 0) {
       const updated = [...unlocked, ...newUnlocks];
-      localStorage.setItem(STORAGE_KEYS.UNLOCKED_STAGES, JSON.stringify(updated));
+      storage.set(STORAGE_KEYS.UNLOCKED_STAGES, updated);
 
       for (const unlock of newUnlocks) {
         console.log(`[InsightService] Stage ${unlock.stage} unlocked!`);
@@ -871,18 +849,17 @@ class InsightServiceClass {
   private getTestResultsFromStorage(): Array<{ testType: string; scores: Record<string, number> }> {
     if (typeof window === 'undefined') return [];
 
-    try {
-      const userId = resultService.getUserId();
-      const all = JSON.parse(localStorage.getItem(GLOBAL_STORAGE_KEYS.TEST_RESULTS) || '[]');
-      return all
-        .filter((item: { user_id?: string }) => item.user_id === userId)
-        .map((item: { test_type?: string; scores?: Record<string, number> }) => ({
-          testType: item.test_type || '',
-          scores: item.scores || {},
-        }));
-    } catch {
-      return [];
-    }
+    const userId = resultService.getUserId();
+    const all = storage.get<Array<{ user_id?: string; test_type?: string; scores?: Record<string, number> }>>(
+      GLOBAL_STORAGE_KEYS.TEST_RESULTS,
+      []
+    );
+    return all
+      .filter((item) => item.user_id === userId)
+      .map((item) => ({
+        testType: item.test_type || '',
+        scores: item.scores || {},
+      }));
   }
 
   // ========================================================================
@@ -895,10 +872,10 @@ class InsightServiceClass {
   reset(): void {
     if (typeof window === 'undefined') return;
 
-    localStorage.removeItem(STORAGE_KEYS.ACTIVITY_STATS);
-    localStorage.removeItem(STORAGE_KEYS.TAG_COUNTS);
-    localStorage.removeItem(STORAGE_KEYS.UNLOCKED_STAGES);
-    localStorage.removeItem(STORAGE_KEYS.CACHED_INSIGHTS);
+    storage.remove(STORAGE_KEYS.ACTIVITY_STATS);
+    storage.remove(STORAGE_KEYS.TAG_COUNTS);
+    storage.remove(STORAGE_KEYS.UNLOCKED_STAGES);
+    storage.remove(STORAGE_KEYS.CACHED_INSIGHTS);
 
     console.log('[InsightService] Reset complete');
   }

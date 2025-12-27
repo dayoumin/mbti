@@ -386,19 +386,17 @@ function CompactView({
         <button
           key={stage.stage}
           onClick={() => onCardClick?.(stage.stage)}
-          className={`flex-shrink-0 px-4 py-3 rounded-2xl transition-all ${
-            stage.unlocked
+          className={`flex-shrink-0 px-4 py-3 rounded-2xl transition-all ${stage.unlocked
               ? 'bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200'
               : 'bg-gray-50 border border-gray-200'
-          }`}
+            }`}
         >
           <div className="flex items-center gap-2">
             <span className="text-lg">{stage.emoji}</span>
             <div className="text-left">
               <div
-                className={`text-sm font-medium ${
-                  stage.unlocked ? 'text-purple-700' : 'text-gray-400'
-                }`}
+                className={`text-sm font-medium ${stage.unlocked ? 'text-purple-700' : 'text-gray-400'
+                  }`}
               >
                 {stage.title}
               </div>
@@ -501,7 +499,7 @@ function Stage1Content({ config, onClick }: { config: StageConfig; onClick?: () 
           {insight.dominantTags.slice(0, 3).map((tag) => (
             <span
               key={tag.tag}
-              className="px-2.5 py-1 bg-white/80 rounded-full text-xs font-medium text-purple-700"
+              className="px-2.5 py-1 bg-slate-50/80 rounded-full text-xs font-medium text-purple-700"
             >
               {tag.tag} {tag.percentage}%
             </span>
@@ -534,12 +532,12 @@ function Stage2Content({
       onClick={onClick}
     >
       {topRule && (
-        <div className="bg-white/80 rounded-xl p-3">
+        <div className="bg-slate-50/80 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-lg">{topRule.insight.emoji}</span>
-            <span className="font-medium text-gray-900">{topRule.insight.title}</span>
+            <span className="font-medium text-primary">{topRule.insight.title}</span>
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-sm text-secondary line-clamp-2">
             {topRule.insight.description}
           </p>
         </div>
@@ -568,12 +566,12 @@ function Stage3Content({
       onClick={onClick}
     >
       {result && (
-        <div className="bg-white/80 rounded-xl p-3">
+        <div className="bg-slate-50/80 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-lg">{result.profile.emoji}</span>
-            <span className="font-medium text-gray-900">{result.profile.nameKr}</span>
+            <span className="font-medium text-primary">{result.profile.nameKr}</span>
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-sm text-secondary line-clamp-2">
             {result.profile.description}
           </p>
         </div>
@@ -606,13 +604,13 @@ function Stage4Content({
           {result.entries.slice(0, 3).map((entry) => (
             <div key={entry.category.id} className="flex items-center gap-2">
               <span className="w-6 text-center">{entry.category.emoji}</span>
-              <div className="flex-1 h-2 bg-white/80 rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-slate-50/80 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-green-400 to-teal-400 rounded-full"
                   style={{ width: `${entry.percentage}%` }}
                 />
               </div>
-              <span className="text-xs text-gray-600 w-8">{entry.percentage}%</span>
+              <span className="text-xs text-secondary w-8">{entry.percentage}%</span>
             </div>
           ))}
         </div>
@@ -641,10 +639,10 @@ function Stage5Content({
       onClick={onClick}
     >
       {result ? (
-        <div className="bg-white/80 rounded-xl p-3">
+        <div className="bg-slate-50/80 rounded-xl p-3">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">{result.conflictStyle.primary.emoji}</span>
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-primary">
               {result.conflictStyle.primary.nameKr}
             </span>
           </div>
@@ -658,8 +656,8 @@ function Stage5Content({
           </div>
         </div>
       ) : (
-        <div className="bg-white/60 rounded-xl p-3 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="bg-slate-50/60 rounded-xl p-3 text-center">
+          <p className="text-sm text-muted">
             관계/갈등 관련 콘텐츠를 더 참여해보세요
           </p>
         </div>
@@ -691,14 +689,14 @@ function Stage6Content({
         <div className="space-y-2">
           {/* 모순 패턴 */}
           {result.contradictions.length > 0 && (
-            <div className="bg-white/80 rounded-xl p-3">
+            <div className="bg-slate-50/80 rounded-xl p-3">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">{result.contradictions[0].emoji}</span>
-                <span className="font-medium text-gray-900 text-sm">
+                <span className="font-medium text-primary text-sm">
                   {result.contradictions[0].interpretation}
                 </span>
               </div>
-              <p className="text-xs text-gray-600 line-clamp-1">
+              <p className="text-xs text-secondary line-clamp-1">
                 {result.contradictions[0].insight}
               </p>
             </div>
@@ -719,8 +717,8 @@ function Stage6Content({
           )}
         </div>
       ) : (
-        <div className="bg-white/60 rounded-xl p-3 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="bg-slate-50/60 rounded-xl p-3 text-center">
+          <p className="text-sm text-muted">
             10개 이상의 태그가 필요해요 (콘텐츠 더 참여하기)
           </p>
         </div>
@@ -751,8 +749,8 @@ function Stage7Content({
       {result ? (
         <div className="space-y-2">
           {/* 핵심 정체성 */}
-          <div className="bg-white/80 rounded-xl p-3">
-            <p className="text-sm text-gray-900 font-medium line-clamp-2">
+          <div className="bg-slate-50/80 rounded-xl p-3">
+            <p className="text-sm text-primary font-medium line-clamp-2">
               &ldquo;{result.coreIdentity}&rdquo;
             </p>
           </div>
@@ -772,13 +770,13 @@ function Stage7Content({
           )}
 
           {/* 신뢰도 */}
-          <div className="text-xs text-gray-500 text-right">
+          <div className="text-xs text-muted text-right">
             신뢰도: {result.meta.confidenceLevel === 'high' ? '높음' : result.meta.confidenceLevel === 'medium' ? '보통' : '낮음'}
           </div>
         </div>
       ) : (
-        <div className="bg-white/60 rounded-xl p-3 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="bg-slate-50/60 rounded-xl p-3 text-center">
+          <p className="text-sm text-muted">
             Stage 6까지 해금하면 AI 종합 분석을 받을 수 있어요
           </p>
         </div>
@@ -842,9 +840,9 @@ export function InsightProgress() {
           <span className="opacity-90">Stage {progress.nextStage}</span>
           <span className="font-medium">{Math.round(progress.progress)}%</span>
         </div>
-        <div className="h-2 bg-white/30 rounded-full overflow-hidden">
+        <div className="h-2 bg-slate-50/30 rounded-full overflow-hidden">
           <div
-            className="h-full bg-white rounded-full transition-all"
+            className="h-full bg-slate-50 rounded-full transition-all"
             style={{ width: `${progress.progress}%` }}
           />
         </div>

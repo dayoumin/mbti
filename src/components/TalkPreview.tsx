@@ -6,7 +6,7 @@ import { MOCK_COMMUNITY_PREVIEW, getPostCategoryLabel } from '@/data/content/com
 
 export default function TalkPreview({ onClickAll, className = '' }: { onClickAll?: () => void, className?: string }) {
     return (
-        <div className={`bg-white rounded-2xl border border-slate-100 shadow-sm p-4 ${className}`}>
+        <div className={`glass-card rounded-md border border-subtle shadow-sm p-4 ${className}`}>
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center">
@@ -26,10 +26,10 @@ export default function TalkPreview({ onClickAll, className = '' }: { onClickAll
                 {MOCK_COMMUNITY_PREVIEW.slice(0, 2).map(post => (
                     <div
                         key={post.id}
-                        className="p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group"
+                        className="p-3 bg-slate-50 rounded-md hover:bg-slate-100 transition-colors cursor-pointer group"
                     >
                         <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-xs font-bold px-1.5 py-0.5 bg-white text-slate-500 rounded-full border border-slate-100">
+                            <span className="text-xs font-bold px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded-full border border-slate-100">
                                 #{getPostCategoryLabel(post.category)}
                             </span>
                             <span className="text-xs text-slate-400 font-medium">{post.author}</span>

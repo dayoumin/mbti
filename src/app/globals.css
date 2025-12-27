@@ -1,7 +1,144 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import "tailwindcss";
 
-/* Dashboard Dark Theme Variables */
+/* ============================================================================
+   Dashboard Design Tokens (CSS Variables for Dark/Light Mode Support)
+   ============================================================================ */
+
+@theme {
+    /* Colors - Background */
+    --color-bg-primary: var(--bg-primary);
+    --color-bg-secondary: var(--bg-secondary);
+    --color-bg-card: var(--bg-card);
+    --color-bg-glass: var(--bg-glass);
+    --color-bg-slate-50: #f8fafc;
+    --color-bg-slate-800: #1e293b;
+
+    /* Colors - Text */
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-muted: var(--text-muted);
+    --color-text-subtle: var(--text-subtle);
+
+    /* Colors - Brand */
+    --color-brand-primary: var(--brand-primary);
+    --color-brand-secondary: var(--brand-secondary);
+    --color-brand-accent: var(--brand-accent);
+
+    /* Colors - Border */
+    --color-border-subtle: var(--border-subtle);
+    --color-border-default: var(--border-default);
+
+    /* Colors - Semantic */
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
+
+    /* Spacing */
+    --spacing-card-padding: 1rem;
+    --spacing-gap-sm: 0.5rem;
+    --spacing-gap-md: 0.75rem;
+
+    /* Border Radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-brand: 0 4px 12px 0 rgb(99 102 241 / 0.15);
+
+    /* Glassmorphism */
+    --glass-bg: var(--bg-glass);
+    --glass-blur: 20px;
+    --glass-border: var(--border-glass);
+}
+
+/* ============================================================================
+   Light Mode (Default)
+   ============================================================================ */
+:root {
+    /* Backgrounds */
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-card: #f8fafc;
+    --bg-glass: rgba(255, 255, 255, 0.85);
+
+    /* Text */
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+
+    /* Brand Colors */
+    --brand-primary: #6366f1;
+    --brand-secondary: #a855f7;
+    --brand-accent: #ec4899;
+
+    /* Borders */
+    --border-subtle: #e2e8f0;
+    --border-default: #cbd5e1;
+    --border-glass: rgba(255, 255, 255, 0.6);
+
+    /* Semantic Colors */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    /* Background Decoration Blobs */
+    --blob-1-start: rgba(99, 102, 241, 0.4);
+    --blob-1-end: rgba(168, 85, 247, 0.3);
+    --blob-2-start: rgba(236, 72, 153, 0.3);
+    --blob-2-end: rgba(244, 114, 182, 0.2);
+    --blob-3-start: rgba(34, 211, 238, 0.2);
+    --blob-3-end: rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================================================
+   Dark Mode
+   ============================================================================ */
+.dark {
+    /* Backgrounds */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: #1e293b;
+    --bg-glass: rgba(30, 41, 59, 0.85);
+
+    /* Text */
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-subtle: #64748b;
+
+    /* Brand Colors */
+    --brand-primary: #818cf8;
+    --brand-secondary: #c084fc;
+    --brand-accent: #f472b6;
+
+    /* Borders */
+    --border-subtle: #334155;
+    --border-default: #475569;
+    --border-glass: rgba(255, 255, 255, 0.1);
+
+    /* Semantic Colors */
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+
+    /* Background Decoration Blobs */
+    --blob-1-start: rgba(99, 102, 241, 0.3);
+    --blob-1-end: rgba(168, 85, 247, 0.2);
+    --blob-2-start: rgba(236, 72, 153, 0.2);
+    --blob-2-end: rgba(244, 114, 182, 0.15);
+    --blob-3-start: rgba(34, 211, 238, 0.15);
+    --blob-3-end: rgba(59, 130, 246, 0.08);
+}
+
+/* ============================================================================
+   Legacy Dashboard Theme Variables (for backward compatibility)
+   ============================================================================ */
 :root {
     --db-bg: #0b0f19;
     --db-panel: #0f1629;
@@ -27,8 +164,8 @@ body {
 
 body {
     font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-    background-color: #F8FAFC;
-    color: #1E293B;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -49,8 +186,8 @@ body {
     --db-shadow: 0 10px 30px rgba(0, 0, 0, .35);
 
     background: radial-gradient(1200px 800px at 20% 10%, rgba(122, 162, 255, .14), transparent 60%),
-                radial-gradient(900px 700px at 70% 30%, rgba(85, 230, 193, .10), transparent 55%),
-                var(--db-bg);
+        radial-gradient(900px 700px at 70% 30%, rgba(85, 230, 193, .10), transparent 55%),
+        var(--db-bg);
     color: var(--db-text);
 }
 
@@ -73,8 +210,8 @@ body {
     --db-shadow: 0 10px 30px rgba(0, 0, 0, .08);
 
     background: radial-gradient(1200px 800px at 20% 10%, rgba(59, 130, 246, .06), transparent 60%),
-                radial-gradient(900px 700px at 70% 30%, rgba(16, 185, 129, .04), transparent 55%),
-                var(--db-bg);
+        radial-gradient(900px 700px at 70% 30%, rgba(16, 185, 129, .04), transparent 55%),
+        var(--db-bg);
     color: var(--db-text);
 }
 
@@ -432,10 +569,10 @@ body {
 
 /* Glassmorphism Utilities */
 .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
@@ -447,6 +584,7 @@ body {
 
 /* Animations */
 @keyframes shake {
+
     0%,
     100% {
         transform: rotate(0deg);
@@ -516,6 +654,7 @@ body {
 }
 
 @keyframes pulseSlow {
+
     0%,
     100% {
         opacity: 1;
@@ -529,6 +668,7 @@ body {
 }
 
 @keyframes bounceSlight {
+
     0%,
     100% {
         transform: translateY(0);
@@ -588,9 +728,11 @@ body {
         opacity: 0;
         transform: translate(-50%, -20px) scale(0.9);
     }
+
     50% {
         transform: translate(-50%, 5px) scale(1.02);
     }
+
     100% {
         opacity: 1;
         transform: translate(-50%, 0) scale(1);
@@ -607,6 +749,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -622,6 +765,7 @@ body {
     0% {
         transform: translateX(-100%);
     }
+
     100% {
         transform: translateX(100%);
     }
@@ -636,6 +780,7 @@ body {
     from {
         transform: translateX(100%);
     }
+
     to {
         transform: translateX(0);
     }
@@ -645,6 +790,7 @@ body {
     from {
         transform: translateX(0);
     }
+
     to {
         transform: translateX(100%);
     }

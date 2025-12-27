@@ -60,7 +60,7 @@ function getTimeUntilNextRotation(): number {
  * 같은 시드는 항상 같은 순서의 난수를 생성
  */
 function seededRandom(seed: number): () => number {
-  return function() {
+  return function () {
     let t = seed += 0x6D2B79F5;
     t = Math.imul(t ^ t >>> 15, t | 1);
     t ^= t + Math.imul(t ^ t >>> 7, t | 61);
@@ -396,11 +396,11 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
   const currentPollState = currentPoll ? pollStates[currentPoll.id] : null;
 
   return (
-    <div className={`bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-4 border border-indigo-100/50 ${className}`}>
+    <div className={`bg-slate-50 rounded-md p-4 border border-subtle ${className}`}>
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-brand-primary rounded-md flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -427,7 +427,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* 퀴즈 완료 상태 */}
         {allQuizzesDone && (
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 shadow-sm border border-green-100">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -448,7 +448,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 연령 제한으로 퀴즈 접근 불가 - 연령 미설정 시 */}
         {noAccessibleQuizzes && !hasAgeSet && (
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 shadow-sm border border-amber-200">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-amber-500" />
@@ -469,7 +469,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 연령 제한으로 퀴즈 접근 불가 - 10대(미성년자) */}
         {noAccessibleQuizzes && hasAgeSet && isMinor && (
-          <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 shadow-sm border border-sky-200">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-sky-500" />
@@ -490,7 +490,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 연령 제한으로 퀴즈 접근 불가 - 성인이지만 콘텐츠 없음 */}
         {noAccessibleQuizzes && hasAgeSet && !isMinor && (
-          <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-4 shadow-sm border border-slate-200">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-slate-400" />
@@ -528,7 +528,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 투표 완료 상태 */}
         {allPollsDone && (
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 shadow-sm border border-purple-100">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                 <CheckCircle className="w-5 h-5 text-purple-500" />
@@ -549,7 +549,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 연령 제한으로 투표 접근 불가 - 연령 미설정 시 */}
         {noAccessiblePolls && !hasAgeSet && (
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 shadow-sm border border-amber-200">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
                 <Vote className="w-5 h-5 text-amber-500" />
@@ -570,7 +570,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 연령 제한으로 투표 접근 불가 - 10대(미성년자) */}
         {noAccessiblePolls && hasAgeSet && isMinor && (
-          <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-4 shadow-sm border border-sky-200">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
                 <Vote className="w-5 h-5 text-sky-500" />
@@ -591,7 +591,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
 
         {/* 연령 제한으로 투표 접근 불가 - 성인이지만 콘텐츠 없음 */}
         {noAccessiblePolls && hasAgeSet && !isMinor && (
-          <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-4 shadow-sm border border-slate-200">
+          <div className="bg-slate-50 rounded-md p-4 shadow-sm border border-subtle">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
                 <Vote className="w-5 h-5 text-slate-400" />
@@ -630,7 +630,7 @@ export default function TodayQuizPoll({ onExploreMore, className = '' }: TodayQu
       {onExploreMore && (
         <button
           onClick={onExploreMore}
-          className="w-full mt-3 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-slate-500 hover:text-indigo-600 hover:bg-white/50 rounded-xl border border-transparent hover:border-indigo-100 transition-all"
+          className="w-full mt-3 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-slate-500 hover:text-indigo-600 hover:bg-slate-50/50 rounded-md border border-transparent hover:border-brand transition-all"
         >
           전체 콘텐츠 둘러보기
           <ChevronRight className="w-3.5 h-3.5" />

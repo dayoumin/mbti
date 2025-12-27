@@ -31,7 +31,7 @@ export default function AchievementsSection({ profile }: AchievementsSectionProp
   const unlockedCombos = hiddenCombos.filter(c => c.unlocked);
 
   return (
-    <section className="bg-white rounded-2xl p-4 md:p-6">
+    <section className="bg-slate-50 rounded-2xl p-4 md:p-6">
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-4">
         <Award className="w-5 h-5 text-amber-500" />

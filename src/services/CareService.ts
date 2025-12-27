@@ -17,6 +17,7 @@ import {
   getDefaultCareTypesForTarget,
 } from '../data/care/types';
 import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
+import { storage } from '@/utils';
 
 // 로컬 키 매핑 (기존 코드 호환)
 const STORAGE_KEYS = {
@@ -60,13 +61,8 @@ class CareService {
 
   getProfiles(targetType?: CareTargetType): AnyCareProfile[] {
     if (typeof window === 'undefined') return [];
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.profiles);
-      const profiles: AnyCareProfile[] = saved ? JSON.parse(saved) : [];
-      return targetType ? profiles.filter(p => p.type === targetType) : profiles;
-    } catch {
-      return [];
-    }
+    const profiles = storage.get<AnyCareProfile[]>(STORAGE_KEYS.profiles, []);
+    return targetType ? profiles.filter(p => p.type === targetType) : profiles;
   }
 
   getProfile(id: string): AnyCareProfile | undefined {
@@ -138,7 +134,7 @@ class CareService {
 
   private saveProfiles(profiles: AnyCareProfile[]): void {
     if (typeof window === 'undefined') return;
-    localStorage.setItem(STORAGE_KEYS.profiles, JSON.stringify(profiles));
+    storage.set(STORAGE_KEYS.profiles, profiles);
   }
 
   // ==========================================================================
@@ -147,13 +143,8 @@ class CareService {
 
   getSchedules(profileId?: string): CareSchedule[] {
     if (typeof window === 'undefined') return [];
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.schedules);
-      const schedules: CareSchedule[] = saved ? JSON.parse(saved) : [];
-      return profileId ? schedules.filter(s => s.profileId === profileId) : schedules;
-    } catch {
-      return [];
-    }
+    const schedules = storage.get<CareSchedule[]>(STORAGE_KEYS.schedules, []);
+    return profileId ? schedules.filter(s => s.profileId === profileId) : schedules;
   }
 
   getSchedule(id: string): CareSchedule | undefined {
@@ -210,7 +201,7 @@ class CareService {
 
   private saveSchedules(schedules: CareSchedule[]): void {
     if (typeof window === 'undefined') return;
-    localStorage.setItem(STORAGE_KEYS.schedules, JSON.stringify(schedules));
+    storage.set(STORAGE_KEYS.schedules, schedules);
   }
 
   private getFrequencyDays(
@@ -281,18 +272,13 @@ class CareService {
 
   getLogs(profileId?: string): CareLog[] {
     if (typeof window === 'undefined') return [];
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.logs);
-      const logs: CareLog[] = saved ? JSON.parse(saved) : [];
-      return profileId ? logs.filter(l => l.profileId === profileId) : logs;
-    } catch {
-      return [];
-    }
+    const logs = storage.get<CareLog[]>(STORAGE_KEYS.logs, []);
+    return profileId ? logs.filter(l => l.profileId === profileId) : logs;
   }
 
   private saveLogs(logs: CareLog[]): void {
     if (typeof window === 'undefined') return;
-    localStorage.setItem(STORAGE_KEYS.logs, JSON.stringify(logs));
+    storage.set(STORAGE_KEYS.logs, logs);
   }
 
   // ==========================================================================

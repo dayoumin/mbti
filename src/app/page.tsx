@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CHEMI_DATA } from '../data/index';
 import { SUBJECT_CONFIG } from '../data/config';
@@ -98,6 +98,10 @@ export default function Home() {
     const [isDeepMode, setIsDeepMode] = useState(false);
     const [answers, setAnswers] = useState<Answer[]>([]);
 
+    // 응답 시간 추적 (Phase 2: 확신도 계산용)
+    const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
+    const [responseTimes, setResponseTimes] = useState<number[]>([]);
+
     // 모달 상태 통합 (기존 7개 boolean → 1개)
     const [activeModal, setActiveModal] = useState<ActiveModal>(null);
 
@@ -142,18 +146,30 @@ export default function Home() {
         setIsDeepMode(false);
         setFinalResult(null);
         setParentInfo(fromParent);
+        setResponseTimes([]); // 응답 시간 초기화
+        setQuestionStartTime(null); // 타이머 초기화
         setView('test');
         closeModal(); // 모달 닫기
     };
 
     const handleAnswer = (dimension: string, scoreVal: number) => {
+        // 응답 시간 계산
+        const responseTime = questionStartTime
+            ? Math.max(0, Math.min(3600000, Date.now() - questionStartTime)) // 0ms~1시간 범위
+            : 0;
+
+        // 응답 시간 배열에 추가
+        const newResponseTimes = [...responseTimes, responseTime];
+        setResponseTimes(newResponseTimes);
+
+        // 기존 로직
         setAnswers(prev => [...prev, { qIdx, dimension, score: scoreVal }]);
         const newScores = { ...scores, [dimension]: (scores[dimension] || 0) + scoreVal };
         setScores(newScores);
         if (qIdx + 1 < maxQuestions) {
             setQIdx(qIdx + 1);
         } else {
-            calculateResult(newScores);
+            calculateResult(newScores, newResponseTimes);
         }
     };
 
@@ -165,6 +181,7 @@ export default function Home() {
             [lastAnswer.dimension]: (prev[lastAnswer.dimension] || 0) - lastAnswer.score
         }));
         setAnswers(prev => prev.slice(0, -1));
+        setResponseTimes(prev => prev.slice(0, -1)); // 응답 시간 롤백
         setQIdx(lastAnswer.qIdx);
     };
 
@@ -203,7 +220,7 @@ export default function Home() {
         }
     };
 
-    const calculateResult = (finalScores: Record<string, number>) => {
+    const calculateResult = (finalScores: Record<string, number>, finalResponseTimes: number[]) => {
         setStep('loading');
         setTimeout(async () => {
             const dimCounts: Record<string, number> = {};
@@ -218,7 +235,7 @@ export default function Home() {
 
             if (resultService && result) {
                 try {
-                    await resultService.saveResult(mode, result, finalScores, isDeepMode, parentInfo || undefined);
+                    await resultService.saveResult(mode, result, finalScores, isDeepMode, parentInfo || undefined, finalResponseTimes);
 
                     const gamification = getGamificationService();
                     if (gamification) {
@@ -242,6 +259,8 @@ export default function Home() {
         setFinalResult(null);
         setIsDeepMode(false);
         setAnswers([]);
+        setResponseTimes([]); // 응답 시간 초기화
+        setQuestionStartTime(null); // 타이머 초기화
         closeModal();
     };
 
@@ -251,6 +270,15 @@ export default function Home() {
         setIsDeepMode(true);
         setStep('question');
     };
+
+    // 타이머 자동 시작: 질문 화면 진입 시 또는 질문 변경 시
+    useEffect(() => {
+        if (step === 'question') {
+            setQuestionStartTime(Date.now());
+        } else {
+            setQuestionStartTime(null);
+        }
+    }, [step, qIdx]);
 
     const getScorePercentage = (dimension: string) => {
         const questionsForDim = questions.filter(q => q.dimension === dimension);
@@ -426,7 +454,7 @@ export default function Home() {
                         {step === 'intro' && (
                             <div className="flex flex-col h-full animate-fade-in px-8 py-10">
                                 <div className="flex justify-between items-center mb-4">
-                                    <button onClick={() => setView('dashboard')} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
+                                    <button onClick={() => setView('dashboard')} className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-slate-800 transition-colors">
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                 </div>
@@ -463,7 +491,7 @@ export default function Home() {
                                         {currentModeData.subtitle}
                                     </p>
 
-                                    <div className="w-full bg-white/40 backdrop-blur-sm rounded-2xl p-5 border border-white/40 shadow-sm space-y-3 mb-8">
+                                    <div className="w-full bg-slate-50/40 backdrop-blur-sm rounded-2xl p-5 border border-slate-50/40 shadow-sm space-y-3 mb-8">
                                         {(subjectConfig.intro || []).map((text: string, idx: number) => (
                                             <div key={idx} className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                                                 <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
@@ -486,7 +514,7 @@ export default function Home() {
                                     {mode === 'petMatch' && (
                                         <button
                                             onClick={() => setStep('directSelect')}
-                                            className="w-full py-3.5 rounded-xl bg-white/60 hover:bg-white border border-white/60 text-slate-600 font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
+                                            className="w-full py-3.5 rounded-xl bg-slate-50/60 hover:bg-slate-50 border border-slate-50/60 text-slate-600 font-bold flex items-center justify-center gap-2 transition-all hover:shadow-md"
                                         >
                                             <Check className="w-4 h-4 text-amber-500" />
                                             이미 원하는 동물이 있어요
@@ -504,13 +532,13 @@ export default function Home() {
                         {step === 'question' && (
                             <div className="flex flex-col h-full animate-fade-in px-6 py-8">
                                 <div className="flex justify-between items-center mb-8">
-                                    <button onClick={handleGoBack} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
+                                    <button onClick={handleGoBack} className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-slate-800 transition-colors">
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                         {isDeepMode ? 'DEEP MODE' : 'QUESTION'}
                                     </span>
-                                    <button onClick={handleExit} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-red-500 transition-colors">
+                                    <button onClick={handleExit} className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-red-500 transition-colors">
                                         <X className="w-6 h-6" />
                                     </button>
                                 </div>
@@ -543,7 +571,7 @@ export default function Home() {
                                         <button
                                             key={idx}
                                             onClick={() => handleAnswer(questions[qIdx].dimension, ans.score)}
-                                            className="w-full p-5 rounded-2xl bg-white/60 hover:bg-white border border-white/60 hover:border-indigo-200 shadow-sm hover:shadow-md transition-all duration-200 text-left group flex items-center justify-between"
+                                            className="w-full p-5 rounded-2xl bg-slate-50/60 hover:bg-slate-50 border border-slate-50/60 hover:border-indigo-200 shadow-sm hover:shadow-md transition-all duration-200 text-left group flex items-center justify-between"
                                         >
                                             <span className="font-bold text-slate-600 group-hover:text-indigo-700 text-lg transition-colors">{ans.text}</span>
                                             <div className="w-6 h-6 rounded-full border-2 border-slate-200 group-hover:border-indigo-500 group-hover:bg-indigo-500 transition-all"></div>
@@ -557,7 +585,7 @@ export default function Home() {
                         {step === 'directSelect' && mode === 'petMatch' && (
                             <div className="flex flex-col h-full animate-fade-in px-6 py-8">
                                 <div className="flex justify-between items-center mb-6">
-                                    <button onClick={() => setStep('intro')} className="p-2 rounded-full hover:bg-white/50 text-slate-400 hover:text-slate-800 transition-colors">
+                                    <button onClick={() => setStep('intro')} className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-slate-800 transition-colors">
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -589,7 +617,7 @@ export default function Home() {
                                             <button
                                                 key={result.name}
                                                 onClick={() => handleStartTest(nextTest, { testType: 'petMatch', resultName: result.name, directSelect: true })}
-                                                className="w-full p-4 rounded-2xl bg-white/70 hover:bg-white border border-white/60 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-200 text-left group flex items-center gap-4"
+                                                className="w-full p-4 rounded-2xl bg-slate-50/70 hover:bg-slate-50 border border-slate-50/60 hover:border-amber-200 shadow-sm hover:shadow-md transition-all duration-200 text-left group flex items-center gap-4"
                                             >
                                                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center border border-amber-100 group-hover:scale-110 transition-transform">
                                                     {PetIcon ? (
@@ -644,7 +672,7 @@ export default function Home() {
                         {/* --- RESULT VIEW --- */}
                         {step === 'result' && finalResult && (
                             <div className="flex flex-col h-full animate-fade-in relative">
-                                <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10 bg-gradient-to-b from-white/90 to-transparent">
+                                <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10 bg-gradient-to-b from-slate-50/90 to-transparent">
                                     <button onClick={() => setView('dashboard')} className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white">
                                         <HomeIcon className="w-5 h-5 text-slate-600" />
                                     </button>
@@ -703,18 +731,18 @@ export default function Home() {
                                         <div className="w-full space-y-3 text-left">
                                             {subjectConfig.resultFormat === 'matching' ? (
                                                 <>
-                                                    <div className="bg-white/60 rounded-xl p-1 border border-white/50 flex">
+                                                    <div className="bg-slate-50/60 rounded-xl p-1 border border-slate-50/50 flex">
                                                         {(['interpretation', 'guide'] as const).map((tab) => (
                                                             <button
                                                                 key={tab}
                                                                 onClick={() => setDetailTab(tab)}
-                                                                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${detailTab === tab ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                                                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${detailTab === tab ? 'bg-slate-50 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                                                             >
                                                                 {tab === 'interpretation' ? '📖 소개' : '💡 팁'}
                                                             </button>
                                                         ))}
                                                     </div>
-                                                    <div className="bg-white/60 rounded-xl p-4 border border-white/50">
+                                                    <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-50/50">
                                                         <p className="text-slate-600 text-sm leading-relaxed">
                                                             {detailTab === 'interpretation' ? finalResult.interpretation : finalResult.guide}
                                                         </p>
@@ -765,7 +793,7 @@ export default function Home() {
 
                                                     {finalResult.nextTest && CHEMI_DATA[finalResult.nextTest as SubjectKey] && (
                                                         <div className="mt-4 p-0.5 bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 rounded-xl shadow-lg">
-                                                            <div className="bg-white rounded-[10px] p-4">
+                                                            <div className="bg-slate-50 rounded-[10px] p-4">
                                                                 <div className="flex items-center gap-1 mb-2">
                                                                     <Sparkles className="w-4 h-4 text-amber-500" />
                                                                     <span className="text-xs font-bold text-amber-600">더 자세히 알아보기</span>
@@ -895,7 +923,7 @@ export default function Home() {
                                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                                     <button
                                         onClick={() => restart()}
-                                        className="px-4 py-2 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-white/50 text-slate-600 text-xs font-bold hover:bg-white hover:text-indigo-600 transition-all flex items-center gap-1.5"
+                                        className="px-4 py-2 rounded-full bg-slate-50/90 backdrop-blur-md shadow-lg border border-slate-50/50 text-slate-600 text-xs font-bold hover:bg-slate-50 hover:text-indigo-600 transition-all flex items-center gap-1.5"
                                     >
                                         <RefreshCw className="w-3.5 h-3.5" /> 처음으로
                                     </button>
@@ -937,7 +965,7 @@ export default function Home() {
                         {/* --- GRAPH POPUP --- */}
                         {activeModal === 'graphPopup' && (
                             <div className="absolute inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
-                                <div className="bg-white w-full sm:w-[90%] max-w-sm rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 shadow-2xl animate-slide-up relative max-h-[85%] overflow-y-auto">
+                                <div className="bg-slate-50 w-full sm:w-[90%] max-w-sm rounded-t-[2rem] sm:rounded-[2rem] p-6 pb-10 shadow-2xl animate-slide-up relative max-h-[85%] overflow-y-auto">
                                     <h3 className="text-xl font-black text-slate-800 mb-6 text-center flex items-center justify-center gap-2">
                                         <BarChart2 className="w-6 h-6 text-indigo-500" /> 상세 성향 분석
                                     </h3>

@@ -90,6 +90,7 @@ import DeveloperGuide from './components/DeveloperGuide';
 import ImagePromptManager from './components/ImagePromptManager';
 import PromptEditor from './components/PromptEditor';
 import CopyrightGuide from './components/CopyrightGuide';
+import ViralOptimization from './components/ViralOptimization';
 import { getTestIcon } from '@/utils/testIcons';
 
 // ============================================================================
@@ -161,6 +162,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       {
         groupLabel: '전략',
         tabs: [
+          { key: 'viralOptimization', label: '바이럴 최적화 🔥', icon: <TrendingUp className="w-4 h-4" /> },
           { key: 'ideaBank', label: '아이디어 뱅크', icon: <Lightbulb className="w-4 h-4" /> },
           { key: 'insight', label: '인사이트 시스템', icon: <Brain className="w-4 h-4" /> },
           { key: 'content', label: '콘텐츠 시스템', icon: <Sparkles className="w-4 h-4" /> },
@@ -490,6 +492,7 @@ export default function DashboardPage() {
           {/* 개요 - TODO */}
           {activeCategory === 'overview' && activeSubTab === 'todos' && <TodoManagement />}
           {/* 기획 */}
+          {activeCategory === 'planning' && activeSubTab === 'viralOptimization' && <ViralOptimization />}
           {activeCategory === 'planning' && activeSubTab === 'insight' && <InsightSystem />}
           {activeCategory === 'planning' && activeSubTab === 'firstMover' && <FirstMoverStrategy />}
           {activeCategory === 'planning' && activeSubTab === 'roadmap' && <Roadmap />}
