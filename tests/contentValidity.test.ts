@@ -227,6 +227,120 @@ describe('contentValidity 유틸리티', () => {
       // a: 2028-12
       // d: 무제한 (마지막)
     });
+
+    it('daysRemaining === 0 (오늘 만료) 정상 정렬 - 버그 수정 검증', () => {
+      // 2025-06-01 기준으로 테스트
+      const testDate = new Date('2025-06-01');
+
+      const contents = [
+        {
+          id: 'future',
+          meta: {
+            timeSensitivity: {
+              sensitivity: 'high' as const,
+              sourceYear: 2025,
+              validUntil: '2025-12', // 6개월 후
+            },
+          },
+        },
+        {
+          id: 'today',
+          meta: {
+            timeSensitivity: {
+              sensitivity: 'high' as const,
+              sourceYear: 2023,
+              validUntil: '2025-06', // 오늘 만료 (daysRemaining: 0)
+            },
+          },
+        },
+        {
+          id: 'expired',
+          meta: {
+            timeSensitivity: {
+              sensitivity: 'high' as const,
+              sourceYear: 2022,
+              validUntil: '2025-05', // 1개월 전 만료
+            },
+          },
+        },
+        {
+          id: 'no-date',
+          meta: undefined, // 날짜 없음
+        },
+      ];
+
+      const sorted = sortByExpiryDate(contents);
+      const ids = sorted.map((c) => c.id);
+
+      // 예상 순서: expired (음수) → today (0일) → future (양수) → no-date (undefined)
+      expect(ids[0]).toBe('expired');
+      expect(ids[1]).toBe('today'); // ← 핵심: daysRemaining === 0이 정상 정렬됨
+      expect(ids[2]).toBe('future');
+      expect(ids[3]).toBe('no-date');
+    });
+
+    it('날짜 없는 콘텐츠(undefined/null)는 항상 맨 뒤', () => {
+      const contents = [
+        {
+          id: 'no-date-1',
+          meta: undefined,
+        },
+        {
+          id: 'valid',
+          meta: {
+            timeSensitivity: {
+              sensitivity: 'high' as const,
+              sourceYear: 2025,
+              validUntil: '2027-12',
+            },
+          },
+        },
+        {
+          id: 'no-date-2',
+          meta: {
+            timeSensitivity: undefined,
+          },
+        },
+      ];
+
+      const sorted = sortByExpiryDate(contents);
+      const ids = sorted.map((c) => c.id);
+
+      expect(ids[0]).toBe('valid');
+      expect(ids[1]).toBe('no-date-1');
+      expect(ids[2]).toBe('no-date-2');
+    });
+
+    it('원본 배열 변경 안 됨 (immutable)', () => {
+      const contents = [
+        {
+          id: 'a',
+          meta: {
+            timeSensitivity: {
+              sensitivity: 'high' as const,
+              sourceYear: 2025,
+              validUntil: '2026-12',
+            },
+          },
+        },
+        {
+          id: 'b',
+          meta: {
+            timeSensitivity: {
+              sensitivity: 'high' as const,
+              sourceYear: 2025,
+              validUntil: '2025-12',
+            },
+          },
+        },
+      ];
+
+      const originalOrder = contents.map((c) => c.id);
+      sortByExpiryDate(contents);
+
+      // 원본 순서 유지
+      expect(contents.map((c) => c.id)).toEqual(originalOrder);
+    });
   });
 
   // ============================================================================
