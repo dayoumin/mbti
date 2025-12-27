@@ -174,10 +174,73 @@ interface InsightTags {
   personality?: PersonalityTag[];   // 성격 태그
   decision?: DecisionTag[];         // 판단 스타일 태그
   relationship?: RelationshipTag[]; // 관계 패턴 태그
-  interest?: InterestTag[];         // 관심사 태그 (Stage 4)
+  interest?: InterestTag[];         // 관심사 태그 (Stage 4) - 필수!
   lifestyle?: LifestyleTag[];       // 라이프스타일 태그 (Stage 4)
 }
 ```
+
+### ⚠️ 태그 선택 우선순위 (중요!)
+
+**현재 부족한 태그를 우선 사용하세요!**
+
+콘텐츠 생성 전 `node scripts/analyze-tag-coverage.mjs`로 현황 확인 후,
+부족한 태그 카테고리부터 채우세요.
+
+#### 긴급 (Stage 해금 차단)
+
+| 카테고리 | 우선 사용 태그 | 이유 |
+|---------|--------------|------|
+| **interest** (필수!) | `interest-love`, `interest-cat`, `interest-dog`, `interest-coffee` 등 | Stage 4 해금 필수 |
+| **relationship** | `compromising`, `self-first`, `other-first`, `diplomatic`, `competing` | Stage 5 해금 필요 |
+
+#### 보통 (편향 방지)
+
+| 카테고리 | 우선 사용 태그 |
+|---------|--------------|
+| lifestyle | `energetic`, `relaxed`, `minimalist`, `collector`, `routine-oriented`, `artistic` |
+| personality | `ambiverted`, `observant`, `romantic`, `empathetic`, `nurturing`, `calm` |
+| decision | `idealistic`, `pragmatic`, `quick-decisive`, `deliberate`, `research-based` |
+
+#### 카테고리별 필수 Interest 태그
+
+**반드시 해당 카테고리의 interest 태그를 포함하세요!**
+
+| 콘텐츠 카테고리 | 필수 Interest 태그 |
+|---------------|------------------|
+| love | `interest-love` |
+| cat | `interest-cat`, `interest-pet` |
+| dog | `interest-dog`, `interest-pet` |
+| coffee | `interest-coffee` |
+| plant | `interest-plant`, `interest-nature` |
+| tarot | `interest-tarot`, `interest-psychology` |
+| lifestyle | `interest-lifestyle` |
+| money | `interest-money` |
+| travel | `interest-travel` |
+
+**예시:**
+```typescript
+// ✅ 올바른 예 - interest 태그 포함
+{
+  category: 'love',
+  insightTags: {
+    interest: ['interest-love'],           // 필수!
+    personality: ['romantic', 'expressive'],
+    decision: ['direct'],
+  }
+}
+
+// ❌ 나쁜 예 - interest 태그 누락
+{
+  category: 'love',
+  insightTags: {
+    personality: ['romantic'],
+    decision: ['direct'],
+    // interest 없음 → Stage 4 해금 불가!
+  }
+}
+```
+
+**참조**: `src/data/insight/content-plan.ts`의 `CATEGORY_TAG_RECOMMENDATIONS`
 
 **태그 유효값 (SSOT: `src/data/insight/insight-tags.ts`)**
 

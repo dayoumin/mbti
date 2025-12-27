@@ -29,14 +29,11 @@ import {
 } from 'lucide-react';
 
 // 데이터 imports
-import { CHEMI_DATA } from '@/data';
-import { SUBJECT_CONFIG } from '@/data/config';
+import { getContentStats } from '../data/content-stats';
 import { ALL_KNOWLEDGE_QUIZZES, ALL_SCENARIO_QUIZZES } from '@/data/content/quizzes';
 import { VS_POLLS, CHOICE_POLLS } from '@/data/content/polls';
 import { ALL_SITUATION_REACTIONS } from '@/data/content/situation-reactions';
-import { ZODIAC_FORTUNES_2025, ZODIAC_POLLS, CONSTELLATIONS, ALL_DAILY_MESSAGES, LUCKY_TIPS } from '@/data/content/fortune';
 import { TIER_TOURNAMENTS } from '@/data/content/tournaments';
-import { getTotalStats, getQuickWins, getHighPriorityIdeas } from '../data/idea-bank';
 import { CATEGORY_LABELS } from '@/data/content/categories';
 import type { ContentCategory } from '@/data/content/types';
 import { AGE_GROUP_LABELS, GENDER_LABELS, type AgeGroup, type Gender } from '@/services/DemographicService';
@@ -64,59 +61,8 @@ interface ContentTypeCard {
 export default function ContentStatusDashboard() {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
-  const stats = useMemo(() => {
-    // 1. 테스트 통계
-    const testKeys = Object.keys(CHEMI_DATA) as (keyof typeof SUBJECT_CONFIG)[];
-    const personalityTests = testKeys.filter(k => SUBJECT_CONFIG[k]?.testType === 'personality');
-    const matchingTests = testKeys.filter(k => SUBJECT_CONFIG[k]?.testType === 'matching');
-
-    // 2. 콘텐츠 통계
-    const totalQuizzes = ALL_KNOWLEDGE_QUIZZES.length + ALL_SCENARIO_QUIZZES.length;
-    const totalPolls = VS_POLLS.length + CHOICE_POLLS.length;
-    const totalSituations = ALL_SITUATION_REACTIONS.length;
-    const totalFortune = ZODIAC_FORTUNES_2025.length + ZODIAC_POLLS.length + CONSTELLATIONS.length + ALL_DAILY_MESSAGES.length + LUCKY_TIPS.length;
-
-    // 3. 아이디어 통계
-    const ideaStats = getTotalStats();
-    const quickWins = getQuickWins();
-    const highPriority = getHighPriorityIdeas();
-
-    // 4. 전체 합계
-    const totalImplemented = testKeys.length + totalQuizzes + totalPolls + totalSituations + totalFortune;
-    const totalIdeas = ideaStats.totalIdeas;
-
-    return {
-      tests: {
-        total: testKeys.length,
-        personality: personalityTests.length,
-        matching: matchingTests.length,
-      },
-      content: {
-        quizzes: totalQuizzes,
-        knowledgeQuizzes: ALL_KNOWLEDGE_QUIZZES.length,
-        scenarioQuizzes: ALL_SCENARIO_QUIZZES.length,
-        polls: totalPolls,
-        vsPolls: VS_POLLS.length,
-        choicePolls: CHOICE_POLLS.length,
-        situations: totalSituations,
-        fortune: totalFortune,
-      },
-      ideas: {
-        total: ideaStats.totalIdeas,
-        themes: ideaStats.totalThemes,
-        veryHighViral: ideaStats.veryHighViralIdeas,
-        highPriority: ideaStats.highPriorityIdeas,
-        quickWins: quickWins.length,
-        completed: ideaStats.completed,
-        inProgress: ideaStats.inProgress,
-      },
-      totals: {
-        implemented: totalImplemented,
-        planned: totalIdeas,
-        all: totalImplemented + totalIdeas,
-      },
-    };
-  }, []);
+  // 통계 로직 분리 → 재사용 가능
+  const stats = useMemo(() => getContentStats(), []);
 
   // 카드 데이터
   const contentCards: ContentTypeCard[] = [
@@ -180,9 +126,9 @@ export default function ContentStatusDashboard() {
       count: stats.content.fortune,
       description: '띠별/별자리 운세 및 일일 메시지',
       subItems: [
-        { name: '띠별 운세', count: ZODIAC_FORTUNES_2025.length, status: 'active' },
-        { name: '별자리', count: CONSTELLATIONS.length, status: 'active' },
-        { name: '운세 투표', count: ZODIAC_POLLS.length, status: 'active' },
+        { name: '띠별 운세', count: 12, status: 'idea' }, // TODO: ZODIAC_FORTUNES_2025
+        { name: '별자리', count: 12, status: 'idea' }, // TODO: CONSTELLATIONS
+        { name: '운세 투표', count: 0, status: 'idea' }, // TODO: ZODIAC_POLLS
       ],
     },
     {
@@ -617,8 +563,8 @@ function TargetCoverageSection() {
             <p className="text-2xl font-bold text-purple-400">{coverageData.targetedCount}</p>
             <p className="text-xs text-[var(--db-muted)]">타겟팅됨</p>
           </div>
-          <div className="p-3 rounded-xl bg-gray-500/10">
-            <p className="text-2xl font-bold text-gray-400">{coverageData.universalCount}</p>
+          <div className="p-3 rounded-xl bg-slate-500/10">
+            <p className="text-2xl font-bold text-slate-400">{coverageData.universalCount}</p>
             <p className="text-xs text-[var(--db-muted)]">전체 대상</p>
           </div>
           <div className="p-3 rounded-xl bg-amber-500/10">
