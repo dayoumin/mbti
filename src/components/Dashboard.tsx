@@ -157,25 +157,25 @@ const TypeTab = ({ type, isActive, onClick, count }: { type: keyof typeof TEST_T
             onClick={isEmpty ? undefined : onClick}
             disabled={isEmpty}
             className={`relative flex items-center gap-1 px-3 py-2 text-sm font-bold transition-all whitespace-nowrap ${isEmpty
-                    ? 'text-slate-200 cursor-not-allowed'
-                    : isActive
-                        ? 'text-indigo-600'
-                        : 'text-slate-400 hover:text-slate-600'
+                ? 'text-subtle cursor-not-allowed'
+                : isActive
+                    ? 'text-brand-primary'
+                    : 'text-muted hover:text-secondary'
                 }`}
         >
             <span>{tabInfo.emoji}</span>
             <span>{tabInfo.label}</span>
             <span className={`text-xs ${isEmpty
-                    ? 'text-slate-200'
-                    : isActive
-                        ? 'text-indigo-400'
-                        : 'text-slate-300'
+                ? 'text-subtle'
+                : isActive
+                    ? 'text-brand-secondary'
+                    : 'text-subtle'
                 }`}>
                 {count}
             </span>
             {/* Underline indicator */}
             {isActive && !isEmpty && (
-                <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-indigo-500 rounded-full" />
+                <span className="absolute bottom-0 left-1 right-1 h-0.5 bg-brand-primary rounded-full" />
             )}
         </button>
     );
@@ -186,8 +186,8 @@ const SubjectChip = ({ subject, isActive, onClick, count }: { subject: keyof typ
     <button
         onClick={onClick}
         className={`flex items-center gap-0.5 px-2 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${isActive
-            ? 'bg-slate-700 text-white'
-            : 'bg-white/80 text-slate-500 hover:bg-white hover:text-slate-700 border border-slate-200'
+            ? 'bg-slate-800 text-white'
+            : 'bg-glass text-muted hover:bg-slate-50 hover:text-secondary border border-subtle'
             }`}
     >
         <span>{SUBJECT_CATEGORIES[subject].emoji}</span>
@@ -200,10 +200,10 @@ const SubjectChip = ({ subject, isActive, onClick, count }: { subject: keyof typ
 const Header = () => (
     <div className="flex items-center justify-center mb-6 animate-fade-in-up lg:hidden">
         <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-black text-slate-800">
-                Chemi <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-pink-500">Test</span>
+            <h1 className="text-2xl md:text-3xl font-black text-primary">
+                Chemi <span className="text-transparent bg-clip-text bg-gradient-brand-primary">Test</span>
             </h1>
-            <p className="text-sm text-slate-500 mt-1">오늘은 뭘 알아볼까?</p>
+            <p className="text-sm text-muted mt-1">오늘은 뭘 알아볼까?</p>
         </div>
     </div>
 );
@@ -227,36 +227,36 @@ const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusActi
     if (!streak || streak.currentStreak === 0) return null;
 
     return (
-        <div className="mb-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-3 border border-amber-200 animate-fade-in-up relative">
+        <div className="mb-4 bg-slate-50 rounded-md p-3 border border-subtle animate-fade-in-up relative">
             {/* 닫기 버튼 */}
             <button
                 onClick={onClose}
-                className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-amber-400 hover:text-amber-600 hover:bg-amber-100 rounded-full transition-colors"
+                className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center text-muted hover:text-secondary hover:bg-slate-50 rounded-full transition-colors"
                 aria-label="닫기"
             >
                 ✕
             </button>
             <div className="flex items-center gap-3 pr-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                <div className="w-10 h-10 bg-gradient-brand-primary rounded-md flex items-center justify-center shadow-brand flex-shrink-0">
                     <Flame className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-amber-700">
+                        <span className="text-sm font-black text-primary">
                             {streak.currentStreak}일 연속!
                         </span>
                         {streak.currentStreak >= 7 && (
-                            <span className="text-xs bg-amber-400 text-white px-1.5 py-0.5 rounded-full font-bold">
+                            <span className="text-xs bg-brand-primary text-white px-1.5 py-0.5 rounded-full font-bold">
                                 🔥 불타는 중
                             </span>
                         )}
                     </div>
-                    <p className="text-xs text-amber-600">
+                    <p className="text-xs text-secondary">
                         최장 {streak.longestStreak}일 | {level?.emoji} {level?.name} Lv.{level?.level}
                     </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                    <div className="flex items-center gap-1 text-amber-600">
+                    <div className="flex items-center gap-1 text-secondary">
                         <Star className="w-3 h-3" />
                         <span className="text-xs font-bold">{points}P</span>
                     </div>
@@ -266,7 +266,7 @@ const StreakBanner = ({ streak, level, points, onClose, onBonusAction, bonusActi
             {bonusAction && (
                 <button
                     onClick={() => onBonusAction?.(bonusAction)}
-                    className="mt-2 w-full py-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-bold flex items-center justify-center gap-1.5 hover:from-amber-500 hover:to-orange-500 transition-all active:scale-95"
+                    className="mt-2 w-full py-2 rounded-md bg-gradient-brand-primary text-white text-xs font-bold flex items-center justify-center gap-1.5 hover:opacity-90 transition-all active:scale-95"
                 >
                     <span>{bonusAction.icon}</span>
                     <span>{bonusAction.label}</span>
@@ -288,7 +288,7 @@ const PointsToast = ({ points, message, onClose }: { points: number | null; mess
 
     return (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-bounce-in">
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
+            <div className="bg-gradient-success text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
                 <Star className="w-4 h-4" />
                 <span className="font-bold">+{points}P</span>
                 {message && <span className="text-xs opacity-90">{message}</span>}
@@ -297,15 +297,25 @@ const PointsToast = ({ points, message, onClose }: { points: number | null; mess
     );
 };
 
-// Background Decoration Component
+// Background Decoration Component (Dark/Light Mode Support)
+// 대각선 파이프라인 테마: 좌측 상단 → 중앙 → 우측 하단
 const BackgroundDecoration = () => (
     <>
-        {/* 상단 좌측 블롭 */}
-        <div className="fixed top-[-10%] left-[-5%] w-[40%] h-[40%] bg-gradient-to-br from-indigo-200/40 to-purple-200/30 rounded-full blur-3xl pointer-events-none" />
-        {/* 상단 우측 블롭 */}
-        <div className="fixed top-[5%] right-[-10%] w-[35%] h-[35%] bg-gradient-to-bl from-pink-200/30 to-rose-200/20 rounded-full blur-3xl pointer-events-none" />
-        {/* 하단 블롭 */}
-        <div className="fixed bottom-[-5%] left-[20%] w-[50%] h-[30%] bg-gradient-to-t from-cyan-100/20 to-blue-100/10 rounded-full blur-3xl pointer-events-none" />
+        {/* 상단 좌측 블롭 - 파이프라인 시작 */}
+        <div
+            className="fixed top-[-10%] left-[5%] w-[40%] h-[40%] rounded-full blur-3xl pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom right, var(--blob-1-start), var(--blob-1-end))' }}
+        />
+        {/* 중앙 블롭 - 파이프라인 중간 */}
+        <div
+            className="fixed top-[30%] left-[35%] w-[35%] h-[35%] rounded-full blur-3xl pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom right, var(--blob-2-start), var(--blob-2-end))' }}
+        />
+        {/* 하단 우측 블롭 - 파이프라인 끝 */}
+        <div
+            className="fixed bottom-[-10%] right-[5%] w-[40%] h-[35%] rounded-full blur-3xl pointer-events-none"
+            style={{ background: 'linear-gradient(to top, var(--blob-3-start), var(--blob-3-end))' }}
+        />
     </>
 );
 
@@ -552,9 +562,9 @@ const Dashboard = ({ onStartTest, onContentExplore, onTournamentClick }: Dashboa
                     />
 
                     {/* 필터 영역 - 고정 높이로 레이아웃 시프트 방지 */}
-                    <div className="sticky top-4 z-20 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200/60 p-3 shadow-sm" style={{ minHeight: '84px' }}>
+                    <div className="sticky top-4 z-20 glass-card rounded-md border-subtle p-3 shadow-sm" style={{ minHeight: '84px' }}>
                         {/* 1차 필터: 탭 스타일 (underline) */}
-                        <div className="flex items-center border-b border-slate-200">
+                        <div className="flex items-center border-b border-subtle">
                             {(Object.keys(TEST_TYPE_TABS) as Array<keyof typeof TEST_TYPE_TABS>).map((type) => (
                                 <TypeTab
                                     key={type}
@@ -604,16 +614,16 @@ const Dashboard = ({ onStartTest, onContentExplore, onTournamentClick }: Dashboa
 
                         {/* Empty State */}
                         {filteredTests.length === 0 && (
-                            <div className="text-center py-16 text-slate-400">
-                                <div className="w-16 h-16 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <div className="text-center py-16 text-muted">
+                                <div className="w-16 h-16 bg-slate-50 rounded-full mx-auto mb-4 flex items-center justify-center">
                                     <span className="text-2xl">{TEST_TYPE_TABS[activeType]?.emoji || '📋'}</span>
                                 </div>
-                                <p className="text-sm font-medium text-slate-500 mb-2">
+                                <p className="text-sm font-medium text-muted mb-2">
                                     {activeType === 'relationship' && '관계 테스트 준비 중'}
                                     {activeType === 'lifestyle' && '라이프 테스트 준비 중'}
                                     {activeType !== 'relationship' && activeType !== 'lifestyle' && '이 카테고리에 테스트가 없습니다'}
                                 </p>
-                                <p className="text-xs text-slate-400">
+                                <p className="text-xs text-muted">
                                     {activeType === 'relationship' && '궁합 테스트, 사랑의 언어 등 바이럴 특화 테스트가 곧 출시됩니다!'}
                                     {activeType === 'lifestyle' && '공간 스타일, 소비 성향 등 제품 연계 테스트가 곧 출시됩니다!'}
                                 </p>
@@ -625,16 +635,16 @@ const Dashboard = ({ onStartTest, onContentExplore, onTournamentClick }: Dashboa
                     {detailTests.length > 0 && (activeType === 'all' || activeType === 'matching') && (!activeSubject || activeSubject === 'pet') && (
                         <section className="mt-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                             <div className="flex items-center gap-2 mb-3 px-1">
-                                <span className="text-sm font-bold text-slate-600">
+                                <span className="text-sm font-bold text-secondary">
                                     🐾 세부 추천
                                 </span>
-                                <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-medium text-muted bg-slate-50 px-2 py-0.5 rounded-full">
                                     {detailTests.length}
                                 </span>
                             </div>
 
-                            <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-100">
-                                <p className="text-xs text-amber-700 mb-3 px-1">
+                            <div className="bg-card rounded-md p-3 border border-subtle">
+                                <p className="text-xs text-primary mb-3 px-1">
                                     💡 반려동물 매칭 테스트 후 자동으로 연결됩니다
                                 </p>
                                 <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
@@ -661,9 +671,6 @@ const Dashboard = ({ onStartTest, onContentExplore, onTournamentClick }: Dashboa
                 isOpen={rankingModalState.isOpen}
                 defaultTab={rankingModalState.defaultTab}
                 onClose={() => setRankingModalState(prev => ({ ...prev, isOpen: false }))}
-                onPollClick={() => {
-                    // TODO: 해당 투표로 이동하는 로직
-                }}
                 onViewAllClick={() => {
                     onContentExplore?.();
                 }}

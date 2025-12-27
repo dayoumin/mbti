@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BackIcon } from './Icons';
 
 interface ProgressDotsProps {
@@ -10,6 +10,8 @@ interface ProgressDotsProps {
 }
 
 const ProgressDots = ({ current, total, themeColor }: ProgressDotsProps) => {
+  if (total <= 0) return null;
+
   const maxDots = 10;
   const dotsToShow = Math.min(total, maxDots);
   const filledDots = Math.round((current / total) * dotsToShow);
@@ -20,9 +22,8 @@ const ProgressDots = ({ current, total, themeColor }: ProgressDotsProps) => {
       {Array.from({ length: dotsToShow }, (_, i) => (
         <div
           key={i}
-          className={`w-2 h-2 rounded-full transition-colors ${
-            i < filledDots ? themeColor : 'bg-gray-300'
-          }`}
+          className={`w-2 h-2 rounded-full transition-colors ${i < filledDots ? themeColor : 'bg-gray-300'
+            }`}
         />
       ))}
     </div>
@@ -41,17 +42,17 @@ const ExitModal = ({ isOpen, onConfirm, onCancel, testName }: ExitModalProps) =>
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-xs border-4 border-gray-800 shadow-xl animate-pop">
-        <h3 className="text-lg font-bold text-gray-800 mb-2 text-center">
+      <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-xs border-4 border-gray-800 shadow-xl animate-pop">
+        <h3 className="text-lg font-bold text-primary mb-2 text-center">
           테스트를 중단할까요?
         </h3>
-        <p className="text-sm text-gray-500 mb-6 text-center">
+        <p className="text-sm text-muted mb-6 text-center">
           진행한 내용은 저장되지 않아요
         </p>
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 px-4 bg-gray-100 rounded-xl font-bold text-gray-600 hover:bg-gray-200 transition-colors"
+            className="flex-1 py-3 px-4 bg-slate-100 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition-colors"
           >
             계속하기
           </button>
@@ -91,7 +92,7 @@ export const TestHeader = ({
   const handleBackClick = () => {
     if (currentQuestion === 0) {
       setShowExitModal(true);
-    } else if (onBack) {
+    } else if (canGoBack && onBack) {
       onBack();
     }
   };
@@ -106,13 +107,18 @@ export const TestHeader = ({
       <div className="flex items-center justify-between h-12 mb-4 -mx-2 px-2">
         <button
           onClick={handleBackClick}
-          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-600"
+          disabled={currentQuestion > 0 && !canGoBack}
+          className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${
+            currentQuestion > 0 && !canGoBack
+              ? 'text-slate-300 cursor-not-allowed'
+              : 'hover:bg-slate-100 active:bg-slate-200 text-slate-600'
+          }`}
           aria-label={currentQuestion === 0 ? '테스트 나가기' : '이전 질문'}
         >
           <BackIcon />
         </button>
 
-        <span className="text-sm font-bold text-gray-700 truncate px-2">
+        <span className="text-sm font-bold text-secondary truncate px-2">
           {testName}
         </span>
 

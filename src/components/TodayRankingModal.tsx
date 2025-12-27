@@ -84,7 +84,6 @@ interface ResultRankingItem {
 interface TodayRankingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onPollClick?: (pollId: string) => void;
   onViewAllClick?: () => void;
   defaultTab?: 'polls' | 'results';
 }
@@ -96,7 +95,6 @@ interface TodayRankingModalProps {
 export default function TodayRankingModal({
   isOpen,
   onClose,
-  onPollClick,
   onViewAllClick,
   defaultTab = 'polls',
 }: TodayRankingModalProps) {
@@ -260,12 +258,15 @@ export default function TodayRankingModal({
   const openCommentView = async (pollId: string, question: string) => {
     setCommentView({ pollId, question });
     setCommentLoading(true);
+    setComments([]);
+    setCommentTotal(0); // 이전 poll의 댓글 수가 잠시 보이는 것 방지
     try {
       const data = await getComments('poll', pollId);
       setComments(data.comments);
       setCommentTotal(data.total);
     } catch {
       setComments([]);
+      setCommentTotal(0);
     } finally {
       setCommentLoading(false);
     }
@@ -345,9 +346,8 @@ export default function TodayRankingModal({
     <>
       {/* 오버레이 */}
       <div
-        className={`fixed inset-0 bg-black/40 z-50 transition-opacity duration-200 ${
-          isClosing ? 'opacity-0' : 'opacity-100'
-        }`}
+        className={`fixed inset-0 bg-black/40 z-50 transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'opacity-100'
+          }`}
         onClick={handleClose}
       />
 
@@ -359,7 +359,7 @@ export default function TodayRankingModal({
         aria-label="오늘의 랭킹"
         tabIndex={-1}
         className={`fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-lg mx-auto z-50
-          bg-white rounded-2xl shadow-2xl overflow-hidden
+          bg-slate-50 rounded-2xl shadow-2xl overflow-hidden
           max-h-[80vh] flex flex-col
           ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}
         `}
@@ -489,172 +489,169 @@ export default function TodayRankingModal({
           </div>
         ) : (
           <>
-        {/* 탭 */}
-        <div className="flex border-b border-gray-100 flex-shrink-0">
-          <button
-            onClick={() => setActiveTab('polls')}
-            className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-              activeTab === 'polls'
-                ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            투표 랭킹
-          </button>
-          <button
-            onClick={() => setActiveTab('results')}
-            className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-              activeTab === 'results'
-                ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            <Star className="w-4 h-4" />
-            결과 랭킹
-          </button>
-        </div>
+            {/* 탭 */}
+            <div className="flex border-b border-gray-100 flex-shrink-0">
+              <button
+                onClick={() => setActiveTab('polls')}
+                className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${activeTab === 'polls'
+                    ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
+                    : 'text-gray-400 hover:text-gray-600'
+                  }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                투표 랭킹
+              </button>
+              <button
+                onClick={() => setActiveTab('results')}
+                className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${activeTab === 'results'
+                    ? 'text-orange-600 border-b-2 border-orange-500 bg-orange-50/50'
+                    : 'text-gray-400 hover:text-gray-600'
+                  }`}
+              >
+                <Star className="w-4 h-4" />
+                결과 랭킹
+              </button>
+            </div>
 
-        {/* 콘텐츠 */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {loading ? (
-            <div className="animate-pulse space-y-3">
-              {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className="h-14 bg-gray-100 rounded-xl"></div>
-              ))}
-            </div>
-          ) : !hasData ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Trophy className="w-8 h-8 text-gray-300" />
-              </div>
-              <p className="text-gray-500 text-sm font-medium mb-1">아직 데이터가 없어요</p>
-              <p className="text-gray-400 text-xs">투표하고 테스트해서 랭킹에 참여해보세요!</p>
-            </div>
-          ) : activeTab === 'polls' ? (
-            // 투표 랭킹
-            <div className="space-y-2">
-              {pollRankings.length === 0 ? (
-                <div className="text-center py-8 text-gray-400 text-sm">
-                  아직 투표 데이터가 없어요
+            {/* 콘텐츠 */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {loading ? (
+                <div className="animate-pulse space-y-3">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="h-14 bg-gray-100 rounded-xl"></div>
+                  ))}
+                </div>
+              ) : !hasData ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Trophy className="w-8 h-8 text-gray-300" />
+                  </div>
+                  <p className="text-gray-500 text-sm font-medium mb-1">아직 데이터가 없어요</p>
+                  <p className="text-gray-400 text-xs">투표하고 테스트해서 랭킹에 참여해보세요!</p>
+                </div>
+              ) : activeTab === 'polls' ? (
+                // 투표 랭킹
+                <div className="space-y-2">
+                  {pollRankings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400 text-sm">
+                      아직 투표 데이터가 없어요
+                    </div>
+                  ) : (
+                    pollRankings.map((poll, idx) => (
+                      <div
+                        key={poll.pollId}
+                        onClick={() => openCommentView(poll.pollId, poll.question)}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-orange-50 transition-all group cursor-pointer"
+                      >
+                        {/* 순위 */}
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${idx === 0 ? 'bg-amber-400 text-white' :
+                            idx === 1 ? 'bg-gray-400 text-white' :
+                              idx === 2 ? 'bg-orange-400 text-white' :
+                                'bg-gray-200 text-gray-600'
+                          }`}>
+                          {idx + 1}
+                        </div>
+
+                        {/* 정보 */}
+                        <div className="flex-1 min-w-0 text-left">
+                          <p className="text-sm font-bold text-gray-800 truncate group-hover:text-orange-600 transition-colors">
+                            {poll.question}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className="text-xs text-gray-400">{getCategoryName(poll.category)}</span>
+                            {poll.topOption && (
+                              <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-full">
+                                {poll.topOption.emoji} {poll.topOption.text} {poll.topOption.percentage}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 참여수 */}
+                        <div className="text-right flex-shrink-0">
+                          <div className="flex items-center gap-1 text-gray-500">
+                            <Users className="w-3 h-3" />
+                            <span className="text-xs font-bold">{poll.totalVotes}</span>
+                          </div>
+                        </div>
+
+                        {/* 댓글 버튼 */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openCommentView(poll.pollId, poll.question);
+                          }}
+                          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-200 hover:bg-orange-200 text-gray-600 hover:text-orange-600 transition-colors flex-shrink-0"
+                        >
+                          <MessageCircle className="w-3 h-3" />
+                          <span className="text-xs font-medium">{poll.commentCount || 0}</span>
+                        </button>
+                      </div>
+                    ))
+                  )}
                 </div>
               ) : (
-                pollRankings.map((poll, idx) => (
-                  <div
-                    key={poll.pollId}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-orange-50 transition-all group"
-                  >
-                    {/* 순위 */}
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${
-                      idx === 0 ? 'bg-amber-400 text-white' :
-                      idx === 1 ? 'bg-gray-400 text-white' :
-                      idx === 2 ? 'bg-orange-400 text-white' :
-                      'bg-gray-200 text-gray-600'
-                    }`}>
-                      {idx + 1}
+                // 결과 랭킹
+                <div className="space-y-2">
+                  {resultRankings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400 text-sm">
+                      아직 테스트 결과가 없어요
                     </div>
+                  ) : (
+                    resultRankings.map((result, idx) => (
+                      <div
+                        key={`${result.testType}-${result.resultName}`}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-gray-50"
+                      >
+                        {/* 순위 */}
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${idx === 0 ? 'bg-amber-400 text-white' :
+                            idx === 1 ? 'bg-gray-400 text-white' :
+                              idx === 2 ? 'bg-orange-400 text-white' :
+                                'bg-gray-200 text-gray-600'
+                          }`}>
+                          {idx + 1}
+                        </div>
 
-                    {/* 정보 */}
-                    <div className="flex-1 min-w-0 text-left">
-                      <p className="text-sm font-bold text-gray-800 truncate group-hover:text-orange-600 transition-colors">
-                        {poll.question}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <span className="text-xs text-gray-400">{getCategoryName(poll.category)}</span>
-                        {poll.topOption && (
-                          <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-full">
-                            {poll.topOption.emoji} {poll.topOption.text} {poll.topOption.percentage}%
+                        {/* 이모지 */}
+                        <span className="text-2xl flex-shrink-0">{result.resultEmoji}</span>
+
+                        {/* 정보 */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-gray-800 truncate">
+                            {result.resultName}
+                          </p>
+                          <span className="text-xs text-gray-400">
+                            {getTestTypeName(result.testType)} 테스트
                           </span>
-                        )}
-                      </div>
-                    </div>
+                        </div>
 
-                    {/* 참여수 */}
-                    <div className="text-right flex-shrink-0">
-                      <div className="flex items-center gap-1 text-gray-500">
-                        <Users className="w-3 h-3" />
-                        <span className="text-xs font-bold">{poll.totalVotes}</span>
+                        {/* 카운트 */}
+                        <div className="flex items-center gap-1 text-orange-500 flex-shrink-0">
+                          <TrendingUp className="w-3 h-3" />
+                          <span className="text-xs font-bold">{result.count}회</span>
+                        </div>
                       </div>
-                    </div>
-
-                    {/* 댓글 버튼 */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openCommentView(poll.pollId, poll.question);
-                      }}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-200 hover:bg-orange-200 text-gray-600 hover:text-orange-600 transition-colors flex-shrink-0"
-                    >
-                      <MessageCircle className="w-3 h-3" />
-                      <span className="text-xs font-medium">{poll.commentCount || 0}</span>
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          ) : (
-            // 결과 랭킹
-            <div className="space-y-2">
-              {resultRankings.length === 0 ? (
-                <div className="text-center py-8 text-gray-400 text-sm">
-                  아직 테스트 결과가 없어요
+                    ))
+                  )}
                 </div>
-              ) : (
-                resultRankings.map((result, idx) => (
-                  <div
-                    key={`${result.testType}-${result.resultName}`}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-gray-50"
-                  >
-                    {/* 순위 */}
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${
-                      idx === 0 ? 'bg-amber-400 text-white' :
-                      idx === 1 ? 'bg-gray-400 text-white' :
-                      idx === 2 ? 'bg-orange-400 text-white' :
-                      'bg-gray-200 text-gray-600'
-                    }`}>
-                      {idx + 1}
-                    </div>
-
-                    {/* 이모지 */}
-                    <span className="text-2xl flex-shrink-0">{result.resultEmoji}</span>
-
-                    {/* 정보 */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-800 truncate">
-                        {result.resultName}
-                      </p>
-                      <span className="text-xs text-gray-400">
-                        {getTestTypeName(result.testType)} 테스트
-                      </span>
-                    </div>
-
-                    {/* 카운트 */}
-                    <div className="flex items-center gap-1 text-orange-500 flex-shrink-0">
-                      <TrendingUp className="w-3 h-3" />
-                      <span className="text-xs font-bold">{result.count}회</span>
-                    </div>
-                  </div>
-                ))
               )}
             </div>
-          )}
-        </div>
 
-        {/* 하단 버튼 */}
-        {hasData && onViewAllClick && !commentView && (
-          <div className="p-4 border-t border-gray-100 flex-shrink-0">
-            <button
-              onClick={() => {
-                onViewAllClick();
-                handleClose();
-              }}
-              className="w-full py-3 bg-gradient-to-r from-orange-500 to-rose-500 text-white text-sm font-bold rounded-xl hover:from-orange-600 hover:to-rose-600 transition-all flex items-center justify-center gap-1.5"
-            >
-              전체 랭킹 보기
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+            {/* 하단 버튼 */}
+            {hasData && onViewAllClick && !commentView && (
+              <div className="p-4 border-t border-gray-100 flex-shrink-0">
+                <button
+                  onClick={() => {
+                    onViewAllClick();
+                    handleClose();
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-orange-500 to-rose-500 text-white text-sm font-bold rounded-xl hover:from-orange-600 hover:to-rose-600 transition-all flex items-center justify-center gap-1.5"
+                >
+                  전체 랭킹 보기
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
