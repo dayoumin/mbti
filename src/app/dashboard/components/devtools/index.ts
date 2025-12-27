@@ -5,3 +5,5 @@ export { default as ArchiveSection } from './ArchiveSection';
 export { default as Troubleshooting } from './Troubleshooting';
 export { default as Learning } from './Learning';
 export { default as Development } from './Development';
+export { default as GA4Monitor } from './GA4Monitor';
+export { default as TagCoverage } from './TagCoverage';

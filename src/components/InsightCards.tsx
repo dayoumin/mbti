@@ -183,7 +183,7 @@ export default function InsightCards({
 
       // Stage 2-7 인사이트 로드
       if (insightService.isStageUnlocked(2)) {
-        setStage2Rules(insightService.getStage2Insight(3));
+        setStage2Rules(insightService.getStage2Insight());
       }
       if (insightService.isStageUnlocked(3)) {
         setStage3Result(insightService.getStage3Insight());

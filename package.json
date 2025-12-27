@@ -21,7 +21,8 @@
     "next-auth": "^4.24.13",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "recharts": "^3.5.1"
+    "recharts": "^3.5.1",
+    "web-vitals": "^5.1.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

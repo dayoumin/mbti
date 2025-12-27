@@ -61,7 +61,7 @@ import { TestList, TestDetail, QuestionPreview, ResultSimulator, LogicViewer } f
 // ============================================================================
 // DevTools Components
 // ============================================================================
-import { DesignTokens, Troubleshooting, Learning, Development } from './components/devtools';
+import { DesignTokens, Troubleshooting, Learning, Development, GA4Monitor, TagCoverage } from './components/devtools';
 
 // ============================================================================
 // Planning Components
@@ -193,6 +193,8 @@ const ROUTE_MAP: Record<string, Record<string, RouteConfig>> = {
     deployment: { component: DeploymentChecklist },
     architecture: { component: Development },
     automation: { component: AutomationSystem },
+    ga4: { component: GA4Monitor },
+    tagCoverage: { component: TagCoverage },
     facts: { component: FactManager },
     demographicTest: { component: DemographicTester },
     tokens: { component: DesignTokens },
@@ -308,6 +310,8 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
       { key: 'deployment', label: '배포 체크리스트', icon: <CheckCircle2 className="w-4 h-4" /> },
       { key: 'architecture', label: '아키텍처', icon: <Puzzle className="w-4 h-4" /> },
       { key: 'automation', label: '자동화', icon: <Zap className="w-4 h-4" /> },
+      { key: 'ga4', label: 'GA4 모니터링', icon: <Activity className="w-4 h-4" /> },
+      { key: 'tagCoverage', label: '태그 커버리지', icon: <BarChart3 className="w-4 h-4" /> },
       { key: 'facts', label: '팩트 DB', icon: <FileText className="w-4 h-4" /> },
       { key: 'demographicTest', label: '연령 테스터', icon: <User className="w-4 h-4" /> },
       { key: 'tokens', label: '디자인 시스템', icon: <Palette className="w-4 h-4" /> },

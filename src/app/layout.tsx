@@ -4,6 +4,9 @@ import UTMInitializer from "@/components/UTMInitializer";
 import { ToastProvider } from "@/components/Toast";
 import { SessionProvider } from "@/components/auth";
 import { MyResultsProvider } from "@/contexts/MyResultsContext";
+import WebVitalsReporter from "@/components/WebVitalsReporter";
+import Script from "next/script";
+import { GA_MEASUREMENT_ID } from "@/lib/gtag";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://chemi.app';
 
@@ -59,11 +62,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        {/* Google Analytics 4 */}
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
+      </head>
       <body className="antialiased bg-gray-50 min-h-screen" suppressHydrationWarning>
         <SessionProvider>
           <MyResultsProvider>
             <ToastProvider>
               <UTMInitializer />
+              <WebVitalsReporter />
               {children}
             </ToastProvider>
           </MyResultsProvider>
