@@ -80,7 +80,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] pb-20 lg:pb-4 lg:ml-60">
+    <div className="min-h-screen bg-[#F0F2F5] pb-20 lg:pb-4 lg:ml-60 xl:mr-80">
       {/* 헤더 - 모바일에서만 표시 */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
