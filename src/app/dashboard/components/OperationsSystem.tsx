@@ -27,6 +27,8 @@ import {
   MonitoringMetric,
   IncidentResponse,
   Phase,
+  DeploymentChecklist,
+  OperationsChecklist,
 } from '../data/operations-system';
 
 // ============================================================================
@@ -109,7 +111,7 @@ function SeverityBadge({ severity }: { severity: string }) {
 // ============================================================================
 
 export default function OperationsSystem() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'checks' | 'monitoring' | 'incidents' | 'checklist' | 'alpha'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'checks' | 'monitoring' | 'incidents' | 'checklist' | 'deployment' | 'operations' | 'alpha'>('overview');
 
   return (
     <div className="space-y-6">
@@ -117,11 +119,13 @@ export default function OperationsSystem() {
       <div className="flex gap-2 flex-wrap">
         {[
           { key: 'overview', label: '개요', icon: <Shield className="w-4 h-4" /> },
+          { key: 'deployment', label: '배포', icon: <Rocket className="w-4 h-4" /> },
+          { key: 'operations', label: '운영', icon: <TrendingUp className="w-4 h-4" /> },
           { key: 'checks', label: '점검 항목', icon: <FileCheck className="w-4 h-4" /> },
           { key: 'monitoring', label: '모니터링', icon: <Activity className="w-4 h-4" /> },
           { key: 'incidents', label: '인시던트', icon: <AlertTriangle className="w-4 h-4" /> },
           { key: 'checklist', label: '체크리스트', icon: <Target className="w-4 h-4" /> },
-          { key: 'alpha', label: '알파 가이드', icon: <Rocket className="w-4 h-4" /> },
+          { key: 'alpha', label: '알파 가이드', icon: <Play className="w-4 h-4" /> },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -140,6 +144,8 @@ export default function OperationsSystem() {
 
       {/* Content */}
       {activeTab === 'overview' && <OverviewTab />}
+      {activeTab === 'deployment' && <DeploymentTab />}
+      {activeTab === 'operations' && <OperationsTab />}
       {activeTab === 'checks' && <ChecksTab />}
       {activeTab === 'monitoring' && <MonitoringTab />}
       {activeTab === 'incidents' && <IncidentsTab />}
@@ -809,6 +815,255 @@ function AlphaGuideTab() {
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Deployment Tab (배포)
+// ============================================================================
+
+function DeploymentTab() {
+  const { deploymentChecklists } = OPERATIONS_SYSTEM;
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+            <Rocket className="w-5 h-5 text-[var(--db-brand)]" />
+            배포 체크리스트
+          </h3>
+          <p className="text-sm text-[var(--db-muted)] mt-1">
+            Vercel 프로덕션 배포 전 필수 점검 사항
+          </p>
+        </div>
+      </div>
+
+      {/* Checklists by Category */}
+      <div className="space-y-4">
+        {deploymentChecklists.map((checklist) => (
+          <DeploymentChecklistCard key={checklist.id} checklist={checklist} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DeploymentChecklistCard({ checklist }: { checklist: DeploymentChecklist }) {
+  const categoryConfig = {
+    env: { label: '환경변수', icon: <Settings className="w-5 h-5" />, color: 'var(--db-brand)' },
+    build: { label: '빌드', icon: <Terminal className="w-5 h-5" />, color: 'var(--db-ok)' },
+    deployment: { label: '배포', icon: <Rocket className="w-5 h-5" />, color: 'var(--db-warning)' },
+    verification: { label: '검증', icon: <CheckCircle2 className="w-5 h-5" />, color: 'var(--db-brand2)' },
+  };
+
+  const config = categoryConfig[checklist.category];
+  const doneCount = checklist.items.filter((i) => i.done).length;
+  const totalCount = checklist.items.length;
+  const progress = Math.round((doneCount / totalCount) * 100);
+
+  return (
+    <div className="db-card">
+      <div className="db-card-header px-5 py-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold text-[var(--db-text)] flex items-center gap-2">
+            <span style={{ color: config.color }}>{config.icon}</span>
+            {checklist.label}
+          </h3>
+          <span className="text-xs text-[var(--db-muted)]">
+            {doneCount}/{totalCount} ({progress}%)
+          </span>
+        </div>
+        <div className="mt-2 h-2 rounded-full bg-[var(--db-panel)] overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all"
+            style={{
+              width: `${progress}%`,
+              backgroundColor: config.color,
+            }}
+          />
+        </div>
+      </div>
+      <div className="p-5 space-y-2">
+        {checklist.items.map((item, idx) => (
+          <div
+            key={idx}
+            className="p-3 rounded-xl flex items-start gap-3"
+            style={{
+              background: item.done
+                ? 'rgba(124,255,138,0.08)'
+                : 'rgba(122, 162, 255, 0.05)',
+            }}
+          >
+            {item.done ? (
+              <CheckCircle2 className="w-5 h-5 text-[var(--db-ok)] mt-0.5 flex-shrink-0" />
+            ) : (
+              <div className="w-5 h-5 rounded-full border-2 border-[var(--db-muted)] mt-0.5 flex-shrink-0" />
+            )}
+            <div className="flex-1 min-w-0">
+              <span
+                className={`text-sm ${
+                  item.done ? 'text-[var(--db-muted)] line-through' : 'text-[var(--db-text)]'
+                }`}
+              >
+                {item.task}
+              </span>
+              {item.notes && (
+                <p className="text-xs text-[var(--db-muted)] mt-1">{item.notes}</p>
+              )}
+              {item.command && (
+                <div className="mt-2 p-2 rounded-lg bg-[rgba(0,0,0,0.2)] font-mono text-xs text-[var(--db-brand)] flex items-center gap-2">
+                  <Terminal className="w-3 h-3" />
+                  {item.command}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Operations Tab (운영)
+// ============================================================================
+
+function OperationsTab() {
+  const { operationsChecklists } = OPERATIONS_SYSTEM;
+  const [activeMilestone, setActiveMilestone] = useState<'1k' | '10k' | '100k'>('1k');
+
+  const milestoneLabels = {
+    '1k': '1,000명',
+    '10k': '10,000명',
+    '100k': '100,000명',
+  };
+
+  const filteredChecklists = operationsChecklists.filter(
+    (c) => c.milestone === activeMilestone
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="db-card">
+        <div className="db-card-header px-5 py-4">
+          <h3 className="text-lg font-semibold text-[var(--db-text)] flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-[var(--db-brand)]" />
+            운영 체크리스트
+          </h3>
+          <p className="text-sm text-[var(--db-muted)] mt-1">
+            사용자 수별 필수 작업 (DB 최적화, 데이터 수집, 비용 관리)
+          </p>
+        </div>
+      </div>
+
+      {/* Milestone Filter */}
+      <div className="flex gap-2">
+        {(['1k', '10k', '100k'] as const).map((milestone) => (
+          <button
+            key={milestone}
+            onClick={() => setActiveMilestone(milestone)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              activeMilestone === milestone
+                ? 'bg-[var(--db-brand)] text-[#081023]'
+                : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            {milestoneLabels[milestone]}
+          </button>
+        ))}
+      </div>
+
+      {/* Checklists */}
+      <div className="space-y-4">
+        {filteredChecklists.map((checklist) => (
+          <OperationsChecklistCard key={checklist.id} checklist={checklist} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function OperationsChecklistCard({ checklist }: { checklist: OperationsChecklist }) {
+  const doneCount = checklist.items.filter((i) => i.done).length;
+  const totalCount = checklist.items.length;
+  const progress = Math.round((doneCount / totalCount) * 100);
+
+  const priorityColors = {
+    critical: 'var(--db-danger)',
+    high: 'var(--db-warning)',
+    medium: 'var(--db-brand)',
+  };
+
+  return (
+    <div className="db-card">
+      <div className="db-card-header px-5 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-semibold text-[var(--db-text)]">
+              {checklist.label}
+            </h3>
+            <p className="text-xs text-[var(--db-muted)] mt-1">
+              ⚡ 트리거: {checklist.trigger}
+            </p>
+          </div>
+          <span className="text-xs text-[var(--db-muted)]">
+            {doneCount}/{totalCount} ({progress}%)
+          </span>
+        </div>
+        <div className="mt-2 h-2 rounded-full bg-[var(--db-panel)] overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all bg-[var(--db-brand)]"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+      <div className="p-5 space-y-2">
+        {checklist.items.map((item, idx) => (
+          <div
+            key={idx}
+            className="p-3 rounded-xl flex items-start gap-3"
+            style={{
+              background: item.done
+                ? 'rgba(124,255,138,0.08)'
+                : 'rgba(122, 162, 255, 0.05)',
+            }}
+          >
+            {item.done ? (
+              <CheckCircle2 className="w-5 h-5 text-[var(--db-ok)] mt-0.5 flex-shrink-0" />
+            ) : (
+              <div className="w-5 h-5 rounded-full border-2 border-[var(--db-muted)] mt-0.5 flex-shrink-0" />
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className={`text-sm ${
+                    item.done ? 'text-[var(--db-muted)] line-through' : 'text-[var(--db-text)]'
+                  }`}
+                >
+                  {item.task}
+                </span>
+                <span
+                  className="px-2 py-0.5 rounded-full text-xs font-medium"
+                  style={{
+                    background: `${priorityColors[item.priority]}20`,
+                    color: priorityColors[item.priority],
+                  }}
+                >
+                  {item.priority === 'critical' ? '필수' : item.priority === 'high' ? '높음' : '중간'}
+                </span>
+              </div>
+              {item.notes && (
+                <p className="text-xs text-[var(--db-muted)] mt-1">{item.notes}</p>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -466,6 +466,380 @@ export const LAUNCH_CHECKLISTS: LaunchChecklist[] = [
 ];
 
 // ============================================================================
+// 배포 체크리스트 (Deployment Checklist)
+// ============================================================================
+
+export interface DeploymentChecklist {
+  id: string;
+  category: 'env' | 'build' | 'deployment' | 'verification';
+  label: string;
+  items: {
+    task: string;
+    done: boolean;
+    notes?: string;
+    command?: string;
+  }[];
+}
+
+export const DEPLOYMENT_CHECKLISTS: DeploymentChecklist[] = [
+  {
+    id: 'env-variables',
+    category: 'env',
+    label: '환경변수 설정',
+    items: [
+      {
+        task: 'OPENAI_API_KEY 설정',
+        done: false,
+        notes: 'AI 리포트 생성용 (Stage 7)',
+      },
+      {
+        task: 'TURSO_DATABASE_URL 설정',
+        done: false,
+        notes: 'libsql://store-dayoumin.aws-ap-northeast-1.turso.io',
+      },
+      {
+        task: 'TURSO_AUTH_TOKEN 설정',
+        done: false,
+        notes: 'Turso 인증 토큰',
+      },
+      {
+        task: 'NEXT_PUBLIC_APP_URL 설정',
+        done: false,
+        notes: '공유 URL 생성용 (https://yourdomain.com)',
+      },
+    ],
+  },
+  {
+    id: 'api-timeout',
+    category: 'env',
+    label: 'API 타임아웃 설정',
+    items: [
+      {
+        task: 'OpenAI API 타임아웃 30초',
+        done: false,
+        notes: 'src/services/InsightService.ts 확인',
+      },
+      {
+        task: 'Turso DB 타임아웃 10초',
+        done: false,
+        notes: 'src/lib/turso.ts 확인',
+      },
+      {
+        task: 'API 에러 핸들링 확인',
+        done: false,
+        notes: '폴백 메커니즘 정상 작동 확인',
+      },
+    ],
+  },
+  {
+    id: 'build-verification',
+    category: 'build',
+    label: '빌드 검증',
+    items: [
+      {
+        task: 'npm run build 성공',
+        done: true,
+        command: 'npm run build',
+      },
+      {
+        task: 'npm start 프로덕션 모드 테스트',
+        done: false,
+        command: 'npm start',
+      },
+      {
+        task: '타입 에러 0개 확인',
+        done: true,
+        notes: 'TypeScript 빌드 통과',
+      },
+      {
+        task: '콘텐츠 검증 (439개 통과)',
+        done: true,
+        notes: 'Phase 1,2,3 완료',
+      },
+    ],
+  },
+  {
+    id: 'vercel-deployment',
+    category: 'deployment',
+    label: 'Vercel 배포',
+    items: [
+      {
+        task: 'Vercel 프로젝트 생성',
+        done: false,
+        notes: 'vercel.com에서 프로젝트 연결',
+      },
+      {
+        task: '환경변수 등록 (Production)',
+        done: false,
+        notes: 'OPENAI_API_KEY, TURSO_* 등록',
+      },
+      {
+        task: '도메인 연결',
+        done: false,
+        notes: '커스텀 도메인 설정 (선택)',
+      },
+      {
+        task: 'OG 이미지 확인',
+        done: false,
+        notes: 'SNS 공유 시 미리보기 이미지',
+      },
+      {
+        task: 'Analytics 활성화',
+        done: false,
+        notes: 'Vercel Analytics (무료)',
+      },
+    ],
+  },
+  {
+    id: 'post-deployment',
+    category: 'verification',
+    label: '배포 후 확인',
+    items: [
+      {
+        task: '메인 페이지 접속 확인',
+        done: false,
+        notes: '테스트 선택 → 진행 → 결과 화면',
+      },
+      {
+        task: 'AI 리포트 생성 확인',
+        done: false,
+        notes: 'Stage 7 AI 분석 정상 작동',
+      },
+      {
+        task: 'DB 저장 확인',
+        done: false,
+        notes: 'Turso DB에 결과 저장 확인',
+        command: 'npx turso db shell store-dayoumin',
+      },
+      {
+        task: '공유 기능 확인',
+        done: false,
+        notes: 'Instagram Story, 링크 공유',
+      },
+      {
+        task: '모바일 반응형 확인',
+        done: false,
+        notes: 'iPhone, Android 테스트',
+      },
+    ],
+  },
+];
+
+// ============================================================================
+// 운영 체크리스트 (Operations Checklist)
+// ============================================================================
+
+export interface OperationsChecklist {
+  id: string;
+  milestone: '1k' | '10k' | '100k'; // 사용자 마일스톤
+  label: string;
+  trigger: string;
+  items: {
+    task: string;
+    done: boolean;
+    notes?: string;
+    priority: 'critical' | 'high' | 'medium';
+  }[];
+}
+
+export const OPERATIONS_CHECKLISTS: OperationsChecklist[] = [
+  {
+    id: 'db-profiling-1k',
+    milestone: '1k',
+    label: 'DB 쿼리 프로파일링 (1000명 달성 시)',
+    trigger: '실사용자 1000명 이상',
+    items: [
+      {
+        task: 'Turso CLI로 쿼리 실행 시간 측정',
+        done: false,
+        notes: '.timer on → 쿼리 실행',
+        priority: 'critical',
+      },
+      {
+        task: 'GROUP BY 쿼리 응답 시간 기록',
+        done: false,
+        notes: 'SELECT result_name, COUNT(*) ... GROUP BY',
+        priority: 'critical',
+      },
+      {
+        task: '임계값 확인 (> 100ms?)',
+        done: false,
+        notes: '목표: < 100ms, 경고: > 200ms, 긴급: > 500ms',
+        priority: 'high',
+      },
+      {
+        task: '느린 쿼리 TOP 10 식별',
+        done: false,
+        notes: 'P95 기준 느린 쿼리 우선 최적화',
+        priority: 'medium',
+      },
+    ],
+  },
+  {
+    id: 'db-optimization-1k',
+    milestone: '1k',
+    label: 'DB 최적화 1단계 (응답 시간 > 100ms)',
+    trigger: '쿼리 응답 시간 > 100ms',
+    items: [
+      {
+        task: '복합 인덱스 추가 (type + result_name)',
+        done: false,
+        notes: 'CREATE INDEX idx_test_results_type_result',
+        priority: 'critical',
+      },
+      {
+        task: '복합 인덱스 추가 (device_id + created_at)',
+        done: false,
+        notes: 'CREATE INDEX idx_test_results_device_created',
+        priority: 'high',
+      },
+      {
+        task: '인덱스 적용 후 재측정',
+        done: false,
+        notes: '예상: 500ms → 50ms',
+        priority: 'critical',
+      },
+    ],
+  },
+  {
+    id: 'caching-200ms',
+    milestone: '1k',
+    label: 'DB 최적화 2단계 (응답 시간 > 200ms)',
+    trigger: '인덱스 후에도 응답 시간 > 200ms',
+    items: [
+      {
+        task: '결과 분포 캐싱 (10분)',
+        done: false,
+        notes: 'unstable_cache 적용',
+        priority: 'critical',
+      },
+      {
+        task: '내 결과 순위 SQL 계산 변경',
+        done: false,
+        notes: '클라이언트 계산 → 서버 SQL',
+        priority: 'high',
+      },
+      {
+        task: '캐싱 적용 후 재측정',
+        done: false,
+        notes: '예상: DB 부하 99% 감소',
+        priority: 'critical',
+      },
+    ],
+  },
+  {
+    id: 'data-collection-1k',
+    milestone: '1k',
+    label: '사용자 데이터 수집 (1000명)',
+    trigger: '실사용자 1000명 이상',
+    items: [
+      {
+        task: 'Google Analytics 또는 Vercel Analytics 확인',
+        done: false,
+        notes: '완료율, 공유율, 재방문율',
+        priority: 'high',
+      },
+      {
+        task: '인기 테스트 TOP 10 확인',
+        done: false,
+        notes: '어떤 테스트가 가장 많이 완료되었는지',
+        priority: 'medium',
+      },
+      {
+        task: '결과 분포 쏠림 확인',
+        done: false,
+        notes: '특정 결과 > 40% 편향 있는지',
+        priority: 'high',
+      },
+      {
+        task: 'A/B 테스트 설계 (결과 UI)',
+        done: false,
+        notes: '상세 분석 펼침 vs 접힘 비교',
+        priority: 'medium',
+      },
+    ],
+  },
+  {
+    id: 'aggregation-table-10k',
+    milestone: '10k',
+    label: 'DB 최적화 3단계 (10,000명)',
+    trigger: '실사용자 10,000명 이상',
+    items: [
+      {
+        task: '집계 테이블 생성 (test_results_summary)',
+        done: false,
+        notes: 'CREATE TABLE test_results_summary',
+        priority: 'critical',
+      },
+      {
+        task: '크론 작업 설정 (매시간 갱신)',
+        done: false,
+        notes: 'Vercel Cron 또는 별도 스케줄러',
+        priority: 'high',
+      },
+      {
+        task: '집계 테이블 적용 후 재측정',
+        done: false,
+        notes: '예상: 500ms → 10ms',
+        priority: 'critical',
+      },
+    ],
+  },
+  {
+    id: 'read-replica-100k',
+    milestone: '100k',
+    label: 'DB 최적화 4단계 (100,000명)',
+    trigger: '실사용자 100,000명 이상',
+    items: [
+      {
+        task: 'Turso Pro 플랜 업그레이드 ($25/월)',
+        done: false,
+        notes: '읽기 전용 복제본 설정',
+        priority: 'critical',
+      },
+      {
+        task: '읽기/쓰기 클라이언트 분리',
+        done: false,
+        notes: 'masterClient, replicaClient',
+        priority: 'critical',
+      },
+      {
+        task: '모니터링 대시보드 구축',
+        done: false,
+        notes: '쿼리 P50, P95, P99 추적',
+        priority: 'high',
+      },
+    ],
+  },
+  {
+    id: 'cost-monitoring',
+    milestone: '10k',
+    label: '비용 모니터링 (10,000명)',
+    trigger: '실사용자 10,000명 이상',
+    items: [
+      {
+        task: 'OpenAI API 월 사용량 확인',
+        done: false,
+        notes: '예상: $500/월',
+        priority: 'high',
+      },
+      {
+        task: 'AI 리포트 캐싱 검토',
+        done: false,
+        notes: '동일 결과 → 재사용 (비용 절감)',
+        priority: 'medium',
+      },
+      {
+        task: 'Vercel 대역폭 확인',
+        done: false,
+        notes: 'Pro 플랜 필요 여부',
+        priority: 'medium',
+      },
+    ],
+  },
+];
+
+// ============================================================================
 // 알파 테스트 가이드
 // ============================================================================
 
@@ -530,6 +904,8 @@ export const OPERATIONS_SYSTEM = {
   metrics: MONITORING_METRICS,
   incidents: INCIDENT_RESPONSES,
   checklists: LAUNCH_CHECKLISTS,
+  deploymentChecklists: DEPLOYMENT_CHECKLISTS,
+  operationsChecklists: OPERATIONS_CHECKLISTS,
   alphaGuide: ALPHA_TEST_GUIDE,
   currentStatus: CURRENT_OPS_STATUS,
 };
