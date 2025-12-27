@@ -5,7 +5,7 @@
 // InsightService, content-generator 스킬, 검증 스크립트 모두 이 파일을 참조합니다.
 
 // ============================================================================
-// 1. 성격 태그 (Personality Tags) - Big Five 기반
+// 1. 성격 태그 (Personality Tags) - Big Five 기반 (32개)
 // ============================================================================
 
 export const PERSONALITY_TAGS = [
@@ -13,49 +13,72 @@ export const PERSONALITY_TAGS = [
   'extroverted',    // 외향적 - 사람들과 어울리기 좋아함
   'introverted',    // 내향적 - 혼자 시간 선호
   'ambiverted',     // 양향적 - 상황에 따라 유연
+  'socially-confident', // 사교적으로 자신감 있는
+  'socially-anxious',   // 사회적으로 불안한
 
   // 정보 처리 (개방성)
   'logical',        // 논리적 - 분석적으로 판단
   'emotional',      // 감성적 - 감정/직관으로 판단
   'intuitive',      // 직관적 - 본능을 신뢰
   'analytical',     // 분석적 - 데이터 중시
+  'data-driven',    // 데이터 기반 - 객관적 지표 선호
+  'systematic',     // 체계적 사고 - 순서대로 처리
+  'holistic',       // 전체적 사고 - 큰 그림 봄
 
   // 행동 방식 (성실성)
   'planned',        // 계획적 - 미리 준비
   'spontaneous',    // 즉흥적 - 순간에 따라
   'flexible',       // 유연한 - 적응력 좋음
   'structured',     // 체계적 - 질서 중시
+  'organized',      // 정리정돈형 - 체계 중시
 
   // 관계 스타일 (친화성)
   'independent',    // 독립적 - 혼자서도 잘함
   'collaborative',  // 협력적 - 함께 해결
   'supportive',     // 지지적 - 상대를 먼저 배려
   'leading',        // 주도적 - 앞장서서 이끔
+  'empathetic',     // 공감적 - 상대 감정 잘 읽음
+  'nurturing',      // 돌봄형 - 보살핌 선호
 
   // 정서 안정성 (신경성)
   'resilient',      // 회복력 있는 - 스트레스에 강함
   'sensitive',      // 민감한 - 감정에 예민
+  'calm',           // 침착한 - 평정심 유지
+  'excitable',      // 흥분 잘하는 - 감정 변화 큼
 
   // 표현력
   'expressive',     // 표현적 - 감정/생각을 적극 표현
   'reserved',       // 절제된 - 감정 표현 조심스러움
+  'articulate',     // 명확한 표현 - 의사소통 능숙
+  'observant',      // 관찰형 - 듣고 보는 것 선호
+  'romantic',       // 낭만적 - 감성과 로맨스 중시
 ] as const;
 
 export type PersonalityTag = typeof PERSONALITY_TAGS[number];
 
 // ============================================================================
-// 2. 판단 태그 (Decision Tags) - 의사결정 스타일
+// 2. 판단 태그 (Decision Tags) - 의사결정 스타일 (23개)
 // ============================================================================
 
 export const DECISION_TAGS = [
   // 판단 기준
   'practical',      // 실용적 - 현실적 기준
   'sentimental',    // 감성적 - 감정 기반 (emotional과 구분)
+  'idealistic',     // 이상주의적 - 원칙/가치 중시
+  'pragmatic',      // 현실주의적 - 실제 작동 여부 중시
 
   // 위험 성향
   'adventurous',    // 모험적 - 새로운 시도 선호
   'safe',           // 안전 추구 - 검증된 것 선호
   'cautious',       // 신중한 - 충분히 고려 후 결정
+  'risk-taking',    // 위험 감수형 - 과감한 시도
+  'conservative',   // 보수적 - 안정 중시
+
+  // 의사결정 속도
+  'quick-decisive', // 빠른 결정 - 즉각 판단
+  'deliberate',     // 신중 숙고형 - 천천히 결정
+  'research-based', // 조사 후 결정 - 정보 수집 우선
+  'instinctive',    // 본능적 - 직감으로 즉시 결정
 
   // 사회성
   'solo',           // 혼자 지향 - 독립적 활동
@@ -64,16 +87,18 @@ export const DECISION_TAGS = [
   // 커뮤니케이션
   'direct',         // 직접적 - 솔직하게 말함
   'indirect',       // 간접적 - 돌려서 표현
+  'tactful',        // 재치있는 - 상황에 맞춰 표현
 
   // 시간 지향
   'present-focused', // 현재 중심 - 지금을 즐김
   'future-focused',  // 미래 중심 - 장기적 관점
+  'nostalgic',      // 과거 지향 - 추억 중시
 ] as const;
 
 export type DecisionTag = typeof DECISION_TAGS[number];
 
 // ============================================================================
-// 3. 관계 태그 (Relationship Tags) - TKI 갈등 모델 기반
+// 3. 관계 태그 (Relationship Tags) - TKI 갈등 모델 기반 (12개)
 // ============================================================================
 
 export const RELATIONSHIP_TAGS = [
@@ -100,7 +125,7 @@ export const RELATIONSHIP_TAGS = [
 export type RelationshipTag = typeof RELATIONSHIP_TAGS[number];
 
 // ============================================================================
-// 4. 관심사 태그 (Interest Tags) - Stage 4 관심사 지도
+// 4. 관심사 태그 (Interest Tags) - Stage 4 관심사 지도 (21개)
 // ============================================================================
 // 카테고리 기반 관심사 자동 추출
 
@@ -128,6 +153,7 @@ export const INTEREST_TAGS = [
   'interest-love',      // 연애
   'interest-lifestyle', // 라이프스타일
   'interest-money',     // 재테크/돈
+  'interest-travel',    // 여행
 
   // 운세/심리
   'interest-tarot',     // 타로
@@ -138,31 +164,44 @@ export const INTEREST_TAGS = [
 export type InterestTag = typeof INTEREST_TAGS[number];
 
 // ============================================================================
-// 5. 라이프스타일 태그 (Lifestyle Tags) - 생활 방식
+// 5. 라이프스타일 태그 (Lifestyle Tags) - 생활 방식 (18개)
 // ============================================================================
 
 export const LIFESTYLE_TAGS = [
   // 활동 수준
   'active',           // 활동적
   'homebody',         // 집순이/집돌이
+  'energetic',        // 활력 넘치는
+  'relaxed',          // 여유로운
 
   // 소비 성향
   'frugal',           // 절약형
   'splurger',         // 소비형
+  'minimalist',       // 미니멀리스트 - 최소한만
+  'collector',        // 수집가 - 모으는 것 좋아함
 
   // 시간 선호
   'morning-person',   // 아침형
   'night-owl',        // 저녁형
+  'routine-oriented', // 루틴 중시형
 
   // 취미 스타일
   'creative',         // 창작형
   'consuming',        // 소비형 (콘텐츠 즐기기)
+  'artistic',         // 예술적 - 미적 감각
+  'innovative',       // 혁신적 - 새로운 방식 시도
+  'traditional',      // 전통적 - 검증된 방식 선호
+
+  // 건강/웰빙
+  'health-conscious', // 건강 의식형
+  'wellness-focused', // 웰빙 추구형
+  'balanced-lifestyle', // 균형 잡힌 생활
 ] as const;
 
 export type LifestyleTag = typeof LIFESTYLE_TAGS[number];
 
 // ============================================================================
-// 통합 타입
+// 통합 타입 (총 106개 태그)
 // ============================================================================
 
 export type InsightTag =
@@ -205,6 +244,7 @@ export const CATEGORY_TO_INTEREST: Record<string, InterestTag> = {
   love: 'interest-love',
   lifestyle: 'interest-lifestyle',
   money: 'interest-money',
+  travel: 'interest-travel',
 
   // 운세
   tarot: 'interest-tarot',

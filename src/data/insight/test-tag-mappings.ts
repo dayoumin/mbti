@@ -4,7 +4,7 @@
 // 각 테스트의 차원 점수를 인사이트 태그로 변환
 // Stage 1, 2에서 사용
 
-import type { PersonalityTag, DecisionTag, RelationshipTag } from './insight-tags';
+import type { PersonalityTag, DecisionTag, RelationshipTag, InterestTag, LifestyleTag } from './insight-tags';
 
 // ============================================================================
 // 타입 정의
@@ -13,9 +13,9 @@ import type { PersonalityTag, DecisionTag, RelationshipTag } from './insight-tag
 /** 차원별 태그 매핑 */
 export interface DimensionTagMapping {
   /** HIGH 레벨 (60% 이상)일 때 적용되는 태그 */
-  high: (PersonalityTag | DecisionTag | RelationshipTag)[];
+  high: (PersonalityTag | DecisionTag | RelationshipTag | InterestTag | LifestyleTag)[];
   /** LOW 레벨 (40% 미만)일 때 적용되는 태그 */
-  low: (PersonalityTag | DecisionTag | RelationshipTag)[];
+  low: (PersonalityTag | DecisionTag | RelationshipTag | InterestTag | LifestyleTag)[];
 }
 
 /** 테스트별 태그 매핑 설정 */
@@ -40,24 +40,24 @@ export const HUMAN_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     inssa: {
-      high: ['extroverted', 'leading', 'together'],
-      low: ['introverted', 'independent', 'solo'],
+      high: ['extroverted', 'leading', 'together', 'socially-confident', 'expressive'],
+      low: ['introverted', 'independent', 'solo', 'reserved', 'observant'],
     },
     adventure: {
-      high: ['intuitive', 'spontaneous', 'adventurous'],
-      low: ['analytical', 'structured', 'safe'],
+      high: ['intuitive', 'spontaneous', 'adventurous', 'risk-taking', 'instinctive'],
+      low: ['analytical', 'structured', 'safe', 'deliberate', 'conservative'],
     },
     empathy: {
-      high: ['emotional', 'supportive', 'other-first'],
-      low: ['logical', 'self-first'],
+      high: ['emotional', 'supportive', 'other-first', 'empathetic', 'nurturing'],
+      low: ['logical', 'self-first', 'pragmatic', 'data-driven'],
     },
     plan: {
-      high: ['planned', 'structured', 'practical'],
-      low: ['spontaneous', 'flexible'],
+      high: ['planned', 'structured', 'practical', 'organized', 'systematic'],
+      low: ['spontaneous', 'flexible', 'holistic'],
     },
     mental: {
-      high: ['resilient'],
-      low: ['sensitive'],
+      high: ['resilient', 'calm'],
+      low: ['sensitive', 'excitable'],
     },
   },
 };
@@ -72,24 +72,24 @@ export const CAT_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     curious: {
-      high: ['intuitive', 'adventurous'],
-      low: ['analytical', 'safe'],
+      high: ['intuitive', 'adventurous', 'innovative'],
+      low: ['analytical', 'safe', 'conservative'],
     },
     alert: {
-      high: ['sensitive', 'analytical'],
-      low: ['resilient', 'flexible'],
+      high: ['sensitive', 'analytical', 'excitable', 'observant'],
+      low: ['resilient', 'flexible', 'calm'],
     },
     boss: {
-      high: ['leading', 'independent', 'competing'],
-      low: ['collaborative', 'accommodating'],
+      high: ['leading', 'independent', 'competing', 'assertive'],
+      low: ['collaborative', 'accommodating', 'diplomatic'],
     },
     random: {
-      high: ['spontaneous', 'intuitive'],
-      low: ['planned', 'structured'],
+      high: ['spontaneous', 'intuitive', 'instinctive'],
+      low: ['planned', 'structured', 'organized'],
     },
     cute: {
-      high: ['expressive', 'collaborative'],
-      low: ['reserved', 'independent'],
+      high: ['expressive', 'collaborative', 'empathetic', 'nurturing'],
+      low: ['reserved', 'independent', 'space-needing'],
     },
   },
 };
@@ -104,27 +104,27 @@ export const DOG_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     energy: {
-      high: ['extroverted', 'adventurous'],
-      low: ['introverted', 'safe'],
+      high: ['extroverted', 'adventurous', 'energetic', 'active'],
+      low: ['introverted', 'safe', 'relaxed', 'homebody'],
     },
     humanLove: {
-      high: ['expressive', 'close-bonding', 'other-first'],
-      low: ['reserved', 'space-needing'],
+      high: ['expressive', 'close-bonding', 'other-first', 'empathetic', 'nurturing'],
+      low: ['reserved', 'space-needing', 'independent'],
     },
     dogFriend: {
-      high: ['collaborative', 'together'],
-      low: ['independent', 'solo'],
+      high: ['collaborative', 'together', 'socially-confident'],
+      low: ['independent', 'solo', 'socially-anxious'],
     },
     focus: {
-      high: ['planned', 'structured', 'analytical'],
-      low: ['spontaneous', 'flexible'],
+      high: ['planned', 'structured', 'analytical', 'organized', 'systematic'],
+      low: ['spontaneous', 'flexible', 'instinctive'],
     },
     brave: {
-      high: ['resilient', 'adventurous', 'competing'],
-      low: ['sensitive', 'avoiding'],
+      high: ['resilient', 'adventurous', 'competing', 'risk-taking'],
+      low: ['sensitive', 'avoiding', 'cautious'],
     },
     persist: {
-      high: ['structured', 'practical'],
+      high: ['structured', 'practical', 'routine-oriented'],
       low: ['flexible', 'spontaneous'],
     },
   },
@@ -140,24 +140,24 @@ export const IDEALTYPE_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: true,
   dimensions: {
     passion: {
-      high: ['expressive', 'emotional', 'sentimental'],
-      low: ['reserved', 'practical'],
+      high: ['expressive', 'emotional', 'sentimental', 'romantic'],
+      low: ['reserved', 'practical', 'pragmatic'],
     },
     commit: {
-      high: ['structured', 'planned', 'future-focused'],
-      low: ['spontaneous', 'present-focused'],
+      high: ['structured', 'planned', 'future-focused', 'organized'],
+      low: ['spontaneous', 'present-focused', 'flexible'],
     },
     close: {
-      high: ['close-bonding', 'together', 'expressive'],
-      low: ['space-needing', 'independent'],
+      high: ['close-bonding', 'together', 'expressive', 'empathetic'],
+      low: ['space-needing', 'independent', 'reserved'],
     },
     express: {
-      high: ['expressive', 'direct'],
-      low: ['reserved', 'indirect'],
+      high: ['expressive', 'direct', 'articulate'],
+      low: ['reserved', 'indirect', 'tactful'],
     },
     active: {
-      high: ['extroverted', 'adventurous', 'together'],
-      low: ['introverted', 'solo'],
+      high: ['extroverted', 'adventurous', 'together', 'active'],
+      low: ['introverted', 'solo', 'homebody'],
     },
   },
 };
@@ -172,27 +172,27 @@ export const CONFLICTSTYLE_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: true,
   dimensions: {
     assert: {
-      high: ['competing', 'direct', 'leading'],
-      low: ['accommodating', 'indirect'],
+      high: ['competing', 'direct', 'leading', 'assertive'],
+      low: ['accommodating', 'indirect', 'diplomatic'],
     },
     engage: {
-      high: ['collaborating', 'direct'],
-      low: ['avoiding', 'reserved'],
+      high: ['collaborating', 'direct', 'articulate'],
+      low: ['avoiding', 'reserved', 'cautious'],
     },
     repair: {
-      high: ['collaborating', 'compromising'],
+      high: ['collaborating', 'compromising', 'empathetic'],
       low: ['competing', 'avoiding'],
     },
     empathy: {
-      high: ['other-first', 'accommodating', 'supportive'],
-      low: ['self-first', 'competing'],
+      high: ['other-first', 'accommodating', 'supportive', 'empathetic', 'nurturing'],
+      low: ['self-first', 'competing', 'pragmatic'],
     },
     express: {
-      high: ['expressive', 'direct'],
-      low: ['reserved', 'indirect'],
+      high: ['expressive', 'direct', 'articulate'],
+      low: ['reserved', 'indirect', 'tactful'],
     },
     support: {
-      high: ['supportive', 'collaborative', 'other-first'],
+      high: ['supportive', 'collaborative', 'other-first', 'nurturing'],
       low: ['independent', 'self-first'],
     },
   },
@@ -208,24 +208,24 @@ export const COFFEE_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     bitter: {
-      high: ['practical', 'resilient'],
-      low: ['sentimental', 'sensitive'],
+      high: ['practical', 'resilient', 'pragmatic'],
+      low: ['sentimental', 'sensitive', 'emotional'],
     },
     sweet: {
-      high: ['sentimental', 'emotional'],
-      low: ['practical', 'logical'],
+      high: ['sentimental', 'emotional', 'romantic'],
+      low: ['practical', 'logical', 'data-driven'],
     },
     caffeine: {
-      high: ['extroverted', 'adventurous'],
-      low: ['introverted', 'safe'],
+      high: ['extroverted', 'adventurous', 'energetic'],
+      low: ['introverted', 'safe', 'relaxed'],
     },
     temperature: {
-      high: ['structured'], // 뜨거운 것 선호 = 전통적
-      low: ['flexible'],    // 차가운 것 선호 = 현대적
+      high: ['structured', 'traditional'], // 뜨거운 것 선호 = 전통적
+      low: ['flexible', 'innovative'],    // 차가운 것 선호 = 현대적
     },
     mood: {
-      high: ['emotional', 'sentimental'],
-      low: ['practical', 'logical'],
+      high: ['emotional', 'sentimental', 'intuitive'],
+      low: ['practical', 'logical', 'analytical'],
     },
   },
 };
@@ -240,24 +240,24 @@ export const PLANT_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     care: {
-      high: ['planned', 'structured', 'supportive'],
+      high: ['planned', 'structured', 'supportive', 'organized', 'routine-oriented'],
       low: ['spontaneous', 'flexible'],
     },
     light: {
-      high: ['extroverted'],
-      low: ['introverted'],
+      high: ['extroverted', 'energetic'],
+      low: ['introverted', 'relaxed'],
     },
     water: {
-      high: ['supportive', 'other-first'],
-      low: ['independent'],
+      high: ['supportive', 'other-first', 'nurturing'],
+      low: ['independent', 'self-first'],
     },
     space: {
-      high: ['adventurous'],
-      low: ['safe'],
+      high: ['adventurous', 'innovative'],
+      low: ['safe', 'conservative'],
     },
     style: {
-      high: ['sentimental', 'intuitive'],
-      low: ['practical', 'analytical'],
+      high: ['sentimental', 'intuitive', 'artistic'],
+      low: ['practical', 'analytical', 'data-driven'],
     },
   },
 };
@@ -272,24 +272,24 @@ export const PETMATCH_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     lifestyle: {
-      high: ['extroverted', 'adventurous', 'together'],
-      low: ['introverted', 'safe', 'solo'],
+      high: ['extroverted', 'adventurous', 'together', 'active', 'energetic'],
+      low: ['introverted', 'safe', 'solo', 'homebody', 'relaxed'],
     },
     space: {
-      high: ['flexible'],
-      low: ['structured'],
+      high: ['flexible', 'innovative'],
+      low: ['structured', 'organized'],
     },
     time: {
-      high: ['supportive', 'other-first'],
-      low: ['independent'],
+      high: ['supportive', 'other-first', 'nurturing'],
+      low: ['independent', 'self-first'],
     },
     experience: {
-      high: ['analytical', 'structured'],
-      low: ['intuitive', 'spontaneous'],
+      high: ['analytical', 'structured', 'data-driven', 'systematic'],
+      low: ['intuitive', 'spontaneous', 'instinctive'],
     },
     interaction: {
-      high: ['expressive', 'close-bonding'],
-      low: ['reserved', 'space-needing'],
+      high: ['expressive', 'close-bonding', 'empathetic'],
+      low: ['reserved', 'space-needing', 'independent'],
     },
   },
 };
@@ -304,24 +304,24 @@ export const RABBIT_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     curious: {
-      high: ['intuitive', 'adventurous'],
-      low: ['analytical', 'safe'],
+      high: ['intuitive', 'adventurous', 'innovative'],
+      low: ['analytical', 'safe', 'cautious'],
     },
     social: {
-      high: ['extroverted', 'together', 'collaborative'],
-      low: ['introverted', 'solo', 'independent'],
+      high: ['extroverted', 'together', 'collaborative', 'socially-confident'],
+      low: ['introverted', 'solo', 'independent', 'socially-anxious'],
     },
     active: {
-      high: ['extroverted', 'spontaneous'],
-      low: ['introverted', 'structured'],
+      high: ['extroverted', 'spontaneous', 'energetic'],
+      low: ['introverted', 'structured', 'relaxed'],
     },
     brave: {
-      high: ['resilient', 'adventurous'],
-      low: ['sensitive', 'safe'],
+      high: ['resilient', 'adventurous', 'risk-taking'],
+      low: ['sensitive', 'safe', 'cautious'],
     },
     chill: {
-      high: ['flexible', 'resilient'],
-      low: ['structured', 'sensitive'],
+      high: ['flexible', 'resilient', 'calm'],
+      low: ['structured', 'sensitive', 'excitable'],
     },
   },
 };
@@ -336,24 +336,24 @@ export const HAMSTER_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: false,
   dimensions: {
     curious: {
-      high: ['intuitive', 'adventurous'],
-      low: ['analytical', 'safe'],
+      high: ['intuitive', 'adventurous', 'innovative'],
+      low: ['analytical', 'safe', 'conservative'],
     },
     hoard: {
-      high: ['planned', 'practical', 'future-focused'],
-      low: ['spontaneous', 'present-focused'],
+      high: ['planned', 'practical', 'future-focused', 'organized', 'collector'],
+      low: ['spontaneous', 'present-focused', 'minimalist'],
     },
     active: {
-      high: ['extroverted', 'adventurous'],
-      low: ['introverted', 'safe'],
+      high: ['extroverted', 'adventurous', 'energetic'],
+      low: ['introverted', 'safe', 'relaxed'],
     },
     tame: {
-      high: ['collaborative', 'supportive'],
-      low: ['independent'],
+      high: ['collaborative', 'supportive', 'empathetic'],
+      low: ['independent', 'self-first'],
     },
     nocturnal: {
-      high: ['flexible', 'spontaneous'],
-      low: ['structured', 'planned'],
+      high: ['flexible', 'spontaneous', 'night-owl'],
+      low: ['structured', 'planned', 'morning-person'],
     },
   },
 };
@@ -368,12 +368,12 @@ export const ATTACHMENT_TAG_MAPPING: TestTagMapping = {
   countsAsRelationship: true,
   dimensions: {
     anxiety: {
-      high: ['sensitive', 'emotional', 'close-bonding', 'other-first'],
-      low: ['resilient', 'independent', 'space-needing'],
+      high: ['sensitive', 'emotional', 'close-bonding', 'other-first', 'empathetic', 'excitable'],
+      low: ['resilient', 'independent', 'space-needing', 'calm'],
     },
     avoidance: {
-      high: ['space-needing', 'independent', 'reserved', 'avoiding'],
-      low: ['close-bonding', 'expressive', 'collaborative', 'supportive'],
+      high: ['space-needing', 'independent', 'reserved', 'avoiding', 'self-first'],
+      low: ['close-bonding', 'expressive', 'collaborative', 'supportive', 'nurturing'],
     },
   },
 };

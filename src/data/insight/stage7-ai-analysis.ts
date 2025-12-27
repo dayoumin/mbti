@@ -854,3 +854,240 @@ function getTraitDescriptionFromTag(tag: string): string {
 
   return descriptions[tag] || '독특한 개성을 가지고 있어요.';
 }
+
+// ============================================================================
+// AI 리포트 생성 (OpenAI API 통합)
+// ============================================================================
+
+/**
+ * OpenAI API를 사용한 실제 AI 리포트 생성
+ * 폴백: API 키 없거나 에러 시 generateFallbackReport 사용
+ *
+ * NOTE: 서버에서만 호출해야 함 (API 키 보안)
+ */
+export async function generateAIReport(input: AIAnalysisInput): Promise<AIAnalysisResult> {
+  const apiKey = process.env.OPENAI_API_KEY; // NEXT_PUBLIC_ 제거 (서버 전용)
+
+  // API 키 없으면 폴백 리포트 반환
+  if (!apiKey) {
+    console.warn('[Stage 7] OpenAI API 키가 없습니다. 폴백 리포트를 사용합니다.');
+    return generateFallbackReport(input);
+  }
+
+  try {
+    // 프롬프트 생성
+    const prompt = buildAIPrompt(input);
+
+    // OpenAI API 호출
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini', // 비용 효율적인 모델
+        messages: [
+          {
+            role: 'system',
+            content: `당신은 심리 분석 전문가입니다. 사용자의 테스트 결과를 바탕으로 긍정적이고 통찰력 있는 성격 리포트를 작성합니다.
+
+**핵심 원칙**:
+1. 긍정적 프레이밍: 모든 특성을 강점으로 해석
+2. 구체적 예시: 추상적 표현 대신 구체적 상황 제시
+3. 균형: 강점과 성장 포인트 모두 다룸
+4. 실용성: 실제 삶에 적용 가능한 조언
+
+JSON 형식으로 응답하세요.`,
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 2000,
+        response_format: { type: 'json_object' },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API 오류: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+
+    if (!content) {
+      throw new Error('OpenAI 응답이 비어있습니다');
+    }
+
+    // JSON 파싱
+    const aiResult = JSON.parse(content);
+
+    // 구조 검증 후 반환
+    return validateAndFormatAIResult(aiResult, input);
+  } catch (error) {
+    console.error('[Stage 7] AI 리포트 생성 실패:', error);
+    // 에러 시 폴백 리포트 사용
+    return generateFallbackReport(input);
+  }
+}
+
+/**
+ * AI 프롬프트 생성
+ */
+function buildAIPrompt(input: AIAnalysisInput): string {
+  const { activitySummary, insights, tagDistribution } = input;
+
+  // 상위 태그 추출
+  const topTags = tagDistribution.slice(0, 10).map(t => `${t.tag} (${t.percentage}%)`).join(', ');
+
+  // Stage별 요약
+  const stagesSummary = [
+    insights.stage1 && `Stage 1: ${insights.stage1.testCount}개 테스트, 주요 태그: ${insights.stage1.dominantTags.join(', ')}`,
+    insights.stage2 && `Stage 2: ${insights.stage2.matchedRulesCount}개 규칙 매칭`,
+    insights.stage3 && `Stage 3: ${insights.stage3.profileName}`,
+    insights.stage4 && `Stage 4: ${insights.stage4.profileName}, 관심사: ${insights.stage4.topInterests.map(i => i.category).join(', ')}`,
+    insights.stage5 && `Stage 5: 관계 패턴 - ${insights.stage5.conflictStyle}`,
+    insights.stage6 && `Stage 6: 일관성 ${insights.stage6.consistencyScore}점`,
+  ].filter(Boolean).join('\n');
+
+  return `사용자 활동 데이터를 바탕으로 성격 리포트를 작성해주세요.
+
+**활동 요약**:
+- 총 테스트: ${activitySummary.totalTests}개
+- 총 퀴즈: ${activitySummary.totalQuizzes}개
+- 총 투표: ${activitySummary.totalPolls}개
+- 활동 일수: ${activitySummary.activeDays}일
+
+**주요 성향 태그**:
+${topTags}
+
+**단계별 분석**:
+${stagesSummary}
+
+다음 JSON 구조로 응답하세요:
+{
+  "coreIdentity": "핵심 정체성 (한 문장)",
+  "keyTraits": [
+    {
+      "trait": "특성 이름",
+      "emoji": "이모지",
+      "description": "설명 (구체적 예시 포함)",
+      "strength": "very-strong" | "strong" | "moderate"
+    }
+  ],
+  "strengths": [
+    {
+      "title": "강점 제목",
+      "description": "설명",
+      "examples": ["예시1", "예시2"]
+    }
+  ],
+  "growthAreas": [
+    {
+      "title": "성장 포인트 제목",
+      "description": "설명",
+      "tips": ["팁1", "팁2"]
+    }
+  ],
+  "relationshipStyle": {
+    "summary": "관계 스타일 요약",
+    "compatibleTypes": ["잘 맞는 유형"],
+    "challengingTypes": ["신경 쓸 유형"],
+    "advice": "관계 조언"
+  },
+  "hiddenPotential": {
+    "title": "숨겨진 가능성 제목",
+    "description": "설명",
+    "howToUnlock": "발휘 방법"
+  },
+  "personalizedAdvice": [
+    {
+      "context": "상황",
+      "advice": "조언"
+    }
+  ]
+}`;
+}
+
+/**
+ * 활동 데이터 기반 신뢰도 계산
+ */
+function calculateConfidenceLevel(input: AIAnalysisInput): 'high' | 'medium' | 'low' {
+  const total = input.activitySummary.totalActivities;
+  if (total >= 30) return 'high';
+  if (total >= 10) return 'medium';
+  return 'low';
+}
+
+/**
+ * AI 응답 검증 및 포맷팅
+ */
+function validateAndFormatAIResult(
+  aiResult: any,
+  fallbackInput: AIAnalysisInput
+): AIAnalysisResult {
+  // 필수 필드 확인
+  const hasRequiredFields =
+    aiResult.coreIdentity &&
+    Array.isArray(aiResult.keyTraits) &&
+    Array.isArray(aiResult.strengths) &&
+    Array.isArray(aiResult.growthAreas) &&
+    aiResult.relationshipStyle &&
+    aiResult.hiddenPotential &&
+    Array.isArray(aiResult.personalizedAdvice);
+
+  if (!hasRequiredFields) {
+    console.warn('[Stage 7] AI 응답 구조가 올바르지 않습니다. 폴백 사용.');
+    return generateFallbackReport(fallbackInput);
+  }
+
+  // 타입 안전하게 반환
+  return {
+    coreIdentity: String(aiResult.coreIdentity),
+    keyTraits: aiResult.keyTraits.slice(0, 5).map((t: any) => ({
+      trait: String(t.trait || ''),
+      emoji: String(t.emoji || '✨'),
+      description: String(t.description || ''),
+      strength: ['very-strong', 'strong', 'moderate'].includes(t.strength)
+        ? t.strength
+        : 'moderate',
+    })),
+    strengths: aiResult.strengths.slice(0, 3).map((s: any) => ({
+      title: String(s.title || ''),
+      description: String(s.description || ''),
+      examples: Array.isArray(s.examples) ? s.examples.map(String) : [],
+    })),
+    growthAreas: aiResult.growthAreas.slice(0, 2).map((g: any) => ({
+      title: String(g.title || ''),
+      description: String(g.description || ''),
+      tips: Array.isArray(g.tips) ? g.tips.map(String) : [],
+    })),
+    relationshipStyle: {
+      summary: String(aiResult.relationshipStyle?.summary || ''),
+      compatibleTypes: Array.isArray(aiResult.relationshipStyle?.compatibleTypes)
+        ? aiResult.relationshipStyle.compatibleTypes.map(String)
+        : [],
+      challengingTypes: Array.isArray(aiResult.relationshipStyle?.challengingTypes)
+        ? aiResult.relationshipStyle.challengingTypes.map(String)
+        : [],
+      advice: String(aiResult.relationshipStyle?.advice || ''),
+    },
+    hiddenPotential: {
+      title: String(aiResult.hiddenPotential?.title || ''),
+      description: String(aiResult.hiddenPotential?.description || ''),
+      howToUnlock: String(aiResult.hiddenPotential?.howToUnlock || ''),
+    },
+    personalizedAdvice: aiResult.personalizedAdvice.slice(0, 3).map((a: any) => ({
+      context: String(a.context || ''),
+      advice: String(a.advice || ''),
+    })),
+    meta: {
+      generatedAt: new Date().toISOString(),
+      dataPoints: fallbackInput.activitySummary.totalActivities,
+      confidenceLevel: calculateConfidenceLevel(fallbackInput),
+    },
+  };
+}
