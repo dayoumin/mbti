@@ -248,8 +248,8 @@ class InsightServiceClass {
       // 현재 localStorage stats
       const currentStats = this.getActivityStats();
 
-      // Turso 기반 실제 카운트 계산
-      const actualTestCount = results.filter(r => r.testType).length;
+      // Turso 기반 실제 카운트 계산 (빈 문자열 제외)
+      const actualTestCount = results.filter(r => r.testType && r.testType.trim()).length;
 
       // testCount 불일치 감지
       if (currentStats.testCount !== actualTestCount) {
@@ -856,14 +856,17 @@ class InsightServiceClass {
     // Turso에서 실제 결과 조회
     const testResults = await resultService.getMyResults();
 
+    // testType 필터링 (syncStatsFromTurso()와 동일한 기준 적용)
+    const validTestResults = testResults.filter(r => r.testType && r.testType.trim());
+
     // 실제 테스트 결과가 없으면 null
-    if (testResults.length === 0) {
+    if (validTestResults.length === 0) {
       return null;
     }
 
     const testTagCounts: Record<string, number> = {};
 
-    for (const result of testResults) {
+    for (const result of validTestResults) {
       if (result.scores && result.testType) {
         const testData = CHEMI_DATA[result.testType as keyof typeof CHEMI_DATA];
         if (testData) {
@@ -890,7 +893,7 @@ class InsightServiceClass {
       .map(([tag]) => tag);
 
     return {
-      testCount: testResults.length, // 실제 Turso 결과 개수 사용
+      testCount: validTestResults.length, // 필터링된 결과 개수 사용 (syncStatsFromTurso()와 일치)
       dominantTags: testDominantTags.length > 0
         ? testDominantTags
         : this.buildTagDistribution().slice(0, 3).map(t => t.tag),

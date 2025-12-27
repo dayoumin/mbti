@@ -4,6 +4,8 @@
  * InsightService 등 window 객체 의존성이 있는 싱글톤 서비스를 위한 설정
  */
 
+import '@testing-library/jest-dom';
+
 // localStorage mock (jsdom 기본 제공하지만 명시적으로 설정)
 const localStorageMock = {
   store: {} as Record<string, string>,

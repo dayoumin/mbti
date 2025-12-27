@@ -99,12 +99,32 @@ function getFromLocalStorage(key: string, userId: string): TestResultData[] {
 class ResultServiceClass {
   private RESULTS_KEY = STORAGE_KEYS.TEST_RESULTS;
 
+  // 메모리 캐시 (30초 TTL)
+  private resultsCache: {
+    data: TestResultCamel[] | null;
+    timestamp: number;
+  } = {
+    data: null,
+    timestamp: 0,
+  };
+  private readonly CACHE_TTL_MS = 30 * 1000; // 30초
+
+  // 진행 중인 요청 추적 (동시 호출 중복 방지)
+  private inflightRequest: Promise<TestResultCamel[]> | null = null;
+
+  // 현재 사용자 추적 (사용자 변경 감지용)
+  private currentUserId: string | null = null;
+
   getUserId(): string {
     return getDeviceId();
   }
 
   setUserId(userId: string): void {
     storage.set(USER_KEY, userId);
+    // 사용자 전환 시 캐시 및 진행 중인 요청 무효화 (다른 사용자 데이터 노출 방지)
+    this.invalidateCache();
+    this.inflightRequest = null;
+    this.currentUserId = userId;
   }
 
   async saveResult(
@@ -155,7 +175,10 @@ class ResultServiceClass {
 
     saveToLocalStorage(this.RESULTS_KEY, localData);
 
-    // 3. 이벤트 발생
+    // 3. 캐시 무효화 (새 결과 추가됨)
+    this.invalidateCache();
+
+    // 4. 이벤트 발생
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('chemi:resultSaved', { detail: localData }));
     }
@@ -170,6 +193,40 @@ class ResultServiceClass {
   async getMyResults(): Promise<TestResultCamel[]> {
     const userId = this.getUserId();
 
+    // 0. 사용자 변경 감지 (localStorage 직접 조작 등에 대비)
+    if (this.currentUserId !== null && this.currentUserId !== userId) {
+      this.invalidateCache();
+      this.inflightRequest = null;
+    }
+    this.currentUserId = userId;
+
+    // 1. 캐시 확인 (30초 이내)
+    const now = Date.now();
+    if (this.resultsCache.data && (now - this.resultsCache.timestamp) < this.CACHE_TTL_MS) {
+      return this.resultsCache.data;
+    }
+
+    // 2. 진행 중인 요청이 있으면 재사용 (동시 호출 중복 방지)
+    if (this.inflightRequest) {
+      return this.inflightRequest;
+    }
+
+    // 3. 새 요청 시작
+    this.inflightRequest = this.fetchAndCacheResults(userId);
+
+    try {
+      const results = await this.inflightRequest;
+      return results;
+    } finally {
+      // 요청 완료 후 inflight 상태 해제
+      this.inflightRequest = null;
+    }
+  }
+
+  /**
+   * 실제 데이터 조회 및 캐싱 로직
+   */
+  private async fetchAndCacheResults(userId: string): Promise<TestResultCamel[]> {
     // 1. Turso에서 조회
     let tursoResults: TestResultCamel[] = [];
     try {
@@ -232,7 +289,25 @@ class ResultServiceClass {
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
+    // 5. 캐시 업데이트 (사용자 변경 감지 - 다른 사용자 데이터로 캐시 오염 방지)
+    if (userId === this.getUserId()) {
+      this.resultsCache = {
+        data: merged,
+        timestamp: Date.now(),
+      };
+    }
+
     return merged;
+  }
+
+  /**
+   * 캐시 무효화 (새 결과 저장 시 호출)
+   */
+  private invalidateCache(): void {
+    this.resultsCache = {
+      data: null,
+      timestamp: 0,
+    };
   }
 
   async getResultsByType(testType: string): Promise<TestResultCamel[]> {
