@@ -368,6 +368,8 @@ export default function Sidebar({
               sessionStorage.setItem(cacheKey, JSON.stringify(popularTestOrder));
               sessionStorage.setItem(`${cacheKey}_expiry`, String(now + 5 * 60 * 1000));
             }
+          } else {
+            console.warn(`Popular tests API returned ${res.status}: ${res.statusText}`);
           }
         }
 
