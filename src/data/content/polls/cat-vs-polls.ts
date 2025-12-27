@@ -16,6 +16,7 @@ export const CAT_VS_POLLS: VSPoll[] = [
       insightTags: {
         personality: ['excitable', 'expressive'],
         decision: ['adventurous'],
+        relationship: ['close-bonding'],
         interest: ['interest-cat', 'interest-pet'],
         lifestyle: ['active', 'energetic'],
       },
@@ -27,6 +28,7 @@ export const CAT_VS_POLLS: VSPoll[] = [
       insightTags: {
         personality: ['calm', 'reserved'],
         decision: ['safe'],
+        relationship: ['space-needing'],
         interest: ['interest-cat', 'interest-pet'],
         lifestyle: ['relaxed', 'homebody'],
       },
@@ -74,6 +76,7 @@ export const CAT_VS_POLLS: VSPoll[] = [
       insightTags: {
         personality: ['structured', 'planned'],
         decision: ['deliberate'],
+        relationship: ['diplomatic'],
         interest: ['interest-cat', 'interest-pet'],
         lifestyle: ['routine-oriented'],
       },
@@ -85,6 +88,7 @@ export const CAT_VS_POLLS: VSPoll[] = [
       insightTags: {
         personality: ['spontaneous', 'flexible'],
         decision: ['instinctive'],
+        relationship: ['accommodating'],
         interest: ['interest-cat', 'interest-pet'],
         lifestyle: ['relaxed'],
       },
@@ -132,6 +136,7 @@ export const CAT_VS_POLLS: VSPoll[] = [
       insightTags: {
         personality: ['logical', 'analytical'],
         decision: ['safe', 'pragmatic', 'practical'],
+        relationship: ['self-first'],
         interest: ['interest-cat', 'interest-pet'],
         lifestyle: ['frugal'],
       },
@@ -141,8 +146,9 @@ export const CAT_VS_POLLS: VSPoll[] = [
       text: '순종 (페르시안, 러시안블루 등)',
       emoji: '👑',
       insightTags: {
-        personality: ['expressive'],
+        personality: ['expressive', 'excitable'],
         decision: ['idealistic'],
+        relationship: ['other-first'],
         interest: ['interest-cat', 'interest-pet'],
         lifestyle: ['collector', 'splurger'],
       },
