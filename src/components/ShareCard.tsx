@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Download, Share2, Copy, Check, X, Users, MessageCircle } from 'lucide-react';
 import { kakaoShareService } from '@/services/KakaoShareService';
 import { generateShareUrl, type SharePlatform } from '@/utils';
@@ -210,7 +210,9 @@ export default function ShareCard({
 
   // UTM이 적용된 공유 URL 생성
   const getShareUrl = (platform: SharePlatform): string => {
-    const baseUrl = `${window.location.origin}?test=${encodeURIComponent(testTitle)}`;
+    // testKey 우선 사용 (URL-safe), 없으면 testTitle 사용
+    const urlTestParam = testKey || encodeURIComponent(testTitle);
+    const baseUrl = `${window.location.origin}?test=${urlTestParam}`;
     return generateShareUrl(baseUrl, platform, 'test-result', testKey || testTitle);
   };
 
@@ -268,13 +270,13 @@ export default function ShareCard({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-slide-up">
+      <div className="bg-slate-50 rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-slide-up">
         {/* 헤더 */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-100">
-          <h3 className="font-bold text-slate-800">결과 공유하기</h3>
+        <div className="flex items-center justify-between p-4 border-b border-subtle">
+          <h3 className="font-bold text-primary">결과 공유하기</h3>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600"
+            className="p-2 rounded-full hover:bg-slate-100 text-muted hover:text-secondary"
           >
             <X className="w-5 h-5" />
           </button>
@@ -289,7 +291,7 @@ export default function ShareCard({
               style={{ width: 270, height: 360 }}
             />
             {generating && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-50/80 rounded-xl">
                 <div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" />
               </div>
             )}

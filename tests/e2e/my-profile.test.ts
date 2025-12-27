@@ -3,15 +3,13 @@ import { expect, test } from '@playwright/test';
 /**
  * MyProfile 컴포넌트 E2E 테스트
  *
- * 테스트 대상:
- * - FullProfile 모달 접근성 (ESC 닫기, role="dialog")
- * - CareButtonWithModal 컴포넌트 동작
- * - 케어 진입 통합 (동물 탭에서 반려생물 케어 관리)
+ * ⚠️ DEPRECATED: FullProfile 모달이 /profile 페이지로 대체됨
+ * 새로운 테스트: tests/e2e/profile-page.test.ts
  *
- * 실행: npx playwright test tests/e2e/my-profile.test.ts
+ * 실행: npx playwright test tests/e2e/profile-page.test.ts
  */
 
-test.describe('FullProfile 모달', () => {
+test.describe.skip('DEPRECATED - FullProfile 모달', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -110,7 +108,7 @@ test.describe('FullProfile 모달', () => {
   });
 });
 
-test.describe('CareButtonWithModal', () => {
+test.describe.skip('DEPRECATED - CareButtonWithModal', () => {
   // 헬퍼: 프로필 탭 클릭하여 FullProfile 모달 열기
   async function openProfileModal(page: import('@playwright/test').Page): Promise<void> {
     // 네비게이션에서 프로필 탭 클릭
@@ -244,7 +242,7 @@ test.describe('CareButtonWithModal', () => {
   });
 });
 
-test.describe('케어 진입 통합 (동물 탭)', () => {
+test.describe.skip('DEPRECATED - 케어 진입 통합 (동물 탭)', () => {
   test('라이프 탭에는 케어 버튼 없음', async ({ page }) => {
     await page.goto('/');
 
@@ -324,7 +322,7 @@ test.describe('케어 진입 통합 (동물 탭)', () => {
   });
 });
 
-test.describe('접근성', () => {
+test.describe.skip('DEPRECATED - 접근성', () => {
   test('모달에 적절한 ARIA 속성 있음', async ({ page }) => {
     await page.goto('/');
 

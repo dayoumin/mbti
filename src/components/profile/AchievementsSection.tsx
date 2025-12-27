@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Award, ChevronDown, ChevronUp, Clock } from 'lucide-react';
 import type { MyProfileData } from '@/services/ProfileService';
 import { formatRelativeTime } from '@/utils/format';
+import { resultService, type TestResultCamel } from '@/services/ResultService';
+import { SUBJECT_CONFIG } from '@/data/config';
+import type { SubjectKey } from '@/data/types';
 
 // ============================================================================
 // 타입
@@ -49,7 +52,7 @@ export default function AchievementsSection({ profile }: AchievementsSectionProp
           <div className="h-2 bg-amber-100 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full transition-all"
-              style={{ width: `${(profile.completionRate / nextMilestone.target) * 100}%` }}
+              style={{ width: `${Math.min(100, (profile.completionRate / nextMilestone.target) * 100)}%` }}
             />
           </div>
           <p className="text-xs text-amber-600 mt-2">
@@ -163,11 +166,6 @@ export default function AchievementsSection({ profile }: AchievementsSectionProp
 // ============================================================================
 // TestHistory 하위 컴포넌트
 // ============================================================================
-
-import { useEffect } from 'react';
-import { resultService, type TestResultCamel } from '@/services/ResultService';
-import { SUBJECT_CONFIG } from '@/data/config';
-import type { SubjectKey } from '@/data/types';
 
 function TestHistory() {
   const [results, setResults] = useState<TestResultCamel[]>([]);

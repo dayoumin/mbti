@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Flame, BarChart3, ChevronRight } from 'lucide-react';
+import { Trophy, Flame, BarChart3 } from 'lucide-react';
 import { insightService, type UserActivityStats } from '@/services/InsightService';
 import { STREAK_BONUS } from '@/data/gamification/points';
 
