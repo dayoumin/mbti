@@ -2,6 +2,7 @@
 // 생성일: 2025-12-11
 
 import type { SubjectData, SubjectKey } from './types';
+import { applyPositiveFramingToTest } from '@/utils/framing';
 import { HUMAN_DATA } from './subjects/human';
 import { CAT_DATA } from './subjects/cat';
 import { DOG_DATA } from './subjects/dog';
@@ -47,7 +48,7 @@ import { reptileTypeData } from './subjects/reptileType';
 //
 // 타입 안전성: _CHEMI_DATA의 키는 SubjectKey와 일치해야 함
 // 키 누락/추가 시 아래 _ensureAllKeys에서 타입 에러 발생
-const _CHEMI_DATA = {
+const _CHEMI_DATA_RAW = {
     human: HUMAN_DATA,
     cat: CAT_DATA,
     dog: DOG_DATA,
@@ -89,14 +90,23 @@ const _CHEMI_DATA = {
     reptileType: reptileTypeData,
 };
 
-// 키 완전성 검증: SubjectKey의 모든 키가 _CHEMI_DATA에 있는지 컴파일 타임 체크
+// 키 완전성 검증: SubjectKey의 모든 키가 _CHEMI_DATA_RAW에 있는지 컴파일 타임 체크
 // 키가 누락되면 여기서 타입 에러 발생 (예: "Property 'newTest' is missing")
-const _ensureAllKeys: Record<SubjectKey, unknown> = _CHEMI_DATA;
+const _ensureAllKeys: Record<SubjectKey, unknown> = _CHEMI_DATA_RAW;
 void _ensureAllKeys; // unused variable 경고 방지
+
+// Phase 1: 긍정 프레이밍 자동 적용
+// 모든 테스트 데이터에 부정→긍정 표현 변환 (BuzzFeed "No haters" 원칙)
+const _CHEMI_DATA_FRAMED = Object.fromEntries(
+  Object.entries(_CHEMI_DATA_RAW).map(([key, data]) => [
+    key,
+    applyPositiveFramingToTest(data)
+  ])
+);
 
 // 타입 단언으로 통일 - 선택적 필드(questions_deep 등) 접근 시 타입 에러 방지
 // unknown을 통한 강제 캐스팅 (각 데이터 파일의 리터럴 타입 차이 무시)
-export const CHEMI_DATA = _CHEMI_DATA as unknown as Record<SubjectKey, SubjectData>;
+export const CHEMI_DATA = _CHEMI_DATA_FRAMED as unknown as Record<SubjectKey, SubjectData>;
 
 // config.ts에서 re-export
 export { SUBJECT_CONFIG, MAIN_TEST_KEYS, DETAIL_TEST_KEYS, RANKABLE_TESTS, RANKABLE_TEST_KEYS, TEST_TYPES } from './config';
