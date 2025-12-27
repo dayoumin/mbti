@@ -47,11 +47,10 @@ export default function CopyrightGuide() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key
                 ? 'bg-red-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             <span>{tab.icon}</span>
             {tab.label}
@@ -73,7 +72,7 @@ function OverviewTab() {
   return (
     <div className="space-y-6">
       {/* 핵심 결론 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">핵심 결론</h3>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-red-50 rounded-lg p-4 border border-red-200">
@@ -99,7 +98,7 @@ function OverviewTab() {
       </div>
 
       {/* 관련 법률 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">관련 법률</h3>
         <div className="space-y-3">
           {RELATED_LAWS.map((law, index) => (
@@ -120,7 +119,7 @@ function OverviewTab() {
       </div>
 
       {/* 안전한 프롬프트 팁 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">AI 이미지 생성 시 안전 팁</h3>
         <div className="grid md:grid-cols-2 gap-4">
           {SAFE_PROMPT_TIPS.map((tip, index) => (
@@ -163,9 +162,8 @@ function ContentTypesTab() {
       {CONTENT_TYPE_GUIDES.map((guide, index) => (
         <div
           key={index}
-          className={`bg-white rounded-xl border p-6 ${
-            guide.canUse ? 'border-green-200' : 'border-red-200'
-          }`}
+          className={`bg-slate-50 rounded-xl border p-6 ${guide.canUse ? 'border-green-200' : 'border-red-200'
+            }`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
@@ -207,7 +205,7 @@ function StrategiesTab() {
   return (
     <div className="space-y-6">
       {IMAGE_STRATEGIES.map((strategy, index) => (
-        <div key={index} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div key={index} className="bg-slate-50 rounded-xl border border-gray-200 overflow-hidden">
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b">
             <div className="flex items-center gap-3">
               <span className="text-2xl">{strategy.icon}</span>
@@ -255,7 +253,7 @@ function CasesTab() {
       </div>
 
       {LEGAL_CASES.map((legalCase, index) => (
-        <div key={index} className="bg-white rounded-xl border border-gray-200 p-6">
+        <div key={index} className="bg-slate-50 rounded-xl border border-gray-200 p-6">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
@@ -293,7 +291,7 @@ function ChecklistTab() {
   return (
     <div className="space-y-6">
       {/* 체크리스트 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">이미지 사용 전 체크리스트</h3>
         <div className="space-y-4">
           {CHECKLIST.map((item, index) => (
@@ -319,7 +317,7 @@ function ChecklistTab() {
       </div>
 
       {/* 빠른 결정 가이드 */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">빠른 결정 가이드</h3>
         <div className="bg-gray-50 rounded-lg p-6">
           <div className="space-y-4 text-sm">

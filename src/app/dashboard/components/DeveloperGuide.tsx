@@ -339,7 +339,7 @@ function ToolCard({ tool, expanded, onToggle }: ToolCardProps) {
   const isAgent = tool.type === 'agent';
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-slate-50 rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
       <button
         onClick={onToggle}
         className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50"
@@ -529,9 +529,8 @@ export default function DeveloperGuide() {
         <Search className="w-4 h-4 text-gray-400" />
         <button
           onClick={() => setSelectedCategory('all')}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-            selectedCategory === 'all' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedCategory === 'all' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
         >
           전체
         </button>
@@ -539,9 +538,8 @@ export default function DeveloperGuide() {
           <button
             key={cat.key}
             onClick={() => setSelectedCategory(cat.key)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              selectedCategory === cat.key ? cat.color : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat.key ? cat.color : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
             {cat.emoji} {cat.name}
           </button>
@@ -600,7 +598,7 @@ export default function DeveloperGuide() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* 테스트 생성 워크플로우 */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-2">🧪 새 MBTI 테스트 추가</h4>
             <ol className="text-sm text-gray-600 space-y-2">
               <li className="flex items-start gap-2">
@@ -619,7 +617,7 @@ export default function DeveloperGuide() {
           </div>
 
           {/* 콘텐츠 생성 워크플로우 */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-2">📝 퀴즈/투표 생성</h4>
             <ol className="text-sm text-gray-600 space-y-2">
               <li className="flex items-start gap-2">
@@ -638,7 +636,7 @@ export default function DeveloperGuide() {
           </div>
 
           {/* 품질 관리 워크플로우 */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-2">✅ 품질 점검</h4>
             <ol className="text-sm text-gray-600 space-y-2">
               <li className="flex items-start gap-2">
@@ -657,7 +655,7 @@ export default function DeveloperGuide() {
           </div>
 
           {/* 아이디어 관리 */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-2">💡 아이디어 관리</h4>
             <ol className="text-sm text-gray-600 space-y-2">
               <li className="flex items-start gap-2">

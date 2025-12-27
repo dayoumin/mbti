@@ -101,11 +101,10 @@ export default function FirstMoverStrategy() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tab.key
                 ? 'bg-amber-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -114,7 +113,7 @@ export default function FirstMoverStrategy() {
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-slate-50 rounded-xl border border-gray-200 p-6">
         {activeTab === 'overview' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -125,7 +124,7 @@ export default function FirstMoverStrategy() {
               {CORE_PRINCIPLES.map((principle) => (
                 <div
                   key={principle.id}
-                  className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 hover:border-amber-300 transition-colors"
+                  className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200 hover:border-amber-300 transition-colors"
                 >
                   <h3 className="font-bold text-gray-900 mb-2">{principle.principle}</h3>
                   <p className="text-sm text-gray-600 mb-3">{principle.description}</p>
@@ -230,7 +229,7 @@ export default function FirstMoverStrategy() {
                   </div>
                 </button>
                 {expandedCase === caseStudy.id && (
-                  <div className="p-4 bg-white border-t border-gray-100">
+                  <div className="p-4 bg-slate-50 border-t border-gray-100">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <h4 className="font-medium text-gray-900 mb-2">핵심 전략</h4>
@@ -303,13 +302,12 @@ export default function FirstMoverStrategy() {
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`p-2 rounded-lg ${
-                        advantage.currentStatus === 'complete'
+                      className={`p-2 rounded-lg ${advantage.currentStatus === 'complete'
                           ? 'bg-green-100'
                           : advantage.currentStatus === 'partial'
-                          ? 'bg-blue-100'
-                          : 'bg-gray-100'
-                      }`}
+                            ? 'bg-blue-100'
+                            : 'bg-gray-100'
+                        }`}
                     >
                       {advantage.id === 'data-moat' && <Database className="w-5 h-5 text-amber-600" />}
                       {advantage.id === 'switching-cost' && <Shield className="w-5 h-5 text-blue-600" />}
@@ -330,9 +328,8 @@ export default function FirstMoverStrategy() {
                       {[...Array(5)].map((_, i) => (
                         <div
                           key={i}
-                          className={`w-2 h-2 rounded-full ${
-                            i < advantage.importance ? 'bg-amber-400' : 'bg-gray-200'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${i < advantage.importance ? 'bg-amber-400' : 'bg-gray-200'
+                            }`}
                         />
                       ))}
                     </div>
@@ -344,7 +341,7 @@ export default function FirstMoverStrategy() {
                   </div>
                 </button>
                 {expandedAdvantage === advantage.id && (
-                  <div className="p-4 bg-white border-t border-gray-100">
+                  <div className="p-4 bg-slate-50 border-t border-gray-100">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <h4 className="font-medium text-gray-900 mb-3">기능 목록</h4>
@@ -355,13 +352,12 @@ export default function FirstMoverStrategy() {
                               className="flex items-start gap-2 p-2 bg-gray-50 rounded-lg"
                             >
                               <span
-                                className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
-                                  feature.status === 'done'
+                                className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${feature.status === 'done'
                                     ? 'bg-green-500'
                                     : feature.status === 'in-progress'
-                                    ? 'bg-blue-500'
-                                    : 'bg-gray-300'
-                                }`}
+                                      ? 'bg-blue-500'
+                                      : 'bg-gray-300'
+                                  }`}
                               />
                               <div>
                                 <p className="text-sm font-medium text-gray-900">{feature.name}</p>
@@ -428,13 +424,12 @@ export default function FirstMoverStrategy() {
                       <p className="text-sm text-gray-600">{trend.description}</p>
                     </div>
                     <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        trend.applicability === 'high'
+                      className={`text-xs px-2 py-1 rounded-full ${trend.applicability === 'high'
                           ? 'bg-green-100 text-green-800'
                           : trend.applicability === 'medium'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
                     >
                       적용성: {trend.applicability === 'high' ? '높음' : trend.applicability === 'medium' ? '중간' : '낮음'}
                     </span>
@@ -499,23 +494,21 @@ export default function FirstMoverStrategy() {
               {IMPLEMENTATION_ROADMAP.map((phase, idx) => (
                 <div
                   key={phase.phase}
-                  className={`p-4 rounded-xl border ${
-                    phase.duration === '완료'
+                  className={`p-4 rounded-xl border ${phase.duration === '완료'
                       ? 'bg-green-50 border-green-200'
                       : phase.duration === '진행중'
-                      ? 'bg-blue-50 border-blue-200'
-                      : 'bg-gray-50 border-gray-200'
-                  }`}
+                        ? 'bg-blue-50 border-blue-200'
+                        : 'bg-gray-50 border-gray-200'
+                    }`}
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
-                        phase.duration === '완료'
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${phase.duration === '완료'
                           ? 'bg-green-500'
                           : phase.duration === '진행중'
-                          ? 'bg-blue-500'
-                          : 'bg-gray-400'
-                      }`}
+                            ? 'bg-blue-500'
+                            : 'bg-gray-400'
+                        }`}
                     >
                       {phase.phase}
                     </div>
@@ -524,13 +517,12 @@ export default function FirstMoverStrategy() {
                       <p className="text-sm text-gray-500">{phase.focus}</p>
                     </div>
                     <span
-                      className={`ml-auto text-xs px-2 py-1 rounded-full ${
-                        phase.duration === '완료'
+                      className={`ml-auto text-xs px-2 py-1 rounded-full ${phase.duration === '완료'
                           ? 'bg-green-100 text-green-800'
                           : phase.duration === '진행중'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
                     >
                       {phase.duration}
                     </span>
@@ -545,13 +537,12 @@ export default function FirstMoverStrategy() {
                             className="text-sm flex items-center gap-2"
                           >
                             <span
-                              className={`w-2 h-2 rounded-full ${
-                                task.priority === 'critical'
+                              className={`w-2 h-2 rounded-full ${task.priority === 'critical'
                                   ? 'bg-red-500'
                                   : task.priority === 'high'
-                                  ? 'bg-orange-400'
-                                  : 'bg-gray-300'
-                              }`}
+                                    ? 'bg-orange-400'
+                                    : 'bg-gray-300'
+                                }`}
                             />
                             <span className="text-gray-700">{task.name}</span>
                           </li>
@@ -559,7 +550,7 @@ export default function FirstMoverStrategy() {
                       </ul>
                     </div>
                     <div className="flex items-center">
-                      <div className="p-3 bg-white rounded-lg border border-gray-200 w-full">
+                      <div className="p-3 bg-slate-50 rounded-lg border border-gray-200 w-full">
                         <p className="text-xs text-gray-500 mb-1">기대 효과</p>
                         <p className="text-sm font-medium text-gray-900">{phase.expectedOutcome}</p>
                       </div>

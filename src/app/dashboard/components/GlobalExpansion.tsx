@@ -58,7 +58,7 @@ function LanguagePrioritySection() {
         {TARGET_LANGUAGES.map((lang) => (
           <div
             key={lang.code}
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+            className="bg-slate-50 border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-2">
               <div>
@@ -126,9 +126,8 @@ function GlobalRoadmapSection() {
               className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                  idx === 0 ? 'bg-blue-500' : idx === 1 ? 'bg-green-500' : idx === 2 ? 'bg-purple-500' : 'bg-orange-500'
-                }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${idx === 0 ? 'bg-blue-500' : idx === 1 ? 'bg-green-500' : idx === 2 ? 'bg-purple-500' : 'bg-orange-500'
+                  }`}>
                   {idx + 1}
                 </div>
                 <div className="text-left">
@@ -167,7 +166,7 @@ function GlobalRoadmapSection() {
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {phase.tasks.map((task) => (
-                      <div key={task.id} className="bg-white rounded-lg p-3 border border-gray-200">
+                      <div key={task.id} className="bg-slate-50 rounded-lg p-3 border border-gray-200">
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-2">
                             {statusIcons[task.status]}
@@ -223,11 +222,10 @@ function MarketStrategySection() {
           <button
             key={strategy.region}
             onClick={() => setSelectedMarket(strategy.region)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedMarket === strategy.region
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedMarket === strategy.region
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {strategy.region}
           </button>
@@ -236,7 +234,7 @@ function MarketStrategySection() {
 
       {/* 선택된 시장 상세 */}
       {currentStrategy && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="bg-slate-50 border border-gray-200 rounded-xl p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-medium text-gray-700 mb-2">지원 언어</h4>
@@ -314,15 +312,14 @@ function TranslationStrategySection() {
       {/* 품질 티어 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {TRANSLATION_STRATEGY.qualityTiers.map((tier) => (
-          <div key={tier.tier} className={`rounded-xl p-4 border ${
-            tier.tier === 'Premium' ? 'bg-yellow-50 border-yellow-200' :
-            tier.tier === 'Standard' ? 'bg-blue-50 border-blue-200' :
-            'bg-gray-50 border-gray-200'
-          }`}>
+          <div key={tier.tier} className={`rounded-xl p-4 border ${tier.tier === 'Premium' ? 'bg-yellow-50 border-yellow-200' :
+              tier.tier === 'Standard' ? 'bg-blue-50 border-blue-200' :
+                'bg-gray-50 border-gray-200'
+            }`}>
             <h4 className="font-bold text-gray-800 mb-2">{tier.tier}</h4>
             <div className="flex flex-wrap gap-1 mb-2">
               {tier.languages.map((lang) => (
-                <span key={lang} className="text-xs bg-white px-2 py-0.5 rounded">
+                <span key={lang} className="text-xs bg-slate-50 px-2 py-0.5 rounded">
                   {lang}
                 </span>
               ))}
@@ -334,7 +331,7 @@ function TranslationStrategySection() {
       </div>
 
       {/* 콘텐츠 타입별 */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="bg-slate-50 border border-gray-200 rounded-xl p-4">
         <h4 className="font-medium text-gray-700 mb-3">콘텐츠 타입별 번역 계획</h4>
         <div className="space-y-2">
           {TRANSLATION_STRATEGY.contentTypes.map((content) => (
@@ -346,9 +343,8 @@ function TranslationStrategySection() {
               <div className="flex items-center gap-4">
                 <span className="text-xs text-gray-500">{content.volume}</span>
                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{content.method}</span>
-                <span className={`text-xs px-2 py-0.5 rounded ${
-                  content.priority === 'high' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                }`}>
+                <span className={`text-xs px-2 py-0.5 rounded ${content.priority === 'high' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>
                   {content.priority === 'high' ? '높음' : '중간'}
                 </span>
               </div>
@@ -375,7 +371,7 @@ function WorkflowSection() {
           {TRANSLATION_WORKFLOW.process.map((step, idx) => (
             <div key={step.step} className="flex items-center gap-2">
               <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center font-bold text-indigo-600">
+                <div className="w-10 h-10 rounded-full bg-slate-50 shadow-md flex items-center justify-center font-bold text-indigo-600">
                   {step.step}
                 </div>
                 <span className="text-xs font-medium text-gray-700 mt-1 text-center max-w-[100px]">
@@ -394,7 +390,7 @@ function WorkflowSection() {
       {/* 도구 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {TRANSLATION_WORKFLOW.tools.map((tool) => (
-          <div key={tool.name} className="bg-white border border-gray-200 rounded-lg p-4">
+          <div key={tool.name} className="bg-slate-50 border border-gray-200 rounded-lg p-4">
             <h4 className="font-bold text-gray-800 mb-1">{tool.name}</h4>
             <p className="text-sm text-gray-600 mb-2">{tool.use}</p>
             <div className="flex gap-4">
@@ -454,7 +450,7 @@ function HallyuMarketingSection() {
       {/* 타겟 팬덤 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {HALLYU_MARKETING.targetFandoms.map((fandom) => (
-          <div key={fandom.type} className="bg-white border border-gray-200 rounded-xl p-4">
+          <div key={fandom.type} className="bg-slate-50 border border-gray-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               {fandomIcons[fandom.type]}
               <h4 className="font-bold text-gray-800">{fandom.type}</h4>
@@ -481,7 +477,7 @@ function HallyuMarketingSection() {
       </div>
 
       {/* 전술 */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
+      <div className="bg-slate-50 border border-gray-200 rounded-xl p-4 mb-4">
         <h4 className="font-medium text-gray-700 mb-3">마케팅 전술</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {HALLYU_MARKETING.tactics.map((tactic) => (
@@ -513,9 +509,8 @@ function HallyuMarketingSection() {
                 <span className="font-medium text-gray-800">{platform.name}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500">{platform.regions.join(', ')}</span>
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                    platform.kpopActivity === 'very high' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
-                  }`}>
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${platform.kpopActivity === 'very high' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
+                    }`}>
                     {platform.kpopActivity}
                   </span>
                 </div>
@@ -570,9 +565,8 @@ function FutureConsiderationsSection() {
                 <span className="text-gray-800">{msg.region}</span>
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{msg.app}</span>
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                    msg.priority === 'high' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600'
-                  }`}>
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${msg.priority === 'high' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600'
+                    }`}>
                     {msg.priority}
                   </span>
                 </div>

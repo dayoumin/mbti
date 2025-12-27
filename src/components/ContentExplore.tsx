@@ -247,37 +247,45 @@ interface CategoryProgressProps {
 function CategoryProgress({ quizzes, polls, participation, activeTab, onCategoryClick }: CategoryProgressProps) {
   const categoryStats = useMemo(() => {
     if (activeTab === 'quiz') {
-      const categories = [...new Set(quizzes.map(q => q.category))];
-      return categories.map(cat => {
-        const total = quizzes.filter(q => q.category === cat).length;
-        const completed = quizzes.filter(q =>
-          q.category === cat &&
-          participation.quizzes.some(pq => pq.quizId === q.id)
-        ).length;
-        return {
-          category: cat,
-          label: getCategoryInfo(cat),
-          total,
-          completed,
-          percent: Math.round((completed / total) * 100),
-        };
-      });
+      // O(n) - 참여한 퀴즈 ID Set 생성
+      const completedIds = new Set(participation.quizzes.map(pq => pq.quizId));
+
+      // O(n) - 카테고리별 통계를 한 번의 순회로 집계
+      const statsMap = new Map<string, { total: number; completed: number }>();
+      for (const quiz of quizzes) {
+        const stat = statsMap.get(quiz.category) || { total: 0, completed: 0 };
+        stat.total++;
+        if (completedIds.has(quiz.id)) stat.completed++;
+        statsMap.set(quiz.category, stat);
+      }
+
+      return Array.from(statsMap.entries()).map(([category, { total, completed }]) => ({
+        category,
+        label: getCategoryInfo(category),
+        total,
+        completed,
+        percent: Math.round((completed / total) * 100),
+      }));
     } else {
-      const categories = [...new Set(polls.map(p => p.category))];
-      return categories.map(cat => {
-        const total = polls.filter(p => p.category === cat).length;
-        const completed = polls.filter(p =>
-          p.category === cat &&
-          participation.polls.some(pp => pp.pollId === p.id)
-        ).length;
-        return {
-          category: cat,
-          label: getCategoryInfo(cat),
-          total,
-          completed,
-          percent: Math.round((completed / total) * 100),
-        };
-      });
+      // O(n) - 참여한 투표 ID Set 생성
+      const completedIds = new Set(participation.polls.map(pp => pp.pollId));
+
+      // O(n) - 카테고리별 통계를 한 번의 순회로 집계
+      const statsMap = new Map<string, { total: number; completed: number }>();
+      for (const poll of polls) {
+        const stat = statsMap.get(poll.category) || { total: 0, completed: 0 };
+        stat.total++;
+        if (completedIds.has(poll.id)) stat.completed++;
+        statsMap.set(poll.category, stat);
+      }
+
+      return Array.from(statsMap.entries()).map(([category, { total, completed }]) => ({
+        category,
+        label: getCategoryInfo(category),
+        total,
+        completed,
+        percent: Math.round((completed / total) * 100),
+      }));
     }
   }, [quizzes, polls, participation, activeTab]);
 
