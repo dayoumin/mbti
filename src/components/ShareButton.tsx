@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Share2, Download, Copy, Check } from 'lucide-react';
+import { trackShare } from '@/lib/analytics';
 
 /**
  * SNS 공유 강화 버튼
@@ -13,11 +14,13 @@ export default function ShareButton({
   resultName,
   resultEmoji,
   testTitle,
+  testKey,
   mode = 'button',
 }: {
   resultName: string;
   resultEmoji: string;
   testTitle: string;
+  testKey?: string;
   mode?: 'button' | 'icon';
 }) {
   const [copied, setCopied] = useState(false);
@@ -28,12 +31,17 @@ export default function ShareButton({
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      // GA4 추적: URL 복사
+      trackShare('link', testKey);
     } catch (err) {
       console.error('복사 실패:', err);
     }
   };
 
   const handleDownloadImage = () => {
+    // GA4 추적: 이미지 다운로드
+    trackShare('image_download', testKey);
+
     // Canvas API로 이미지 생성
     const canvas = document.createElement('canvas');
     canvas.width = 1080;
@@ -96,6 +104,8 @@ export default function ShareButton({
           text: `${testTitle} 결과: ${resultName}`,
           url: window.location.href,
         });
+        // GA4 추적: 네이티브 공유
+        trackShare('native', testKey);
       } catch (err) {
         console.error('공유 실패:', err);
       }

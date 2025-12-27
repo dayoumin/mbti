@@ -7,6 +7,7 @@ export default defineConfig({
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     exclude: ['tests/e2e/**/*.test.ts'], // E2E 테스트는 Playwright 사용
     globals: true,
+    setupFiles: ['./vitest.setup.ts'], // 전역 설정 파일
   },
   resolve: {
     alias: {

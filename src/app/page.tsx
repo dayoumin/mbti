@@ -36,6 +36,7 @@ import ResultDistribution from '../components/ResultDistribution';
 import * as Icons from '../components/Icons';
 import type { SubjectKey, ResultLabel, Dimension, SubjectConfig } from '../data/types';
 import type { NavTab } from '../components/nav/types';
+import { trackTestStart, trackTestComplete } from '@/lib/analytics';
 import {
     ChevronLeft, Share2, RefreshCw, BarChart2,
     Check, X, Sparkles, Home as HomeIcon, Trophy, ArrowRight, MessageSquare,
@@ -101,6 +102,7 @@ export default function Home() {
     // 응답 시간 추적 (Phase 2: 확신도 계산용)
     const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
     const [responseTimes, setResponseTimes] = useState<number[]>([]);
+    const [testStartTime, setTestStartTime] = useState<number | null>(null);
 
     // 모달 상태 통합 (기존 7개 boolean → 1개)
     const [activeModal, setActiveModal] = useState<ActiveModal>(null);
@@ -138,6 +140,10 @@ export default function Home() {
     const subjectConfig = (SUBJECT_CONFIG[mode as keyof typeof SUBJECT_CONFIG] || {}) as Partial<SubjectConfig>;
 
     const handleStartTest = (testType: SubjectKey, fromParent: ParentInfo | null = null) => {
+        // GA4 추적: 테스트 시작
+        trackTestStart(testType);
+        setTestStartTime(Date.now());
+
         setMode(testType);
         setStep('intro');
         setQIdx(0);
@@ -223,6 +229,10 @@ export default function Home() {
     const calculateResult = (finalScores: Record<string, number>, finalResponseTimes: number[]) => {
         setStep('loading');
         setTimeout(async () => {
+            // GA4 추적: 테스트 완료 (소요 시간 포함)
+            const testDuration = testStartTime ? Date.now() - testStartTime : 0;
+            trackTestComplete(mode, testDuration);
+
             const dimCounts: Record<string, number> = {};
             questions.forEach(q => {
                 dimCounts[q.dimension] = (dimCounts[q.dimension] || 0) + 1;
@@ -680,6 +690,7 @@ export default function Home() {
                                         resultName={finalResult.name}
                                         resultEmoji={finalResult.emoji}
                                         testTitle={currentModeData.title}
+                                        testKey={safeMode}
                                         mode="icon"
                                     />
                                 </div>

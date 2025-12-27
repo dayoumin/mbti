@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import { Download, Share2, Copy, Check, X, Users, MessageCircle } from 'lucide-react';
 import { kakaoShareService } from '@/services/KakaoShareService';
 import { generateShareUrl, type SharePlatform } from '@/utils';
+import { trackShare } from '@/lib/analytics';
 
 interface ShareCardProps {
   testTitle: string;
@@ -223,6 +224,8 @@ export default function ShareCard({
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      // GA4 추적: URL 복사
+      trackShare('link', testKey);
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -242,6 +245,8 @@ export default function ShareCard({
     if (navigator.share) {
       try {
         await navigator.share(shareData);
+        // GA4 추적: 네이티브 공유
+        trackShare('native', testKey);
       } catch {
         console.log('Share cancelled');
       }
@@ -266,6 +271,8 @@ export default function ShareCard({
       resultDesc,
       linkUrl: shareUrl,
     });
+    // GA4 추적: 카카오톡 공유
+    trackShare('kakao', testKey);
   };
 
   return (

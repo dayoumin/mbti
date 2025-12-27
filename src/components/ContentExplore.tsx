@@ -23,6 +23,7 @@ import { QuizCard } from './content/explore/QuizTab';
 import { PollCard } from './content/explore/PollTab';
 import CommunityContent from './content/explore/CommunityTab';
 import ContentDiscoverySidebar from './content/explore/ContentDiscoverySidebar';
+import { trackQuizAnswer, trackPollVote, trackReaction } from '@/lib/analytics';
 
 interface ContentExploreProps {
   onClose: () => void;
@@ -120,6 +121,9 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
   // 퀴즈 정답 처리
   const handleQuizAnswer = async (quizId: string, optionId: string, isCorrect: boolean) => {
+    // GA4 추적: 퀴즈 응답
+    trackQuizAnswer(quizId, isCorrect);
+
     contentParticipationService.recordQuizAnswer(quizId, optionId, isCorrect);
     setParticipation(contentParticipationService.getParticipation());
 
@@ -132,6 +136,9 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
   // 투표 처리
   const handlePollVote = async (pollId: string, choice: 'a' | 'b') => {
+    // GA4 추적: 투표 참여
+    trackPollVote(pollId, choice);
+
     contentParticipationService.recordPollVote(pollId, choice);
     setParticipation(contentParticipationService.getParticipation());
 
@@ -152,6 +159,9 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
   // 상황별 반응 처리
   const handleSituationAnswer = (situationId: string, optionId: string) => {
+    // GA4 추적: 상황 반응 참여
+    trackReaction(situationId, optionId);
+
     contentParticipationService.recordSituationAnswer(situationId, optionId);
     setParticipation(contentParticipationService.getParticipation());
   };
@@ -249,7 +259,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             aria-controls="quiz-panel"
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'quiz'
               ? 'bg-blue-500 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
           >
             <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
@@ -262,7 +272,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             aria-controls="poll-panel"
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'poll'
               ? 'bg-purple-500 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
           >
             <Vote className="w-3.5 h-3.5" aria-hidden="true" />
@@ -275,7 +285,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
             aria-controls="community-panel"
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${activeTab === 'community'
               ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
           >
             <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
@@ -286,20 +296,20 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
         {/* 검색 바 */}
         {activeTab !== 'community' && (
           <div className="relative mt-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder={`${activeTab === 'quiz' ? '퀴즈' : '투표'} 검색...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-10 py-2.5 bg-gray-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-slate-50 transition-all outline-none"
+              className="w-full pl-9 pr-10 py-2.5 bg-slate-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-slate-50 transition-all outline-none"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-200 transition-colors"
               >
-                <X className="w-3.5 h-3.5 text-gray-400" />
+                <X className="w-3.5 h-3.5 text-slate-400" />
               </button>
             )}
           </div>
@@ -439,7 +449,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
                     );
                   })
                 ) : (
-                  <div className="text-center py-12 text-gray-400">
+                  <div className="text-center py-12 text-slate-400">
                     <p>이 카테고리에 퀴즈가 없습니다</p>
                   </div>
                 )
@@ -515,7 +525,7 @@ export default function ContentExplore({ onClose, initialTab = 'quiz', onStartTe
 
                   {/* 아무 콘텐츠도 없을 때 */}
                   {filteredPolls.length === 0 && filteredSituations.length === 0 && (
-                    <div className="text-center py-12 text-gray-400">
+                    <div className="text-center py-12 text-slate-400">
                       <p>이 카테고리에 투표가 없습니다</p>
                     </div>
                   )}

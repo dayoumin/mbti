@@ -9,6 +9,7 @@ import { SubjectKey } from '@/data/types';
 import { getDeviceId } from '@/utils/device';
 import { STORAGE_KEYS } from '@/lib/storage';
 import { storage } from '@/utils';
+import { trackRankingVote } from '@/lib/analytics';
 
 // ========== 타입 정의 ==========
 
@@ -413,8 +414,13 @@ class RankingServiceClass {
 
     const result = await this.provider.saveVote(vote);
 
-    if (result.success && typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('chemi:rankingVoted', { detail: vote }));
+    if (result.success) {
+      // GA4 추적: 랭킹 투표
+      trackRankingVote(testType, resultKey);
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('chemi:rankingVoted', { detail: vote }));
+      }
     }
 
     return result;
