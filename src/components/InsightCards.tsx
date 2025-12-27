@@ -232,8 +232,23 @@ export default function InsightCards({
         setStage6Result(insightService.getStage6Insight());
       }
       if (insightService.isStageUnlocked(6)) {
-        // Stage 7은 Stage 6 해금 후 사용 가능
-        setStage7Result(insightService.getStage7Insight());
+        // Stage 7은 Stage 6 해금 후 사용 가능 (async)
+        let cancelled = false;
+
+        insightService.getStage7Insight().then(result => {
+          if (cancelled) return; // 언마운트됐으면 무시
+          if (result) {
+            setStage7Result(result);
+          }
+        }).catch(err => {
+          if (cancelled) return; // 언마운트됐으면 무시
+          console.error('[InsightCards] Stage 7 error:', err);
+        });
+
+        // Cleanup: 언마운트 시 취소 플래그 설정
+        return () => {
+          cancelled = true;
+        };
       }
     } catch (error) {
       console.error('[InsightCards] Error loading data:', error);
@@ -244,7 +259,7 @@ export default function InsightCards({
 
   // maxStages 변경 시 재로드
   useEffect(() => {
-    loadInsightData();
+    return loadInsightData();
   }, [loadInsightData]);
 
   // 활동 완료 시 자동 갱신 (eventBus 구독)

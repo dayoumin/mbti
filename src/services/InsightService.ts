@@ -722,8 +722,10 @@ class InsightServiceClass {
   /**
    * Stage 7 인사이트 생성 - AI 종합 분석
    * Stage 6 해금 필요 (유료 체크는 별도)
+   *
+   * @param useAI - true: API Route 호출, false: 폴백 리포트 사용 (기본값: true)
    */
-  getStage7Insight(): AIAnalysisResult | null {
+  async getStage7Insight(useAI = true): Promise<AIAnalysisResult | null> {
     if (!this.isStageUnlocked(6)) {
       return null;
     }
@@ -731,8 +733,40 @@ class InsightServiceClass {
     // AI 분석용 입력 데이터 수집
     const input = this.buildAIAnalysisInput();
 
-    // 현재는 폴백 리포트 사용 (추후 AI API 연동)
-    return generateFallbackReport(input);
+    // 명시적으로 폴백 요청 시
+    if (!useAI) {
+      return generateFallbackReport(input);
+    }
+
+    // API Route 호출 (서버에서 안전하게 OpenAI API 호출)
+    try {
+      const response = await fetch('/api/insight/ai-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+      });
+
+      if (!response.ok) {
+        console.warn('[InsightService] API Route 실패, 폴백 사용');
+        return generateFallbackReport(input);
+      }
+
+      const data = await response.json();
+
+      // 응답 구조 검증 (타입 안전성 확보)
+      if (!data || typeof data !== 'object' || !data.analysis || !data.nextSteps) {
+        console.warn('[InsightService] Invalid response shape, 폴백 사용');
+        return generateFallbackReport(input);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('[InsightService] getStage7Insight error:', error);
+      // 에러 시 폴백 리포트 반환
+      return generateFallbackReport(input);
+    }
   }
 
   /**
