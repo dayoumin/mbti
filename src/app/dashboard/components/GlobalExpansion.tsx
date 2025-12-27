@@ -223,8 +223,8 @@ function MarketStrategySection() {
             key={strategy.region}
             onClick={() => setSelectedMarket(strategy.region)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedMarket === strategy.region
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-green-600 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
             {strategy.region}
@@ -313,8 +313,8 @@ function TranslationStrategySection() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {TRANSLATION_STRATEGY.qualityTiers.map((tier) => (
           <div key={tier.tier} className={`rounded-xl p-4 border ${tier.tier === 'Premium' ? 'bg-yellow-50 border-yellow-200' :
-              tier.tier === 'Standard' ? 'bg-blue-50 border-blue-200' :
-                'bg-gray-50 border-gray-200'
+            tier.tier === 'Standard' ? 'bg-blue-50 border-blue-200' :
+              'bg-gray-50 border-gray-200'
             }`}>
             <h4 className="font-bold text-gray-800 mb-2">{tier.tier}</h4>
             <div className="flex flex-wrap gap-1 mb-2">
@@ -636,15 +636,15 @@ export default function GlobalExpansion() {
           다국어 지원 및 해외 시장 진출 로드맵
         </p>
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          <div className="bg-white/20 rounded-lg px-3 py-2">
+          <div className="bg-slate-50/20 rounded-lg px-3 py-2">
             <span className="font-medium">{TARGET_LANGUAGES.length}</span>
             <span className="ml-1 text-blue-100">개 타겟 언어</span>
           </div>
-          <div className="bg-white/20 rounded-lg px-3 py-2">
+          <div className="bg-slate-50/20 rounded-lg px-3 py-2">
             <span className="font-medium">{GLOBAL_PHASES.length}</span>
             <span className="ml-1 text-blue-100">단계 로드맵</span>
           </div>
-          <div className="bg-white/20 rounded-lg px-3 py-2">
+          <div className="bg-slate-50/20 rounded-lg px-3 py-2">
             <span className="font-medium">{MARKET_STRATEGIES.length}</span>
             <span className="ml-1 text-blue-100">개 타겟 시장</span>
           </div>

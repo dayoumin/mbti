@@ -63,7 +63,7 @@ function ValueChainSection() {
         {VALUE_CHAIN.flow.map((step, idx) => (
           <div key={step.step} className="flex items-center gap-2">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-2xl">
+              <div className="w-12 h-12 rounded-full bg-slate-50 shadow-md flex items-center justify-center text-2xl">
                 {step.icon}
               </div>
               <span className="text-xs font-medium text-gray-700 mt-1">{step.name}</span>
@@ -138,22 +138,20 @@ function RoadmapSection() {
                         key={item.id}
                         className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
                       >
-                        <span className={`text-xs px-2 py-0.5 rounded ${
-                          item.priority === 'high' ? 'bg-red-100 text-red-700' :
-                          item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>
+                        <span className={`text-xs px-2 py-0.5 rounded ${item.priority === 'high' ? 'bg-red-100 text-red-700' :
+                            item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-600'
+                          }`}>
                           {item.priority === 'high' ? '높음' : item.priority === 'medium' ? '중간' : '낮음'}
                         </span>
                         <div className="flex-1">
                           <span className="text-sm font-medium text-gray-800">{item.title}</span>
                           <p className="text-xs text-gray-500">{item.description}</p>
                         </div>
-                        <span className={`text-xs px-2 py-0.5 rounded ${
-                          item.status === 'done' ? 'bg-green-100 text-green-700' :
-                          item.status === 'in-progress' ? 'bg-blue-100 text-blue-700' :
-                          'bg-gray-100 text-gray-500'
-                        }`}>
+                        <span className={`text-xs px-2 py-0.5 rounded ${item.status === 'done' ? 'bg-green-100 text-green-700' :
+                            item.status === 'in-progress' ? 'bg-blue-100 text-blue-700' :
+                              'bg-gray-100 text-gray-500'
+                          }`}>
                           {item.status === 'done' ? '완료' : item.status === 'in-progress' ? '진행중' : '예정'}
                         </span>
                       </div>
@@ -298,9 +296,8 @@ function RankingContentSection() {
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={() => setSelectedPlatform('all')}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            selectedPlatform === 'all' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedPlatform === 'all' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
         >
           전체
         </button>
@@ -308,9 +305,8 @@ function RankingContentSection() {
           <button
             key={platform}
             onClick={() => setSelectedPlatform(platform)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedPlatform === platform ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedPlatform === platform ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
             {platformIcons[platform]}
             {PLATFORM_STRATEGY[platform].name}
@@ -323,15 +319,14 @@ function RankingContentSection() {
         {filteredContent.map((content) => (
           <div key={content.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-2">
-              <span className={`text-xs px-2 py-0.5 rounded ${
-                content.type === 'ranking' ? 'bg-blue-100 text-blue-700' :
-                content.type === 'battle' ? 'bg-red-100 text-red-700' :
-                content.type === 'trend' ? 'bg-green-100 text-green-700' :
-                'bg-purple-100 text-purple-700'
-              }`}>
+              <span className={`text-xs px-2 py-0.5 rounded ${content.type === 'ranking' ? 'bg-blue-100 text-blue-700' :
+                  content.type === 'battle' ? 'bg-red-100 text-red-700' :
+                    content.type === 'trend' ? 'bg-green-100 text-green-700' :
+                      'bg-purple-100 text-purple-700'
+                }`}>
                 {content.type === 'ranking' ? '랭킹' :
-                 content.type === 'battle' ? '대결' :
-                 content.type === 'trend' ? '트렌드' : '비교'}
+                  content.type === 'battle' ? '대결' :
+                    content.type === 'trend' ? '트렌드' : '비교'}
               </span>
               <div className="flex gap-1">
                 {content.platforms.map((p) => (
@@ -538,9 +533,9 @@ function DataAssetsSection() {
                     {asset.period.map((p, idx) => (
                       <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">
                         {p === 'daily' ? '일간' :
-                         p === 'weekly' ? '주간' :
-                         p === 'monthly' ? '월간' :
-                         p === 'quarterly' ? '분기' : '연간'}
+                          p === 'weekly' ? '주간' :
+                            p === 'monthly' ? '월간' :
+                              p === 'quarterly' ? '분기' : '연간'}
                       </span>
                     ))}
                   </div>
@@ -564,17 +559,15 @@ function TrendReportsSection() {
       </h3>
       <div className="grid md:grid-cols-3 gap-4">
         {TREND_REPORTS.map((report) => (
-          <div key={report.id} className={`border rounded-lg p-4 ${
-            report.pricing ? 'border-green-200 bg-green-50' : 'border-gray-200'
-          }`}>
+          <div key={report.id} className={`border rounded-lg p-4 ${report.pricing ? 'border-green-200 bg-green-50' : 'border-gray-200'
+            }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs px-2 py-0.5 rounded ${
-                report.period === 'monthly' ? 'bg-blue-100 text-blue-700' :
-                report.period === 'quarterly' ? 'bg-purple-100 text-purple-700' :
-                'bg-orange-100 text-orange-700'
-              }`}>
+              <span className={`text-xs px-2 py-0.5 rounded ${report.period === 'monthly' ? 'bg-blue-100 text-blue-700' :
+                  report.period === 'quarterly' ? 'bg-purple-100 text-purple-700' :
+                    'bg-orange-100 text-orange-700'
+                }`}>
                 {report.period === 'monthly' ? '월간' :
-                 report.period === 'quarterly' ? '분기' : '연간'}
+                  report.period === 'quarterly' ? '분기' : '연간'}
               </span>
               {report.pricing && (
                 <span className="text-xs font-semibold text-green-600">B2B</span>
@@ -615,9 +608,8 @@ function PremiumPlansSection() {
         {(Object.keys(PREMIUM_PLANS) as Array<keyof typeof PREMIUM_PLANS>).map((key) => {
           const plan = PREMIUM_PLANS[key];
           return (
-            <div key={key} className={`border rounded-xl p-6 ${
-              key === 'pro' ? 'border-indigo-300 bg-indigo-50' : 'border-gray-200'
-            }`}>
+            <div key={key} className={`border rounded-xl p-6 ${key === 'pro' ? 'border-indigo-300 bg-indigo-50' : 'border-gray-200'
+              }`}>
               {key === 'pro' && (
                 <span className="text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-full mb-2 inline-block">
                   추천
@@ -659,7 +651,7 @@ function CareAppEcosystemSection() {
           {TEST_TO_CARE_FLOW.flow.map((step, idx) => (
             <div key={step.step} className="flex items-center gap-2">
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-sm font-bold text-green-600">
+                <div className="w-8 h-8 rounded-full bg-slate-50 shadow flex items-center justify-center text-sm font-bold text-green-600">
                   {step.step}
                 </div>
                 <span className="text-xs font-medium text-gray-700 mt-1">{step.action}</span>
@@ -673,7 +665,7 @@ function CareAppEcosystemSection() {
         </div>
         <div className="flex flex-wrap gap-2">
           {TEST_TO_CARE_FLOW.conversionTips.map((tip, idx) => (
-            <span key={idx} className="text-xs bg-white text-green-700 px-2 py-1 rounded-full">
+            <span key={idx} className="text-xs bg-slate-50 text-green-700 px-2 py-1 rounded-full">
               💡 {tip}
             </span>
           ))}
@@ -686,11 +678,10 @@ function CareAppEcosystemSection() {
           <button
             key={app.id}
             onClick={() => setSelectedApp(app.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedApp === app.id
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedApp === app.id
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
           >
             <span>{app.emoji}</span>
             {app.name}
@@ -847,11 +838,10 @@ export default function BusinessStrategy() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.key
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}

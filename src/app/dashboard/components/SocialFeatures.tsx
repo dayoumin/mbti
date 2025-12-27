@@ -136,8 +136,8 @@ function PhasesTab() {
         <button
           onClick={() => setSelectedPhase('all')}
           className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedPhase === 'all'
-              ? 'bg-gray-800 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            ? 'bg-gray-800 text-white'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
         >
           전체 ({SOCIAL_FEATURES.length})
@@ -147,8 +147,8 @@ function PhasesTab() {
             key={phase.id}
             onClick={() => setSelectedPhase(phase.id)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${selectedPhase === phase.id
-                ? 'bg-gray-800 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-gray-800 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
             <span>{phase.emoji}</span>
@@ -287,7 +287,7 @@ function RoadmapTab() {
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold">
+                <span className="w-8 h-8 rounded-full bg-slate-50/20 flex items-center justify-center font-bold">
                   {phase.phase}
                 </span>
                 <h3 className="font-bold">{phase.name}</h3>
@@ -314,10 +314,10 @@ function RoadmapTab() {
                     <span
                       key={featureId}
                       className={`px-3 py-1 rounded-full text-sm ${feature?.priority === 'high'
-                          ? 'bg-red-100 text-red-700'
-                          : feature?.priority === 'medium'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-gray-100 text-gray-600'
+                        ? 'bg-red-100 text-red-700'
+                        : feature?.priority === 'medium'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-gray-100 text-gray-600'
                         }`}
                     >
                       {feature?.name || featureId}
@@ -396,8 +396,8 @@ export default function SocialFeatures() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${activeTab === tab.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
           >
             <span>{tab.icon}</span>

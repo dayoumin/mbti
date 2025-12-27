@@ -86,11 +86,10 @@ export default function IdeaBank() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab.key
                 ? 'bg-[var(--db-brand)] text-[#081023]'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -330,11 +329,10 @@ function ThemesTab({
           <button
             key={theme.id}
             onClick={() => setSelectedTheme(theme.id === selectedTheme ? null : theme.id)}
-            className={`w-full text-left p-4 rounded-xl transition-all ${
-              selectedTheme === theme.id
+            className={`w-full text-left p-4 rounded-xl transition-all ${selectedTheme === theme.id
                 ? 'bg-[var(--db-brand)]/20 border border-[var(--db-brand)]/50'
                 : 'bg-[var(--db-panel)] hover:bg-[var(--db-panel)]/80'
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">{theme.icon}</span>
@@ -448,7 +446,7 @@ function IdeaCard({
     <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(0,0,0,0.3)' }}>
       <button
         onClick={onToggle}
-        className="w-full p-4 text-left hover:bg-white/5 transition-colors"
+        className="w-full p-4 text-left hover:bg-slate-50/5 transition-colors"
       >
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -469,14 +467,14 @@ function IdeaCard({
                       idea.strategy.priority === 'high'
                         ? '#ff6b6b22'
                         : idea.strategy.priority === 'medium'
-                        ? '#ffd16622'
-                        : '#95a5a622',
+                          ? '#ffd16622'
+                          : '#95a5a622',
                     color:
                       idea.strategy.priority === 'high'
                         ? '#ff6b6b'
                         : idea.strategy.priority === 'medium'
-                        ? '#ffd166'
-                        : '#95a5a6',
+                          ? '#ffd166'
+                          : '#95a5a6',
                   }}
                 >
                   {idea.strategy.priority === 'high' ? '높음' : idea.strategy.priority === 'medium' ? '중간' : '낮음'}
@@ -500,9 +498,8 @@ function IdeaCard({
             </div>
           </div>
           <ChevronRight
-            className={`w-5 h-5 text-[var(--db-muted)] transition-transform flex-shrink-0 ml-2 ${
-              isExpanded ? 'rotate-90' : ''
-            }`}
+            className={`w-5 h-5 text-[var(--db-muted)] transition-transform flex-shrink-0 ml-2 ${isExpanded ? 'rotate-90' : ''
+              }`}
           />
         </div>
       </button>

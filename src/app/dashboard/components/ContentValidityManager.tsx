@@ -268,7 +268,7 @@ export default function ContentValidityManager() {
                                             <span style={{ color: statusConfig.color }}>{statusConfig.icon}</span>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-[var(--db-muted)] uppercase">
+                                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-50/10 text-[var(--db-muted)] uppercase">
                                                         {typeLabel}
                                                     </span>
                                                     <span className="text-[10px] text-[var(--db-muted)]">
@@ -327,7 +327,7 @@ export default function ContentValidityManager() {
                                             <span style={{ color: statusConfig.color }}>{statusConfig.icon}</span>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-[var(--db-muted)] uppercase">
+                                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-50/10 text-[var(--db-muted)] uppercase">
                                                         {typeLabel}
                                                     </span>
                                                     <span className="text-[9px] text-[var(--db-muted)]">

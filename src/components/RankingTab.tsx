@@ -304,7 +304,7 @@ function RankingSidebar({
   completedCount: number;
 }) {
   return (
-    <aside className="w-72 flex-shrink-0 space-y-4">
+    <aside className="w-60 flex-shrink-0 space-y-4">
       {/* 통계 요약 */}
       <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 text-white">
         <div className="flex items-center gap-3 mb-3">
@@ -406,7 +406,7 @@ function RankingDiscoverySidebar({ onNavigate }: { onNavigate?: (target: string)
   const hotPosts = [...MOCK_COMMUNITY_POSTS].sort((a, b) => b.likes - a.likes).slice(0, 3);
 
   return (
-    <aside className="hidden xl:block w-72 flex-shrink-0">
+    <aside className="hidden xl:block w-80 flex-shrink-0">
       <div className="sticky top-4 space-y-4">
         {/* 인기 투표 */}
         <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">

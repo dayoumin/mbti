@@ -290,7 +290,7 @@ function PostDetailSidebar({ currentPost, allPosts, onSelectPost, onBack, onStar
   }, [currentPost.category]);
 
   return (
-    <aside className="hidden xl:block w-72 flex-shrink-0">
+    <aside className="hidden xl:block w-80 flex-shrink-0">
       <div className="sticky top-20 space-y-4">
         {/* 작성자 정보 */}
         <section className="bg-slate-50 rounded-2xl border border-slate-100 shadow-sm p-4">

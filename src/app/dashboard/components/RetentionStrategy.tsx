@@ -44,11 +44,10 @@ export default function RetentionStrategy() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab.key
                 ? 'bg-[var(--db-brand)] text-[#081023]'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -152,11 +151,10 @@ function PhasesTab({
           <button
             key={phase.id}
             onClick={() => setActivePhase(phase.id)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activePhase === phase.id
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activePhase === phase.id
                 ? 'bg-emerald-500 text-white'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {phase.title}
           </button>
@@ -222,7 +220,7 @@ function TacticCard({ tactic }: { tactic: RetentionTactic }) {
     <div className="db-card overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-5 flex items-start gap-4 text-left hover:bg-white/5 transition-colors"
+        className="w-full p-5 flex items-start gap-4 text-left hover:bg-slate-50/5 transition-colors"
       >
         <div className="w-10 h-10 rounded-xl bg-[var(--db-brand)]/20 flex items-center justify-center text-[var(--db-brand)]">
           {categoryIcons[tactic.category]}
@@ -255,7 +253,7 @@ function TacticCard({ tactic }: { tactic: RetentionTactic }) {
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-white/5 pt-4">
+        <div className="px-5 pb-5 space-y-4 border-t border-slate-50/5 pt-4">
           <div>
             <p className="text-xs text-[var(--db-muted)] mb-2">메커니즘</p>
             <p className="text-sm text-[var(--db-text)]">{tactic.mechanism}</p>
@@ -338,13 +336,12 @@ function MetricsTab() {
                     <td className="py-3 px-4 text-center text-sm text-[var(--db-muted)]">{metric.benchmark}</td>
                     <td className="py-3 px-4 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
-                          metric.importance === 'critical'
+                        className={`px-2 py-0.5 rounded text-xs font-medium ${metric.importance === 'critical'
                             ? 'bg-rose-500/20 text-rose-400'
                             : metric.importance === 'high'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-blue-500/20 text-blue-400'
-                        }`}
+                              ? 'bg-amber-500/20 text-amber-400'
+                              : 'bg-blue-500/20 text-blue-400'
+                          }`}
                       >
                         {metric.importance === 'critical' ? '핵심' : metric.importance === 'high' ? '높음' : '중간'}
                       </span>
@@ -394,7 +391,7 @@ function TriggersTab() {
           {RETENTION_STRATEGY.triggers.map((trigger) => (
             <div
               key={trigger.id}
-              className="p-4 rounded-xl bg-white/5 border border-white/10"
+              className="p-4 rounded-xl bg-slate-50/5 border border-slate-50/10"
             >
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-xl bg-[var(--db-brand)]/20 flex items-center justify-center">

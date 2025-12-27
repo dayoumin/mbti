@@ -89,7 +89,7 @@ export default function ConversionAnalysis() {
       ) : (
         <>
           {/* 전체 퍼널 요약 */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-slate-50 border border-gray-200 rounded-xl p-6">
             <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-indigo-500" />
               전체 퍼널
@@ -146,7 +146,7 @@ export default function ConversionAnalysis() {
 
           {/* 소스별 분석 */}
           {funnel.bySource.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <div className="bg-slate-50 border border-gray-200 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-500" />
                 유입 소스별 전환율
@@ -169,12 +169,11 @@ export default function ConversionAnalysis() {
                       <tr key={source.source} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-2 px-3">
                           <span className="inline-flex items-center gap-1.5">
-                            <span className={`w-2 h-2 rounded-full ${
-                              source.source === 'kakao' ? 'bg-yellow-400' :
-                              source.source === 'instagram' ? 'bg-pink-400' :
-                              source.source === 'link_copy' ? 'bg-blue-400' :
-                              'bg-gray-400'
-                            }`} />
+                            <span className={`w-2 h-2 rounded-full ${source.source === 'kakao' ? 'bg-yellow-400' :
+                                source.source === 'instagram' ? 'bg-pink-400' :
+                                  source.source === 'link_copy' ? 'bg-blue-400' :
+                                    'bg-gray-400'
+                              }`} />
                             {source.source}
                           </span>
                         </td>
@@ -183,11 +182,10 @@ export default function ConversionAnalysis() {
                         <td className="text-right py-2 px-3 text-gray-600">{source.testCompletes}</td>
                         <td className="text-right py-2 px-3 text-gray-600">{source.shares}</td>
                         <td className="text-right py-2 px-3">
-                          <span className={`font-medium ${
-                            source.overallConversion >= 50 ? 'text-green-600' :
-                            source.overallConversion >= 30 ? 'text-amber-600' :
-                            'text-gray-600'
-                          }`}>
+                          <span className={`font-medium ${source.overallConversion >= 50 ? 'text-green-600' :
+                              source.overallConversion >= 30 ? 'text-amber-600' :
+                                'text-gray-600'
+                            }`}>
                             {source.overallConversion.toFixed(1)}%
                           </span>
                         </td>
@@ -201,7 +199,7 @@ export default function ConversionAnalysis() {
 
           {/* 테스트별 전환율 */}
           {testConversion.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <div className="bg-slate-50 border border-gray-200 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5 text-orange-500" />
                 테스트별 전환율
@@ -272,12 +270,11 @@ export default function ConversionAnalysis() {
                     <span className="text-gray-600">공유로 유입된 사용자</span>
                     <span className="font-medium">{viral.viralUsers}명</span>
                   </div>
-                  <div className="mt-3 px-3 py-2 bg-white rounded-lg text-sm">
-                    <span className={`font-medium ${
-                      viral.coefficient >= 1 ? 'text-green-600' :
-                      viral.coefficient >= 0.5 ? 'text-amber-600' :
-                      'text-gray-600'
-                    }`}>
+                  <div className="mt-3 px-3 py-2 bg-slate-50 rounded-lg text-sm">
+                    <span className={`font-medium ${viral.coefficient >= 1 ? 'text-green-600' :
+                        viral.coefficient >= 0.5 ? 'text-amber-600' :
+                          'text-gray-600'
+                      }`}>
                       {viral.interpretation}
                     </span>
                     <span className="text-gray-500 ml-2">

@@ -328,7 +328,7 @@ export default function Home() {
             )}
 
             {activeModal === 'community' && (
-                <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-60 lg:right-0">
+                <div className="fixed inset-0 z-50 bg-[#F0F2F5] lg:left-60">
                     <CommunityBoard
                         className="h-full"
                         onClose={() => {
@@ -673,7 +673,7 @@ export default function Home() {
                         {step === 'result' && finalResult && (
                             <div className="flex flex-col h-full animate-fade-in relative">
                                 <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10 bg-gradient-to-b from-slate-50/90 to-transparent">
-                                    <button onClick={() => setView('dashboard')} className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white">
+                                    <button onClick={() => setView('dashboard')} className="p-2 rounded-full bg-slate-50/50 backdrop-blur-sm shadow-sm hover:bg-slate-50">
                                         <HomeIcon className="w-5 h-5 text-slate-600" />
                                     </button>
                                     <ShareButton
@@ -756,7 +756,7 @@ export default function Home() {
                                                             </h3>
                                                             <div className="flex flex-wrap gap-1">
                                                                 {(finalResult.matchPoints || []).map((point, idx) => (
-                                                                    <span key={idx} className="px-2 py-0.5 bg-white text-slate-600 text-xs rounded-full border border-slate-200">
+                                                                    <span key={idx} className="px-2 py-0.5 bg-slate-50 text-slate-600 text-xs rounded-full border border-slate-200">
                                                                         {point}
                                                                     </span>
                                                                 ))}
@@ -817,7 +817,7 @@ export default function Home() {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <div className="bg-white/60 rounded-xl p-4 border border-white/50 space-y-3">
+                                                    <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-50/50 space-y-3">
                                                         <div>
                                                             <h3 className="font-bold text-slate-800 mb-1 text-sm">💡 상세 분석</h3>
                                                             <p className="text-slate-600 text-sm leading-relaxed">{finalResult.interpretation}</p>
@@ -867,7 +867,7 @@ export default function Home() {
                                                 <span className="relative flex items-center gap-2">
                                                     📸 결과 카드 저장하기
                                                 </span>
-                                                <span className="relative text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                                                <span className="relative text-xs bg-slate-50/20 px-2 py-0.5 rounded-full">
                                                     1.2K
                                                 </span>
                                             </button>

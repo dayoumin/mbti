@@ -89,11 +89,10 @@ export default function ContentSystem() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab.key
                 ? 'bg-[var(--db-brand)] text-[#081023]'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -273,11 +272,10 @@ function TypesTab({
           <button
             key={type.id}
             onClick={() => setSelectedType(type.id)}
-            className={`w-full text-left p-4 rounded-xl transition-all ${
-              selectedType === type.id
+            className={`w-full text-left p-4 rounded-xl transition-all ${selectedType === type.id
                 ? 'bg-[var(--db-brand)]/20 border border-[var(--db-brand)]/50'
                 : 'bg-[var(--db-panel)] hover:bg-[var(--db-panel)]/80'
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
               <div
@@ -704,7 +702,7 @@ function EstimatesTab() {
                 <div key={cat.category}>
                   <button
                     onClick={() => setExpandedCategory(isExpanded ? null : cat.category)}
-                    className="w-full grid grid-cols-6 gap-4 px-4 py-3 hover:bg-white/5 transition-colors text-sm"
+                    className="w-full grid grid-cols-6 gap-4 px-4 py-3 hover:bg-slate-50/5 transition-colors text-sm"
                   >
                     <div className="flex items-center gap-2 text-left">
                       <span className="text-xl">{cat.icon}</span>
@@ -1126,21 +1124,19 @@ function SeasonalTab() {
       <div className="flex gap-2">
         <button
           onClick={() => setSubTab('seasonal')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            subTab === 'seasonal'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${subTab === 'seasonal'
               ? 'bg-[var(--db-brand)] text-[#081023]'
               : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-          }`}
+            }`}
         >
           📅 시즌 콘텐츠
         </button>
         <button
           onClick={() => setSubTab('trend')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            subTab === 'trend'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${subTab === 'trend'
               ? 'bg-[var(--db-brand)] text-[#081023]'
               : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-          }`}
+            }`}
         >
           🔥 트렌드 콘텐츠
         </button>
@@ -1225,13 +1221,12 @@ function SeasonalContentView({
             return (
               <div
                 key={season.id}
-                className={`rounded-xl overflow-hidden transition-all ${
-                  isActive ? 'ring-2 ring-[var(--db-brand)]' : ''
-                }`}
+                className={`rounded-xl overflow-hidden transition-all ${isActive ? 'ring-2 ring-[var(--db-brand)]' : ''
+                  }`}
               >
                 <button
                   onClick={() => setExpandedSeason(isExpanded ? null : season.id)}
-                  className="w-full p-4 text-left hover:bg-white/5 transition-colors"
+                  className="w-full p-4 text-left hover:bg-slate-50/5 transition-colors"
                   style={{ background: 'rgba(0,0,0,0.3)' }}
                 >
                   <div className="flex items-center justify-between">
@@ -1376,9 +1371,8 @@ function FollowUpTab() {
             <button
               key={category.id}
               onClick={() => setSelectedCategory(isSelected ? null : category.id)}
-              className={`p-4 rounded-xl text-left transition-all ${
-                isSelected ? 'ring-2' : ''
-              }`}
+              className={`p-4 rounded-xl text-left transition-all ${isSelected ? 'ring-2' : ''
+                }`}
               style={{
                 background: `${color}15`,
                 // @ts-expect-error CSS variable for ring color
@@ -1638,7 +1632,7 @@ function TrendContentSection() {
               <div key={step.step} className="flex-1 relative">
                 {idx < TREND_OPERATION_GUIDE.length - 1 && (
                   <div
-                    className="absolute top-6 left-1/2 w-full h-0.5 bg-white/10"
+                    className="absolute top-6 left-1/2 w-full h-0.5 bg-slate-50/10"
                   />
                 )}
                 <div className="relative z-10 text-center">
@@ -1800,7 +1794,7 @@ function TrendContentSection() {
         </div>
         <div className="p-5">
           <pre className="text-xs text-[var(--db-muted)] bg-black/30 p-4 rounded-lg overflow-x-auto">
-{`interface TrendContent {
+            {`interface TrendContent {
   id: string;
   source: 'news' | 'sns' | 'community' | 'search' | 'manual';
   keyword: string;           // 트렌드 키워드
@@ -1862,9 +1856,8 @@ function DatabaseTab() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-[var(--db-brand)]">{table.name}</span>
-                    <span className={`px-2 py-0.5 rounded text-xs ${
-                      table.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-                    }`}>
+                    <span className={`px-2 py-0.5 rounded text-xs ${table.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                      }`}>
                       {table.status}
                     </span>
                   </div>
@@ -1909,12 +1902,11 @@ function DatabaseTab() {
                 {endpoints.map((ep, i) => (
                   <tr key={i} className="border-t border-white/5">
                     <td className="py-2">
-                      <span className={`px-2 py-0.5 rounded text-xs font-mono ${
-                        ep.method === 'GET' ? 'bg-green-500/20 text-green-400' :
-                        ep.method === 'POST' ? 'bg-blue-500/20 text-blue-400' :
-                        ep.method === 'PUT' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-red-500/20 text-red-400'
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded text-xs font-mono ${ep.method === 'GET' ? 'bg-green-500/20 text-green-400' :
+                          ep.method === 'POST' ? 'bg-blue-500/20 text-blue-400' :
+                            ep.method === 'PUT' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-red-500/20 text-red-400'
+                        }`}>
                         {ep.method}
                       </span>
                     </td>

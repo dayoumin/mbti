@@ -282,7 +282,7 @@ function RoadmapCard({ phase }: { phase: RoadmapPhase }) {
 
 function DebateCard({ debate }: { debate: DebateTopic }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-3">
+    <div className="bg-slate-50 rounded-xl border border-slate-200 p-3">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg">{CATEGORY_DEFINITIONS.find(c => c.id === debate.category)?.emoji}</span>
         <span className="text-xs font-bold text-slate-700">{debate.topic}</span>
@@ -328,8 +328,8 @@ export default function CategoryStrategy() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab.key
-                ? 'bg-indigo-500 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              ? 'bg-indigo-500 text-white'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
           >
             {tab.icon}
@@ -358,7 +358,7 @@ export default function CategoryStrategy() {
                   <span className="text-xs opacity-75">테스트 아이디어</span>
                 </div>
                 {(cat.id === 'relationship' || cat.id === 'lifestyle') && (
-                  <span className="mt-2 inline-block px-2 py-0.5 bg-white/20 text-xs font-bold rounded-full">
+                  <span className="mt-2 inline-block px-2 py-0.5 bg-slate-50/20 text-xs font-bold rounded-full">
                     신규 카테고리
                   </span>
                 )}

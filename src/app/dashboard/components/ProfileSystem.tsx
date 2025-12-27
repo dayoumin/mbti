@@ -76,7 +76,7 @@ export default function ProfileSystem() {
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
           {PROFILE_CONCEPT.userValue.map((value, i) => (
-            <span key={i} className="px-3 py-1.5 bg-white/10 rounded-full text-xs text-[var(--db-text)]">
+            <span key={i} className="px-3 py-1.5 bg-slate-50/10 rounded-full text-xs text-[var(--db-text)]">
               {value}
             </span>
           ))}
@@ -95,11 +95,10 @@ export default function ProfileSystem() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab.key
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -194,7 +193,7 @@ function ConceptTab() {
               </p>
               <div className="flex flex-wrap gap-1 mt-2">
                 {card.sections.slice(0, 3).map((s) => (
-                  <span key={s} className="px-1.5 py-0.5 bg-white/10 rounded text-xs">
+                  <span key={s} className="px-1.5 py-0.5 bg-slate-50/10 rounded text-xs">
                     {s}
                   </span>
                 ))}

@@ -58,11 +58,10 @@ export default function MarketingStrategy() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab.key
                 ? 'bg-[var(--db-brand)] text-[#081023]'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -174,11 +173,10 @@ function ChannelsTab() {
           <button
             key={channel.id}
             onClick={() => setSelectedChannel(channel.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              selectedChannel === channel.id
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedChannel === channel.id
                 ? 'bg-purple-500 text-white'
                 : 'bg-[var(--db-panel)] text-[var(--db-muted)] hover:text-[var(--db-text)]'
-            }`}
+              }`}
           >
             {channelIcons[channel.id]}
             {channel.name}
@@ -204,11 +202,10 @@ function ChannelsTab() {
             <div className="flex gap-4 text-center">
               <div>
                 <p className="text-xs text-[var(--db-muted)]">우선순위</p>
-                <p className={`text-sm font-bold ${
-                  currentChannel.priority === 'critical' ? 'text-rose-400' :
-                  currentChannel.priority === 'high' ? 'text-amber-400' :
-                  'text-blue-400'
-                }`}>
+                <p className={`text-sm font-bold ${currentChannel.priority === 'critical' ? 'text-rose-400' :
+                    currentChannel.priority === 'high' ? 'text-amber-400' :
+                      'text-blue-400'
+                  }`}>
                   {currentChannel.priority === 'critical' ? '필수' : currentChannel.priority === 'high' ? '높음' : '중간'}
                 </p>
               </div>
@@ -269,7 +266,7 @@ function TacticCard({ tactic }: { tactic: ChannelTactic }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+    <div className="p-4 rounded-xl bg-slate-50/5 border border-slate-50/10">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between text-left"
@@ -315,7 +312,7 @@ function ContentTab() {
         </div>
         <div className="p-5 space-y-4">
           {CONTENT_PILLARS.map((pillar) => (
-            <div key={pillar.id} className="p-4 rounded-xl bg-white/5">
+            <div key={pillar.id} className="p-4 rounded-xl bg-slate-50/5">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h4 className="font-bold text-[var(--db-text)]">{pillar.name}</h4>
@@ -327,7 +324,7 @@ function ContentTab() {
               </div>
 
               {/* Progress Bar */}
-              <div className="h-2 bg-white/10 rounded-full mb-3">
+              <div className="h-2 bg-slate-50/10 rounded-full mb-3">
                 <div
                   className="h-full bg-[var(--db-brand)] rounded-full"
                   style={{ width: `${pillar.ratio}%` }}
@@ -382,7 +379,7 @@ function ContentTab() {
                 <tr key={day} className="border-b border-white/5">
                   <td className="py-2 px-3 font-medium text-[var(--db-text)] capitalize">
                     {day === 'monday' ? '월' : day === 'tuesday' ? '화' : day === 'wednesday' ? '수' :
-                     day === 'thursday' ? '목' : day === 'friday' ? '금' : day === 'saturday' ? '토' : '일'}
+                      day === 'thursday' ? '목' : day === 'friday' ? '금' : day === 'saturday' ? '토' : '일'}
                   </td>
                   <td className="py-2 px-3 text-[var(--db-muted)]">{content.instagram || '-'}</td>
                   <td className="py-2 px-3 text-[var(--db-muted)]">{content.tiktok || '-'}</td>
@@ -434,14 +431,13 @@ function PhasesTab() {
             {phase.activities.map((activity) => (
               <div
                 key={activity.id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5"
+                className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/5"
               >
                 <CheckCircle2
-                  className={`w-5 h-5 ${
-                    activity.status === 'done' ? 'text-emerald-400' :
-                    activity.status === 'in-progress' ? 'text-amber-400' :
-                    'text-[var(--db-muted)]'
-                  }`}
+                  className={`w-5 h-5 ${activity.status === 'done' ? 'text-emerald-400' :
+                      activity.status === 'in-progress' ? 'text-amber-400' :
+                        'text-[var(--db-muted)]'
+                    }`}
                 />
                 <div className="flex-1">
                   <p className="font-medium text-[var(--db-text)]">{activity.name}</p>
@@ -450,11 +446,10 @@ function PhasesTab() {
                 <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded">
                   {activity.channel}
                 </span>
-                <span className={`px-2 py-1 text-xs rounded ${
-                  activity.priority === 'critical' ? 'bg-rose-500/20 text-rose-400' :
-                  activity.priority === 'high' ? 'bg-amber-500/20 text-amber-400' :
-                  'bg-blue-500/20 text-blue-400'
-                }`}>
+                <span className={`px-2 py-1 text-xs rounded ${activity.priority === 'critical' ? 'bg-rose-500/20 text-rose-400' :
+                    activity.priority === 'high' ? 'bg-amber-500/20 text-amber-400' :
+                      'bg-blue-500/20 text-blue-400'
+                  }`}>
                   {activity.priority === 'critical' ? '필수' : activity.priority === 'high' ? '높음' : '중간'}
                 </span>
               </div>
@@ -510,7 +505,7 @@ function KPITab() {
         </div>
         <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
           {MARKETING_STRATEGY.tools.map((category) => (
-            <div key={category.category} className="p-4 rounded-xl bg-white/5">
+            <div key={category.category} className="p-4 rounded-xl bg-slate-50/5">
               <h4 className="font-medium text-[var(--db-text)] mb-3">{category.category}</h4>
               <ul className="space-y-2">
                 {category.tools.map((tool) => (
@@ -580,7 +575,7 @@ function AutomationTab() {
             <p className="text-xs text-[var(--db-muted)]">주간 유지보수</p>
           </div>
         </div>
-        <div className="mt-4 p-3 rounded-xl bg-white/5 text-sm text-[var(--db-muted)]">
+        <div className="mt-4 p-3 rounded-xl bg-slate-50/5 text-sm text-[var(--db-muted)]">
           <strong className="text-[var(--db-text)]">수동 대비:</strong> 월 {AUTOMATION_ROI.manualEffort.monthlyContent} → {AUTOMATION_ROI.automatedEffort.monthlyContent} (검수만)
         </div>
       </div>
@@ -610,14 +605,13 @@ function AutomationTab() {
         </div>
         <div className="p-5 space-y-4">
           {CONTENT_TEMPLATES.slice(0, 3).map((template) => (
-            <div key={template.id} className="p-4 rounded-xl bg-white/5 border border-white/10">
+            <div key={template.id} className="p-4 rounded-xl bg-slate-50/5 border border-slate-50/10">
               <div className="flex items-center gap-2 mb-2">
-                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                  template.type === 'image' ? 'bg-pink-500/20 text-pink-400' :
-                  template.type === 'video' ? 'bg-purple-500/20 text-purple-400' :
-                  template.type === 'carousel' ? 'bg-blue-500/20 text-blue-400' :
-                  'bg-gray-500/20 text-gray-400'
-                }`}>
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${template.type === 'image' ? 'bg-pink-500/20 text-pink-400' :
+                    template.type === 'video' ? 'bg-purple-500/20 text-purple-400' :
+                      template.type === 'carousel' ? 'bg-blue-500/20 text-blue-400' :
+                        'bg-gray-500/20 text-gray-400'
+                  }`}>
                   {template.type}
                 </span>
                 <h4 className="font-medium text-[var(--db-text)]">{template.name}</h4>
@@ -642,7 +636,7 @@ function AutomationTab() {
         </div>
         <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {AUTOMATION_TOOLS.map((category) => (
-            <div key={category.category} className="p-4 rounded-xl bg-white/5">
+            <div key={category.category} className="p-4 rounded-xl bg-slate-50/5">
               <h4 className="font-medium text-[var(--db-text)] mb-3 flex items-center gap-2">
                 <Bot className="w-4 h-4 text-purple-400" />
                 {category.category}
@@ -670,21 +664,20 @@ function AutomationTab() {
             {AUTOMATION_ROADMAP.map((phase, index) => (
               <div key={phase.phase} className="flex gap-4 pb-6 last:pb-0">
                 <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    index === 0 ? 'bg-emerald-500 text-white' :
-                    index === 1 ? 'bg-amber-500 text-white' :
-                    'bg-purple-500 text-white'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${index === 0 ? 'bg-emerald-500 text-white' :
+                      index === 1 ? 'bg-amber-500 text-white' :
+                        'bg-purple-500 text-white'
+                    }`}>
                     {phase.phase}
                   </div>
                   {index < AUTOMATION_ROADMAP.length - 1 && (
-                    <div className="w-0.5 flex-1 bg-white/10 mt-2" />
+                    <div className="w-0.5 flex-1 bg-slate-50/10 mt-2" />
                   )}
                 </div>
                 <div className="flex-1 pb-4">
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-bold text-[var(--db-text)]">{phase.title}</h4>
-                    <span className="px-2 py-0.5 bg-white/10 text-[var(--db-muted)] text-xs rounded">
+                    <span className="px-2 py-0.5 bg-slate-50/10 text-[var(--db-muted)] text-xs rounded">
                       {phase.timeline}
                     </span>
                   </div>
@@ -728,10 +721,10 @@ function PipelineCard({
   };
 
   return (
-    <div className="rounded-xl bg-white/5 border border-white/10 overflow-hidden">
+    <div className="rounded-xl bg-slate-50/5 border border-slate-50/10 overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full p-4 flex items-start gap-4 text-left hover:bg-white/5 transition-colors"
+        className="w-full p-4 flex items-start gap-4 text-left hover:bg-slate-50/5 transition-colors"
       >
         <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
           <Bot className="w-5 h-5 text-purple-400" />
@@ -790,7 +783,7 @@ function PipelineCard({
             <p className="text-xs text-[var(--db-muted)] mb-2">사용 도구</p>
             <div className="flex flex-wrap gap-2">
               {pipeline.tools.map((tool, i) => (
-                <span key={i} className="px-2 py-1 bg-white/10 text-[var(--db-text)] text-xs rounded">
+                <span key={i} className="px-2 py-1 bg-slate-50/10 text-[var(--db-text)] text-xs rounded">
                   {tool}
                 </span>
               ))}

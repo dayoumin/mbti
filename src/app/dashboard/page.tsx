@@ -328,9 +328,8 @@ export default function DashboardPage() {
               <div key={item.key}>
                 <button
                   onClick={() => handleCategoryChange(item.key)}
-                  className={`db-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium ${
-                    isActive ? 'active' : ''
-                  }`}
+                  className={`db-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium ${isActive ? 'active' : ''
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={isActive ? 'text-[var(--db-brand)]' : 'text-[var(--db-muted)]'}>
@@ -345,9 +344,8 @@ export default function DashboardPage() {
                       </span>
                     )}
                     <ChevronRight
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        isExpanded ? 'rotate-90 text-[var(--db-brand)]' : 'text-[var(--db-muted)]'
-                      }`}
+                      className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-90 text-[var(--db-brand)]' : 'text-[var(--db-muted)]'
+                        }`}
                     />
                   </div>
                 </button>
@@ -359,11 +357,10 @@ export default function DashboardPage() {
                       <button
                         key={group.groupLabel}
                         onClick={() => handleGroupChange(group.groupLabel)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                          activeGroup === group.groupLabel && isActive
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${activeGroup === group.groupLabel && isActive
                             ? 'bg-[var(--db-brand)]/10 text-[var(--db-brand)]'
                             : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[var(--db-panel)]'
-                        }`}
+                          }`}
                       >
                         {group.groupLabel}
                         <span className="ml-2 text-[10px] opacity-60">({group.tabs.length})</span>
@@ -379,11 +376,10 @@ export default function DashboardPage() {
                       <button
                         key={tab.key}
                         onClick={() => setActiveSubTab(tab.key)}
-                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors flex items-center gap-2 ${
-                          activeSubTab === tab.key && isActive
+                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors flex items-center gap-2 ${activeSubTab === tab.key && isActive
                             ? 'bg-[var(--db-brand)]/10 text-[var(--db-brand)]'
                             : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[var(--db-panel)]'
-                        }`}
+                          }`}
                       >
                         {tab.icon}
                         {tab.label}
@@ -420,9 +416,8 @@ export default function DashboardPage() {
                     <button
                       key={tab.key}
                       onClick={() => setActiveSubTab(tab.key)}
-                      className={`db-tab flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
-                        activeSubTab === tab.key ? 'active' : ''
-                      }`}
+                      className={`db-tab flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${activeSubTab === tab.key ? 'active' : ''
+                        }`}
                     >
                       {tab.icon}
                       {tab.label}
@@ -437,9 +432,8 @@ export default function DashboardPage() {
                   <button
                     key={tab.key}
                     onClick={() => setActiveSubTab(tab.key)}
-                    className={`db-tab flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium ${
-                      activeSubTab === tab.key ? 'active' : ''
-                    }`}
+                    className={`db-tab flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium ${activeSubTab === tab.key ? 'active' : ''
+                      }`}
                   >
                     {tab.icon}
                     {tab.label}
@@ -732,9 +726,8 @@ function TypeTabs({ selectedType, onSelectType }: TypeTabsProps) {
           <button
             key={type}
             onClick={() => onSelectType(type)}
-            className={`db-tab flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium ${
-              isSelected ? 'active' : ''
-            }`}
+            className={`db-tab flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium ${isSelected ? 'active' : ''
+              }`}
           >
             <span>{typeInfo?.emoji}</span>
             <span>{typeInfo?.label || type}</span>
@@ -767,9 +760,8 @@ function TestSelector({ selectedTest, onSelectTest }: TestSelectorProps) {
             <button
               key={key}
               onClick={() => onSelectTest(key)}
-              className={`db-tab flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium ${
-                isSelected ? 'active' : ''
-              }`}
+              className={`db-tab flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium ${isSelected ? 'active' : ''
+                }`}
             >
               {getTestIcon(key)}
               {data.title}
@@ -808,9 +800,8 @@ function TestList({ selectedTest, onSelectTest }: TestSelectorProps) {
             <div
               key={key}
               onClick={() => onSelectTest(key)}
-              className={`db-card p-5 cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
-                selectedTest === key ? 'ring-2 ring-[var(--db-brand)]' : ''
-              }`}
+              className={`db-card p-5 cursor-pointer transition-all duration-200 hover:scale-[1.02] ${selectedTest === key ? 'ring-2 ring-[var(--db-brand)]' : ''
+                }`}
             >
               <div className="flex items-start gap-4">
                 <div
@@ -1143,7 +1134,7 @@ function LogicViewer({ selectedTest, onSelectTest }: TestSelectorProps) {
                 const conditionEntries = Object.entries(r.condition || {});
                 const conditionCount = conditionEntries.length;
                 return (
-                  <div key={idx} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
+                  <div key={idx} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50/5 transition-colors">
                     <span className="text-lg">{r.emoji}</span>
                     <span className="text-[var(--db-text)] text-sm font-medium min-w-[120px]">{r.name}</span>
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -1151,11 +1142,10 @@ function LogicViewer({ selectedTest, onSelectTest }: TestSelectorProps) {
                         conditionEntries.map(([dim, level]) => (
                           <span
                             key={dim}
-                            className={`px-2 py-0.5 rounded text-xs font-mono ${
-                              level === 'high' ? 'bg-emerald-500/20 text-emerald-300' :
-                              level === 'low' ? 'bg-rose-500/20 text-rose-300' :
-                              'bg-amber-500/20 text-amber-300'
-                            }`}
+                            className={`px-2 py-0.5 rounded text-xs font-mono ${level === 'high' ? 'bg-emerald-500/20 text-emerald-300' :
+                                level === 'low' ? 'bg-rose-500/20 text-rose-300' :
+                                  'bg-amber-500/20 text-amber-300'
+                              }`}
                           >
                             {dim}:{level}
                           </span>
@@ -1277,11 +1267,10 @@ function DesignTokens() {
             <button
               key={tab.key}
               onClick={() => setActiveSection(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeSection === tab.key
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === tab.key
                   ? 'bg-[var(--db-brand)] text-[#081023]'
                   : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[rgba(255,255,255,0.05)]'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -1508,7 +1497,7 @@ function AppDesignSystem() {
         <div className="p-5" style={{ background: '#F8FAFC' }}>
           <div className="grid grid-cols-2 gap-4">
             {/* 카드 */}
-            <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-lg">🧠</div>
                 <div>
@@ -1524,14 +1513,14 @@ function AppDesignSystem() {
               <button className="w-full py-2.5 rounded-lg bg-indigo-500 text-white text-sm font-medium">
                 Primary 버튼
               </button>
-              <button className="w-full py-2.5 rounded-lg bg-white border border-slate-200 text-slate-700 text-sm font-medium">
+              <button className="w-full py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium">
                 Secondary 버튼
               </button>
               <div className="flex gap-2">
-                <button className="flex-1 py-2 rounded-lg bg-white border border-slate-200 text-emerald-600 text-xs font-medium flex items-center justify-center gap-1">
+                <button className="flex-1 py-2 rounded-lg bg-slate-50 border border-slate-200 text-emerald-600 text-xs font-medium flex items-center justify-center gap-1">
                   <ThumbsUp className="w-3 h-3" /> 맞아요
                 </button>
-                <button className="flex-1 py-2 rounded-lg bg-white border border-slate-200 text-red-500 text-xs font-medium flex items-center justify-center gap-1">
+                <button className="flex-1 py-2 rounded-lg bg-slate-50 border border-slate-200 text-red-500 text-xs font-medium flex items-center justify-center gap-1">
                   <ThumbsDown className="w-3 h-3" /> 아니에요
                 </button>
               </div>
@@ -1539,7 +1528,7 @@ function AppDesignSystem() {
           </div>
 
           {/* TraitBar */}
-          <div className="mt-4 bg-white rounded-lg border border-slate-200 p-3">
+          <div className="mt-4 bg-slate-50 rounded-lg border border-slate-200 p-3">
             <p className="text-xs font-medium text-slate-500 mb-2">TraitBar</p>
             <div className="flex justify-between text-xs text-slate-500 mb-1">
               <span>내향 72%</span>
@@ -1590,11 +1579,10 @@ function AppDesignSystem() {
                 <code className="text-xs font-medium text-[var(--db-text)]">{svc.name}</code>
                 <span className="text-xs text-[var(--db-muted)]">{svc.desc}</span>
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                svc.api === 'Supabase' ? 'bg-emerald-500/10 text-emerald-400' :
-                svc.api === 'Local' ? 'bg-slate-500/10 text-slate-400' :
-                'bg-blue-500/10 text-blue-400'
-              }`}>{svc.api}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${svc.api === 'Supabase' ? 'bg-emerald-500/10 text-emerald-400' :
+                  svc.api === 'Local' ? 'bg-slate-500/10 text-slate-400' :
+                    'bg-blue-500/10 text-blue-400'
+                }`}>{svc.api}</span>
             </div>
           ))}
         </div>
@@ -2075,7 +2063,7 @@ function Monetization() {
           <div>
             <h4 className="font-bold text-[var(--db-text)] mb-2">Situation 스키마</h4>
             <pre className="p-4 rounded-lg text-xs overflow-x-auto" style={{ background: 'rgba(0,0,0,0.3)', color: 'var(--db-brand2)' }}>
-{`Situation
+              {`Situation
 - id: "AQ-FW-001"
 - domain: "aquarium" | "pet" | "plant"
 - categoryPath: ["관상어","담수어","질병"]
@@ -2090,7 +2078,7 @@ function Monetization() {
           <div>
             <h4 className="font-bold text-[var(--db-text)] mb-2">Experience 스키마</h4>
             <pre className="p-4 rounded-lg text-xs overflow-x-auto" style={{ background: 'rgba(0,0,0,0.3)', color: 'var(--db-brand2)' }}>
-{`Experience (구조화 기록)
+              {`Experience (구조화 기록)
 - situationId: "AQ-FW-001"
 - chosen: "C"
 - outcome: "회복" | "악화" | "미확인"
@@ -2309,7 +2297,7 @@ function Roadmap() {
                   }}
                 >
                   {item.done && <CheckCircle2 className="w-4 h-4 text-[#081023] absolute -top-0.5 -left-0.5" />}
-                  {item.current && <div className="w-2 h-2 rounded-full bg-white" />}
+                  {item.current && <div className="w-2 h-2 rounded-full bg-slate-50" />}
                 </div>
                 <div>
                   <div className="flex items-center gap-3 mb-2">
@@ -3239,9 +3227,8 @@ function Troubleshooting() {
                 </div>
               </div>
               <ChevronRight
-                className={`w-5 h-5 text-[var(--db-muted)] transition-transform ${
-                  expandedId === issue.id ? 'rotate-90' : ''
-                }`}
+                className={`w-5 h-5 text-[var(--db-muted)] transition-transform ${expandedId === issue.id ? 'rotate-90' : ''
+                  }`}
               />
             </button>
 
@@ -3858,11 +3845,10 @@ function ProductFeatures() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === tab.key
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key
                   ? 'bg-[var(--db-brand)] text-[#081023]'
                   : 'text-[var(--db-muted)] hover:text-[var(--db-text)] hover:bg-[var(--db-hover)]'
-              }`}
+                }`}
             >
               {tab.icon}
               {tab.label}

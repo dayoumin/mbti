@@ -490,11 +490,10 @@ export default function AutomationSystem() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as typeof activeTab)}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                activeTab === tab.key
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${activeTab === tab.key
                   ? 'bg-yellow-500/20 text-yellow-400'
-                  : 'hover:bg-white/5'
-              }`}
+                  : 'hover:bg-slate-50/5'
+                }`}
             >
               {tab.icon}
               {tab.label}
@@ -513,7 +512,7 @@ export default function AutomationSystem() {
               파일 구조
             </h3>
             <pre className="bg-black/30 rounded-lg p-4 text-sm overflow-x-auto">
-{`.claude/
+              {`.claude/
 ├── agents/
 │   ├── test-creator.md       # 새 테스트 생성
 │   ├── test-improver.md      # 기존 테스트 개선
@@ -718,7 +717,7 @@ docs/test-creation/
           <div className="db-card p-6 bg-gradient-to-r from-blue-500/10 to-green-500/10">
             <h4 className="font-semibold mb-4">Claude Code 전체 아키텍처</h4>
             <pre className="bg-black/30 rounded-lg p-4 text-sm mb-4">
-{`┌─────────────────────────────────────────────────────────┐
+              {`┌─────────────────────────────────────────────────────────┐
 │                     메인 Claude                          │
 │                   (오케스트레이터)                        │
 └─────────────────────────────────────────────────────────┘
@@ -781,7 +780,7 @@ docs/test-creation/
             <div className="mb-4 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
               <div className="font-medium text-green-400 mb-2">★ 콘텐츠 생성 2중 검증 워크플로우</div>
               <pre className="bg-black/30 rounded-lg p-3 text-sm">
-{`사용자: "고양이 컨텐츠 만들자"
+                {`사용자: "고양이 컨텐츠 만들자"
         ↓
 메인 Claude → content-workflow Skill 읽음
         ↓
@@ -800,13 +799,13 @@ Step 4: 결과 보고`}
 
             <div className="grid md:grid-cols-2 gap-4">
               <pre className="bg-black/30 rounded-lg p-4 text-sm">
-{`test-creator (Subagent)
+                {`test-creator (Subagent)
 ├── research-parser (Skill)
 ├── test-generator (Skill)
 └── test-validator (Skill)`}
               </pre>
               <pre className="bg-black/30 rounded-lg p-4 text-sm">
-{`content-creator (Subagent)
+                {`content-creator (Subagent)
 ├── fact-collector (Skill)
 ├── content-generator (Skill)
 └── content-validator (Skill)`}
@@ -863,16 +862,15 @@ Step 4: 결과 보고`}
                 <div key={step.step} className="flex gap-4">
                   <div className="flex flex-col items-center">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        step.manual
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${step.manual
                           ? 'bg-orange-500/20 text-orange-400'
                           : 'bg-green-500/20 text-green-400'
-                      }`}
+                        }`}
                     >
                       {step.step}
                     </div>
                     {idx < WORKFLOW_STEPS.length - 1 && (
-                      <div className="w-0.5 h-full bg-white/10 my-2" />
+                      <div className="w-0.5 h-full bg-slate-50/10 my-2" />
                     )}
                   </div>
                   <div className="flex-1 pb-8">
@@ -1057,7 +1055,7 @@ Step 4: 결과 보고`}
               <div>
                 <h4 className="text-sm font-semibold opacity-70 mb-2">예시 차원 (라면)</h4>
                 <pre className="bg-black/30 rounded-lg p-3 text-xs">
-{`spicy: 매움 (순한맛 ↔ 불닭급)
+                  {`spicy: 매움 (순한맛 ↔ 불닭급)
 soup: 국물 (볶음면 ↔ 국물면)
 hunger: 배고픔 (간단히 ↔ 든든하게)
 mood: 기분 (평범한 날 ↔ 특별한 날)`}
