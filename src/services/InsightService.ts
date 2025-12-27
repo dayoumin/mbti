@@ -9,7 +9,6 @@
 
 import { resultService } from './ResultService';
 import { eventBus } from './EventBus';
-import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '@/lib/storage';
 import { storage } from '@/utils';
 import {
   extractTagsFromTestResult,
@@ -110,6 +109,70 @@ const STORAGE_KEYS = {
 };
 
 // ============================================================================
+// Stage 설정 (팩토리 패턴)
+// ============================================================================
+
+interface StageConfig<T> {
+  requiredTags?: (tagCounts: Record<string, number>) => boolean;
+  generator: (tagCounts: Record<string, number>, stats?: UserActivityStats) => T;
+}
+
+/**
+ * Stage별 설정
+ *
+ * Stage 추가 시 수정 포인트:
+ * 1. 여기에 설정 추가 (satisfies StageConfig<반환타입>으로 타입 보장)
+ * 2. getStageInsight<T> union 타입에 stage 번호 추가
+ * 3. getStageNInsight() wrapper 메서드 작성
+ */
+const STAGE_CONFIGS = {
+  2: {
+    requiredTags: (tagCounts) => Object.keys(tagCounts).length > 0,
+    generator: (tagCounts) => matchStage2Rules(Object.keys(tagCounts), 5),
+  } satisfies StageConfig<Stage2Rule[]>,
+
+  3: {
+    requiredTags: (tagCounts) => DECISION_TAGS.some(tag => tagCounts[tag] > 0),
+    generator: (tagCounts) => generateDecisionStyleResult(tagCounts),
+  } satisfies StageConfig<DecisionStyleResult>,
+
+  4: {
+    requiredTags: (tagCounts) => Object.keys(tagCounts).some(tag => tag.startsWith('interest-')),
+    generator: (tagCounts, stats) => generateInterestMapResult(tagCounts, stats?.totalActivities || 0),
+  } satisfies StageConfig<InterestMapResult>,
+
+  5: {
+    requiredTags: (tagCounts) => RELATIONSHIP_TAGS.some(tag => tagCounts[tag] > 0),
+    generator: (tagCounts) => generateRelationshipPatternResult(tagCounts),
+  } satisfies StageConfig<RelationshipPatternResult>,
+
+  6: {
+    requiredTags: (tagCounts) => Object.values(tagCounts).reduce((sum, count) => sum + count, 0) >= 10,
+    generator: (tagCounts) => generateHiddenPatternResult(tagCounts),
+  } satisfies StageConfig<HiddenPatternResult>,
+} as const;
+
+// ============================================================================
+// 진행률 설정
+// ============================================================================
+
+interface ProgressConfig {
+  stage: number;
+  statKey: keyof UserActivityStats;
+  label: string;
+  requirement: number;
+}
+
+const PROGRESS_CONFIGS: ProgressConfig[] = [
+  { stage: 1, statKey: 'testCount', label: '테스트', requirement: INSIGHT_UNLOCK.STAGE_1.tests },
+  { stage: 2, statKey: 'testCount', label: '테스트', requirement: INSIGHT_UNLOCK.STAGE_2.tests },
+  { stage: 3, statKey: 'pollCount', label: '투표', requirement: INSIGHT_UNLOCK.STAGE_3.polls },
+  { stage: 4, statKey: 'totalActivities', label: '활동', requirement: INSIGHT_UNLOCK.STAGE_4.activities },
+  { stage: 5, statKey: 'relationshipActivities', label: '관계 활동', requirement: INSIGHT_UNLOCK.STAGE_5.relationshipActivities },
+  { stage: 6, statKey: 'totalActivities', label: '활동', requirement: INSIGHT_UNLOCK.STAGE_6.activities },
+];
+
+// ============================================================================
 // InsightService 클래스
 // ============================================================================
 
@@ -124,7 +187,7 @@ class InsightServiceClass {
   }
 
   /**
-   * 서비스 초기화 - EventBus 구독
+   * 서비스 초기화 - EventBus 구독 + unlock 동기화
    */
   private initialize(): void {
     if (this.initialized) return;
@@ -137,7 +200,78 @@ class InsightServiceClass {
     eventBus.subscribeToActivity('poll_vote', this.handleQuizOrPoll.bind(this));
 
     this.initialized = true;
+
+    // 앱 로드 시 unlock 상태 동기화
+    // (localStorage 복원, 마이그레이션, 멀티 디바이스 등으로 stats와 unlock이 불일치할 수 있음)
+    this.syncUnlocksOnLoad();
+
     console.log('[InsightService] Initialized and subscribed to events');
+  }
+
+  /**
+   * 앱 로드 시 unlock 상태 동기화
+   *
+   * 목적: Turso 결과 기반으로 stats 재계산 후 unlock 체크
+   * 시나리오:
+   * - localStorage 복원 (다른 기기에서 활동)
+   * - Supabase 마이그레이션 (서버 → 로컬)
+   * - 멀티 디바이스 (기기 A에서 활동 → 기기 B 로드)
+   *
+   * 프로세스:
+   * 1. Turso에서 실제 결과 조회
+   * 2. localStorage stats와 비교
+   * 3. 불일치 시 stats 재계산
+   * 4. unlock 체크
+   */
+  private async syncUnlocksOnLoad(): Promise<void> {
+    try {
+      await this.syncStatsFromTurso();
+      await this.checkAndUnlockStages();
+      console.log('[InsightService] Unlock sync completed');
+    } catch (error) {
+      console.error('[InsightService] Unlock sync failed:', error);
+    }
+  }
+
+  /**
+   * Turso 결과 기반 stats 동기화
+   *
+   * localStorage stats가 실제 Turso 데이터와 불일치할 경우 재계산
+   */
+  private async syncStatsFromTurso(): Promise<void> {
+    if (typeof window === 'undefined') return;
+
+    try {
+      // Turso에서 실제 결과 조회
+      const results = await resultService.getMyResults();
+
+      // 현재 localStorage stats
+      const currentStats = this.getActivityStats();
+
+      // Turso 기반 실제 카운트 계산
+      const actualTestCount = results.filter(r => r.testType).length;
+
+      // testCount 불일치 감지
+      if (currentStats.testCount !== actualTestCount) {
+        console.log(
+          `[InsightService] Stats sync: testCount mismatch (local: ${currentStats.testCount}, turso: ${actualTestCount})`
+        );
+
+        // stats 재계산 (testCount만 동기화, 나머지는 이벤트 기반 유지)
+        currentStats.testCount = actualTestCount;
+
+        // totalActivities도 최소값 보장
+        if (currentStats.totalActivities < actualTestCount) {
+          currentStats.totalActivities = actualTestCount;
+        }
+
+        storage.set(STORAGE_KEYS.ACTIVITY_STATS, currentStats);
+        console.log('[InsightService] Stats synchronized from Turso');
+      }
+    } catch (error) {
+      console.error('[InsightService] Turso sync failed:', error);
+      // 동기화 실패해도 기존 로직 계속 진행 (degraded mode)
+    }
   }
 
   // ========================================================================
@@ -492,6 +626,11 @@ class InsightServiceClass {
 
   /**
    * 다음 스테이지까지 진행률
+   *
+   * 비순차 해금 지원:
+   * - 각 Stage는 독립적 조건으로 해금 가능
+   * - 진행률은 미해금 Stage 중 가장 낮은 번호 우선 표시
+   * - 예: Stage 2 미해금, Stage 3 해금 시 → Stage 2 진행률 표시
    */
   getProgressToNextStage(): {
     currentStage: number;
@@ -501,196 +640,101 @@ class InsightServiceClass {
   } | null {
     const stats = this.getActivityStats();
     const unlockedStages = this.getUnlockedStages();
-    const maxUnlocked = Math.max(0, ...unlockedStages.map(s => s.stage));
+    const unlockedSet = new Set(unlockedStages.map(s => s.stage));
 
-    // Stage 1 미해금
-    if (maxUnlocked === 0) {
-      const needed = INSIGHT_UNLOCK.STAGE_1.tests;
-      return {
-        currentStage: 0,
-        nextStage: 1,
-        progress: Math.min(100, (stats.testCount / needed) * 100),
-        remaining: this.formatRemaining('테스트', needed, stats.testCount),
-      };
+    // Stage 1-6 중 미해금된 Stage 찾기 (낮은 번호 우선)
+    for (let stage = 1; stage <= 6; stage++) {
+      if (!unlockedSet.has(stage)) {
+        const config = PROGRESS_CONFIGS.find(c => c.stage === stage);
+        if (!config) continue;
+
+        const currentValue = stats[config.statKey];
+        const needed = config.requirement;
+
+        // 직전 해금된 Stage 찾기 (currentStage용)
+        let currentStage = 0;
+        for (let prev = stage - 1; prev >= 0; prev--) {
+          if (unlockedSet.has(prev)) {
+            currentStage = prev;
+            break;
+          }
+        }
+
+        return {
+          currentStage,
+          nextStage: stage,
+          progress: Math.min(100, (currentValue / needed) * 100),
+          remaining: this.formatRemaining(config.label, needed, currentValue),
+        };
+      }
     }
 
-    // Stage 2
-    if (maxUnlocked === 1) {
-      const needed = INSIGHT_UNLOCK.STAGE_2.tests;
-      return {
-        currentStage: 1,
-        nextStage: 2,
-        progress: Math.min(100, (stats.testCount / needed) * 100),
-        remaining: this.formatRemaining('테스트', needed, stats.testCount),
-      };
-    }
-
-    // Stage 3
-    if (maxUnlocked === 2) {
-      const needed = INSIGHT_UNLOCK.STAGE_3.polls;
-      return {
-        currentStage: 2,
-        nextStage: 3,
-        progress: Math.min(100, (stats.pollCount / needed) * 100),
-        remaining: this.formatRemaining('투표', needed, stats.pollCount),
-      };
-    }
-
-    // Stage 4
-    if (maxUnlocked === 3) {
-      const needed = INSIGHT_UNLOCK.STAGE_4.activities;
-      return {
-        currentStage: 3,
-        nextStage: 4,
-        progress: Math.min(100, (stats.totalActivities / needed) * 100),
-        remaining: this.formatRemaining('활동', needed, stats.totalActivities),
-      };
-    }
-
-    // Stage 5
-    if (maxUnlocked === 4) {
-      const needed = INSIGHT_UNLOCK.STAGE_5.relationshipActivities;
-      return {
-        currentStage: 4,
-        nextStage: 5,
-        progress: Math.min(100, (stats.relationshipActivities / needed) * 100),
-        remaining: this.formatRemaining('관계 활동', needed, stats.relationshipActivities),
-      };
-    }
-
-    // Stage 6
-    if (maxUnlocked === 5) {
-      const needed = INSIGHT_UNLOCK.STAGE_6.activities;
-      return {
-        currentStage: 5,
-        nextStage: 6,
-        progress: Math.min(100, (stats.totalActivities / needed) * 100),
-        remaining: this.formatRemaining('활동', needed, stats.totalActivities),
-      };
-    }
-
-    // Stage 6 해금됨 (Stage 7은 유료)
+    // 모든 Stage 해금됨 (Stage 7은 유료)
     return null;
   }
 
   // ========================================================================
-  // Stage 2: 성격 조합 인사이트
+  // Stage 2-6: 통합 인사이트 생성 (팩토리 패턴)
   // ========================================================================
 
   /**
-   * Stage 2 인사이트 생성 - 성격 조합 룰 매칭
-   * @param limit 반환할 최대 룰 수 (기본 5)
+   * Stage별 인사이트 생성 (통합 메서드)
+   * @param stage Stage 번호 (2-6)
    */
-  getStage2Insight(limit: number = 5): Stage2Rule[] | null {
-    if (!this.isStageUnlocked(2)) {
+  private getStageInsight<T>(stage: 2 | 3 | 4 | 5 | 6): T | null {
+    if (!this.isStageUnlocked(stage)) {
       return null;
     }
+
+    // STAGE_CONFIGS[stage]는 항상 존재 (stage가 2-6 리터럴이므로)
+    const config = STAGE_CONFIGS[stage];
 
     const tagCounts = this.getTagCounts();
-    const userTags = Object.keys(tagCounts);
 
-    if (userTags.length === 0) {
+    // 필수 태그 검증
+    if (config.requiredTags && !config.requiredTags(tagCounts)) {
       return null;
     }
 
-    return matchStage2Rules(userTags, limit);
+    // Stage 4는 stats 필요
+    const stats = stage === 4 ? this.getActivityStats() : undefined;
+
+    return config.generator(tagCounts, stats) as T;
   }
 
-  // ========================================================================
-  // Stage 3: 판단 스타일 인사이트
-  // ========================================================================
+  /**
+   * Stage 2 인사이트 생성 - 성격 조합 룰 매칭
+   */
+  getStage2Insight(): Stage2Rule[] | null {
+    return this.getStageInsight<Stage2Rule[]>(2);
+  }
 
   /**
    * Stage 3 인사이트 생성 - 판단 스타일 분석
    */
   getStage3Insight(): DecisionStyleResult | null {
-    if (!this.isStageUnlocked(3)) {
-      return null;
-    }
-
-    const tagCounts = this.getTagCounts();
-
-    // 의사결정 관련 태그가 있는지 확인 (SSOT: DECISION_TAGS)
-    const hasDecisionTags = DECISION_TAGS.some(tag => tagCounts[tag] > 0);
-
-    if (!hasDecisionTags) {
-      return null;
-    }
-
-    return generateDecisionStyleResult(tagCounts);
+    return this.getStageInsight<DecisionStyleResult>(3);
   }
-
-  // ========================================================================
-  // Stage 4: 관심사 지도 인사이트
-  // ========================================================================
 
   /**
    * Stage 4 인사이트 생성 - 관심사 지도
    */
   getStage4Insight(): InterestMapResult | null {
-    if (!this.isStageUnlocked(4)) {
-      return null;
-    }
-
-    const tagCounts = this.getTagCounts();
-    const stats = this.getActivityStats();
-
-    // interest- 태그가 있는지 확인
-    const hasInterestTags = Object.keys(tagCounts).some(tag => tag.startsWith('interest-'));
-
-    if (!hasInterestTags) {
-      return null;
-    }
-
-    return generateInterestMapResult(tagCounts, stats.totalActivities);
+    return this.getStageInsight<InterestMapResult>(4);
   }
-
-  // ========================================================================
-  // Stage 5: 관계 패턴 인사이트
-  // ========================================================================
 
   /**
    * Stage 5 인사이트 생성 - 관계 패턴 분석
    */
   getStage5Insight(): RelationshipPatternResult | null {
-    if (!this.isStageUnlocked(5)) {
-      return null;
-    }
-
-    const tagCounts = this.getTagCounts();
-
-    // 관계 관련 태그가 있는지 확인 (SSOT: RELATIONSHIP_TAGS from insight-tags.ts)
-    const hasRelationshipTags = RELATIONSHIP_TAGS.some(tag => tagCounts[tag] > 0);
-
-    if (!hasRelationshipTags) {
-      return null;
-    }
-
-    return generateRelationshipPatternResult(tagCounts);
+    return this.getStageInsight<RelationshipPatternResult>(5);
   }
-
-  // ========================================================================
-  // Stage 6: 숨은 패턴 인사이트
-  // ========================================================================
 
   /**
    * Stage 6 인사이트 생성 - 숨은 패턴 분석
    */
   getStage6Insight(): HiddenPatternResult | null {
-    if (!this.isStageUnlocked(6)) {
-      return null;
-    }
-
-    const tagCounts = this.getTagCounts();
-
-    // 태그가 충분한지 확인 (최소 10개 이상의 태그 기록)
-    const totalTagCount = Object.values(tagCounts).reduce((sum, count) => sum + count, 0);
-
-    if (totalTagCount < 10) {
-      return null;
-    }
-
-    return generateHiddenPatternResult(tagCounts);
+    return this.getStageInsight<HiddenPatternResult>(6);
   }
 
   // ========================================================================
@@ -709,7 +753,7 @@ class InsightServiceClass {
     }
 
     // AI 분석용 입력 데이터 수집
-    const input = this.buildAIAnalysisInput();
+    const input = await this.buildAIAnalysisInput();
 
     // 명시적으로 폴백 요청 시
     if (!useAI) {
@@ -750,13 +794,36 @@ class InsightServiceClass {
   /**
    * AI 분석용 입력 데이터 빌드
    */
-  private buildAIAnalysisInput(): AIAnalysisInput {
-    const stats = this.getActivityStats();
-    const tagCounts = this.getTagCounts();
+  private async buildAIAnalysisInput(): Promise<AIAnalysisInput> {
+    return {
+      activitySummary: this.buildActivitySummary(),
+      insights: await this.collectAllStageInsights(),
+      tagDistribution: this.buildTagDistribution(),
+    };
+  }
 
-    // 태그 분포 계산
+  /**
+   * 활동 통계 요약 생성
+   */
+  private buildActivitySummary() {
+    const stats = this.getActivityStats();
+    return {
+      totalTests: stats.testCount,
+      totalPolls: stats.pollCount,
+      totalQuizzes: stats.quizCount,
+      totalActivities: stats.totalActivities,
+      activeDays: 1, // TODO: 실제 활동 일수 추적
+    };
+  }
+
+  /**
+   * 태그 분포 계산
+   */
+  private buildTagDistribution() {
+    const tagCounts = this.getTagCounts();
     const totalTags = Object.values(tagCounts).reduce((sum, count) => sum + count, 0);
-    const tagDistribution = Object.entries(tagCounts)
+
+    return Object.entries(tagCounts)
       .map(([tag, count]) => ({
         tag,
         count,
@@ -764,20 +831,39 @@ class InsightServiceClass {
         category: this.getTagCategory(tag),
       }))
       .sort((a, b) => b.count - a.count);
+  }
 
-    // Stage별 인사이트 수집
-    const stage2Rules = this.getStage2Insight(5);
-    const stage3Result = this.getStage3Insight();
-    const stage4Result = this.getStage4Insight();
-    const stage5Result = this.getStage5Insight();
-    const stage6Result = this.getStage6Insight();
+  /**
+   * Stage 1-6 인사이트 수집 및 요약
+   */
+  private async collectAllStageInsights() {
+    return {
+      stage1: await this.buildStage1Summary(),
+      stage2: this.summarizeStage(this.getStage2Insight(), summarizeStage2Rules),
+      stage3: this.summarizeStage(this.getStage3Insight(), summarizeStage3Result),
+      stage4: this.summarizeStage(this.getStage4Insight(), summarizeStage4Result),
+      stage5: this.summarizeStage(this.getStage5Insight(), summarizeStage5Result),
+      stage6: this.summarizeStage(this.getStage6Insight(), summarizeStage6Result),
+    };
+  }
 
-    // Stage 1 요약 (테스트 기반 태그만 사용 - 퀴즈/투표 태그 제외)
-    // 테스트 결과에서 직접 태그 추출 (저장된 결과 기반)
+  /**
+   * Stage 1 요약 생성 (테스트 기반 태그만)
+   *
+   * Turso 결과 기반으로 생성 (stats는 참고만, 실제 데이터는 Turso)
+   */
+  private async buildStage1Summary() {
+    // Turso에서 실제 결과 조회
+    const testResults = await resultService.getMyResults();
+
+    // 실제 테스트 결과가 없으면 null
+    if (testResults.length === 0) {
+      return null;
+    }
+
     const testTagCounts: Record<string, number> = {};
-    const testResults = this.getTestResultsFromStorage();
+
     for (const result of testResults) {
-      // 테스트 결과에서 dimensions(scores)로 태그 추출
       if (result.scores && result.testType) {
         const testData = CHEMI_DATA[result.testType as keyof typeof CHEMI_DATA];
         if (testData) {
@@ -803,31 +889,22 @@ class InsightServiceClass {
       .slice(0, 3)
       .map(([tag]) => tag);
 
-    const stage1Summary = stats.testCount > 0
-      ? {
-          testCount: stats.testCount,
-          dominantTags: testDominantTags.length > 0 ? testDominantTags : tagDistribution.slice(0, 3).map(t => t.tag),
-        }
-      : null;
-
     return {
-      activitySummary: {
-        totalTests: stats.testCount,
-        totalPolls: stats.pollCount,
-        totalQuizzes: stats.quizCount,
-        totalActivities: stats.totalActivities,
-        activeDays: 1, // TODO: 실제 활동 일수 추적
-      },
-      insights: {
-        stage1: stage1Summary,
-        stage2: stage2Rules ? summarizeStage2Rules(stage2Rules) : null,
-        stage3: stage3Result ? summarizeStage3Result(stage3Result) : null,
-        stage4: stage4Result ? summarizeStage4Result(stage4Result) : null,
-        stage5: stage5Result ? summarizeStage5Result(stage5Result) : null,
-        stage6: stage6Result ? summarizeStage6Result(stage6Result) : null,
-      },
-      tagDistribution,
+      testCount: testResults.length, // 실제 Turso 결과 개수 사용
+      dominantTags: testDominantTags.length > 0
+        ? testDominantTags
+        : this.buildTagDistribution().slice(0, 3).map(t => t.tag),
     };
+  }
+
+  /**
+   * Stage별 인사이트 요약 (null 처리 통합)
+   */
+  private summarizeStage<T, R>(
+    insight: T | null,
+    summarizeFn: (insight: T) => R
+  ): R | null {
+    return insight ? summarizeFn(insight) : null;
   }
 
   /**
@@ -840,26 +917,6 @@ class InsightServiceClass {
     }
     // 유효하지 않은 태그는 lifestyle로 폴백
     return 'lifestyle';
-  }
-
-  /**
-   * localStorage에서 테스트 결과 조회 (동기)
-   * Stage 7 buildAIAnalysisInput()에서 테스트 전용 태그 추출에 사용
-   */
-  private getTestResultsFromStorage(): Array<{ testType: string; scores: Record<string, number> }> {
-    if (typeof window === 'undefined') return [];
-
-    const userId = resultService.getUserId();
-    const all = storage.get<Array<{ user_id?: string; test_type?: string; scores?: Record<string, number> }>>(
-      GLOBAL_STORAGE_KEYS.TEST_RESULTS,
-      []
-    );
-    return all
-      .filter((item) => item.user_id === userId)
-      .map((item) => ({
-        testType: item.test_type || '',
-        scores: item.scores || {},
-      }));
   }
 
   // ========================================================================
