@@ -10,8 +10,9 @@ import { resultService } from '../services/ResultService';
 import ResultRankingView from '../components/ResultRankingView';
 import RankingTab from '../components/RankingTab';
 import Dashboard from '../components/Dashboard';
+import ResultView from '../components/ResultView';
+import ShareButton from '../components/ShareButton';
 import ShareCard from '../components/ShareCard';
-import { FullProfile } from '../components/MyProfile';
 import ContentExplore from '../components/ContentExplore';
 import ResultFeedback from '../components/ResultFeedback';
 import FeedbackComments from '../components/FeedbackComments';
@@ -56,9 +57,8 @@ type StepType = 'intro' | 'question' | 'directSelect' | 'loading' | 'result';
 type DetailTabType = 'interpretation' | 'guide';
 
 // 모달 상태 통합 - 7개 boolean → 1개 유니온 타입
-// care는 프로필 > 동물 탭에서 직접 관리하므로 제거
+// profile은 /profile 페이지로 분리됨
 type ActiveModal =
-    | 'profile'
     | 'contentExplore'  // 퀴즈/투표 (참여형 콘텐츠)
     | 'ranking'
     | 'community'
@@ -273,22 +273,6 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-[#F0F2F5] flex">
-            {/* 전역 모달들 - activeModal 기반으로 렌더링 */}
-            {activeModal === 'profile' && (
-                <FullProfile
-                    onClose={() => {
-                        closeModal();
-                        setActiveNavTab('home');
-                    }}
-                    onStartTest={(testKey: string) => {
-                        closeModal();
-                        setActiveNavTab('home');
-                        handleStartTest(testKey as SubjectKey);
-                    }}
-                />
-            )}
-
-
             {/* 퀴즈/투표 (참여형 콘텐츠) */}
             {activeModal === 'contentExplore' && (
                 <ContentExplore
@@ -664,12 +648,12 @@ export default function Home() {
                                     <button onClick={() => setView('dashboard')} className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white">
                                         <HomeIcon className="w-5 h-5 text-slate-600" />
                                     </button>
-                                    <button
-                                        onClick={() => openModal('shareCard')}
-                                        className="p-2 rounded-full bg-white/50 backdrop-blur-sm shadow-sm hover:bg-white text-indigo-600"
-                                    >
-                                        <Share2 className="w-5 h-5" />
-                                    </button>
+                                    <ShareButton
+                                        resultName={finalResult.name}
+                                        resultEmoji={finalResult.emoji}
+                                        testTitle={currentModeData.title}
+                                        mode="icon"
+                                    />
                                 </div>
 
                                 <div className="flex-1 overflow-y-auto no-scrollbar pt-14 px-5 pb-20">
@@ -701,28 +685,13 @@ export default function Home() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <>
-                                                <div className="flex items-center gap-4 mb-4 w-full">
-                                                    <div className="relative flex-shrink-0">
-                                                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/50 to-pink-200/50 blur-2xl rounded-full scale-150"></div>
-                                                        <IconComponent mood={finalResult.mood || 'happy'} className="w-24 h-24 relative z-10 drop-shadow-xl" />
-                                                    </div>
-                                                    <div className="flex-1 text-left">
-                                                        <span className="inline-block px-2 py-0.5 rounded-full text-xs font-bold text-white mb-1 bg-indigo-400">
-                                                            {finalResult.mood || 'RARE'} TYPE
-                                                        </span>
-                                                        <h1 className="text-2xl font-black text-slate-800 leading-tight">
-                                                            {finalResult.name}
-                                                        </h1>
-                                                        <p className="text-xs text-slate-500 mt-1">{finalResult.emoji} {currentModeData.title}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="w-full bg-white/70 backdrop-blur-md rounded-xl p-4 border border-white/50 shadow-sm mb-4">
-                                                    <p className="text-slate-700 font-semibold text-sm leading-relaxed break-keep">
-                                                        &quot;{finalResult.desc}&quot;
-                                                    </p>
-                                                </div>
-                                            </>
+                                            <ResultView
+                                                result={finalResult}
+                                                testTitle={currentModeData.title}
+                                                IconComponent={IconComponent}
+                                                dimensions={isDeepMode ? dimensions : undefined}
+                                                scores={isDeepMode ? scores : undefined}
+                                            />
                                         )}
 
                                         {isDeepMode && (

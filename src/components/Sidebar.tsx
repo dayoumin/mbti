@@ -8,8 +8,7 @@ import { profileService, type MyProfileData } from '../services/ProfileService';
 import { insightService } from '../services/InsightService';
 import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
-import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
-import { DETAIL_TEST_KEYS } from '../config/testKeys';
+import { SUBJECT_CONFIG, MAIN_TEST_KEYS, DETAIL_TEST_KEYS } from '../data/config';
 import { RESULT_TO_DETAIL_TEST } from '../data/contentGraph';
 import { POPULAR_TESTS, filterTestsByAge } from '../data/recommendationPolicy';
 import { demographicService } from '../services/DemographicService';
@@ -81,6 +80,7 @@ interface ProfileMiniCardProps {
 function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
   const [profile, setProfile] = useState<MyProfileData | null>(null);
   const [newInsightCount, setNewInsightCount] = useState(0);
+  const [nextStageHint, setNextStageHint] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -91,9 +91,22 @@ function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
 
         // 새 인사이트 수 계산 (해금된 스테이지 중 아직 안 본 것)
         const unlockedStages = insightService.getUnlockedStages();
-        const viewedStages = JSON.parse(localStorage.getItem('chemi_viewed_insights') || '[]');
+        let viewedStages: number[] = [];
+        try {
+          viewedStages = JSON.parse(localStorage.getItem('chemi_viewed_insights') || '[]');
+        } catch (parseError) {
+          console.warn('Failed to parse chemi_viewed_insights:', parseError);
+        }
         const newCount = unlockedStages.filter(s => !viewedStages.includes(s.stage)).length;
         setNewInsightCount(newCount);
+
+        // 다음 스테이지 해금 힌트 (활동 통계 기반)
+        const nextStageProgress = insightService.getProgressToNextStage();
+        if (nextStageProgress && nextStageProgress.nextStage <= 6) {
+          setNextStageHint(nextStageProgress.remaining);
+        } else {
+          setNextStageHint(null);
+        }
       } catch (e) {
         console.error('Failed to load profile:', e);
       } finally {
@@ -117,7 +130,6 @@ function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
   }
 
   const completionRate = profile?.completionRate || 0;
-  const completedTests = profile?.completedTests || 0;
 
   return (
     <button
@@ -163,10 +175,10 @@ function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
         <ChevronRight className="w-4 h-4 text-indigo-300 group-hover:text-indigo-500 transition-colors" />
       </div>
 
-      {/* 하단 힌트 */}
-      {completedTests < 3 && (
-        <p className="text-xs text-indigo-400 mt-2 pl-13">
-          테스트 {3 - completedTests}개 더 하면 인사이트 해금!
+      {/* 하단 힌트: 다음 스테이지 해금 안내 (활동 통계 기반) */}
+      {nextStageHint && (
+        <p className="text-xs text-indigo-400 mt-2 ml-[52px]">
+          {nextStageHint} 하면 인사이트 해금!
         </p>
       )}
     </button>
@@ -289,7 +301,10 @@ export default function Sidebar({
         resultEmoji: r.resultEmoji,
         createdAt: r.createdAt,
       })));
-      setCompletedCount(results.length);
+
+      // 완료 카운트: 유니크 메인 테스트 기준 (프로필 완성도와 통일)
+      const uniqueMainTests = completedKeys.filter(key => !(DETAIL_TEST_KEYS as readonly string[]).includes(key));
+      setCompletedCount(uniqueMainTests.length);
 
       // 추천 테스트: 실제 참여 데이터 기반 인기순
       const demographic = demographicService.getDemographic();
@@ -356,12 +371,14 @@ export default function Sidebar({
           }
         }
 
-        // 맞춤 라벨 설정
-        if (ageGroup || gender) {
+        // 맞춤 라벨 설정: 실제 개인화 데이터가 있을 때만 맞춤 라벨 사용
+        if (popularTestOrder.length > 0 && (ageGroup || gender)) {
           label = demographicService.getRecommendationLabel() || '인기순';
         }
       } catch (e) {
         console.warn('Failed to fetch popular tests:', e);
+        // API 실패 시 라벨도 기본값으로 초기화
+        label = '인기순';
       }
 
       // 4. 인기순으로 정렬 (API 데이터 우선, 없으면 POPULAR_TESTS 폴백)

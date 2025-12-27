@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   MessageSquare, MessageCircle, Heart, ChevronRight,
   Flame, Users, Trophy, Crown, Medal, BarChart2, TrendingUp
@@ -376,7 +376,24 @@ function PopularTestsSection({ onStartTest }: { onStartTest: (key: SubjectKey) =
     );
   }
 
-  if (popularTests.length === 0) return null;
+  if (popularTests.length === 0) {
+    return (
+      <section className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-sm">
+            <TrendingUp className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-emerald-700">지금 인기 테스트</h3>
+            <p className="text-xs text-emerald-500">다른 사람들이 많이 하는 테스트</p>
+          </div>
+        </div>
+        <div className="text-center py-4">
+          <p className="text-xs text-emerald-400">아직 인기 테스트 데이터가 없어요</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-4">
