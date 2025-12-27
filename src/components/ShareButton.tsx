@@ -49,25 +49,26 @@ export default function ShareButton({
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 한글 안전 폰트 스택
+    // 폰트 스택 분리: 이모지 전용 / 한글 전용
+    const emojiFont = '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
     const koreanFont = '"Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif';
 
-    // 이모지 (크게)
-    ctx.font = `bold 300px ${koreanFont}`;
+    // 이모지 (크게) - 이모지 전용 폰트
+    ctx.font = `bold 300px ${emojiFont}`;
     ctx.textAlign = 'center';
     ctx.fillText(resultEmoji, canvas.width / 2, 500);
 
-    // 결과 이름
+    // 결과 이름 - 한글 폰트
     ctx.font = `bold 100px ${koreanFont}`;
     ctx.fillStyle = '#1e293b'; // text-slate-800
     ctx.fillText(resultName, canvas.width / 2, 700);
 
-    // 테스트 제목
+    // 테스트 제목 - 한글 폰트
     ctx.font = `50px ${koreanFont}`;
     ctx.fillStyle = '#64748b'; // text-slate-500
     ctx.fillText(testTitle, canvas.width / 2, 800);
 
-    // URL (하단) - 동적 도메인
+    // URL (하단) - 한글 폰트
     ctx.font = `40px ${koreanFont}`;
     ctx.fillStyle = '#94a3b8'; // text-slate-400
     const domain = window.location.hostname || 'chemi.kr';
