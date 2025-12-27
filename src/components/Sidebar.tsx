@@ -1,15 +1,19 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, ChevronRight, User } from 'lucide-react';
+import { Sparkles, Clock, TrendingUp, PenSquare, Heart, MessageCircle, ChevronRight, ChevronDown, PawPrint, Zap, User } from 'lucide-react';
 import { NavTab, SIDEBAR_NAV_ITEMS } from './nav/types';
 import { resultService } from '../services/ResultService';
+import { profileService, type MyProfileData } from '../services/ProfileService';
+import { insightService } from '../services/InsightService';
 import { CHEMI_DATA } from '../data/index';
 import { getIconComponent } from '@/utils';
 import { SUBJECT_CONFIG, MAIN_TEST_KEYS } from '../data/config';
+import { DETAIL_TEST_KEYS } from '../config/testKeys';
+import { RESULT_TO_DETAIL_TEST } from '../data/contentGraph';
 import { POPULAR_TESTS, filterTestsByAge } from '../data/recommendationPolicy';
 import { demographicService } from '../services/DemographicService';
-import type { SubjectKey } from '../data/types';
+import type { SubjectKey, SubjectConfig, SubjectData } from '../data/types';
 import { getPostCategoryLabel, getPostCategoryStyle } from '../data/content/community';
 import MyRankingMini from './MyRankingMini';
 
@@ -52,7 +56,7 @@ function SidebarTestCard({ testKey, onStart }: { testKey: SubjectKey; onStart: (
   return (
     <button
       onClick={() => onStart(testKey)}
-      className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/80 transition-all group text-left"
+      className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50/80 transition-all group text-left"
     >
       <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
         <IconComponent mood="happy" className="w-6 h-6" />
@@ -63,6 +67,199 @@ function SidebarTestCard({ testKey, onStart }: { testKey: SubjectKey; onStart: (
         </p>
       </div>
     </button>
+  );
+}
+
+// ============================================================================
+// 프로필 미니 카드 (상단 배치 - 완성도 + 새 인사이트 알림)
+// ============================================================================
+
+interface ProfileMiniCardProps {
+  onOpenProfile: () => void;
+}
+
+function ProfileMiniCard({ onOpenProfile }: ProfileMiniCardProps) {
+  const [profile, setProfile] = useState<MyProfileData | null>(null);
+  const [newInsightCount, setNewInsightCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProfileData = async () => {
+      try {
+        const profileData = await profileService.getMyProfile();
+        setProfile(profileData);
+
+        // 새 인사이트 수 계산 (해금된 스테이지 중 아직 안 본 것)
+        const unlockedStages = insightService.getUnlockedStages();
+        const viewedStages = JSON.parse(localStorage.getItem('chemi_viewed_insights') || '[]');
+        const newCount = unlockedStages.filter(s => !viewedStages.includes(s.stage)).length;
+        setNewInsightCount(newCount);
+      } catch (e) {
+        console.error('Failed to load profile:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfileData();
+
+    // 테스트 결과 저장 시 갱신
+    window.addEventListener('chemi:resultSaved', loadProfileData);
+    return () => window.removeEventListener('chemi:resultSaved', loadProfileData);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3 animate-pulse">
+        <div className="h-12 bg-white/50 rounded-lg"></div>
+      </div>
+    );
+  }
+
+  const completionRate = profile?.completionRate || 0;
+  const completedTests = profile?.completedTests || 0;
+
+  return (
+    <button
+      onClick={onOpenProfile}
+      className="w-full bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3 text-left hover:from-indigo-100 hover:to-purple-100 transition-all group"
+    >
+      <div className="flex items-center gap-3">
+        {/* 아바타 + 레벨 */}
+        <div className="relative">
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
+            <User className="w-5 h-5 text-white" />
+          </div>
+          {newInsightCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+              {newInsightCount}
+            </span>
+          )}
+        </div>
+
+        {/* 정보 */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs font-bold text-indigo-700">내 프로필</span>
+            {newInsightCount > 0 && (
+              <span className="text-xs font-bold text-rose-500 flex items-center gap-0.5">
+                <Zap className="w-3 h-3" /> 새 인사이트!
+              </span>
+            )}
+          </div>
+
+          {/* 진행률 바 */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-1.5 bg-white/60 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full transition-all"
+                style={{ width: `${Math.min(completionRate, 100)}%` }}
+              />
+            </div>
+            <span className="text-xs font-bold text-indigo-600">{completionRate}%</span>
+          </div>
+        </div>
+
+        <ChevronRight className="w-4 h-4 text-indigo-300 group-hover:text-indigo-500 transition-colors" />
+      </div>
+
+      {/* 하단 힌트 */}
+      {completedTests < 3 && (
+        <p className="text-xs text-indigo-400 mt-2 pl-13">
+          테스트 {3 - completedTests}개 더 하면 인사이트 해금!
+        </p>
+      )}
+    </button>
+  );
+}
+
+// ============================================================================
+// 세부 반려동물 테스트 섹션 (나의 petMatch 결과 기반 추천)
+// ============================================================================
+
+function DetailTestsSection({ onStartTest }: { onStartTest: (key: string) => void }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hasPetMatchResult, setHasPetMatchResult] = useState(false);
+  const [recommendedTestKeys, setRecommendedTestKeys] = useState<SubjectKey[]>([]);
+
+  useEffect(() => {
+    const checkPetMatch = async () => {
+      try {
+        const results = await resultService.getMyResults();
+        const petMatchResult = results.find(r => r.testType === 'petMatch');
+        if (petMatchResult) {
+          setHasPetMatchResult(true);
+          const recommended = RESULT_TO_DETAIL_TEST[petMatchResult.resultKey] || [];
+          setRecommendedTestKeys(recommended);
+        }
+      } catch (e) {
+        console.error('Failed to check petMatch result:', e);
+      }
+    };
+    checkPetMatch();
+  }, []);
+
+  const detailTests = DETAIL_TEST_KEYS.map(key => {
+    const config = SUBJECT_CONFIG[key];
+    const data = CHEMI_DATA[key];
+    if (!config || !data) return null;
+    return { key, config, data };
+  }).filter(Boolean) as Array<{ key: SubjectKey; config: SubjectConfig; data: SubjectData }>;
+
+  // petMatch 결과가 없으면 표시하지 않음
+  if (!hasPetMatchResult) return null;
+
+  return (
+    <div className="bg-amber-50/80 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full p-3 flex items-center justify-between text-left hover:bg-amber-50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center">
+            <PawPrint className="w-3.5 h-3.5 text-amber-600" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-amber-700">맞춤 품종 추천</p>
+            <p className="text-xs text-amber-500">petMatch 결과 기반</p>
+          </div>
+        </div>
+        <ChevronDown className={`w-4 h-4 text-amber-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isExpanded && (
+        <div className="px-3 pb-3 space-y-1.5 animate-fade-in">
+          {detailTests.map(({ key, config, data }) => {
+            const IconComponent = getIconComponent(config.icon);
+            const isRecommended = recommendedTestKeys.includes(key);
+
+            return (
+              <button
+                key={key}
+                onClick={() => onStartTest(key)}
+                className={`w-full p-2 rounded-lg text-left transition-all hover:shadow-sm group flex items-center gap-2 ${isRecommended
+                    ? 'bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300'
+                    : 'bg-slate-50/70 hover:bg-slate-50'
+                  }`}
+              >
+                {isRecommended && (
+                  <span className="text-xs font-bold text-amber-600 bg-amber-200 px-1.5 py-0.5 rounded-full">
+                    추천
+                  </span>
+                )}
+                <div className="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <IconComponent mood="happy" className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-slate-700 truncate flex-1">
+                  {data.title?.replace(' 추천', '') || config.label}
+                </span>
+                <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-amber-500 transition-colors" />
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -239,15 +436,15 @@ export default function Sidebar({
   // 현재 표시할 3개 테스트
   const displayedTests = recommendedTests.length > 0
     ? recommendedTests.slice(rotationOffset, rotationOffset + 3).concat(
-        rotationOffset + 3 > recommendedTests.length
-          ? recommendedTests.slice(0, (rotationOffset + 3) % recommendedTests.length)
-          : []
-      ).slice(0, 3)
+      rotationOffset + 3 > recommendedTests.length
+        ? recommendedTests.slice(0, (rotationOffset + 3) % recommendedTests.length)
+        : []
+    ).slice(0, 3)
     : [];
 
   return (
     <aside
-      className={`hidden lg:flex flex-col w-60 h-screen fixed left-0 top-0 bg-white/80 backdrop-blur-xl border-r border-slate-200/50 z-40 ${className}`}
+      className={`hidden lg:flex flex-col w-60 h-screen fixed left-0 top-0 bg-slate-50/80 backdrop-blur-xl border-r border-slate-200/50 z-40 ${className}`}
       role="navigation"
       aria-label="사이드 네비게이션"
     >
@@ -300,8 +497,13 @@ export default function Sidebar({
         </ul>
       </nav>
 
+      {/* 프로필 미니 카드 (상단 고정) */}
+      <div className="px-4 pb-2">
+        <ProfileMiniCard onOpenProfile={() => onTabChange('profile')} />
+      </div>
+
       {/* 하단 위젯 영역 - 스크롤 가능 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
+      <div className="flex-1 overflow-y-auto p-4 pt-2 space-y-3 no-scrollbar">
         {/* 추천 테스트 (인기순 + 로테이션) */}
         {displayedTests.length > 0 && (
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3">
@@ -317,9 +519,8 @@ export default function Sidebar({
                     {Array.from({ length: Math.ceil(recommendedTests.length / 3) }).map((_, idx) => (
                       <div
                         key={idx}
-                        className={`w-1 h-1 rounded-full transition-colors ${
-                          Math.floor(rotationOffset / 3) === idx ? 'bg-indigo-500' : 'bg-indigo-200'
-                        }`}
+                        className={`w-1 h-1 rounded-full transition-colors ${Math.floor(rotationOffset / 3) === idx ? 'bg-indigo-500' : 'bg-indigo-200'
+                          }`}
                       />
                     ))}
                   </div>
@@ -337,7 +538,7 @@ export default function Sidebar({
                   <button
                     key={key}
                     onClick={() => onStartTest?.(key)}
-                    className="w-full flex items-center gap-2 p-2 bg-white/70 rounded-lg hover:bg-white transition-colors group text-left"
+                    className="w-full flex items-center gap-2 p-2 bg-slate-50/70 rounded-lg hover:bg-slate-50 transition-colors group text-left"
                   >
                     <span className="w-5 h-5 bg-indigo-100 text-indigo-600 text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
                       {index + 1}
@@ -370,7 +571,7 @@ export default function Sidebar({
                 <SidebarTestCard
                   key={`${test.testType}-${test.createdAt}`}
                   testKey={test.testType as SubjectKey}
-                  onStart={onStartTest || (() => {})}
+                  onStart={onStartTest || (() => { })}
                 />
               ))}
             </div>
@@ -379,6 +580,9 @@ export default function Sidebar({
 
         {/* 내 결과 순위 */}
         <MyRankingMini onOpenRanking={onOpenRanking} />
+
+        {/* 맞춤 품종 추천 (petMatch 결과 기반) */}
+        <DetailTestsSection onStartTest={onStartTest || (() => { })} />
 
         {/* 내가 쓴 글 */}
         {myPosts.length > 0 && (
@@ -392,7 +596,7 @@ export default function Sidebar({
                 <button
                   key={post.id}
                   onClick={() => onTabChange('talk')}
-                  className="w-full p-2 bg-white/60 rounded-lg hover:bg-white transition-colors text-left group"
+                  className="w-full p-2 bg-slate-50/60 rounded-lg hover:bg-slate-50 transition-colors text-left group"
                 >
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${getPostCategoryStyle(post.category)}`}>
@@ -427,24 +631,6 @@ export default function Sidebar({
             <span className="text-xs text-slate-500">개 테스트 완료</span>
           </div>
         </div>
-      </div>
-
-      {/* 하단 프로필 버튼 */}
-      <div className="p-4 border-t border-slate-100">
-        <button
-          onClick={() => onTabChange('profile')}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
-            activeTab === 'profile'
-              ? 'bg-indigo-50 text-indigo-600 font-bold'
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
-          }`}
-        >
-          <User className={`w-5 h-5 ${activeTab === 'profile' ? 'stroke-[2.5px]' : 'stroke-[1.5px]'}`} />
-          <span className="text-sm">프로필</span>
-          {activeTab === 'profile' && (
-            <div className="ml-auto w-1.5 h-1.5 bg-indigo-500 rounded-full" />
-          )}
-        </button>
       </div>
     </aside>
   );
