@@ -95,10 +95,10 @@ export default function SharePrompt({
 
       {/* 공유 옵션 (Native Share API 없을 때) */}
       {showOptions && (
-        <div className="mt-3 bg-gray-50 rounded-xl p-4 space-y-2">
+        <div className="mt-3 bg-slate-50 rounded-xl p-4 space-y-2">
           <button
             onClick={handleCopyLink}
-            className="w-full bg-slate-50 border border-gray-200 text-gray-700 py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-700 py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-slate-100 transition-colors"
           >
             {copied ? (
               <>

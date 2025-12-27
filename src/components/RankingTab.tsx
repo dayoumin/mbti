@@ -105,7 +105,7 @@ function RankCard({
   return (
     <button
       onClick={onClick}
-      className="w-full bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all text-left group"
+      className="w-full bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all text-left group"
     >
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-2xl">
@@ -131,7 +131,7 @@ function RankCard({
                         ? 'bg-amber-100 text-amber-700'
                         : rank.rank <= 3
                           ? 'bg-indigo-50 text-indigo-600'
-                          : 'bg-gray-100 text-gray-500'
+                          : 'bg-slate-100 text-slate-500'
                         }`}
                     >
                       {rank.emoji} {rank.rank}위
@@ -141,10 +141,10 @@ function RankCard({
               )}
             </div>
           ) : (
-            <p className="text-xs text-gray-400">테스트 후 내 순위 확인</p>
+            <p className="text-xs text-slate-400">테스트 후 내 순위 확인</p>
           )}
         </div>
-        <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-indigo-400 transition-colors" />
+        <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-400 transition-colors" />
       </div>
     </button>
   );
@@ -227,7 +227,7 @@ function TestRankingDetail({
             onClick={() => setSelectedCategory(cat.id)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${selectedCategory === cat.id
               ? 'bg-indigo-500 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
           >
             <span>{cat.emoji}</span>
@@ -245,14 +245,14 @@ function TestRankingDetail({
               ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400'
               : rank <= 3
                 ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'
-                : 'bg-slate-50 border-gray-100'
+                : 'bg-slate-50 border-slate-100'
               }`}
           >
             {/* 순위 */}
             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${rank === 1 ? 'bg-amber-400 text-white' :
-              rank === 2 ? 'bg-gray-400 text-white' :
+              rank === 2 ? 'bg-slate-400 text-white' :
                 rank === 3 ? 'bg-orange-400 text-white' :
-                  'bg-gray-200 text-gray-600'
+                  'bg-slate-200 text-slate-600'
               }`}>
               {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
             </div>
@@ -261,7 +261,7 @@ function TestRankingDetail({
             <span className="text-2xl">{result.emoji}</span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <p className={`font-bold ${isMyResult ? 'text-amber-800' : 'text-gray-800'}`}>
+                <p className={`font-bold ${isMyResult ? 'text-amber-800' : 'text-slate-800'}`}>
                   {result.name}
                 </p>
                 {isMyResult && (
@@ -270,7 +270,7 @@ function TestRankingDetail({
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 line-clamp-1">{result.desc}</p>
+              <p className="text-xs text-slate-500 line-clamp-1">{result.desc}</p>
             </div>
           </div>
         ))}
@@ -346,7 +346,7 @@ function RankingSidebar({
                 onClick={() => onSelectTest(test.key)}
                 className={`w-full p-3 rounded-xl text-left transition-all ${isSelected
                   ? 'bg-indigo-100 border-2 border-indigo-400 shadow-md'
-                  : 'bg-slate-50 border border-gray-100 hover:border-indigo-200 hover:shadow-sm'
+                  : 'bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:shadow-sm'
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -361,7 +361,7 @@ function RankingSidebar({
                         {myResult.resultEmoji} {myResult.resultName}
                       </p>
                     ) : (
-                      <p className="text-xs text-gray-400">테스트 후 확인</p>
+                      <p className="text-xs text-slate-400">테스트 후 확인</p>
                     )}
                   </div>
                   {isSelected && (

@@ -105,7 +105,7 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
   const categoryInfo = getCategoryInfo(poll.category);
 
   return (
-    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100">
       <div className="flex items-center gap-2 mb-3">
         <Vote className="w-4 h-4 text-purple-500" />
         <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">
@@ -129,7 +129,7 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
           aria-pressed={voted === 'a'}
           aria-disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
-            voted ? 'border-gray-200 bg-gray-50' :
+            voted ? 'border-slate-200 bg-slate-50' :
               'border-purple-200 bg-slate-50 hover:border-purple-300 hover:bg-purple-50'
             }`}
         >
@@ -161,7 +161,7 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
           aria-pressed={voted === 'b'}
           aria-disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
-            voted ? 'border-gray-200 bg-gray-50' :
+            voted ? 'border-slate-200 bg-slate-50' :
               'border-pink-200 bg-slate-50 hover:border-pink-300 hover:bg-pink-50'
             }`}
         >
@@ -198,7 +198,7 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
 
       {/* 다음 액션 추천 */}
       {voted && nextActions.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-gray-100">
+        <div className="mt-4 pt-3 border-t border-slate-100">
           <NextActionInline actions={nextActions} onActionClick={onNextAction} />
         </div>
       )}
@@ -216,7 +216,7 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
       {voted && (
         <button
           onClick={() => setShowComments(!showComments)}
-          className="w-full mt-3 py-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-700 border-t border-gray-100 transition-colors"
+          className="w-full mt-3 py-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-700 border-t border-slate-100 transition-colors"
         >
           <MessageCircle className="w-3.5 h-3.5" />
           <span>댓글</span>
@@ -226,7 +226,7 @@ export function PollCard({ poll, isVoted, previousVote, onVote, onNextAction, al
 
       {/* 댓글 섹션 */}
       {voted && showComments && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-slate-100">
           <CommentSystem
             targetType="poll"
             targetId={poll.id}
@@ -266,7 +266,7 @@ export default function PollTab({ polls, votedPollIds, onVote, onNextAction }: P
           );
         })
       ) : (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-slate-400">
           <p>이 카테고리에 투표가 없습니다</p>
         </div>
       )}

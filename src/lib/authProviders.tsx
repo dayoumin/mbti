@@ -53,9 +53,9 @@ export const SOCIAL_PROVIDERS: SocialProvider[] = [
     id: 'google',
     name: '구글',
     bgColor: 'bg-slate-50',
-    textColor: 'text-gray-700',
-    hoverColor: 'hover:bg-gray-50',
-    border: 'border border-gray-300',
+    textColor: 'text-slate-700',
+    hoverColor: 'hover:bg-slate-50',
+    border: 'border border-slate-300',
     icon: <GoogleIcon />,
   },
   {

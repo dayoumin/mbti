@@ -21,7 +21,7 @@ function TipCard({ tip, onNextAction }: TipCardProps) {
   }).filter(a => a.type === 'test').slice(0, 1);
 
   return (
-    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100">
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-lg flex-shrink-0">
           💡
@@ -33,25 +33,25 @@ function TipCard({ tip, onNextAction }: TipCardProps) {
                 베스트
               </span>
             )}
-            <span className="text-xs text-gray-400">{tip.author.name}</span>
+            <span className="text-xs text-slate-400">{tip.author.name}</span>
             {tip.author.badge && (
               <span className="text-xs text-indigo-500">{tip.author.badge}</span>
             )}
           </div>
           <h3 className="font-bold text-sm text-slate-800 mb-2">{tip.title}</h3>
-          <p className="text-xs text-gray-600 leading-relaxed line-clamp-3">{tip.content}</p>
+          <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">{tip.content}</p>
           <div className="flex items-center gap-3 mt-3">
-            <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-amber-500 transition-colors">
+            <button className="flex items-center gap-1 text-xs text-slate-500 hover:text-amber-500 transition-colors">
               <ThumbsUp className="w-3.5 h-3.5" />
               <span>{formatNumber(tip.reactions.helpful)}</span>
             </button>
-            <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-indigo-500 transition-colors">
+            <button className="flex items-center gap-1 text-xs text-slate-500 hover:text-indigo-500 transition-colors">
               <Bookmark className="w-3.5 h-3.5" />
               <span>{formatNumber(tip.reactions.saved)}</span>
             </button>
             <div className="flex gap-1 ml-auto">
               {tip.tags.slice(0, 2).map(tag => (
-                <span key={tag} className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">
+                <span key={tag} className="px-1.5 py-0.5 bg-slate-100 text-slate-500 text-xs rounded">
                   #{tag}
                 </span>
               ))}
@@ -60,7 +60,7 @@ function TipCard({ tip, onNextAction }: TipCardProps) {
 
           {/* 관련 테스트 추천 */}
           {nextActions.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-3 pt-3 border-t border-slate-100">
               <NextActionInline actions={nextActions} onActionClick={onNextAction} />
             </div>
           )}
@@ -105,17 +105,17 @@ function QnACard({ question, onNextAction }: QnACardProps) {
             )}
           </div>
           <h3 className="font-bold text-sm text-slate-800 mb-2">{question.title}</h3>
-          <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{question.content}</p>
-          <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
+          <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{question.content}</p>
+          <div className="flex items-center gap-3 mt-3 text-xs text-slate-400">
             <span>답변 {question.answerCount}</span>
             <span>조회 {formatNumber(question.viewCount)}</span>
             <span>{formatRelativeTime(question.createdAt)}</span>
-            <ChevronRight className="w-4 h-4 ml-auto text-gray-300" />
+            <ChevronRight className="w-4 h-4 ml-auto text-slate-300" />
           </div>
 
           {/* 관련 테스트 추천 */}
           {nextActions.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-3 pt-3 border-t border-slate-100">
               <NextActionInline actions={nextActions} onActionClick={onNextAction} />
             </div>
           )}
@@ -161,7 +161,7 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
           onClick={() => !voted && setVoted('a')}
           disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'a' ? 'border-purple-400 bg-purple-50' :
-            voted ? 'border-gray-200 bg-gray-50' :
+            voted ? 'border-slate-200 bg-slate-50' :
               'border-purple-200 bg-slate-50 hover:border-purple-300'
             }`}
         >
@@ -188,7 +188,7 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
           onClick={() => !voted && setVoted('b')}
           disabled={!!voted}
           className={`flex-1 relative overflow-hidden rounded-xl border-2 transition-all ${voted === 'b' ? 'border-pink-400 bg-pink-50' :
-            voted ? 'border-gray-200 bg-gray-50' :
+            voted ? 'border-slate-200 bg-slate-50' :
               'border-pink-200 bg-slate-50 hover:border-pink-300'
             }`}
         >
@@ -208,13 +208,13 @@ function DebateCard({ debate, onNextAction }: DebateCardProps) {
         </button>
       </div>
 
-      <div className="mt-3 text-center text-xs text-gray-400">
+      <div className="mt-3 text-center text-xs text-slate-400">
         {formatNumber(totalVotes)}명 참여
       </div>
 
       {/* 투표 후 관련 테스트 추천 */}
       {voted && nextActions.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-slate-100">
           <NextActionInline actions={nextActions} onActionClick={onNextAction} />
         </div>
       )}
@@ -237,7 +237,7 @@ export default function CommunityContent({ onNextAction }: CommunityContentProps
           onClick={() => setSubTab('tips')}
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${subTab === 'tips'
             ? 'bg-amber-500 text-white'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
         >
           <Lightbulb className="w-3.5 h-3.5 inline mr-1" />
@@ -247,7 +247,7 @@ export default function CommunityContent({ onNextAction }: CommunityContentProps
           onClick={() => setSubTab('qna')}
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${subTab === 'qna'
             ? 'bg-emerald-500 text-white'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
         >
           <MessageCircle className="w-3.5 h-3.5 inline mr-1" />
@@ -257,7 +257,7 @@ export default function CommunityContent({ onNextAction }: CommunityContentProps
           onClick={() => setSubTab('debate')}
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${subTab === 'debate'
             ? 'bg-rose-500 text-white'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
         >
           ⚔️ 토론

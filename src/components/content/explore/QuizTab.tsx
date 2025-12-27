@@ -112,7 +112,7 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
   const categoryInfo = getCategoryInfo(quiz.category);
 
   return (
-    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-100">
       <div className="flex items-center gap-2 mb-3">
         <HelpCircle className="w-4 h-4 text-blue-500" />
         <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
@@ -131,7 +131,7 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
         {quiz.options.map((option) => {
           const isSelected = selectedOption === option.id;
           const isCorrect = option.isCorrect;
-          let bgClass = 'bg-gray-50 hover:bg-blue-50 border-gray-200';
+          let bgClass = 'bg-slate-50 hover:bg-blue-50 border-slate-200';
 
           if (showResult) {
             if (isCorrect) {
@@ -139,7 +139,7 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
             } else if (isSelected && !isCorrect) {
               bgClass = 'bg-red-50 border-red-300 text-red-700';
             } else {
-              bgClass = 'bg-gray-50 border-gray-200 text-gray-400';
+              bgClass = 'bg-slate-50 border-slate-200 text-slate-400';
             }
           }
 
@@ -192,7 +192,7 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
 
       {/* 다음 액션 추천 */}
       {showResult && nextActions.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-slate-100">
           <NextActionInline actions={nextActions} onActionClick={onNextAction} />
         </div>
       )}
@@ -210,7 +210,7 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
       {showResult && (
         <button
           onClick={() => setShowComments(!showComments)}
-          className="w-full mt-3 py-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-700 border-t border-gray-100 transition-colors"
+          className="w-full mt-3 py-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-700 border-t border-slate-100 transition-colors"
         >
           <MessageCircle className="w-3.5 h-3.5" />
           <span>댓글</span>
@@ -220,7 +220,7 @@ export function QuizCard({ quiz, isAnswered, previousAnswer, onAnswer, onNextAct
 
       {/* 댓글 섹션 */}
       {showResult && showComments && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-slate-100">
           <CommentSystem
             targetType="quiz"
             targetId={quiz.id}
@@ -260,7 +260,7 @@ export default function QuizTab({ quizzes, answeredQuizIds, onAnswer, onNextActi
           );
         })
       ) : (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-slate-400">
           <p>이 카테고리에 퀴즈가 없습니다</p>
         </div>
       )}

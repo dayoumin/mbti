@@ -14,7 +14,7 @@ export default function LoginButton({ className = '', showLogout = true }: Login
 
   if (status === 'loading' || providersLoading) {
     return (
-      <div className={`animate-pulse bg-gray-200 rounded-lg h-10 w-24 ${className}`} />
+      <div className={`animate-pulse bg-slate-200 rounded-lg h-10 w-24 ${className}`} />
     );
   }
 
@@ -31,12 +31,12 @@ export default function LoginButton({ className = '', showLogout = true }: Login
             className="w-8 h-8 rounded-full"
           />
         )}
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-slate-700">
           {session.user.name || session.user.email}
         </span>
         <button
           onClick={() => signOut()}
-          className="text-sm text-gray-500 hover:text-gray-700 underline"
+          className="text-sm text-slate-500 hover:text-slate-700 underline"
         >
           로그아웃
         </button>
@@ -47,7 +47,7 @@ export default function LoginButton({ className = '', showLogout = true }: Login
   // provider가 없으면 안내 메시지
   if (!hasProviders) {
     return (
-      <div className={`text-sm text-gray-500 ${className}`}>
+      <div className={`text-sm text-slate-500 ${className}`}>
         소셜 로그인이 아직 설정되지 않았습니다.
       </div>
     );
@@ -81,10 +81,10 @@ export function LoginPromptBanner() {
       <div className="flex items-start gap-3">
         <span className="text-2xl">💡</span>
         <div className="flex-1">
-          <p className="font-medium text-gray-800 mb-1">
+          <p className="font-medium text-slate-800 mb-1">
             로그인하면 더 좋아요!
           </p>
-          <p className="text-sm text-gray-600 mb-3">
+          <p className="text-sm text-slate-600 mb-3">
             다른 기기에서도 내 결과를 볼 수 있어요.
             <br />
             <span className="text-orange-600">
@@ -103,14 +103,14 @@ export function LoginButtonSmall() {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
-    return <div className="animate-pulse bg-gray-200 rounded-full h-8 w-8" />;
+    return <div className="animate-pulse bg-slate-200 rounded-full h-8 w-8" />;
   }
 
   if (session?.user) {
     return (
       <button
         onClick={() => signOut()}
-        className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800"
+        className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800"
       >
         {session.user.image ? (
           <img

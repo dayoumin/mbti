@@ -34,8 +34,8 @@ export function CompactProfile() {
             <span className="text-2xl">✨</span>
           </div>
           <div>
-            <p className="font-medium text-gray-800">나의 프로필을 시작해보세요!</p>
-            <p className="text-sm text-gray-500">테스트를 하면 프로필이 채워집니다</p>
+            <p className="font-medium text-slate-800">나의 프로필을 시작해보세요!</p>
+            <p className="text-sm text-slate-500">테스트를 하면 프로필이 채워집니다</p>
           </div>
         </div>
         <div className="flex gap-2 mt-3">
@@ -57,8 +57,8 @@ export function CompactProfile() {
             Lv.{level}
           </div>
           <div>
-            <p className="font-medium text-gray-800">{title}</p>
-            <p className="text-xs text-gray-500">{profile.completedTests}/{profile.totalTests} 테스트 완료</p>
+            <p className="font-medium text-slate-800">{title}</p>
+            <p className="text-xs text-slate-500">{profile.completedTests}/{profile.totalTests} 테스트 완료</p>
           </div>
         </div>
         <button
@@ -77,7 +77,7 @@ export function CompactProfile() {
             style={{ width: `${profile.completionRate}%` }}
           />
         </div>
-        <p className="text-xs text-gray-500 mt-1 text-right">{profile.completionRate}% 완성</p>
+        <p className="text-xs text-slate-500 mt-1 text-right">{profile.completionRate}% 완성</p>
       </div>
 
       {/* 미니 요약 */}

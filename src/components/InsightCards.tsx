@@ -246,7 +246,7 @@ export default function InsightCards({
     return (
       <div className="animate-pulse space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-gray-100 rounded-2xl" />
+          <div key={i} className="h-24 bg-slate-100 rounded-2xl" />
         ))}
       </div>
     );
@@ -272,9 +272,9 @@ export default function InsightCards({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Brain className="w-5 h-5 text-purple-500" />
-          <h3 className="font-bold text-gray-900">나의 인사이트</h3>
+          <h3 className="font-bold text-slate-900">나의 인사이트</h3>
         </div>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-slate-500">
           {stages.filter((s) => s.unlocked).length}/{stages.length} 해금
         </span>
       </div>
@@ -354,24 +354,24 @@ function CompactView({
           key={stage.stage}
           onClick={() => onCardClick?.(stage.stage)}
           className={`flex-shrink-0 px-4 py-3 rounded-2xl transition-all ${stage.unlocked
-              ? 'bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200'
-              : 'bg-gray-50 border border-gray-200'
+            ? 'bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200'
+            : 'bg-slate-50 border border-slate-200'
             }`}
         >
           <div className="flex items-center gap-2">
             <span className="text-lg">{stage.emoji}</span>
             <div className="text-left">
               <div
-                className={`text-sm font-medium ${stage.unlocked ? 'text-purple-700' : 'text-gray-400'
+                className={`text-sm font-medium ${stage.unlocked ? 'text-purple-700' : 'text-slate-400'
                   }`}
               >
                 {stage.title}
               </div>
               {!stage.unlocked && stage.progress !== undefined && (
-                <div className="text-xs text-gray-400">{Math.round(stage.progress)}%</div>
+                <div className="text-xs text-slate-400">{Math.round(stage.progress)}%</div>
               )}
             </div>
-            {!stage.unlocked && <Lock className="w-3 h-3 text-gray-400" />}
+            {!stage.unlocked && <Lock className="w-3 h-3 text-slate-400" />}
           </div>
         </button>
       ))}
@@ -385,29 +385,29 @@ function CompactView({
 
 function LockedStageCard({ stage }: { stage: StageData }) {
   return (
-    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
+    <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center">
-            <Lock className="w-5 h-5 text-gray-400" />
+          <div className="w-10 h-10 bg-slate-200 rounded-xl flex items-center justify-center">
+            <Lock className="w-5 h-5 text-slate-400" />
           </div>
           <div>
-            <div className="font-medium text-gray-400">
+            <div className="font-medium text-slate-400">
               Stage {stage.stage}: {stage.title}
             </div>
             {stage.remaining && (
-              <div className="text-sm text-gray-400">{stage.remaining}</div>
+              <div className="text-sm text-slate-400">{stage.remaining}</div>
             )}
           </div>
         </div>
         {stage.progress !== undefined && (
           <div className="text-right">
-            <div className="text-sm font-medium text-gray-500">
+            <div className="text-sm font-medium text-slate-500">
               {Math.round(stage.progress)}%
             </div>
-            <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gray-400 rounded-full transition-all"
+                className="h-full bg-slate-400 rounded-full transition-all"
                 style={{ width: `${stage.progress}%` }}
               />
             </div>

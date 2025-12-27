@@ -18,11 +18,11 @@ const ProgressDots = ({ current, total, themeColor }: ProgressDotsProps) => {
 
   return (
     <div className="flex gap-1 items-center">
-      <span className="text-xs text-gray-500 mr-1">{current}/{total}</span>
+      <span className="text-xs text-slate-500 mr-1">{current}/{total}</span>
       {Array.from({ length: dotsToShow }, (_, i) => (
         <div
           key={i}
-          className={`w-2 h-2 rounded-full transition-colors ${i < filledDots ? themeColor : 'bg-gray-300'
+          className={`w-2 h-2 rounded-full transition-colors ${i < filledDots ? themeColor : 'bg-slate-300'
             }`}
         />
       ))}
@@ -42,7 +42,7 @@ const ExitModal = ({ isOpen, onConfirm, onCancel, testName }: ExitModalProps) =>
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-xs border-4 border-gray-800 shadow-xl animate-pop">
+      <div className="bg-slate-50 rounded-2xl p-6 w-full max-w-xs border-4 border-slate-800 shadow-xl animate-pop">
         <h3 className="text-lg font-bold text-primary mb-2 text-center">
           테스트를 중단할까요?
         </h3>
@@ -108,11 +108,10 @@ export const TestHeader = ({
         <button
           onClick={handleBackClick}
           disabled={currentQuestion > 0 && !canGoBack}
-          className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${
-            currentQuestion > 0 && !canGoBack
+          className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${currentQuestion > 0 && !canGoBack
               ? 'text-slate-300 cursor-not-allowed'
               : 'hover:bg-slate-100 active:bg-slate-200 text-slate-600'
-          }`}
+            }`}
           aria-label={currentQuestion === 0 ? '테스트 나가기' : '이전 질문'}
         >
           <BackIcon />

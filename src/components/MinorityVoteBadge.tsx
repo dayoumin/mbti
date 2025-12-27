@@ -51,11 +51,10 @@ export function VoteResultWithMinority({
 
   return (
     <div
-      className={`flex items-center justify-between p-3 rounded-lg ${
-        isSelected
+      className={`flex items-center justify-between p-3 rounded-lg ${isSelected
           ? 'bg-indigo-100 border-2 border-indigo-500'
-          : 'bg-gray-50 border border-gray-200'
-      }`}
+          : 'bg-slate-50 border border-slate-200'
+        }`}
     >
       <div className="flex items-center gap-2">
         <span className="text-sm">{optionText}</span>
@@ -63,7 +62,7 @@ export function VoteResultWithMinority({
           <MinorityVoteBadge percentage={percentage} size="sm" />
         )}
       </div>
-      <span className="text-sm font-medium text-gray-600">
+      <span className="text-sm font-medium text-slate-600">
         {percentage.toFixed(1)}%
       </span>
     </div>

@@ -31,7 +31,7 @@ export default function ParticipationStats({
 
   if (loading) {
     return (
-      <div className={`animate-pulse bg-gray-100 rounded-xl h-24 ${className}`} />
+      <div className={`animate-pulse bg-slate-100 rounded-xl h-24 ${className}`} />
     );
   }
 
@@ -114,7 +114,7 @@ function StatBadge({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
+    <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full">
       <span>{emoji}</span>
       <span className="font-medium text-primary">{value}</span>
       <span className="text-xs text-muted">{label}</span>

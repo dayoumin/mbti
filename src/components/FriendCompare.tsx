@@ -107,17 +107,17 @@ export default function FriendCompare({
         <div className="p-5">
           {/* 내 결과 표시 */}
           <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-5">
-            <div className="text-xs text-gray-500 mb-1">나의 {testName} 결과</div>
+            <div className="text-xs text-slate-500 mb-1">나의 {testName} 결과</div>
             <div className="flex items-center gap-2">
               <span className="text-2xl">{myResultEmoji}</span>
-              <span className="font-bold text-gray-900">{myResult}</span>
+              <span className="font-bold text-slate-900">{myResult}</span>
             </div>
           </div>
 
           {/* Step: 초대 */}
           {step === 'invite' && (
             <div className="space-y-4">
-              <p className="text-sm text-gray-600 text-center">
+              <p className="text-sm text-slate-600 text-center">
                 친구에게 초대 코드를 보내고<br />
                 결과를 비교해보세요!
               </p>
@@ -131,8 +131,8 @@ export default function FriendCompare({
                 </button>
               ) : (
                 <div className="space-y-3">
-                  <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <div className="text-xs text-gray-500 mb-1">초대 코드</div>
+                  <div className="bg-slate-50 rounded-xl p-4 text-center">
+                    <div className="text-xs text-slate-500 mb-1">초대 코드</div>
                     <div className="text-2xl font-mono font-bold text-purple-600 tracking-wider">
                       {inviteCode}
                     </div>
@@ -157,14 +157,14 @@ export default function FriendCompare({
               )}
 
               <div className="flex items-center gap-3 my-4">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400">또는</span>
-                <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex-1 h-px bg-slate-200" />
+                <span className="text-xs text-slate-400">또는</span>
+                <div className="flex-1 h-px bg-slate-200" />
               </div>
 
               <button
                 onClick={() => setStep('input')}
-                className="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl"
+                className="w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-xl"
               >
                 친구 코드 입력하기
               </button>
@@ -181,7 +181,7 @@ export default function FriendCompare({
                 </span>
               </div>
 
-              <p className="text-sm text-gray-600 text-center">
+              <p className="text-sm text-slate-600 text-center">
                 친구에게 받은 코드를 입력하세요
               </p>
 
@@ -191,7 +191,7 @@ export default function FriendCompare({
                 onChange={(e) => setInputCode(e.target.value.toUpperCase())}
                 placeholder="코드 입력"
                 maxLength={6}
-                className="w-full px-4 py-3 text-center font-mono text-xl uppercase tracking-wider border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 text-center font-mono text-xl uppercase tracking-wider border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
 
               {error && (
@@ -212,7 +212,7 @@ export default function FriendCompare({
                   setInputCode('');
                   setError('');
                 }}
-                className="w-full py-2 text-sm text-gray-400"
+                className="w-full py-2 text-sm text-slate-400"
               >
                 뒤로가기
               </button>
@@ -229,7 +229,7 @@ export default function FriendCompare({
                     {comparison.matchScore}%
                   </span>
                 </div>
-                <h3 className="font-bold text-gray-900 text-lg">
+                <h3 className="font-bold text-slate-900 text-lg">
                   {comparison.matchScore >= 80 ? '찰떡궁합!' :
                     comparison.matchScore >= 60 ? '잘 맞는 편!' :
                       comparison.matchScore >= 40 ? '적당히 다름' : '정반대?!'}
@@ -237,33 +237,33 @@ export default function FriendCompare({
               </div>
 
               {/* VS 비교 */}
-              <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4">
+              <div className="flex items-center justify-between bg-slate-50 rounded-xl p-4">
                 <div className="text-center flex-1">
                   <div className="text-2xl mb-1">{myResultEmoji}</div>
-                  <div className="text-xs text-gray-500">나</div>
-                  <div className="font-bold text-sm text-gray-900">{myResult}</div>
+                  <div className="text-xs text-slate-500">나</div>
+                  <div className="font-bold text-sm text-slate-900">{myResult}</div>
                 </div>
-                <div className="text-xl font-black text-gray-300">VS</div>
+                <div className="text-xl font-black text-slate-300">VS</div>
                 <div className="text-center flex-1">
                   <div className="text-2xl mb-1">👤</div>
-                  <div className="text-xs text-gray-500">친구</div>
-                  <div className="font-bold text-sm text-gray-900">{comparison.friendResult}</div>
+                  <div className="text-xs text-slate-500">친구</div>
+                  <div className="font-bold text-sm text-slate-900">{comparison.friendResult}</div>
                 </div>
               </div>
 
               {/* 차원별 비교 */}
               {comparison.dimensionMatches.length > 0 && (
                 <div className="space-y-2">
-                  <div className="text-xs font-bold text-gray-500">차원별 유사도</div>
+                  <div className="text-xs font-bold text-slate-500">차원별 유사도</div>
                   {comparison.dimensionMatches.slice(0, 5).map(({ dimension, similarity }) => {
                     const dimInfo = dimensions[dimension];
                     return (
                       <div key={dimension} className="flex items-center gap-2">
                         <span className="text-sm">{dimInfo?.emoji || '📊'}</span>
-                        <span className="text-xs text-gray-600 w-16 truncate">
+                        <span className="text-xs text-slate-600 w-16 truncate">
                           {dimInfo?.name || dimension}
                         </span>
-                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full ${similarity >= 70 ? 'bg-green-400' :
                               similarity >= 40 ? 'bg-yellow-400' : 'bg-red-400'
@@ -271,7 +271,7 @@ export default function FriendCompare({
                             style={{ width: `${similarity}%` }}
                           />
                         </div>
-                        <span className="text-xs font-bold text-gray-600 w-10 text-right">
+                        <span className="text-xs font-bold text-slate-600 w-10 text-right">
                           {similarity}%
                         </span>
                       </div>
@@ -291,7 +291,7 @@ export default function FriendCompare({
 
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl"
+                className="w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-xl"
               >
                 닫기
               </button>
